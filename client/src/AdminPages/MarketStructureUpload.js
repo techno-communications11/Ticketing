@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { apiRequest } from '../lib/apiRequest';
-import { MdOutlineCloudUpload } from "react-icons/md";
 import '../styles/loader.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import FileUploads from '../universalComponents/FileUploads';
 
 export function MarketStructureUpload() {
   const BoiIDRef = useRef('');
@@ -179,50 +179,14 @@ export function MarketStructureUpload() {
               </div>
 
             ) : (
-              <div className="row mt-5">
-                <div className="col-12 col-md-6 order-md-2 d-flex justify-content-center align-items-center">
-                  <img src="../csv.png" alt="CSV illustration" className="img-fluid d-none d-md-block" />
-                </div>
-                <div className="col-12 col-md-6 order-md-1 mt-4 mt-md-0">
-                  <div className="bg-body shadow-lg rounded p-4">
-                    <h4 className="text-center fw-bold mb-4 font-family">Upload</h4>
-                    <h6 className="text-danger">
-                      Note<sup>*</sup>: Only CSV files can be uploaded.
-                    </h6>
-                    <div
-                      className="cursor-pointer  mb-2"
-                      style={{ height: '80px', cursor: 'pointer', border: '1px dashed' }}
-                      onClick={handleFileUploadClick}
-                    >
-                      {!selectedFile ? (
-                        <div className=' mt-2 d-flex flex-column align-items-center justify-content-center m-0'>
-                          <MdOutlineCloudUpload className=" text-secondary fs-1" />
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: 'none' }}
-                            onChange={handleFileChange}
-                            accept=".csv"
-                          />
-                          <p className="fw-bolder text-secondary">Upload files</p>
-                        </div>
-
-                      ) : (
-                        <p className="text-secondary mt-4 fw-bolder">{selectedFile.name}</p>
-                      )}
-                    </div>
-                    <div className="d-flex justify-content-end">
-                      <button
-                        className="btn btn-primary w-100"
-                        onClick={handleFileUpload}
-                        disabled={isLoading}
-                      >
-                        {isLoading ? 'Uploading...' : 'Upload'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <FileUploads
+                handleFileUploadClick={handleFileUploadClick}
+                handleFileChange={handleFileChange}
+                handleFileUpload={handleFileUpload}
+                handleSubmit={handleSubmit}
+                selectedFile={selectedFile}
+                fileInputRef={fileInputRef}
+                isLoading={isLoading} />
             )}
           </div>
         </div>

@@ -25,41 +25,38 @@ const UserTable = () => {
     const fetchData = async () => {
       try {
         const response = await apiRequest.get('/auth/userdata');
+      console.log(response.data,"hahahj")
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
         toast.error("Error fetching users");
       }
     };
-
     fetchData();
   }, []);
 
-  
-  const handleSearch = async (query) => {
-    setIsSearching(true);
-    const input = query.trim();
-    console.log("Trimmed Input:", input); 
-  
+
+  const handleSearch = (query) => {
+    const input = query.trim().toLowerCase();
     if (!input) {
       toast.error("Please enter a search term");
-      setIsSearching(false);
-      return; 
+      return;
     }
+    const filteredUsers = users.filter(user => {
+      const ntid = user.ntid ? user.ntid.toLowerCase() : '';
+      const fullname = user.fullname ? user.fullname.toLowerCase() : '';
+      const market = user.market && user.market.market ? user.market.market.toLowerCase() : '';
+      const dmName = user.dmName ? user.dmName.toLowerCase() : '';
   
-    try {
-      const url = `/profile/searchuser?query=${encodeURIComponent(input)}`;
-      console.log("API Request URL:", url); 
-      const response = await apiRequest.get(url);
-      setUsers(response.data);
-    } catch (error) {
-      console.error('Error searching users:', error);
-      toast.error("Error searching users");
-    } finally {
-      setIsSearching(false);
-    }
+      return (
+        ntid.includes(input) ||
+        fullname.includes(input) ||
+        market.includes(input) ||
+        dmName.includes(input)
+      );
+    });
+    setUsers(filteredUsers);
   };
-  
 
   const handleEdit = (user) => {
     setSelectedUser(user);
@@ -102,8 +99,6 @@ const UserTable = () => {
     setSelectedUser(user);
     setShowImageModal(true);
   };
-
-
 
   const currentItems = useMemo(() => {
     return users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);

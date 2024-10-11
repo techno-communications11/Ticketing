@@ -45,20 +45,17 @@ const Individualmarketss = () => {
 
 
   const { ntid:userNtid, department, fullname } = getDecodedToken() || {};
-  console.log(department, "dept",userNtid,"ntid")
-
-
   
     const fetchData = async () => {
       try {
         const response = await apiRequest.get('/auth/GetUsers');
-        console.log('API Response:', response); // Log the response for debugging
+        console.log('API Response:', response); 
         const fetchedUsers = response.data.teamMembers || [];
-        const filterdata=fetchedUsers.filter(name=>name.fullname!=fullname)
-        setUsers(filterdata); // Set users data in state
+        const filterdata=fetchedUsers.filter(name=>name.fullname!==fullname)
+        setUsers(filterdata); 
         if (filterdata.length > 0) {
         } else {
-          toast.info("No users found in your team");
+          console.log("No users found in your team");
         }
       } catch (error) {
         console.error('Error fetching users:', error.response || error.message);
@@ -180,7 +177,6 @@ const Individualmarketss = () => {
     }
   };
 
-
   if (loading) {
     return (
       <div className='vh-100'>
@@ -192,10 +188,8 @@ const Individualmarketss = () => {
     setComment(e.target.value);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const response = await apiRequest.put('/createTickets/postcomment', {
         ticketId: markets.ticketId,
@@ -214,15 +208,12 @@ const Individualmarketss = () => {
     }
   };
 
-
   const onhandleDepartment = (e) => {
     const selectedDept = e.target.value;
     console.log(selectedDept, "soluted");  
     setSelectedDepartment(selectedDept);    
     assignToDepartment(selectedDept);       
   };
-
-
 
   const assignToDepartment = async (selectedDept) => {
 
@@ -251,6 +242,7 @@ const Individualmarketss = () => {
       if (response.status === 200) {
         toast.success(`assigned to ${user}`)
         updateTicketStatus('3');
+        
       }
     }
     catch (error) {
@@ -310,7 +302,6 @@ const handleTicketAction = async (action) => {
 };
 const handleConfirmSettled = () => handleTicketAction('settle');
 const handleRequestReopen = () => handleTicketAction('reopen');
-
 
   return (
     <div className="container mt-2">
@@ -392,7 +383,7 @@ const handleRequestReopen = () => handleTicketAction('reopen');
 
             <div className="col-md-5 d-flex justify-content-end align-items-center mt-sm-2 mt-xs-2 mt-md-none">
               {
-                departments.includes(department)&&markets.status.name!=='completed' && (
+                departments.includes(department)&&markets.status?.name!=='completed' && (
                   <Dropdown className='mx-2'>
                     <Dropdown.Toggle variant="primary" id="dropdown-basic">
                       Allocate
@@ -490,7 +481,7 @@ const handleRequestReopen = () => handleTicketAction('reopen');
         </Modal.Body>
       </Modal>
       {
-        department==='Employee'&&<span className='text-danger fw-bolder'>* Enter comment describing the purpose of reopening the ticket before requesting reopen</span>
+        department==='Employee'&& markets.status?.name === 'completed' &&<span className='text-danger fw-bolder'>* Enter comment describing the purpose of reopening the ticket before requesting reopen</span>
       }
       <ToastContainer />
     </div>

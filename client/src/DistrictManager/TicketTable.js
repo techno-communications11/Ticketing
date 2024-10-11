@@ -48,10 +48,11 @@ const TicketsTable = ({ statusIds }) => {
   }, []);
 
   useEffect(() => {
-    if (combinedTickets.length > 0) {
+    if (combinedTickets.length > 0 && combinedTickets[0]?.market) {
       setMarket(combinedTickets[0].market.toUpperCase());
     }
   }, [combinedTickets]);
+  
 
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
@@ -61,20 +62,23 @@ const TicketsTable = ({ statusIds }) => {
 
   const filteredTickets = useMemo(() => {
     return combinedTickets.filter(ticket => {
-      const ntidMatch = ntidFilter ? ticket.ntid.includes(ntidFilter) : true;
+      const ntidMatch = ntidFilter ? ticket.ntid?.toLowerCase().includes(ntidFilter.toLowerCase()) : true;
       const dateMatch = dateFilter ? new Date(ticket.createdAt).toISOString().split('T')[0] === new Date(dateFilter).toISOString().split('T')[0] : true;
       return ntidMatch && dateMatch;
     });
   }, [combinedTickets, ntidFilter, dateFilter]);
+  
 
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const completedTickets = currentItems.filter(ticket => ticket.isSettled);
-  const nonCompletedTickets = currentItems.filter(ticket => !ticket.isSettled);
+  // Sorting logic: completed tickets go to the end
+  const completedTickets = currentItems.filter(ticket => ticket.isSettled); // completed tickets
+  const nonCompletedTickets = currentItems.filter(ticket => !ticket.isSettled); // not completed tickets
+  
 
   const sortedCompletedTickets = completedTickets.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
   const finalTickets = [...nonCompletedTickets, ...sortedCompletedTickets];
-  
+  console.log(finalTickets)
   return (
     <Container className="mt-3">
       <h3 className="d-flex justify-content-center mb-2 font-family" style={{ color: '#E10174' }}>
@@ -111,7 +115,7 @@ const TicketsTable = ({ statusIds }) => {
           </tr>
         </thead>
         <tbody>
-        {finalTickets.length > 0 ? (
+          {finalTickets.length > 0 ? (
             finalTickets.map((ticket, index) => (
               <tr
                 key={ticket.ticketId}
@@ -120,7 +124,7 @@ const TicketsTable = ({ statusIds }) => {
                 <td className='fw-medium'>{index + 1}</td>
                 <td className='fw-medium'>{ticket.ntid}</td>
                 <td className='fw-medium'>{ticket.fullname}</td>
-                <td className='fw-medium'>{ticket.status?.name || '-'}</td>
+                <td className='fw-medium'>{ticket.status.name || '-'}</td>
                 <td className='fw-medium'>{formatDate(ticket.createdAt)}</td>
                 <td className='fw-medium'>
                   {ticket.completedAt ? formatDate(ticket.completedAt) : '-'}

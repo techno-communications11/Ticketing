@@ -39,7 +39,7 @@ const UserTickets = () => {
 
  
 
-  const handleTicketClick = (id) => {
+  const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
@@ -111,7 +111,7 @@ const UserTickets = () => {
                 </td>
                 <td>
                   <Link to={'/details'}>
-                    <GrLinkNext className="fw-bolder" onClick={() => handleTicketClick(ticket.ticketId)} />
+                    <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId)} />
                   </Link>
                 </td>
               </tr>

@@ -3,14 +3,10 @@ import { Table,Row } from 'react-bootstrap';
 import getDecodedToken from '../universalComponents/decodeToken';
 import { apiRequest } from '../lib/apiRequest';
 import { setId, fetchIndividualTickets } from '../redux/marketSlice';
-import { GrLinkNext } from "react-icons/gr";
 import { useDispatch } from 'react-redux';
 import Filtering from '../universalComponents/Filtering';
 import FilterLogic from '../universalComponents/FilteringLogic';
-import { Link } from 'react-router-dom';
-import formatDate from '../universalComponents/FormatDate';
-import { getDuration } from '../universalComponents/getDuration';
-
+import TicketBody from '../universalComponents/TicketBody';
 
 function RequestReopen() {
   const dispatch = useDispatch();
@@ -26,6 +22,7 @@ function RequestReopen() {
           params: { ntid }
         });
         setTickets(response.data);
+        console.log(response.data,"req,re")
       } catch (error) {
         console.error('Error fetching tickets:', error);
       }
@@ -59,31 +56,15 @@ function RequestReopen() {
         <thead>
           <tr>
 
-            {['SC.No', 'ntid', 'Full Name', 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
+            {['SC.No', 'ntid',  'Full Name',"Status", 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
               <th key={header} className='text-center' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
             ))}
           </tr>
-
-
         </thead>
         <tbody>
           {tickets.length > 0 ? (
             tickets.map((ticket, index) => (
-              <tr key={index}>
-                <td className='text-center fw-medium'>{index + 1}</td>
-                <td className='text-center fw-medium'>{ticket.ntid}</td>
-                <td className='text-center fw-medium'>{ticket.fullname}</td>
-                <td className='text-center fw-medium'>{formatDate(ticket.createdAt)}</td>
-                <td className='text-center fw-medium'>{ticket.completedAt ? formatDate(ticket.completedAt) : '-'}</td>
-                <td className='text-center fw-medium'>
-                  {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : "-"}
-                </td>
-                <td className='text-center fw-medium'>
-                  <Link to="/details">
-                    <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId)} />
-                  </Link>
-                </td>
-              </tr>
+              <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}/>
             ))
           ) : (
             <tr>

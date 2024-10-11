@@ -1,16 +1,15 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Container, Table, Form } from 'react-bootstrap';
-import { GrLinkNext } from 'react-icons/gr';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import '../styles/loader.css';
 import { fetchStatusWiseTickets, setMarketAndStatus } from '../redux/statusSlice';
 import { setId, fetchIndividualTickets } from '../redux/marketSlice';
-import { getDuration } from '../universalComponents/getDuration';
+
 import PageCountStack from '../universalComponents/PageCountStack';
-import formatDate from '../universalComponents/FormatDate';
+
 import FilterLogic from '../universalComponents/FilteringLogic';
 import Filtering from '../universalComponents/Filtering';
+import TicketBody from '../universalComponents/TicketBody';
 
 const ShowTickets = () => {
   const dispatch = useDispatch();
@@ -93,26 +92,7 @@ const ShowTickets = () => {
             <tbody>
               {currentItems.length > 0 && (
                 currentItems.map((ticket, index) => (
-                  <tr key={ticket.ticketId}>
-                    <td className="text-center fw-medium">{index + 1}</td>
-                    <td className="text-center fw-medium">{ticket.ntid}</td>
-                    <td className="text-center fw-medium">{ticket.fullname}</td>
-                    <td className="text-center fw-medium">{ticket.status.name}</td>
-                    <td className='text-center fw-medium'>{formatDate(ticket.createdAt)}</td>
-                    <td className='text-center fw-medium'>{ticket.completedAt ? formatDate(ticket.completedAt) : '-'}</td>
-                    <td className='text-center fw-medium'>
-                      {ticket.completedAt ? (
-                        getDuration(ticket.createdAt, ticket.completedAt)
-                      ) : (
-                        "-"
-                      )}
-                    </td>
-                    <td className="text-center fw-medium">
-                      <Link to="/details">
-                        <GrLinkNext onClick={() => handleTicket(ticket.ticketId)} />
-                      </Link>
-                    </td>
-                  </tr>
+                  <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}/>
                 ))
               )}
             </tbody>

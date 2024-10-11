@@ -65,7 +65,6 @@ export function Login() {
     const ntid = ntidRef.current.value.toLowerCase();
     const password = passwordRef.current.value;
 
-    // Validate inputs
     if (!validateInputs(ntid, password)) {
       setIsLoading(false);
       return;
@@ -89,7 +88,7 @@ export function Login() {
         navigate('/superAdminHome');
       }
     } catch (error) {
-      console.error('Login error:', error); // Additional logging
+      console.error('Login error:', error); 
       setError(error.response?.data?.message || 'Something went wrong. Please try again later.');
     } finally {
       setIsLoading(false);

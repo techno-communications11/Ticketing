@@ -37,6 +37,7 @@ const TicketStatus = async (req, res) => {
       } 
       if (statusId === '5') {
         updateData.completedAt = null;
+        updateData.isSettled=null;
       }
 
       await prisma.createTicket.update({

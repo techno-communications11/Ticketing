@@ -1,16 +1,13 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { apiRequest } from '../lib/apiRequest';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
-import { GrLinkNext } from "react-icons/gr";
 import { useDispatch } from 'react-redux';
 import { setId, fetchIndividualTickets } from '../redux/marketSlice';
 import PageCountStack from '../universalComponents/PageCountStack';
-import formatDate from '../universalComponents/FormatDate';
 import Form from 'react-bootstrap/Form'; 
 import '../styles/loader.css';
-import { getDuration } from '../universalComponents/getDuration';
 import decodedToken from '../universalComponents/decodeToken';
+import TicketBody from '../universalComponents/TicketBody';
 
 function TotalUserTickets() {
   const dispatch = useDispatch();
@@ -58,11 +55,7 @@ function TotalUserTickets() {
     });
   }, [tickets, statusFilter, dateFilter]);
   
-  console.log(dateFilter)
-  console.log(tickets)
-
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
 
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
@@ -107,25 +100,7 @@ function TotalUserTickets() {
             </thead>
             <tbody>
               {currentItems.map((ticket, index) => (
-                <tr key={ticket.ticketId}>
-                  <td className='text-center fw-medium'>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                  <td className='text-center fw-medium'>{ticket.ntid}</td>
-                  <td className='text-center fw-medium'>{ticket.fullname}</td>
-                  <td className='text-center fw-medium'>{ticket.status.name}</td>
-                  <td className='text-center fw-medium'>{formatDate(ticket.createdAt)}</td>
-                  <td className='text-center fw-medium'>{ticket.completedAt?formatDate(ticket.completedAt):'Not Completed'}</td>
-                  <td className='text-center fw-medium'>
-                    {ticket.completedAt ? (
-                      getDuration(ticket.createdAt, ticket.completedAt)
-                    ) : (
-                      "In Progress"
-                    )}
-                  </td>                  <td className='text-center fw-medium'>
-                    <Link to="/details">
-                      <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId)} />
-                    </Link>
-                  </td>
-                </tr>
+                 <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}/>
               ))}
             </tbody>
           </table>

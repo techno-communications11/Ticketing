@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Container, Table, Spinner } from 'react-bootstrap'; // Use Spinner for loader
+import { Container, Table } from 'react-bootstrap'; 
 import { GrLinkNext } from 'react-icons/gr';
 import '../styles/loader.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +13,7 @@ import { getDuration } from '../universalComponents/getDuration';
 import formatDate from '../universalComponents/FormatDate';
 import Filtering from '../universalComponents/Filtering';
 import FilterLogic from '../universalComponents/FilteringLogic';
+import TicketBody from '../universalComponents/TicketBody';
 
 const ShowTickets = () => {
   const dispatch = useDispatch();
@@ -46,6 +47,8 @@ const ShowTickets = () => {
     };
     fetchMarketData();
   }, []);
+
+
 
   useEffect(() => {
     const storedMarket = localStorage.getItem('marketData');
@@ -87,7 +90,6 @@ const ShowTickets = () => {
     setDropdownVisible(false);
   };
 
-  const statusOptions = ['opened', 'completed', 'inprogress', 'new', 'reopened'];
 
   return (
     <Container className="mt-2">
@@ -124,8 +126,8 @@ const ShowTickets = () => {
       </div>
 
       {loading ? (
-        <div className='d-flex align-items-center justify-content-center vh-80'>
-          <Spinner animation="border" variant="primary" />
+        <div className='loader d-flex align-items-center justify-content-center vh-80'>
+    
         </div>
       ) : (
         <Table bordered hover responsive>
@@ -139,22 +141,7 @@ const ShowTickets = () => {
           <tbody>
             {currentItems.length > 0 ? (
               currentItems.map((ticket, index) => (
-                <tr key={ticket.ticketId}>
-                  <td className='text-center fw-medium'>{index + 1 + (currentPage - 1) * itemsPerPage}</td>
-                  <td className='text-center fw-medium'>{ticket.ntid}</td>
-                  <td className='text-center fw-medium'>{ticket.fullname?.name || ticket.fullname}</td>
-                  <td className='text-center fw-medium'>{ticket.status?.name || ticket.status}</td>
-                  <td className='text-center fw-medium'>{formatDate(ticket.createdAt)}</td>
-                  <td className='text-center fw-medium'>{ticket.completedAt ? formatDate(ticket.completedAt) : '-'}</td>
-                  <td className='text-center fw-medium'>
-                    {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : '-'}
-                  </td>
-                  <td className='text-center'>
-                    <Link to='/details' className='text-primary'>
-                      <GrLinkNext size={20} onClick={() => handleTicket(ticket.ticketId)} />
-                    </Link>
-                  </td>
-                </tr>
+                <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}/>
               ))
             ) : (
               <tr>

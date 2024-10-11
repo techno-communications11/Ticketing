@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { apiRequest } from '../lib/apiRequest';
-import { MdOutlineCloudUpload } from "react-icons/md";
 import { FaRegEye, FaEyeSlash } from 'react-icons/fa';
 import '../styles/loader.css';
-import getMarkets from '../universalComponents/GetMarkets';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import FileUploads from '../universalComponents/FileUploads';
 
 export function Register() {
   const NTIDRef = useRef('');
@@ -13,21 +12,17 @@ export function Register() {
   const passwordRef = useRef('');
   const DoorCodeRef = useRef('');
   const fileInputRef = useRef(null);
-
   const [selectedRole, setSelectedRole] = useState('');
-  // const [selectedMarket, setSelectedMarket] = useState([]);
   const [selectMarketValue, setSelectMarketValue] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [activeForm, setActiveForm] = useState('register');
-
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [ntidError, setNtidError] = useState('');
   const [fullnameError, setFullnameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [selectedRoleError, setSelectedRoleError] = useState('');
-  // const [selectedMarketError, setSelectedMarketError] = useState('');
   const [DoorCodeError, setDoorCodeError] = useState('');
   const userRoles = [
     'Varun Team',
@@ -53,19 +48,6 @@ export function Register() {
 
   ]
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const data = await getMarkets();
-  //       setSelectedMarket(data);
-  //     } catch (error) {
-  //       console.error('Error fetching market data:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -74,7 +56,6 @@ export function Register() {
     setFullnameError('');
     setPasswordError('');
     setSelectedRoleError('');
-    // setSelectedMarketError('');
     setDoorCodeError('');
 
     const ntid = NTIDRef.current.value;
@@ -82,11 +63,9 @@ export function Register() {
     const password = passwordRef.current.value;
     const DoorCode = DoorCodeRef.current.value;
 
-    // const NTIDRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{3,16}$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
 
     let hasError = false;
-
     if (!ntid) {
       setNtidError('NTID is required');
       hasError = true;
@@ -112,11 +91,6 @@ export function Register() {
       hasError = true;
     }
 
-    // if (!selectMarketValue) {
-    //   setSelectedMarketError('Please select a market');
-    //   hasError = true;
-    // }
-
     if (hasError) {
       setIsLoading(false);
       return;
@@ -134,12 +108,9 @@ export function Register() {
 
       if (response.status === 201) {
         console.log(response.status);
-        toast.success("registered successfully", { autoClose: 3000 }); // 3 seconds
-
-        // Handle successful registration (e.g., redirect or show success message)
+        toast.success("registered successfully", { autoClose: 2000 }); 
       } else {
         toast.error(error.response?.data?.message || "failed to register");
-
         setError('Invalid credentials. Please try again.');
       }
     } catch (error) {
@@ -172,7 +143,6 @@ export function Register() {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-
       const response = await apiRequest.post('/auth/registeruser', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -182,11 +152,10 @@ export function Register() {
       if (response.status === 200) {
         setSelectedFile(null);
         console.log(response.message, "success");
-        toast.success("File uploaded successfully", { autoClose: 3000 });
-        // Handle successful file upload (e.g., show success message)
+        toast.success("File uploaded successfully", { autoClose: 2000 });
       } else {
         setError('File upload failed. Please try again.');
-        toast.error("File upload failed. Please try again.", { autoClose: 3000 });
+        toast.error("File upload failed. Please try again.", { autoClose: 2000 });
       }
     } catch (error) {
       setError('An unexpected error occurred');
@@ -204,9 +173,7 @@ export function Register() {
     setSelectedRole(e.target.value);
   };
 
-  const handleMarketChange = (e) => {
-    setSelectMarketValue(e.target.value);
-  };
+ 
 
   return (
     <div className="container">
@@ -233,25 +200,25 @@ export function Register() {
             </div>
             {activeForm === 'register' ? (
               <div className='d-flex justify-content-center'>
-                <form onSubmit={handleSubmit} className=' col-12 col-md-4 shadow-lg p-3 rounded'> {/* Reduced padding from p-4 to p-3 */}
-                  <h4 className="text-center font-family mb-3">Register User</h4> {/* Reduced margin bottom */}
+                <form onSubmit={handleSubmit} className=' col-12 col-md-4 shadow-lg p-3 rounded'> 
+                  <h4 className="text-center font-family mb-3">Register User</h4> 
 
-                  <div className="mb-3"> {/* Reduced margin bottom */}
+                  <div className="mb-3"> 
                     <input type="text" id="ntid" placeholder="NTID" className="fw-medium text-secondary form-control border shadow-none" ref={NTIDRef} />
                     <span className="text-danger">{ntidError}</span>
                   </div>
 
-                  <div className="mb-3"> {/* Reduced margin bottom */}
+                  <div className="mb-3"> 
                     <input type="text" id="fullName" placeholder="Full Name" className=" fw-medium text-secondary form-control border shadow-none" ref={fullNameRef} />
                     <span className="text-danger">{fullnameError}</span>
                   </div>
 
-                  <div className="mb-3"> {/* Reduced margin bottom */}
+                  <div className="mb-3"> 
                     <input type="text" id="doorCode" placeholder="Door Code" className=" fw-medium text-secondary form-control border shadow-none" ref={DoorCodeRef} />
                     <span className="text-danger">{DoorCodeError}</span>
                   </div>
 
-                  <div className="mb-3"> {/* Reduced margin bottom */}
+                  <div className="mb-3"> 
                     <select id="role" name="Select Role" className="form-select border shadow-none fw-medium text-secondary" value={selectedRole} onChange={handleRoleChange}>
                       <option value="" disabled>Select role</option>
                       {
@@ -287,48 +254,14 @@ export function Register() {
 
 
             ) : (
-              <div className="col-12 col-md-12  order-md-1 mt-5 mt-md-0">
-                <div className="d-flex justify-content-center gap-5">
-                  <div className="bg-body shadow-lg rounded p-4 ">
-                    <h4 className="text-center fw-bold mb-4 font-family">Upload</h4>
-                    <h6 className="text-danger">
-                      Note<sup>*</sup>: Only CSV files can be uploaded.
-                    </h6>
-                    <div
-                      className="cursor-pointer mb-2"
-                      style={{ height: '80px', cursor: 'pointer', border: '1px dashed #ccc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      onClick={handleFileUploadClick}
-                    >
-                      {!selectedFile ? (
-                        <div className=' mt-2 d-flex flex-column align-items-center justify-content-center m-0'>
-                          <MdOutlineCloudUpload className="fs-1 text-secondary" />
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: 'none' }}
-                            onChange={handleFileChange}
-                            accept=".csv"
-                          />
-                          <p className="fw-bolder text-secondary">Upload files</p>
-                        </div>
-                      ) : (
-                        <p className="text-secondary mt-4 fw-bolder">{selectedFile.name}</p>
-                      )}
-                    </div>
-
-                    <button
-                      className="btn btn-primary w-100"
-                      onClick={handleFileUpload}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? 'Uploading...' : 'Upload'}
-                    </button>
-                  </div>
-                  <img src="./csv.png" alt="csv" className='img-fluid d-none d-md-block' />
-
-                  {error && <div className="text-danger mt-2">{error}</div>}
-                </div>
-              </div>
+              <FileUploads
+                handleFileUploadClick={handleFileUploadClick}
+                handleFileChange={handleFileChange}
+                handleFileUpload={handleFileUpload}
+                handleSubmit={handleSubmit}
+                selectedFile={selectedFile}
+                fileInputRef={fileInputRef}
+                isLoading={isLoading} />
 
             )}
           </div>

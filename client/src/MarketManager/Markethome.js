@@ -14,6 +14,7 @@ import formatDate from '../universalComponents/FormatDate';
 import Filtering from '../universalComponents/Filtering';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import getDecodedToken from '../universalComponents/decodeToken';
+import TicketBody from '../universalComponents/TicketBody';
 
 function TotalUserTickets() {
   const [tickets, setTickets] = useState([]);
@@ -139,22 +140,8 @@ function TotalUserTickets() {
             </thead>
             <tbody>
               {currentItems.map((ticket, index) => (
-                <tr key={ticket.ticketId} className='fw-medium'>
-                  <td className='text-center'>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                  <td className='text-center'>{ticket.ntid}</td>
-                  <td className='text-center'>{ticket.fullname}</td>
-                  <td className='text-center'>{ticket.status.name}</td>
-                  <td className='text-center'>{formatDate(ticket.createdAt)}</td>
-                  <td className='text-center'>{ticket.completedAt ? formatDate(ticket.completedAt) : '-'}</td>
-                  <td className='text-center'>
-                    {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : "-"}
-                  </td>
-                  <td className='text-center'>
-                    <Link to="/details">
-                      <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId)} />
-                    </Link>
-                  </td>
-                </tr>
+                
+                <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}/>
               ))}
             </tbody>
           </table>

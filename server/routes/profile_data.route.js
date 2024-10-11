@@ -6,7 +6,6 @@ import authenticateJWT from '../controllers/user_authentication/authMiddleWare.j
 import GetProfileData_token from '../controllers/profile_data/profileData_token.js';
 import getProfilePhoto from '../controllers/profile_data/getProfilePhoto.js';
 import updateprofilePhoto from '../controllers/profile_data/updateProfilePhoto.js';
-import { searchUser } from '../controllers/profile_data/SeacrhUser.js';
 
 
 
@@ -19,7 +18,6 @@ ProfilephotoRouter.get('/getprofiledata_ntid',authenticateJWT,GetProfileData_NTI
 ProfilephotoRouter.post('/profilephoto',authenticateJWT,ProfilePhoto)
 ProfilephotoRouter.get('/getprofilephoto',authenticateJWT,getProfilePhoto)
 ProfilephotoRouter.put('/updateprofilephoto',authenticateJWT,updateprofilePhoto)
-ProfilephotoRouter.get('/searchuser',authenticateJWT,searchUser)
 
 
 export default ProfilephotoRouter

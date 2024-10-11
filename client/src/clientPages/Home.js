@@ -147,7 +147,7 @@ export function Home() {
                 .then(response => {
                     toast.success('Ticket created successfully!', {
                         position: "top-right",
-                        autoClose: 3000, // Auto-close the toast after 3 seconds
+                        autoClose: 2000, // Auto-close the toast after 3 seconds
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -157,14 +157,14 @@ export function Home() {
                     handleClose();
                     setTimeout(() => {
                         window.location.reload();
-                    }, 3000); // Delay in milliseconds (3000ms = 3 seconds)
+                    }, 2000); // Delay in milliseconds (3000ms = 3 seconds)
                 })
                 .catch(error => {
                     if (error.response) {
                         setErrors(prevErrors => ({ ...prevErrors, ntid: error.response.data.message }));
                         toast.error(error.response.data.message, {
                             position: "top-right",
-                            autoClose: 3000,
+                            autoClose: 2000,
                             hideProgressBar: false,
                             closeOnClick: true,
                             pauseOnHover: true,
@@ -175,7 +175,7 @@ export function Home() {
                         setErrors(prevErrors => ({ ...prevErrors, ntid: 'No response from server. Please try again later.' }));
                         toast.error('No response from server. Please try again later.', {
                             position: "top-right",
-                            autoClose: 3000,
+                            autoClose: 2000,
                             hideProgressBar: false,
                             closeOnClick: true,
                             pauseOnHover: true,
@@ -186,7 +186,7 @@ export function Home() {
                         setErrors(prevErrors => ({ ...prevErrors, ntid: 'Error occurred. Please try again.' }));
                         toast.error('Error occurred. Please try again.', {
                             position: "top-right",
-                            autoClose: 3000,
+                            autoClose: 2000,
                             hideProgressBar: false,
                             closeOnClick: true,
                             pauseOnHover: true,

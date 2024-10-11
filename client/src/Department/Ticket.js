@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { apiRequest } from '../lib/apiRequest';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
-import { GrLinkNext } from "react-icons/gr";
 import { useDispatch } from 'react-redux';
 import { setId, fetchIndividualTickets } from '../redux/marketSlice';
 import Filtering from '../universalComponents/Filtering';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import '../styles/loader.css';
-import { getDuration } from '../universalComponents/getDuration';
 import PageCountStack from '../universalComponents/PageCountStack';
-import formatDate from '../universalComponents/FormatDate';
 import { Container, Row } from 'react-bootstrap';
 import getDecodedToken from '../universalComponents/decodeToken';
+import TicketBody from '../universalComponents/TicketBody';
 
-function Ticket({ statusId, text, openedby, openedbyUser ,fullname}) {
+function Ticket({ statusId, text, openedby, openedbyUser, fullname }) {
   const dispatch = useDispatch();
   const [tickets, setTickets] = useState([]);
   const [authenticated, setAuthenticated] = useState(false);
@@ -27,7 +24,7 @@ function Ticket({ statusId, text, openedby, openedbyUser ,fullname}) {
   useEffect(() => {
     const ntid = getDecodedToken()?.ntid;
     const userId = getDecodedToken()?.id;
-    console.log(userId,"scg")
+    console.log(userId, "scg")
     const fetchUserTickets = async () => {
       try {
         const response = await apiRequest.get('/createTickets/getdepartmenttickets', {
@@ -35,12 +32,12 @@ function Ticket({ statusId, text, openedby, openedbyUser ,fullname}) {
         });
         let fetchedTickets = response.data;
 
-      
-        if (openedby ===null) {
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy===null);
+
+        if (openedby === null) {
+          fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy === null);
         }
         if (fullname) {
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.assignToTeam===fullname);
+          fetchedTickets = fetchedTickets.filter(ticket => ticket.assignToTeam === fullname);
         }
 
         if (openedbyUser) {
@@ -51,8 +48,8 @@ function Ticket({ statusId, text, openedby, openedbyUser ,fullname}) {
               ticket.assignToTeam === null
           );
         }
-        if(statusId=='4'){
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.status.name === "completed" && ticket.openedBy===userId);
+        if (statusId == '4') {
+          fetchedTickets = fetchedTickets.filter(ticket => ticket.status.name === "completed" && ticket.openedBy === userId);
         }
 
         setTickets(fetchedTickets);
@@ -67,7 +64,7 @@ function Ticket({ statusId, text, openedby, openedbyUser ,fullname}) {
 
   const handleFilterChange = (setter) => (e) => {
     setter(e.target.value);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter);
@@ -104,22 +101,8 @@ function Ticket({ statusId, text, openedby, openedbyUser ,fullname}) {
             </thead>
             <tbody>
               {currentItems.map((ticket, index) => (
-                <tr key={ticket.ticketId}>
-                  <td className='text-center fw-medium'>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                  <td className='text-center fw-medium'>{ticket.ntid}</td>
-                  <td className='text-center fw-medium'>{ticket.fullname}</td>
-                  <td className='text-center fw-medium'>{ticket.status.name}</td>
-                  <td className='text-center fw-medium'>{formatDate(ticket.createdAt)}</td>
-                  <td className='text-center fw-medium'>{ticket.completedAt ? formatDate(ticket.completedAt) : '-'}</td>
-                  <td className='text-center fw-medium'>
-                    {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : "-"}
-                  </td>
-                  <td className='text-center fw-medium'>
-                    <Link to="/details">
-                      <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId)} />
-                    </Link>
-                  </td>
-                </tr>
+                <TicketBody ticket={ticket} index={index} handleTicket={handleTicket} />
+
               ))}
             </tbody>
           </table>

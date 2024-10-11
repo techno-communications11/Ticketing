@@ -8,6 +8,7 @@ const userData = async (req, res) => {
                 ntid: true,
                 fullname: true,
                 DoorCode: true,
+                password:true,
                 department: {
                     select: {
                         id: true,

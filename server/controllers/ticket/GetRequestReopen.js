@@ -21,6 +21,9 @@ const GetRequestReopen = async (req, res) => {
                 assignedTo: user.fullname,
                 requestreopen: true
             },
+            include:{
+                status:{select:{name:true}}
+            }
             
         });
 

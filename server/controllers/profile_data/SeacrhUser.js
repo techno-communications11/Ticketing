@@ -16,8 +16,10 @@ export const searchUser = async (req, res) => {
         OR: [
           { ntid: { contains: input, mode: 'insensitive' } },
           { fullname: { contains: input, mode: 'insensitive' } },
-          { market: { contains: input, mode: 'insensitive' } }, // Updated to use 'input'
-          { manager: { contains: input, mode: 'insensitive' } } // Updated to use 'input'
+          {
+            market: { select: { market: true } }
+          },
+          { manager: { contains: input, mode: 'insensitive' } } 
         ]
       }
     });
