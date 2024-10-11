@@ -4,6 +4,7 @@ import '../styles/loader.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FileUploads from '../universalComponents/FileUploads';
+import ReusableButtons from '../universalComponents/ReusableButtons';
 
 export function MarketStructureUpload() {
   const BoiIDRef = useRef('');
@@ -89,12 +90,10 @@ export function MarketStructureUpload() {
       toast.warn('Please select a file first.');
       return;
     }
-
     setIsLoading(true);
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-
       const response = await apiRequest.post('/market/excelSheet', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -123,20 +122,10 @@ export function MarketStructureUpload() {
       ) : (
         <div className="row  w-100 align-items-center justify-content-center">
           <div className="col-12 col-md-8 col-lg-10 col-xl-8 mt-3">
-            <div className="d-flex justify-content-center gap-2 mb-4">
-              <button
-                className={`btn ${activeForm === 'register' ? 'btn-success' : 'btn-danger'}`}
-                onClick={() => setActiveForm('register')}
-              >
-                Register Market
-              </button>
-              <button
-                className={`btn ${activeForm === 'upload' ? 'btn-success' : 'btn-danger'}`}
-                onClick={() => setActiveForm('upload')}
-              >
-                Upload
-              </button>
-            </div>
+          <ReusableButtons bigText={'Register Market'}
+             smallText={'Upload'} 
+             setActiveForm={setActiveForm} 
+             activeForm={activeForm}/>
             {activeForm === 'register' ? (
               <div className="container">
                 <div className="row d-flex justify-content-center align-items-center">
@@ -195,3 +184,4 @@ export function MarketStructureUpload() {
     </div>
   );
 }
+

@@ -1,16 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Container, Table } from 'react-bootstrap'; 
-import { GrLinkNext } from 'react-icons/gr';
 import '../styles/loader.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTickets } from '../redux/ticketSlice';
 import { fetchIndividualTickets, setId } from '../redux/marketSlice';
-import { Link } from 'react-router-dom';
 import getMarkets from '../universalComponents/GetMarkets';
 import { IoIosArrowDown } from "react-icons/io";
 import PageCountStack from '../universalComponents/PageCountStack';
-import { getDuration } from '../universalComponents/getDuration';
-import formatDate from '../universalComponents/FormatDate';
 import Filtering from '../universalComponents/Filtering';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import TicketBody from '../universalComponents/TicketBody';
