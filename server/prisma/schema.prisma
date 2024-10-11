@@ -1,0 +1,96 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  ntid          String        @unique
+  fullname      String
+  DoorCode      String
+  password      String
+  createdAt     DateTime      @default(now())
+  departmentId  String
+  department    Department    @relation(fields: [departmentId], references: [id])
+  profilePhoto  ProfilePhoto?
+  tickets       CreateTicket[] @relation("UserTickets")
+}
+
+model CreateTicket {
+  ticketId          String      @id @map("_id")
+  ntid              String
+  fullname          String
+  phoneNumber       Int
+  market            String
+  selectStore       String
+  ticketRegarding   String
+  description       String
+  files             String
+  assignedTo        String
+  ticketNowAt       String?
+  requestreopen     Boolean?
+  isSettled         Boolean?
+  assignToTeam      String?
+  openedBy          String?
+  createdAt         DateTime    @default(now())
+  completedAt       DateTime?
+  status            Status      @relation(fields: [statusId], references: [id])
+  statusId          String
+  departmentId      String 
+  department        Department  @relation(fields: [departmentId], references: [id])
+  comments          Comment[]
+  userId            String      @db.ObjectId
+  user              User        @relation("UserTickets", fields: [userId], references: [id])
+}
+
+model Comment {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  comment       String
+  createdBy     String
+  createdAt     DateTime     @default(now())
+  createTicket  CreateTicket @relation(fields: [ticketId], references: [ticketId])
+  ticketId      String
+}
+
+model Markets {
+  id                String            @id @map("_id")
+  market            String            @unique
+  marketStructures  marketStructure[]
+}
+
+model Department {
+  id        String       @id @map("_id")
+  name      String       @unique
+  users     User[]
+  tickets   CreateTicket[]
+}
+
+model Status {
+  id        String       @id @map("_id") 
+  name      String       @unique
+  tickets   CreateTicket[]
+}
+
+model ProfilePhoto {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  fileName   String
+  userId     String  @unique @db.ObjectId
+  user       User    @relation(fields: [userId], references: [id])
+}
+
+model marketStructure {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  boiId        String         @unique
+  storeName    String
+  marketId     String
+  market       Markets        @relation(fields: [marketId], references: [id]) // Defines the one-to-many relationship
+  dmName       String
+  doorCode     String         @unique
+  StoreAddress String
+  storeEmail   String
+  createdAt    DateTime       @default(now())
+}

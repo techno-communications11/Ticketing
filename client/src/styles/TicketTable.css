@@ -1,0 +1,46 @@
+.tablerow {
+    width: 100%;
+    border-collapse: collapse; /* Remove space between borders */
+    margin-top: 20px; /* Add margin to the top */
+}
+
+.tablerow th,
+.tablerow td {
+    border: 1px solid #ddd; /* Light gray border */
+    padding: 8px; /* Padding for cells */
+    text-align: center; /* Center text */
+}
+
+/* Header styling */
+.tablerow th {
+    background-color: #E10174; /* Header background color */
+    color: white; /* Header text color */
+    font-weight: bold; /* Make header text bold */
+}
+
+/* Row styling */
+.tablerowrow tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+
+.tablerow tr:hover {
+    background-color: #ddd; /* Highlight row on hover */
+}
+
+/* Highlight settled tickets */
+.tablerow tr.settled {
+    background-color: lightgray; /* Background color for settled tickets */
+    color: white; /* Text color for settled tickets */
+}
+
+/* Cell styling for bold text */
+.tablerow .fw-medium {
+    font-weight: 500; /* Medium font weight */
+}
+
+/* Centering specific icons */
+.tablerow .text-center {
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
