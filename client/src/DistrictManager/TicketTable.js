@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Container, Table, Form } from 'react-bootstrap';
+import { Container, Form } from 'react-bootstrap';
 import { GrLinkNext } from 'react-icons/gr';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import formatDate from '../universalComponents/FormatDate';
 import PageCountStack from '../universalComponents/PageCountStack';
 import { fetchStatusWiseTickets, setMarketAndStatus } from '../redux/statusSlice';
-import { setId, fetchIndividualTickets } from '../redux/marketSlice';
 import { jwtDecode } from 'jwt-decode';
 import { getDuration } from '../universalComponents/getDuration';
 import '../styles/TicketTable.css'
+import handleTicket from '../universalComponents/handleTicket';
 
 const TicketsTable = ({ statusIds }) => {
   const dispatch = useDispatch();
@@ -54,11 +54,7 @@ const TicketsTable = ({ statusIds }) => {
   }, [combinedTickets]);
   
 
-  const handleTicket = (id) => {
-    localStorage.setItem("selectedId", id);
-    dispatch(setId(id));
-    dispatch(fetchIndividualTickets(id));
-  };
+ 
 
   const filteredTickets = useMemo(() => {
     return combinedTickets.filter(ticket => {
@@ -71,7 +67,6 @@ const TicketsTable = ({ statusIds }) => {
 
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  // Sorting logic: completed tickets go to the end
   const completedTickets = currentItems.filter(ticket => ticket.isSettled); // completed tickets
   const nonCompletedTickets = currentItems.filter(ticket => !ticket.isSettled); // not completed tickets
   
@@ -134,7 +129,7 @@ const TicketsTable = ({ statusIds }) => {
                 </td>
                 <td>
                   <Link to={'/details'}>
-                    <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId)} />
+                    <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId,dispatch)} />
                   </Link>
                 </td>
               </tr>

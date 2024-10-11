@@ -24,7 +24,7 @@ const Individualmarketss = () => {
   const [comment, setComment] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [getcomment, setGetComment] = useState([]);
-  const [users, setUsers] = useState([]); 
+  const [users, setUsers] = useState([]);
   const departments = [
     'Varun Team',
     'NTID Mappings',
@@ -43,39 +43,38 @@ const Individualmarketss = () => {
     'HR Payroll'
   ];
 
+  const { ntid: userNtid, department, fullname } = getDecodedToken() || {};
 
-  const { ntid:userNtid, department, fullname } = getDecodedToken() || {};
-  
-    const fetchData = async () => {
-      try {
-        const response = await apiRequest.get('/auth/GetUsers');
-        console.log('API Response:', response); 
-        const fetchedUsers = response.data.teamMembers || [];
-        const filterdata=fetchedUsers.filter(name=>name.fullname!==fullname)
-        setUsers(filterdata); 
-        if (filterdata.length > 0) {
-        } else {
-          console.log("No users found in your team");
-        }
-      } catch (error) {
-        console.error('Error fetching users:', error.response || error.message);
+  const fetchData = async () => {
+    try {
+      const response = await apiRequest.get('/auth/GetUsers');
+      console.log('API Response:', response);
+      const fetchedUsers = response.data.teamMembers || [];
+      const filterdata = fetchedUsers.filter(name => name.fullname !== fullname)
+      setUsers(filterdata);
+      if (filterdata.length > 0) {
+      } else {
+        console.log("No users found in your team");
       }
-    };
+    } catch (error) {
+      console.error('Error fetching users:', error.response || error.message);
+    }
+  };
 
   useEffect(() => {
     const storedId = localStorage.getItem('selectedId');
     if (storedId) {
       const fetchComments = async () => {
         try {
-          const response = await apiRequest.get(`/createTickets/getcomment/?ticketId=${storedId}`); // Fetch comments by ticketId
-          setGetComment(response.data);  
+          const response = await apiRequest.get(`/createTickets/getcomment/?ticketId=${storedId}`);
+          setGetComment(response.data);
         } catch (err) {
           console.log('Error fetching comments.', err);
         }
       };
       fetchComments();
     }
-  }, [markets.ticketId]); 
+  }, [markets.ticketId]);
 
   useEffect(() => {
     const storedId = localStorage.getItem('selectedId');
@@ -100,7 +99,7 @@ const Individualmarketss = () => {
 
   const updateOpenedBy = async () => {
     try {
-      const endpoint=departments.includes(department)?'/createTickets/update_opened_by':'';
+      const endpoint = departments.includes(department) ? '/createTickets/update_opened_by' : '';
       const response = await apiRequest.put(endpoint, {
         ticketId: markets.ticketId,
       });
@@ -139,10 +138,11 @@ const Individualmarketss = () => {
           if (department === 'District Manager') {
             navigate('/completed')
           }
-
           window.location.reload();
         }, [3000])
       }
+
+
       if (statusId === '5' && response.status === 200) {
         toast.success('Ticket marked as reopened!', { position: "top-right", autoClose: 3000 });
         setTimeout(() => {
@@ -210,13 +210,12 @@ const Individualmarketss = () => {
 
   const onhandleDepartment = (e) => {
     const selectedDept = e.target.value;
-    console.log(selectedDept, "soluted");  
-    setSelectedDepartment(selectedDept);    
-    assignToDepartment(selectedDept);       
+    console.log(selectedDept, "soluted");
+    setSelectedDepartment(selectedDept);
+    assignToDepartment(selectedDept);
   };
 
   const assignToDepartment = async (selectedDept) => {
-
     try {
       const response = await apiRequest.put(`/createTickets/assigntodepartment/?department=${selectedDept}&ticketId=${markets.ticketId}&ntid=${userNtid}`);
       if (response.status === 200) {
@@ -231,10 +230,10 @@ const Individualmarketss = () => {
     }
   }
 
-  const onhandleAllot=async(user)=>{
-    console.log(user,"ssseer")
+  const onhandleAllot = async (user) => {
+    console.log(user, "ssseer")
 
- try {
+    try {
       const response = await apiRequest.put('/createTickets/alloted', {
         user,
         ticketId: markets.ticketId,
@@ -242,7 +241,7 @@ const Individualmarketss = () => {
       if (response.status === 200) {
         toast.success(`assigned to ${user}`)
         updateTicketStatus('3');
-        
+
       }
     }
     catch (error) {
@@ -252,56 +251,56 @@ const Individualmarketss = () => {
     }
   }
 
-const handleTicketAction = async (action) => {
-  const actionText = action === 'settle' ? 'settle' : 'request to reopen';
-  const confirmationText = action === 'settle'
-    ? 'Are you sure you want to settle this ticket?'
-    : 'Are you sure you want to request reopening this ticket?';
+  const handleTicketAction = async (action) => {
+    const actionText = action === 'settle' ? 'settle' : 'request to reopen';
+    const confirmationText = action === 'settle'
+      ? 'Are you sure you want to settle this ticket?'
+      : 'Are you sure you want to request reopening this ticket?';
 
-  const { isConfirmed } = await Swal.fire({
-    title: `Confirm ${actionText.charAt(0).toUpperCase() + actionText.slice(1)}`,
-    text: confirmationText,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#E10174',
-    cancelButtonColor: '#d33',
-    confirmButtonText: `Yes, ${actionText} it!`,
-    cancelButtonText: 'Cancel'
-  });
+    const { isConfirmed } = await Swal.fire({
+      title: `Confirm ${actionText.charAt(0).toUpperCase() + actionText.slice(1)}`,
+      text: confirmationText,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#E10174',
+      cancelButtonColor: '#d33',
+      confirmButtonText: `Yes, ${actionText} it!`,
+      cancelButtonText: 'Cancel'
+    });
 
-  if (isConfirmed) {
-    try {
-      const endpoint = action === 'settle' ? '/createTickets/settlement' : '/createTickets/request-reopen';
-      const response = await apiRequest.put(endpoint, { ticketId: markets.ticketId });
+    if (isConfirmed) {
+      try {
+        const endpoint = action === 'settle' ? '/createTickets/settlement' : '/createTickets/request-reopen';
+        const response = await apiRequest.put(endpoint, { ticketId: markets.ticketId });
 
-      if (response.status === 200) {
+        if (response.status === 200) {
+          Swal.fire({
+            icon: 'success',
+            title: `Ticket ${actionText}d`,
+            text: `The ticket has been ${actionText}d successfully.`,
+            confirmButtonColor: '#E10174'
+          });
+
+          if (department === 'District Manager' && action === 'settle') {
+            navigate('/completed');
+          }
+          if (department === 'Employee' && action === 'reopen') {
+            navigate('/home');
+          }
+        }
+      } catch (error) {
+        console.error(`Error requesting ${actionText}:`, error);
         Swal.fire({
-          icon: 'success',
-          title: `Ticket ${actionText}d`,
-          text: `The ticket has been ${actionText}d successfully.`,
+          icon: 'error',
+          title: 'Error',
+          text: `There was an error ${actionText}ing the ticket. Please try again.`,
           confirmButtonColor: '#E10174'
         });
-
-        if (department === 'District Manager' && action === 'settle') {
-          navigate('/completed');
-        }
-        if (department === 'Employee' && action === 'reopen') {
-          navigate('/home');
-        }
       }
-    } catch (error) {
-      console.error(`Error requesting ${actionText}:`, error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: `There was an error ${actionText}ing the ticket. Please try again.`,
-        confirmButtonColor: '#E10174'
-      });
     }
-  }
-};
-const handleConfirmSettled = () => handleTicketAction('settle');
-const handleRequestReopen = () => handleTicketAction('reopen');
+  };
+  const handleConfirmSettled = () => handleTicketAction('settle');
+  const handleRequestReopen = () => handleTicketAction('reopen');
 
   return (
     <div className="container mt-2">
@@ -374,28 +373,28 @@ const handleRequestReopen = () => handleTicketAction('reopen');
           <div className="row mb-2">
             <div className="col-md-7 d-flex align-items-center">
               {department !== 'Employee' && department !== 'SuperAdmin' && markets.ntid !== userNtid && markets.status?.name !== 'completed' && (
-                <Comment comment={comment} handleCommentChange={handleCommentChange} handleSubmit={handleSubmit}/>
+                <Comment comment={comment} handleCommentChange={handleCommentChange} handleSubmit={handleSubmit} />
               )}
-              {(department === 'Employee' ||department==='District Manager')&& markets.status?.name === 'completed' && (
-                <Comment  comment={comment} handleCommentChange={handleCommentChange} handleSubmit={handleSubmit}/>
+              {(department === 'Employee' || department === 'District Manager') && markets.status?.name === 'completed' && (
+                <Comment comment={comment} handleCommentChange={handleCommentChange} handleSubmit={handleSubmit} />
               )}
             </div>
 
             <div className="col-md-5 d-flex justify-content-end align-items-center mt-sm-2 mt-xs-2 mt-md-none">
               {
-                departments.includes(department)&&markets.status?.name!=='completed' && (
+                departments.includes(department) && markets.status?.name !== 'completed' && (
                   <Dropdown className='mx-2'>
                     <Dropdown.Toggle variant="primary" id="dropdown-basic">
                       Allocate
                     </Dropdown.Toggle>
                     <Dropdown.Menu style={{ height: '350px', overflow: 'scroll' }}>
-                    {users.map((user, index) => (
+                      {users.map((user, index) => (
                         <Dropdown.Item
                           key={index}
-                          onClick={() => onhandleAllot(user.fullname)} 
+                          onClick={() => onhandleAllot(user.fullname)}
                           className="shadow-lg text-primary"
                         >
-                         {user.fullname}
+                          {user.fullname}
                         </Dropdown.Item>
                       ))}
                     </Dropdown.Menu>
@@ -481,7 +480,7 @@ const handleRequestReopen = () => handleTicketAction('reopen');
         </Modal.Body>
       </Modal>
       {
-        department==='Employee'&& markets.status?.name === 'completed' &&<span className='text-danger fw-bolder'>* Enter comment describing the purpose of reopening the ticket before requesting reopen</span>
+        department === 'Employee' && markets.status?.name === 'completed' && <span className='text-danger fw-bolder'>* Enter comment describing the purpose of reopening the ticket before requesting reopen</span>
       }
       <ToastContainer />
     </div>

@@ -76,23 +76,28 @@ export function Home() {
         setShow(true);
         setPopButtons(false);
     }, [setShow, setPopButtons]);
+
     useEffect(() => {
     }, [handleShow]);
+
     const handleCameraChange = (event) => {
         if (event.target.files.length > 0) {
             setCameraFileName(event.target.files[0]);
             setFileSystemFileName(null);
         }
     };
+
     const handleFileSystemChange = (event) => {
         if (event.target.files.length > 0) {
             setFileSystemFileName(event.target.files[0]);
             setCameraFileName(null);
         }
     };
+
     const handleStoreSelect = (store) => {
         setSelectedStore(store);
     };
+
     const validateForm = () => {
         const newErrors = {
             ntid: '',
@@ -121,6 +126,7 @@ export function Home() {
         setErrors(newErrors);
         return Object.values(newErrors).every(error => error === '');
     };
+
     const handleSubmit = () => {
         if (validateForm()) {
             const formData = new FormData();
@@ -145,54 +151,22 @@ export function Home() {
                 }
             })
                 .then(response => {
-                    toast.success('Ticket created successfully!', {
-                        position: "top-right",
-                        autoClose: 2000, // Auto-close the toast after 3 seconds
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    });
+                    toast.success('Ticket created successfully!');
                     handleClose();
                     setTimeout(() => {
                         window.location.reload();
-                    }, 2000); // Delay in milliseconds (3000ms = 3 seconds)
+                    }, 2000); 
                 })
                 .catch(error => {
                     if (error.response) {
                         setErrors(prevErrors => ({ ...prevErrors, ntid: error.response.data.message }));
-                        toast.error(error.response.data.message, {
-                            position: "top-right",
-                            autoClose: 2000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                        });
+                        toast.error(error.response.data.message);
                     } else if (error.request) {
                         setErrors(prevErrors => ({ ...prevErrors, ntid: 'No response from server. Please try again later.' }));
-                        toast.error('No response from server. Please try again later.', {
-                            position: "top-right",
-                            autoClose: 2000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                        });
+                        toast.error('No response from server. Please try again later.');
                     } else {
                         setErrors(prevErrors => ({ ...prevErrors, ntid: 'Error occurred. Please try again.' }));
-                        toast.error('Error occurred. Please try again.', {
-                            position: "top-right",
-                            autoClose: 2000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                        });
+                        toast.error('Error occurred. Please try again.');
                     }
                 });
         }
@@ -227,11 +201,13 @@ export function Home() {
                 toast.error('Failed to fetch ticket counts');
             }
         };
+
         useEffect(() => {
             handleNTIDBlur();
             fetchTicketCounts();
         }, [handleShow]);
         
+
     useEffect(() => {
         const objTotal = document.getElementById("Totalvalue");
         const objNew = document.getElementById("Newvalue");
@@ -259,39 +235,39 @@ export function Home() {
             animateValue(objreopened, 0, TicketsCount.reopened || 0, 500);
         }
     }, [TicketsCount]);
-    const handleNew = () => {
-        const statusId = '1'
+
+    const handleDataSend=(statusId)=>{
         localStorage.setItem('statusData', statusId)
         dispatch(fetchStatusTickets({ statusId }));
         dispatch(setUserAndStatus({ statusId }))
+    }
+
+    const handleNew = () => {
+        const statusId = '1'
+        handleDataSend(statusId)
+      
     };
     const handleOpened = () => {
         const statusId = '2'
-        localStorage.setItem('statusData', statusId)
-        dispatch(fetchStatusTickets({ statusId }));
-        dispatch(setUserAndStatus({ statusId }))
+        handleDataSend(statusId)
+     
     };
     const handleInprogress = () => {
         const statusId = '3'
-        localStorage.setItem('statusData', statusId)
-        dispatch(fetchStatusTickets({ statusId }));
-        dispatch(setUserAndStatus({ statusId }))
+        handleDataSend(statusId)
     };
     const handleCompleted = () => {
         const statusId = '4'
-        localStorage.setItem('statusData', statusId)
-        dispatch(fetchStatusTickets({ statusId }));
-        dispatch(setUserAndStatus({ statusId }))
+        handleDataSend(statusId)
     };
     const handleReOpened = () => {
         const statusId = '5'
-        localStorage.setItem('statusData', statusId)
-        dispatch(fetchStatusTickets({ statusId }));
-        dispatch(setUserAndStatus({ statusId }))
+        handleDataSend(statusId)
     };
     const handleTotal = () => {
         navigate('/totalusertickets')
     };
+    
     return (
         <div>
             <Modal show={show} onHide={handleClose}>

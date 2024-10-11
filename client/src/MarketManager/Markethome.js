@@ -2,15 +2,12 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { apiRequest } from '../lib/apiRequest';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
-import { GrLinkNext } from 'react-icons/gr';
 import { useDispatch } from 'react-redux';
 import { setId, fetchIndividualTickets } from '../redux/marketSlice';
 import PageCountStack from '../universalComponents/PageCountStack';
 import '../styles/loader.css';
-import { getDuration } from '../universalComponents/getDuration';
 import { Container, Row, Col } from 'react-bootstrap';
 import { fetchStatusWiseTickets, setMarketAndStatus } from '../redux/statusSlice';
-import formatDate from '../universalComponents/FormatDate';
 import Filtering from '../universalComponents/Filtering';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import getDecodedToken from '../universalComponents/decodeToken';
@@ -45,16 +42,10 @@ function TotalUserTickets() {
     if (ntid) fetchUserTickets();
     else setLoading(false);
   }, [ntid]);
+
+
   let market = [...new Set(tickets.map(ticket => ticket.market))];
-
-
-  const handleFilterChange = (setter) => (e) => {
-    setter(e.target.value);
-    setCurrentPage(1);
-  };
-
   const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter)
-
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleTicket = (id) => {
@@ -62,8 +53,6 @@ function TotalUserTickets() {
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
-
-
 
   const counts = {};
   tickets.forEach((ticket) => {
@@ -93,8 +82,6 @@ function TotalUserTickets() {
 
   return (
     <Container className='mt-0'>
-
-
       <Row className="d-flex justify-content-center gap-5  my-2">
         <Col xs={12} lg={2} className='card text-center shadow-sm rounded p-3'>
           <Link to={"/opened"} onClick={() => handleStatusClick('Total')} className='text-decoration-none fw-medium text-black'>
@@ -140,12 +127,10 @@ function TotalUserTickets() {
             </thead>
             <tbody>
               {currentItems.map((ticket, index) => (
-                
                 <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}/>
               ))}
             </tbody>
           </table>
-
           <PageCountStack
             filteredTickets={filteredTickets}
             currentPage={currentPage}

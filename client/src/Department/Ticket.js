@@ -32,7 +32,6 @@ function Ticket({ statusId, text, openedby, openedbyUser, fullname }) {
         });
         let fetchedTickets = response.data;
 
-
         if (openedby === null) {
           fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy === null);
         }
@@ -61,11 +60,6 @@ function Ticket({ statusId, text, openedby, openedbyUser, fullname }) {
     };
     fetchUserTickets();
   }, [statusId, openedby]);
-
-  const handleFilterChange = (setter) => (e) => {
-    setter(e.target.value);
-    setCurrentPage(1);
-  };
 
   const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter);
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);

@@ -60,7 +60,8 @@ export function MarketStructureUpload() {
     }
 
     try {
-      const response = await apiRequest.post('/market/registermarket', { boiId, dmName, storeName, market, doorCode, storeAddress });
+      const response = await apiRequest.post('/market/registermarket', { boiId,
+         dmName, storeName, market, doorCode, storeAddress });
       if (response.status === 201) {
         setIsLoading(false);
         toast.success('Market registered successfully!');

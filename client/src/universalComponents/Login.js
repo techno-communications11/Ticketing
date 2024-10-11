@@ -145,7 +145,6 @@ export function Login() {
                     {isLoading ? 'Logging in...' : 'Login'}
                   </button>
                 </div>
-
                 {error && <p className='text-danger'>{error}</p>}
               </form>
             </div>
