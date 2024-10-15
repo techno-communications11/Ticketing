@@ -13,7 +13,6 @@ import Comment from './Comment';
 import getDecodedToken from './decodeToken';
 import formatDate from './FormatDate';
 
-
 const Individualmarketss = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch();
@@ -26,20 +25,9 @@ const Individualmarketss = () => {
   const [getcomment, setGetComment] = useState([]);
   const [users, setUsers] = useState([]);
   const departments = [
-    'Varun Team',
-    'NTID Mappings',
-    'Trainings',
-    'Accessories Order',
-    'YUBI Key Setups',
-    'Deposits',
-    'Charge Back',
-    'Commission',
-    'Inventory',
-    'Head Office',
-    'Admin Related',
-    'Maintenance Related',
-    'Housing Related',
-    'CAM NW',
+    'Varun Team','NTID Mappings', 'Trainings','Accessories Order',
+    'YUBI Key Setups','Deposits','Charge Back', 'Commission', 'Inventory',
+    'Head Office', 'Admin Related', 'Maintenance Related', 'Housing Related', 'CAM NW',
     'HR Payroll'
   ];
 
@@ -127,7 +115,7 @@ const Individualmarketss = () => {
     try {
       const response = await apiRequest.put(`/createTickets/updateprogress/?statusId=${statusId}&ticketId=${markets.ticketId}`);
       if (statusId === '4' && response.status === 200) {
-        toast.success('Ticket marked as completed!', { position: "top-right", autoClose: 3000 });
+        toast.success('Ticket marked as completed!', { position: "top-right", autoClose: 2000 });
         setTimeout(() => {
           if (department === 'Market Manager') {
             navigate('/markethome')
@@ -139,24 +127,23 @@ const Individualmarketss = () => {
             navigate('/completed')
           }
           window.location.reload();
-        }, [3000])
+        }, [2000])
       }
 
 
       if (statusId === '5' && response.status === 200) {
-        toast.success('Ticket marked as reopened!', { position: "top-right", autoClose: 3000 });
+        toast.success('Ticket marked as reopened!', { position: "top-right", autoClose: 2000 });
         setTimeout(() => {
-          navigate('/new')
           window.location.reload();
-        }, [3000])
+        }, [2000])
 
       }
       if (statusId === '3' && response.status === 200) {
-        toast.success('Ticket status updated!', { position: "top-right", autoClose: 3000 });
+        toast.success('Ticket status updated!', { position: "top-right", autoClose: 2000 });
         setTimeout(() => {
           navigate('/openedTickets')
           window.location.reload();
-        }, [3000])
+        }, [2000])
       }
     } catch (error) {
       console.error(`Error updating ticket status to ${statusId}:`, error);
@@ -198,10 +185,10 @@ const Individualmarketss = () => {
       });
       if (response.status === 200) {
         setComment('');
-        toast.success('comment submitted!', { position: "top-right", autoClose: 3000 });
+        toast.success('comment submitted!', { position: "top-right", autoClose: 2000 });
         setTimeout(() => {
           window.location.reload();
-        }, [3000])
+        }, [2000])
       }
     } catch (error) {
       console.error('Error submitting comment:', error);
@@ -231,8 +218,6 @@ const Individualmarketss = () => {
   }
 
   const onhandleAllot = async (user) => {
-    console.log(user, "ssseer")
-
     try {
       const response = await apiRequest.put('/createTickets/alloted', {
         user,
@@ -302,6 +287,14 @@ const Individualmarketss = () => {
   const handleConfirmSettled = () => handleTicketAction('settle');
   const handleRequestReopen = () => handleTicketAction('reopen');
 
+
+  let counts = getcomment.reduce((acc, comment) => {
+    if (comment.createdBy === markets.fullname) {
+      acc++; 
+    }
+    return acc; 
+  }, 0); 
+  
   return (
     <div className="container mt-2">
       <h5 className="mb-3 font-family text-start" style={{ color: '#E10174', fontWeight: 'bold' }}>
@@ -351,7 +344,6 @@ const Individualmarketss = () => {
             </div>
           </div>
 
-
           <div className="col-md-4 mb-3 text-center">
             <div className="card shadow-sm rounded">
               {uploadedFileUrl ? (
@@ -388,11 +380,11 @@ const Individualmarketss = () => {
                       Allocate
                     </Dropdown.Toggle>
                     <Dropdown.Menu style={{ height: '350px', overflow: 'scroll' }}>
-                      {users.map((user, index) => (
+                      {users.sort().map((user, index) => (
                         <Dropdown.Item
                           key={index}
                           onClick={() => onhandleAllot(user.fullname)}
-                          className="shadow-lg text-primary"
+                          className="shadow-lg text-primary text-capitalize"
                         >
                           {user.fullname}
                         </Dropdown.Item>
@@ -433,30 +425,24 @@ const Individualmarketss = () => {
                 </>
               )}
               {
-                getcomment.map(comment => {
-                  if (comment.createdBy === markets.fullname) {
-                    if ((department === "Employee") && markets.status?.name === 'completed') {
-                      return (
-                        <Button
-                          variant="primary fw-bolder w-auto ms-auto me-3"
-                          onClick={() => handleRequestReopen()}
-                          key={comment.id}
-                        >
-                          Request Reopen
-                        </Button>
-                      );
-                    }
-                  }
-                  return null;
-                })
+                counts >= 1 && department === "Employee" && markets.status?.name === 'completed' && (
+                  <Button
+                    variant="primary fw-bolder w-auto ms-auto me-3"
+                    onClick={() => handleRequestReopen()}
+                    key={comment.id}
+                  >
+                    Request Reopen
+                  </Button>
+                )
               }
+
 
               {(department === "District Manager" || department === 'Market Manager' || department === 'SuperAdmin') && markets.status?.name === 'completed' && (
                 <Button variant="primary fw-bolder w-auto me-2 " onClick={() => handleConfirmAction('5', 'reopened')}>
                   Reopen
                 </Button>
               )}
-              {(department === "District Manager") && markets.status?.name === 'completed' && (
+              {(department === "District Manager") && (markets.status?.name === 'completed' && !markets.isSettled)&&(
                 <Button variant="success fw-bolder w-auto" onClick={() => handleConfirmSettled()}>
                   settled
                 </Button>

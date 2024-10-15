@@ -36,7 +36,7 @@ function Ticket({ statusId, text, openedby, openedbyUser, fullname }) {
           fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy === null);
         }
         if (fullname) {
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.assignToTeam === fullname);
+          fetchedTickets = fetchedTickets.filter(ticket => ticket.assignToTeam === fullname&&ticket.status.name !== "completed");
         }
 
         if (openedbyUser) {
@@ -95,7 +95,9 @@ function Ticket({ statusId, text, openedby, openedbyUser, fullname }) {
             </thead>
             <tbody>
               {currentItems.map((ticket, index) => (
-                <TicketBody ticket={ticket} index={index} handleTicket={handleTicket} />
+                <TicketBody ticket={ticket} 
+                index={index} 
+                handleTicket={handleTicket} currentPage={currentPage} itemsPerPage={itemsPerPage}/>
 
               ))}
             </tbody>

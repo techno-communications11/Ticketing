@@ -92,7 +92,11 @@ const ShowTickets = () => {
             <tbody>
               {currentItems.length > 0 && (
                 currentItems.map((ticket, index) => (
-                  <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}/>
+                  <TicketBody ticket={ticket} 
+                  index={index} 
+                  handleTicket={handleTicket}
+                   currentPage={currentPage} 
+                   itemsPerPage={itemsPerPage}/>
                 ))
               )}
             </tbody>

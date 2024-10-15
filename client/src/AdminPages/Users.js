@@ -150,7 +150,7 @@ const UserTable = () => {
                 <tbody>
                   {currentItems.map((user, index) => (
                     <tr key={user.ntid} className='fw-medium'>
-                      <td className='text-center'>{index + 1}</td>
+                      <td className='text-center'>{(currentPage - 1) * itemsPerPage+index + 1}</td>
                       <td className='text-center'>{user.ntid}</td>
                       <td className='text-center'>{user.fullname}</td>
                       <td className='text-center'>{user.market ? user.market.market : ""}</td>

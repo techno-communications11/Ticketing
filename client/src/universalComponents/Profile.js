@@ -19,40 +19,41 @@ export function Profile() {
   const [error, setError] = useState('');
   const [photoUpdated, setPhotoUpdated] = useState(false);
 
+
+  const fetchUserData = async () => {
+    try {
+      const response = await apiRequest.get('/profile/getprofiledata_token');
+      if (response.status === 200) {
+        setUserData(response.data);
+      } else {
+        throw new Error('Failed to fetch user data');
+      }
+    } catch (err) {
+      console.error('Error fetching user data:', err.message);
+      setError(err.message);
+    }
+  };
+
+  const fetchProfile = async () => {
+    try {
+      const response = await apiRequest.get('/profile/getprofilephoto', {
+        withCredentials: true
+      });
+
+      if (response.status === 200) {
+        const fileName = response.data.path;
+        const baseURL = 'http://localhost:4000';
+        const imageUrl = `${baseURL}/public/images/${fileName}`;
+        setUploadedFileUrl(imageUrl);
+      } else {
+        throw new Error('Failed to retrieve profile photo');
+      }
+    } catch (error) {
+      console.error('Error retrieving file:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await apiRequest.get('/profile/getprofiledata_token');
-        if (response.status === 200) {
-          setUserData(response.data);
-        } else {
-          throw new Error('Failed to fetch user data');
-        }
-      } catch (err) {
-        console.error('Error fetching user data:', err.message);
-        setError(err.message);
-      }
-    };
-
-    const fetchProfile = async () => {
-      try {
-        const response = await apiRequest.get('/profile/getprofilephoto', {
-          withCredentials: true
-        });
-
-        if (response.status === 200) {
-          const fileName = response.data.path;
-          const baseURL = 'http://localhost:4000';
-          const imageUrl = `${baseURL}/public/images/${fileName}`;
-          setUploadedFileUrl(imageUrl);
-        } else {
-          throw new Error('Failed to retrieve profile photo');
-        }
-      } catch (error) {
-        console.error('Error retrieving file:', error);
-      }
-    };
-
     fetchUserData();
     fetchProfile();
   }, [photoUpdated]);
@@ -69,7 +70,7 @@ export function Profile() {
         },
         withCredentials: true
       });
-      toast.success('Profile photo added successfully!'); // Toast notification for adding photo
+      toast.success('Profile photo added successfully!'); 
     } catch (error) {
       console.error('Error uploading file:', error);
       toast.error('Error adding profile photo');
@@ -89,7 +90,7 @@ export function Profile() {
         withCredentials: true
       });
       setPhotoUpdated(prev => !prev);
-      toast.success('Profile photo updated successfully!'); // Toast notification for updating photo
+      toast.success('Profile photo updated successfully!'); 
     } catch (error) {
       console.error('Error uploading file:', error);
       toast.error('Error updating profile photo');
@@ -103,23 +104,15 @@ export function Profile() {
     }
   };
 
-  const handleEdit = async (event) => {
+  const handleEdit = async () => {
     setImmediateEdit(true);
     setPopButtons(false);
     setUploadedFileUrl(null);
   };
 
-  const resetPasswordHandler = () => {
-    setToggle(true);
-  };
-
-  const handlePasswordToggle = () => {
-    setPasswordVisibleNew(!passwordVisibleNew);
-  };
-
-  const handlePasswordConfirmToggle = () => {
-    setPasswordConfirmVisible(!passwordVisibleConfirm);
-  };
+  const resetPasswordHandler = () => setToggle(true);
+  const handlePasswordToggle = () => setPasswordVisibleNew(prev => !prev);
+  const handlePasswordConfirmToggle = () => setPasswordConfirmVisible(prev => !prev);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -139,7 +132,7 @@ export function Profile() {
         const response = await apiRequest.put('/auth/resetpassword', { password }, { withCredentials: true });
         if (response.status === 200) {
           setToggle(false);
-          toast.success("Password updated successfully!"); // Toast notification for password update
+          toast.success("Password updated successfully!"); 
         }
       } catch (error) {
         console.error('Error resetting password:', error);
@@ -208,33 +201,15 @@ export function Profile() {
           </div>  
 
           {userData && (
-            <div className='profile-data'>
-              <div className=" col-12 d-flex flex-column my-3 mx-auto w-50">
-                <p className="card-text d-flex justify-content-between">
-                  <strong>NTID:</strong> 
-                  <span>{userData.ntid}</span>
-                </p>
-                <p className="card-text d-flex justify-content-between">
-                  <strong>FullName:</strong> 
-                  <span>{userData.fullname}</span>
-                </p>
-                <p className="card-text d-flex justify-content-between">
-                  <strong>Market:</strong> 
-                  <span>{userData.market}</span>
-                </p>
-                <p className="card-text d-flex justify-content-between">
-                  <strong>DmName:</strong> 
-                  <span>{userData.dmName}</span>
-                </p>
-                <p className="card-text d-flex justify-content-between">
-                  <strong>DoorCode:</strong> 
-                  <span>{userData.DoorCode}</span>
-                </p>
-                <p className="card-text d-flex justify-content-between">
-                  <strong>department:</strong> 
-                  <span>{userData.departmentName}</span>
-                </p>
-              </div>
+             <div className='profile-data'>
+             <div className="col-12 d-flex flex-column my-3 mx-auto w-50">
+               {Object.entries(userData).map(([key, value]) => (
+                 <p key={key} className="card-text d-flex justify-content-between">
+                   <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>
+                   <span>{value}</span>
+                 </p>
+               ))}
+             </div>
               {toggle === false ? (
                 <button className="btn btn-primary w-50" onClick={resetPasswordHandler}>Reset Password</button>
               ) : (
@@ -259,7 +234,7 @@ export function Profile() {
           )}
         </div>
       </div>
-      <ToastContainer /> {/* Toast container for notifications */}
+      <ToastContainer /> 
     </div>
   );
 }

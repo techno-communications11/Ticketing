@@ -2,13 +2,12 @@ import prisma from "../lib/prisma.js";
 
 const requestReopenTicket = async (req, res) => {
   const { ticketId } = req.body; // Use req.body to get the ticketId
-  console.log(ticketId, "yyyyyyyyyyy");
 
   try {
     // Update the ticket's requestReopen status
     const updatedTicket = await prisma.createTicket.update({
       where: { ticketId: ticketId },
-      data: { requestreopen: true } // Ensure the field name matches your model
+      data: { requestreopen: true } 
     });
  console.log(updatedTicket)
     // Send back the updated ticket

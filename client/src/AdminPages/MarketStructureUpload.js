@@ -88,7 +88,7 @@ export function MarketStructureUpload() {
 
   const handleFileUpload = async () => {
     if (!selectedFile) {
-      toast.warn('Please select a file first.');
+      toast.error('Please select a file first.');
       return;
     }
     setIsLoading(true);

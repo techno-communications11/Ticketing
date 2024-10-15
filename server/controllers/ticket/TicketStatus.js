@@ -26,7 +26,7 @@ const TicketStatus = async (req, res) => {
       '2': ['3', '4'],
       '3': ['4'],
       '4': ['5'],
-      '5': ['3', '4']
+      '5': ['2','3', '4']
     };
 
     if (validTransitions[ticket.status.id]?.includes(statusId)) {

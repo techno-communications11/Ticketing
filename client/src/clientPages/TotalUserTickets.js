@@ -35,7 +35,6 @@ function TotalUserTickets() {
         setLoading(false);
       }
     };
-
     if (ntid) fetchUserTickets();
     else setLoading(false);
   }, []);
@@ -55,18 +54,14 @@ function TotalUserTickets() {
     });
   }, [tickets, statusFilter, dateFilter]);
 
-  const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
+  const currentItems = filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
 
-
   if (loading) return <div className='loader'></div>;
-
-
   const status = ['new', 'opened', 'inprogress', 'completed', 'reopened']
 
   return (
@@ -102,7 +97,8 @@ function TotalUserTickets() {
             </thead>
             <tbody>
               {currentItems.map((ticket, index) => (
-                <TicketBody ticket={ticket} index={index} handleTicket={handleTicket} />
+                <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}
+                  currentPage={currentPage} itemsPerPage={itemsPerPage} />
               ))}
             </tbody>
           </table>

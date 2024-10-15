@@ -36,12 +36,12 @@ export function Login() {
     return () => animation.destroy();
   }, []);
 
+
   const validateInputs = (ntid, password) => {
     const ntidRegex = /^(?=.*[a-z])(?=.*\d)[a-zA-Z\d]{3,16}$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+={}[\]|\\:;'",.<>?/~`-])[A-Za-z\d!@#$%^&*()_+={}[\]|\\:;'",.<>?/~`-]{8,20}$/;
 
     let valid = true;
-
     if (!ntidRegex.test(ntid)) {
       setNtidError('NTID should be 3-16 characters long and contain letters and digits.');
       valid = false;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Container, Table } from 'react-bootstrap'; 
+import { Container, Table } from 'react-bootstrap';
 import '../styles/loader.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTickets } from '../redux/ticketSlice';
@@ -45,7 +45,6 @@ const ShowTickets = () => {
   }, []);
 
 
-
   useEffect(() => {
     const storedMarket = localStorage.getItem('marketData');
     if (storedMarket) {
@@ -85,6 +84,7 @@ const ShowTickets = () => {
     dispatch(fetchTickets(selectedMarket.toLowerCase()));
     setDropdownVisible(false);
   };
+  console.log(currentItems)
 
 
   return (
@@ -123,7 +123,7 @@ const ShowTickets = () => {
 
       {loading ? (
         <div className='loader d-flex align-items-center justify-content-center vh-80'>
-    
+
         </div>
       ) : (
         <Table bordered hover responsive>
@@ -137,7 +137,12 @@ const ShowTickets = () => {
           <tbody>
             {currentItems.length > 0 ? (
               currentItems.map((ticket, index) => (
-                <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}/>
+                <TicketBody ticket={ticket}
+                  index={index}
+                  handleTicket={handleTicket}
+                  currentPage={currentPage} // pass the current page
+                  itemsPerPage={itemsPerPage}
+                />
               ))
             ) : (
               <tr>
