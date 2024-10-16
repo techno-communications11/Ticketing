@@ -24,6 +24,7 @@ const Individualmarketss = () => {
   const [comment, setComment] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [getcomment, setGetComment] = useState([]);
+  const [userCommnetCount,setuserCommentCount]=useState(0);
   const [users, setUsers] = useState([]);
   const departments = [
     'Varun Team',
@@ -127,7 +128,7 @@ const Individualmarketss = () => {
     try {
       const response = await apiRequest.put(`/createTickets/updateprogress/?statusId=${statusId}&ticketId=${markets.ticketId}`);
       if (statusId === '4' && response.status === 200) {
-        toast.success('Ticket marked as completed!', { position: "top-right", autoClose: 3000 });
+        toast.success('Ticket marked as completed!', { position: "top-right", autoClose: 1000 });
         setTimeout(() => {
           if (department === 'Market Manager') {
             navigate('/markethome')
@@ -139,24 +140,24 @@ const Individualmarketss = () => {
             navigate('/completed')
           }
           window.location.reload();
-        }, [3000])
+        }, [1000])
       }
 
 
       if (statusId === '5' && response.status === 200) {
-        toast.success('Ticket marked as reopened!', { position: "top-right", autoClose: 3000 });
+        toast.success('Ticket marked as reopened!', { position: "top-right", autoClose: 1000 });
         setTimeout(() => {
           navigate('/new')
           window.location.reload();
-        }, [3000])
+        }, [1000])
 
       }
       if (statusId === '3' && response.status === 200) {
-        toast.success('Ticket status updated!', { position: "top-right", autoClose: 3000 });
+        toast.success('Ticket status updated!', { position: "top-right", autoClose: 1000 });
         setTimeout(() => {
           navigate('/openedTickets')
           window.location.reload();
-        }, [3000])
+        }, [1000])
       }
     } catch (error) {
       console.error(`Error updating ticket status to ${statusId}:`, error);
@@ -198,10 +199,10 @@ const Individualmarketss = () => {
       });
       if (response.status === 200) {
         setComment('');
-        toast.success('comment submitted!', { position: "top-right", autoClose: 3000 });
+        toast.success('comment submitted!', { position: "top-right", autoClose: 1000 });
         setTimeout(() => {
           window.location.reload();
-        }, [3000])
+        }, [1000])
       }
     } catch (error) {
       console.error('Error submitting comment:', error);
@@ -250,6 +251,18 @@ const Individualmarketss = () => {
       setSelectedDepartment('')
     }
   }
+
+  
+    let count=0;
+    getcomment.map(comment => {
+      if (comment.createdBy === markets.fullname) {
+         count++;
+        }
+      }
+     
+    )
+  
+
 
   const handleTicketAction = async (action) => {
     const actionText = action === 'settle' ? 'settle' : 'request to reopen';
@@ -432,23 +445,18 @@ const Individualmarketss = () => {
                   )}
                 </>
               )}
+              
               {
-                getcomment.map(comment => {
-                  if (comment.createdBy === markets.fullname) {
-                    if ((department === "Employee") && markets.status?.name === 'completed') {
-                      return (
-                        <Button
-                          variant="primary fw-bolder w-auto ms-auto me-3"
-                          onClick={() => handleRequestReopen()}
-                          key={comment.id}
-                        >
-                          Request Reopen
-                        </Button>
-                      );
-                    }
-                  }
-                  return null;
-                })
+                department === "Employee" && markets.status?.name === 'completed'&&count>=1&&
+                   (
+                    <Button
+                      variant="primary fw-bolder w-auto ms-auto me-3"
+                      onClick={() => handleRequestReopen()}
+                      key={comment.id}
+                    >
+                      Request Reopen
+                    </Button>
+                  )
               }
 
               {(department === "District Manager" || department === 'Market Manager' || department === 'SuperAdmin') && markets.status?.name === 'completed' && (

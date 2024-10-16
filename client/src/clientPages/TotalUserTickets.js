@@ -63,10 +63,7 @@ function TotalUserTickets() {
     dispatch(fetchIndividualTickets(id));
   };
 
-
   if (loading) return <div className='loader'></div>;
-
-
   const status = ['new', 'opened', 'inprogress', 'completed', 'reopened']
 
   return (
@@ -79,7 +76,7 @@ function TotalUserTickets() {
             <option value="">Select Status</option>
             {
               status.map((status, index) => (
-                <option key={index} value={status} className="text-capitalize ">{status}</option>
+                <option key={index} value={status} className="text-capitalize">{status}</option>
               ))
             }
           </Form.Select>

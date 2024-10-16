@@ -270,7 +270,7 @@ export function Home() {
     
     return (
         <div>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show} onHide={handleClose} size='md'>
                 <Modal.Header closeButton>
                     <Modal.Title>Enter Ticket Details</Modal.Title>
                 </Modal.Header>
@@ -289,7 +289,7 @@ export function Home() {
                         </Form.Group>
                         <Form.Group className="mb-2 d-flex gap-1 flex-wrap" controlId="formPhoneNumber">
                             <div className='flex-grow-1 mb-2 mb-md-0'>
-                                <Form.Control className='fw-medium text-secondary shadow-none boorder-0' type="text" value={userData?.fullname || ''} placeholder='Full Name' ref={fullnameRef} readOnly />
+                                <Form.Control className='fw-medium text-secondary shadow-none boorder-0 text-capitalize' type="text" value={userData?.fullname || ''} placeholder='Full Name' ref={fullnameRef} readOnly />
                             </div>
                             <div className='d-flex flex-grow-1 align-items-center'>
                                 <Form.Control
@@ -303,7 +303,7 @@ export function Home() {
                         </Form.Group>
                         <Form.Group className="mb-2 d-flex gap-3 flex-wrap">
                             <div className='flex-grow-1 mb-2 mb-md-0 '>
-                                <Form.Control ref={marketRef} className='text-secondary fw-medium shadow-none boorder-0' type="text" placeholder='market'  value={userData.market?.market || ""} readOnly />
+                                <Form.Control ref={marketRef} className='text-secondary text-capitalize fw-medium shadow-none boorder-0' type="text" placeholder='market'  value={userData.market?.market || ""} readOnly />
                             </div>
                             <Dropdown className='flex-grow-1' id="dropdown-store">
                                 <Dropdown.Toggle className={`bg-white fw-medium text-secondary border-dropdown w-100`} id="dropdown-basic">
@@ -323,15 +323,14 @@ export function Home() {
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Form.Group>
-                        <Form.Group controlId="ticketSubject">
+                        <Form.Group controlId="ticketSubject" >
                             <Form.Select
                                 className="shadow-none text-secondary border rounded mb-2 fw-medium"
                                 isInvalid={!!errors.department}
                                 ref={ticketDepartmentRef}
                                 aria-label="department"
-
                             >
-                                <option value="" className="fw-medium text-primary">Select Department</option> {/* Default placeholder option */}
+                                <option value="" className="fw-medium text-primary">Select Department</option> 
                                 {
                                     Departments.sort().map((department, index) => (
                                         <option key={index} className="fw-medium text-primary" value={department}>
@@ -345,7 +344,7 @@ export function Home() {
                             <Form.Control
                                 type="text"
                                 className='shadow-none fw-medium boorder-0'
-                                placeholder="Ticket regarding"
+                                placeholder="Ticket Regarding"
                                 isInvalid={!!errors.ticketSubject}
                                 ref={ticketSubjectRef}
                             />
@@ -354,7 +353,7 @@ export function Home() {
                             <Form.Control
                                 className='shadow-none  fw-medium boorder-0'
                                 as="textarea"
-                                placeholder="Enter description"
+                                placeholder="Enter Description"
                                 rows={3}
                                 isInvalid={!!errors.description}
                                 ref={descriptionRef}
@@ -398,7 +397,7 @@ export function Home() {
                                     ) : (
                                         <div>
                                             <MdOutlineCloudUpload className='fs-1  text-secondary' />
-                                            <p className='fw-bolder  text-secondary'>Upload files</p>
+                                            <p className='fw-bolder  text-secondary'>Upload Files</p>
                                         </div>
                                     )
                                 )}
