@@ -19,8 +19,8 @@ export function Login() {
   const Departments = [
     'Varun Team', 'NTID Mappings', 'Trainings', 'Accessories Order',
     'YUBI Key Setups', 'Deposits', 'Charge Back', 'Commission',
-    'Inventory', 'Head Office', 'Admin Related', 'Maintenance Related',
-    'Housing Related', 'CAM NW', 'HR Payroll', 
+    'Inventory', 'Head Office', 'Admin_Head', 'Maintenance_Head',
+    'Housing Related', 'CAM NW', 'HR Payroll', 'Maintenance Related','Admin Related'
   ];
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export function Login() {
       ) : (
         <>
           <div className='my-2 text-center mt-5'>
-            <h2 className='fw-bolder fs-3' style={{ color: '#E10174' }}>TECHNO COMMUNICATIONS LLC</h2>
+            <h2 className='fw-medium fs-3' style={{ color: '#E10174' }}>TECHNO COMMUNICATIONS LLC</h2>
           </div>
 
           <div className='row justify-content-center align-items-center w-100 mt-5'>

@@ -38,8 +38,8 @@ const districtManagerDepartments = ['District Manager', 'Employee'];
 const marketManagerDepartments = ['Market Manager'];
 const departmentDepartments = [
   'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups', 'Deposits', 'Charge Back',
-  'Commission', 'Inventory', 'Head Office', 'Admin Related', 'Maintenance Related', 'Housing Related',
-  'CAM NW', 'HR Payroll','Varun Team'
+  'Commission', 'Inventory', 'Head Office', 'Admin_Head', 'Maintenance_Head', 'Housing Related',
+  'CAM NW', 'HR Payroll','Varun Team','Maintenance Related','Admin Related'
 ];
 
 const ProtectedRoute = ({ children, allowedDepartments }) => {

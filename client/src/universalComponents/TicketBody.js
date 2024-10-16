@@ -9,7 +9,7 @@ function TicketBody({ ticket, index, currentPage, itemsPerPage, handleTicket }) 
         <tr key={ticket.ticketId}>
             <td className="text-center fw-medium">
                 {(currentPage - 1) * itemsPerPage + index + 1}
-            </td> {/* Continuous count */}
+            </td> 
             <td className="text-center fw-medium">{ticket.ntid}</td>
             <td className="text-center fw-medium">{ticket.fullname}</td>
             <td className="text-center fw-medium">{ticket.status?.name}</td>

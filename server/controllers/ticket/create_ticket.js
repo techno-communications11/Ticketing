@@ -58,7 +58,6 @@ const createTicket = async (req, res) => {
                     department: department, 
                     ticketRegarding: ticketSubject,
                     description,
-                    ticketNowAt:'',
                     status: { connect: { id: '1' } }, 
                     department: { connect: { id: '19' } },
                     assignedTo: dmName,

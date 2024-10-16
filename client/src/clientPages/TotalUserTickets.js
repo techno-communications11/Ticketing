@@ -104,7 +104,7 @@ function TotalUserTickets() {
           </table>
         </div>
       ) : (
-        <p className='text-center text-primary fw-bolder'>No tickets found for this NTID.</p>
+        <p className='text-center text-primary fw-medium'>No tickets found for this NTID.</p>
       )}
       <PageCountStack
         filteredTickets={filteredTickets}

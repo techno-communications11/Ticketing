@@ -33,18 +33,17 @@ function Ticket({ statusId, text, openedby, openedbyUser, fullname }) {
         let fetchedTickets = response.data;
 
         if (openedby === null) {
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy === null);
+          fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy === null&&ticket.assignToTeam===null);
         }
         if (fullname) {
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.assignToTeam === fullname&&ticket.status.name !== "completed");
+          fetchedTickets = fetchedTickets.filter(ticket => ticket.assignToTeam === fullname &&ticket.status.name !== "completed"&&ticket.openedBy===null);
         }
 
         if (openedbyUser) {
           fetchedTickets = fetchedTickets.filter(
             ticket =>
               ticket.status.name !== "completed" &&
-              ticket.openedBy === userId &&
-              ticket.assignToTeam === null
+              ticket.openedBy === userId 
           );
         }
         if (statusId == '4') {

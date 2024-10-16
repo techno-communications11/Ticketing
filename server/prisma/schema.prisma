@@ -31,7 +31,6 @@ model CreateTicket {
   description       String
   files             String
   assignedTo        String
-  ticketNowAt       String?
   requestreopen     Boolean?
   isSettled         Boolean?
   assignToTeam      String?

@@ -110,12 +110,12 @@ const UserTable = () => {
         <div className='d-flex gap-2 rounded align-items-center w-50 my-3' style={{ border: '1.5px solid gray' }}>
           <input
             type="text"
-            className='form-control input-form fw-bolder border-0 shadow-none'
+            className='form-control input-form fw-medium border-0 shadow-none'
             placeholder="Search..."
             value={query}
             onChange={e => setQuery(e.target.value)}
           />
-          <button onClick={() => handleSearch(query)} className='btn btn-white fs-5 border-0 shadow-lg text-success fw-bolder'>
+          <button onClick={() => handleSearch(query)} className='btn btn-white fs-5 border-0 shadow-lg text-success fw-medium'>
             <CiSearch />
           </button>
         </div>

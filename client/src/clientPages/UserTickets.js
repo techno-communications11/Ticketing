@@ -111,7 +111,7 @@ const UserTickets = () => {
                   </td>
                   <td>
                     <Link to={'/details'}>
-                      <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId)} />
+                      <GrLinkNext className="fw-medium" onClick={() => handleTicket(ticket.ticketId)} />
                     </Link>
                   </td>
                 </tr>

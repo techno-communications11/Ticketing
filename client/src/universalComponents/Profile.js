@@ -157,7 +157,7 @@ export function Profile() {
                 style={{ cursor: 'pointer', width: '10vw', height: '19vh' }}>
                 {popButtons || ImmediateEdit ? (
                   <div className='mt-3'>
-                    <label className='btn btn-outline-secondary fw-bolder m-1 font-size'>
+                    <label className='btn btn-outline-secondary fw-medium m-1 font-size'>
                       Camera
                       <input
                         type='file'
@@ -167,7 +167,7 @@ export function Profile() {
                         onChange={handleFileInputChange}
                       />
                     </label>
-                    <label className='btn btn-outline-secondary fw-bolder font-size'>
+                    <label className='btn btn-outline-secondary fw-medium font-size'>
                       Browse
                       <input
                         type='file'
@@ -180,7 +180,7 @@ export function Profile() {
                 ) : (
                   <div>
                     <MdOutlineCloudUpload className='upload-image-style' size={50} />
-                    <p className='fw-bolder text-secondary'>Upload Photo</p>
+                    <p className='fw-medium text-secondary'>Upload Photo</p>
                   </div>
                 )}
               </div>

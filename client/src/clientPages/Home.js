@@ -347,13 +347,13 @@ export function Home() {
                             >
                                 {cameraFileName || fileSystemFileName ? (
                                     <div>
-                                        {cameraFileName && <p className='fw-bolder text-secondary mt-2'>Selected: {cameraFileName.name}</p>}
-                                        {fileSystemFileName && <p className='fw-bolder text-secondary mt-2'>Selected: {fileSystemFileName.name}</p>}
+                                        {cameraFileName && <p className='fw-medium text-secondary mt-2'>Selected: {cameraFileName.name}</p>}
+                                        {fileSystemFileName && <p className='fw-medium text-secondary mt-2'>Selected: {fileSystemFileName.name}</p>}
                                     </div>
                                 ) : (
                                     popButtons ? (
                                         <div>
-                                            <label className='btn border-secondary  btn-outline-secondary fw-bolder mt-3 me-2'>
+                                            <label className='btn border-secondary  btn-outline-secondary fw-medium mt-3 me-2'>
                                                 Camera
                                                 <input
                                                     type='file'
@@ -364,7 +364,7 @@ export function Home() {
                                                     disabled={!!fileSystemFileName}
                                                 />
                                             </label>
-                                            <label className='btn border-secondary btn-outline-secondary fw-bolder mt-3'>
+                                            <label className='btn border-secondary btn-outline-secondary fw-medium mt-3'>
                                                 Browse
                                                 <input
                                                     type='file'
@@ -377,7 +377,7 @@ export function Home() {
                                     ) : (
                                         <div>
                                             <MdOutlineCloudUpload className='fs-1  text-secondary' />
-                                            <p className='fw-bolder  text-secondary'>Upload files</p>
+                                            <p className='fw-medium  text-secondary'>Upload files</p>
                                         </div>
                                     )
                                 )}
@@ -392,7 +392,7 @@ export function Home() {
                 </Modal.Footer>
             </Modal>
             <div className='container'>
-                <p className='font-family home-text pt-5 fw-bolder fs-3 text-center' style={{ color: '#E10174' }}>
+                <p className='font-family home-text pt-5 fw-medium fs-3 text-center' style={{ color: '#E10174' }}>
                     Ticketing Portal
                 </p>
                 <div className='d-flex flex-column flex-md-row align-items-center justify-content-between mt-4 gap-4 mx-auto'>
@@ -406,41 +406,41 @@ export function Home() {
                     </div>
                     <div className='col-12 col-md-8 bg-white shadow-lg border-0 rounded p-2'>
                         <div className='d-flex justify-content-center '>
-                            <p className='fs-3 fw-bolder text-dark font-family' >Status Of Tickets</p>
+                            <p className='fs-3 fw-medium text-dark font-family' >Status Of Tickets</p>
                         </div>
                         <div className="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-3 p-3">
                             <Link onClick={handleTotal} to="/totalusertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-3">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-3">
                                     <h6 className="fw-bold">Total</h6>
                                     <p id="Totalvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleNew} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-3">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-3">
                                     <h6 className="fw-bold">New</h6>
                                     <p id="Newvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleOpened} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-2">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
                                     <h6 className="fw-bold">Opened</h6>
                                     <p id="Openedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleInprogress} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-2">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
                                     <h6 className="fw-bold">InProgress</h6>
                                     <p id="Inprocessvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleCompleted} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-2">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
                                     <h6 className="fw-bold">Completed</h6>
                                     <p id="Completedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleReOpened} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-2">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
                                     <h6 className="fw-bold">Reopened</h6>
                                     <p id="reOpenedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>

@@ -38,11 +38,13 @@ export function Register() {
     'Head Office',
     'Admin Related',
     'Maintenance Related',
+    'Maintenance_Head',
     'Housing Related',
     'CAM NW',
     'HR Payroll',
     "Reporting",
     "Admin",
+    'Admin_Head',
     "SuperAdmin",
     "District Manager",
     "Employee"
