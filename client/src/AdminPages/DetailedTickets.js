@@ -84,6 +84,7 @@ const ShowTickets = () => {
     dispatch(fetchTickets(selectedMarket.toLowerCase()));
     setDropdownVisible(false);
   };
+  console.log(currentItems)
 
 
   return (
