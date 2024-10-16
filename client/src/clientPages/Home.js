@@ -81,17 +81,10 @@ export function Home() {
         }
     }
 
-    const handleCameraChange = (event) => {
-        handlefiles(event);
-    };
+    const handleCameraChange = (event) => { handlefiles(event); }
+    const handleFileSystemChange = (event) => { handlefiles(event); };
+    const handleStoreSelect = (store) => { setSelectedStore(store); };
 
-    const handleFileSystemChange = (event) => {
-        handlefiles(event);
-    };
-
-    const handleStoreSelect = (store) => {
-        setSelectedStore(store);
-    };
 
     const validateForm = () => {
         const newErrors = {
@@ -209,25 +202,14 @@ export function Home() {
         const objInProgress = document.getElementById("Inprocessvalue");
         const objCompleted = document.getElementById("Completedvalue");
         const objreopened = document.getElementById('reOpenedvalue')
-        const totalTickets = (TicketsCount.reopened || 0) + (TicketsCount.new || 0) + (TicketsCount.opened || 0) + (TicketsCount.inprogress || 0) + (TicketsCount.completed || 0);
-        if (objTotal) {
-            animateValue(objTotal, 0, totalTickets, 500);
-        }
-        if (objNew) {
-            animateValue(objNew, 0, TicketsCount.new || 0, 500);
-        }
-        if (objOpened) {
-            animateValue(objOpened, 0, TicketsCount.opened || 0, 500);
-        }
-        if (objInProgress) {
-            animateValue(objInProgress, 0, TicketsCount.inprogress || 0, 500);
-        }
-        if (objCompleted) {
-            animateValue(objCompleted, 0, TicketsCount.completed || 0, 500);
-        }
-        if (objreopened) {
-            animateValue(objreopened, 0, TicketsCount.reopened || 0, 500);
-        }
+        const totalTickets = (TicketsCount.reopened || 0) + (TicketsCount.new || 0)
+            + (TicketsCount.opened || 0) + (TicketsCount.inprogress || 0) + (TicketsCount.completed || 0);
+        if (objTotal) { animateValue(objTotal, 0, totalTickets, 500); }
+        if (objNew) { animateValue(objNew, 0, TicketsCount.new || 0, 500); }
+        if (objOpened) { animateValue(objOpened, 0, TicketsCount.opened || 0, 500); }
+        if (objInProgress) { animateValue(objInProgress, 0, TicketsCount.inprogress || 0, 500); }
+        if (objCompleted) { animateValue(objCompleted, 0, TicketsCount.completed || 0, 500); }
+        if (objreopened) { animateValue(objreopened, 0, TicketsCount.reopened || 0, 500); }
     }, [TicketsCount]);
 
     const handleDataSend = (statusId) => {
@@ -242,19 +224,17 @@ export function Home() {
     const handleCompleted = () => handleDataSend('4');
     const handleReOpened = () => handleDataSend('5');
 
-    const handleTotal = () => {
-        navigate('/totalusertickets')
-    };
+    const handleTotal = () => { navigate('/totalusertickets') };
 
     return (
         <div>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show} onHide={handleClose} size='lg'>
                 <Modal.Header closeButton>
                     <Modal.Title>Enter Ticket Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        <Form.Group className="mb-2 d-flex align-items-center" controlId="formBasicNTID">
+                        <Form.Group className="mb-1 d-flex align-items-center" controlId="formBasicNTID">
                             <Form.Control
                                 className='shadow-none text-secondary fw-medium boorder-0'
                                 type="text"
@@ -265,8 +245,8 @@ export function Home() {
                                 readOnly
                             />
                         </Form.Group>
-                        <Form.Group className="mb-2 d-flex gap-1 flex-wrap" controlId="formPhoneNumber">
-                            <div className='flex-grow-1 mb-2 mb-md-0'>
+                        <Form.Group className="mb-1 d-flex gap-1 flex-wrap" controlId="formPhoneNumber">
+                            <div className='flex-grow-1 mb-1 mb-md-0'>
                                 <Form.Control className='fw-medium text-secondary shadow-none boorder-0' type="text" value={userData?.fullname || ''} placeholder='Full Name' ref={fullnameRef} readOnly />
                             </div>
                             <div className='d-flex flex-grow-1 align-items-center'>
@@ -279,12 +259,12 @@ export function Home() {
                                 />
                             </div>
                         </Form.Group>
-                        <Form.Group className="mb-2 d-flex gap-3 flex-wrap" controlId="store">
-                            <div className='flex-grow-1 mb-2 mb-md-0 '>
+                        <Form.Group className="mb-1 d-flex gap-1 flex-wrap" controlId="store">
+                            <div className='flex-grow-1 mb-1 mb-md-0 '>
                                 <Form.Control ref={marketRef} className='text-secondary fw-medium shadow-none boorder-0' type="text" placeholder='market' value={userData.market?.market || ""} readOnly />
                             </div>
                             <Dropdown className='flex-grow-1' id="dropdown-store">
-                                <Dropdown.Toggle className={`bg-white fw-medium text-secondary border-dropdown w-100`} id="dropdown-basic">
+                                <Dropdown.Toggle className={`bg-white fw-medium text-secondary  w-100`} id="dropdown-basic">
                                     {selectedStore}
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu style={{ height: "40vh", overflow: 'scroll' }}>
@@ -301,10 +281,10 @@ export function Home() {
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Form.Group>
-                        
+
                         <Form.Group controlId="ticketDepartment">
                             <Form.Select
-                                className="shadow-none text-secondary border rounded mb-2 fw-medium"
+                                className="shadow-none text-secondary border rounded mb-1 fw-medium"
                                 isInvalid={!!errors.ticketDepartment}
                                 ref={ticketDepartmentRef}
                                 aria-label="department"
@@ -320,7 +300,7 @@ export function Home() {
                                 }
                             </Form.Select>
                         </Form.Group>
-                        <Form.Group className="mb-2 d-flex align-items-center " controlId="formTicketSubject">
+                        <Form.Group className="mb-1 d-flex align-items-center " controlId="formTicketSubject">
                             <Form.Control
                                 type="text"
                                 className='shadow-none fw-medium boorder-0'
@@ -329,7 +309,7 @@ export function Home() {
                                 ref={ticketSubjectRef}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-2 " controlId="formDescription">
+                        <Form.Group className="mb-1" controlId="formDescription">
                             <Form.Control
                                 className='shadow-none  fw-medium boorder-0'
                                 as="textarea"
@@ -339,7 +319,7 @@ export function Home() {
                                 ref={descriptionRef}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-2" controlId="fileUpload">
+                        <Form.Group className="mb-1" controlId="fileUpload">
                             <div
                                 className='border text-center'
                                 onClick={() => setPopButtons(true)}
@@ -352,8 +332,8 @@ export function Home() {
                                     </div>
                                 ) : (
                                     popButtons ? (
-                                        <div>
-                                            <label className='btn border-secondary  btn-outline-secondary fw-medium mt-3 me-2'>
+                                        <div className='rounded'>
+                                            <label className='btn border-secondary  btn-outline-secondary fw-medium mt-3  me-2'>
                                                 Camera
                                                 <input
                                                     type='file'
@@ -398,7 +378,7 @@ export function Home() {
                 <div className='d-flex flex-column flex-md-row align-items-center justify-content-between mt-4 gap-4 mx-auto'>
                     <div className='card col-12 col-md-4 bg-white shadow-lg rounded py-3 px-4 border-0 text-center'>
                         <div className='d-flex justify-content-center align-items-center mb-3'>
-                            <img loading="lazy"  src='./ticket.png' alt='Ticket Icon' className='img img-fluid rounded-circle' style={{ maxWidth: '150px', height: 'auto' }} />
+                            <img loading="lazy" src='./ticket.png' alt='Ticket Icon' className='img img-fluid rounded-circle' style={{ maxWidth: '150px', height: 'auto' }} />
                         </div>
                         <div className='d-flex justify-content-center'>
                             <button className='btn btn-primary w-auto' onClick={handleShow}>Open A Ticket</button>
