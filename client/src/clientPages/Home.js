@@ -212,6 +212,7 @@ export function Home() {
         if (objreopened) { animateValue(objreopened, 0, TicketsCount.reopened || 0, 500); }
     }, [TicketsCount]);
 
+
     const handleDataSend = (statusId) => {
         localStorage.setItem('statusData', statusId);
         dispatch(fetchStatusTickets({ statusId }));
