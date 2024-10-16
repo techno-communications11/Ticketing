@@ -148,13 +148,13 @@ export function SuperAdminHome() {
       <div>
         <Row>
           <Col md={12}>
-            <h4 className="mb-4 font-family d-flex justify-content-center fw-bolder">Status Count Of Tickets</h4>
+            <h4 className="mb-4 font-family d-flex justify-content-center fw-medium">Status Count Of Tickets</h4>
           </Col>
           <Col md={12}>
             <Row className="d-flex justify-content-center">
               {Object.entries(ticketCounts).map(([key, value]) => (
                 <Col xs={12} sm={6} md={4} lg={2} key={key} className="d-flex justify-content-center">
-                  <Card className="rounded border text-dark fw-bolder text-center p-2 w-100">
+                  <Card className="rounded border text-dark fw-medium text-center p-2 w-100">
                     <h4 className="font-family">{key.charAt(0).toUpperCase() + key.slice(1)}</h4>
                     <p id={`${key}Tickets`} style={{ color: '#E10174', fontSize: '60px' }}>
                       {safeNumber(value)}
@@ -171,10 +171,10 @@ export function SuperAdminHome() {
             <Row className="container mt-4 mb-2 d-flex justify-content-center">
               <Col md={12} sm={12} xs={12} className="constainer d-flex flex-wrap justify-content-start">
                 <div className="d-flex flex-wrap w-100 gap-2">
-                  <button className="btn btn-outline-success fw-bolder" onClick={downloadStatus}>
+                  <button className="btn btn-outline-success fw-medium" onClick={downloadStatus}>
                     <MdDownload /> Download Status Count as Excel File
                   </button>
-                  <button className="btn btn-outline-success fw-bolder" onClick={downloadTickets}>
+                  <button className="btn btn-outline-success fw-medium" onClick={downloadTickets}>
                     <MdDownload /> Download Tickets as Excel File
                   </button>
                 </div>
@@ -185,7 +185,7 @@ export function SuperAdminHome() {
                 <thead>
                   <tr>
                     {['Market', 'Total', 'New', 'Opened', 'Inprogress', 'Completed', 'Reopened'].map((header) => (
-                      <th key={header} className='text-center' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
+                      <th key={header} className='text-decoration-none fw-medium ' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
                     ))}
                   </tr>
                 </thead>

@@ -14,6 +14,7 @@ import { useCallback } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+
 export function Home() {
     const [show, setShow] = useState(false);
     const [popButtons, setPopButtons] = useState(false);
@@ -22,23 +23,13 @@ export function Home() {
     const [selectedStore, setSelectedStore] = useState('Select Store');
     const [userData, setUserData] = useState('');
     const [TicketsCount, setTicketsCount] = useState(0);
+
     const Departments = [
-        'Varun Team',
-        'NTID Mappings',
-        'Trainings',
-        'Accessories Order',
-        'YUBI Key Setups',
-        'Deposits',
-        'Charge Back',
-        'Commission',
-        'Inventory',
-        'Head Office',
-        'Admin Related',
-        'Maintenance Related',
-        'Housing Related',
-        'CAM NW',
-        'HR Payroll'
+        'Varun Team', 'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
+        'Deposits', 'Charge Back', 'Commission', 'Inventory', 'Head Office', 'Admin Related',
+        'Maintenance Related', 'Housing Related', 'CAM NW', 'HR Payroll'
     ];
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [errors, setErrors] = useState({
@@ -57,6 +48,7 @@ export function Home() {
     const marketRef = useRef(null);
     const fullnameRef = useRef('');
     const ticketDepartmentRef = useRef('');
+
     const handleClose = () => {
         setShow(false);
         setCameraFileName(null);
@@ -72,6 +64,7 @@ export function Home() {
         });
         setSelectedStore('Select Store');
     };
+
     const handleShow = useCallback(() => {
         setShow(true);
         setPopButtons(false);
@@ -80,18 +73,20 @@ export function Home() {
     useEffect(() => {
     }, [handleShow]);
 
-    const handleCameraChange = (event) => {
+
+    const handlefiles = (event) => {
         if (event.target.files.length > 0) {
             setCameraFileName(event.target.files[0]);
             setFileSystemFileName(null);
         }
+    }
+
+    const handleCameraChange = (event) => {
+        handlefiles(event);
     };
 
     const handleFileSystemChange = (event) => {
-        if (event.target.files.length > 0) {
-            setFileSystemFileName(event.target.files[0]);
-            setCameraFileName(null);
-        }
+        handlefiles(event);
     };
 
     const handleStoreSelect = (store) => {
@@ -144,7 +139,6 @@ export function Home() {
             if (fileSystemFileName) {
                 formData.append('fileSystemFile', fileSystemFileName);
             }
-            console.log('fd', formData)
             apiRequest.post('/createTickets/uploadTicket', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -155,7 +149,7 @@ export function Home() {
                     handleClose();
                     setTimeout(() => {
                         window.location.reload();
-                    }, 2000); 
+                    }, 2000);
                 })
                 .catch(error => {
                     if (error.response) {
@@ -171,42 +165,42 @@ export function Home() {
                 });
         }
     };
-   
-        const handleNTIDBlur = async () => {
-            try {
-                const response = await apiRequest.get('/profile/getprofiledata_ntid');
-                if (response.status === 200) {
-                    setUserData(response.data);
-                } else {
-                    setErrors(prevErrors => ({ ...prevErrors, ntid: 'User not found or error fetching data' }));
-                }
-            } catch (error) {
-                if (error.response) {
-                    setErrors(prevErrors => ({ ...prevErrors, ntid: error.response.data.message || 'Invalid NTID entered' }));
-                } else if (error.request) {
-                    setErrors(prevErrors => ({ ...prevErrors, ntid: 'No response from server. Please try again later.' }));
-                } else {
-                    setErrors(prevErrors => ({ ...prevErrors, ntid: 'Error occurred. Please try again.' }));
-                }
-            }
-        };
-       
-    
-        const fetchTicketCounts = async () => {
-            try {
-                const response = await apiRequest.get('/createTickets/countusertickets'); // Replace with your actual API request
-                console.log('Initial ticket count response:', response);
-                setTicketsCount(response.data); // Assuming response has a count field
-            } catch (error) {
-                toast.error('Failed to fetch ticket counts');
-            }
-        };
 
-        useEffect(() => {
-            handleNTIDBlur();
-            fetchTicketCounts();
-        }, [handleShow]);
-        
+    const handleNTIDBlur = async () => {
+        try {
+            const response = await apiRequest.get('/profile/getprofiledata_ntid');
+            if (response.status === 200) {
+                setUserData(response.data);
+            } else {
+                setErrors(prevErrors => ({ ...prevErrors, ntid: 'User not found or error fetching data' }));
+            }
+        } catch (error) {
+            if (error.response) {
+                setErrors(prevErrors => ({ ...prevErrors, ntid: error.response.data.message || 'Invalid NTID entered' }));
+            } else if (error.request) {
+                setErrors(prevErrors => ({ ...prevErrors, ntid: 'No response from server. Please try again later.' }));
+            } else {
+                setErrors(prevErrors => ({ ...prevErrors, ntid: 'Error occurred. Please try again.' }));
+            }
+        }
+    };
+
+
+    const fetchTicketCounts = async () => {
+        try {
+            const response = await apiRequest.get('/createTickets/countusertickets');
+            console.log('Initial ticket count response:', response);
+            setTicketsCount(response.data);
+        } catch (error) {
+            toast.error('Failed to fetch ticket counts');
+        }
+    };
+
+    useEffect(() => {
+        handleNTIDBlur();
+        fetchTicketCounts();
+    }, [handleShow]);
+
 
     useEffect(() => {
         const objTotal = document.getElementById("Totalvalue");
@@ -236,38 +230,22 @@ export function Home() {
         }
     }, [TicketsCount]);
 
-    const handleDataSend=(statusId)=>{
-        localStorage.setItem('statusData', statusId)
+    const handleDataSend = (statusId) => {
+        localStorage.setItem('statusData', statusId);
         dispatch(fetchStatusTickets({ statusId }));
-        dispatch(setUserAndStatus({ statusId }))
-    }
+        dispatch(setUserAndStatus({ statusId }));
+    };
 
-    const handleNew = () => {
-        const statusId = '1'
-        handleDataSend(statusId)
-      
-    };
-    const handleOpened = () => {
-        const statusId = '2'
-        handleDataSend(statusId)
-     
-    };
-    const handleInprogress = () => {
-        const statusId = '3'
-        handleDataSend(statusId)
-    };
-    const handleCompleted = () => {
-        const statusId = '4'
-        handleDataSend(statusId)
-    };
-    const handleReOpened = () => {
-        const statusId = '5'
-        handleDataSend(statusId)
-    };
+    const handleNew = () => handleDataSend('1');
+    const handleOpened = () => handleDataSend('2');
+    const handleInprogress = () => handleDataSend('3');
+    const handleCompleted = () => handleDataSend('4');
+    const handleReOpened = () => handleDataSend('5');
+
     const handleTotal = () => {
         navigate('/totalusertickets')
     };
-    
+
     return (
         <div>
             <Modal show={show} onHide={handleClose} size='md'>
@@ -301,15 +279,16 @@ export function Home() {
                                 />
                             </div>
                         </Form.Group>
-                        <Form.Group className="mb-2 d-flex gap-3 flex-wrap">
+                        <Form.Group className="mb-2 d-flex gap-3 flex-wrap" controlId="store">
                             <div className='flex-grow-1 mb-2 mb-md-0 '>
                                 <Form.Control ref={marketRef} className='text-secondary text-capitalize fw-medium shadow-none boorder-0' type="text" placeholder='market'  value={userData.market?.market || ""} readOnly />
+                                <Form.Control ref={marketRef} className='text-secondary fw-medium shadow-none boorder-0' type="text" placeholder='market' value={userData.market?.market || ""} readOnly />
                             </div>
                             <Dropdown className='flex-grow-1' id="dropdown-store">
                                 <Dropdown.Toggle className={`bg-white fw-medium text-secondary border-dropdown w-100`} id="dropdown-basic">
                                     {selectedStore}
                                 </Dropdown.Toggle>
-                                <Dropdown.Menu style={{ height: "40vh", overflow:'scroll' }}>
+                                <Dropdown.Menu style={{ height: "40vh", overflow: 'scroll' }}>
                                     {userData?.stores?.map((store, index) => (
                                         <Dropdown.Item
                                             key={index}
@@ -323,10 +302,25 @@ export function Home() {
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Form.Group>
-                        <Form.Group controlId="ticketSubject" >
+                        <Form.Group className="mb-2 d-flex gap-1 flex-wrap" controlId="ticketregarding">
+                            <div className='flex-grow-1 mb-2 mb-md-0'>
+                                <Form.Control className='fw-medium text-secondary shadow-none boorder-0 text-capitalize' type="text"  placeholder='Full Name' ref={ticketSubjectRef} readOnly />
+                            </div>
+                            <div className='d-flex flex-grow-1 align-items-center'>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Enter your Phone Number"
+                                    isInvalid={!!errors.ticketSubject}
+                                    ref={ticketSubjectRef}
+                                    className='shadow-none fw-medium border'
+                                />
+                            </div>
+                        </Form.Group>
+                        
+                        <Form.Group controlId="ticketDepartment">
                             <Form.Select
                                 className="shadow-none text-secondary border rounded mb-2 fw-medium"
-                                isInvalid={!!errors.department}
+                                isInvalid={!!errors.ticketDepartment}
                                 ref={ticketDepartmentRef}
                                 aria-label="department"
                             >
@@ -367,13 +361,13 @@ export function Home() {
                             >
                                 {cameraFileName || fileSystemFileName ? (
                                     <div>
-                                        {cameraFileName && <p className='fw-bolder text-secondary mt-2'>Selected: {cameraFileName.name}</p>}
-                                        {fileSystemFileName && <p className='fw-bolder text-secondary mt-2'>Selected: {fileSystemFileName.name}</p>}
+                                        {cameraFileName && <p className='fw-medium text-secondary mt-2'>Selected: {cameraFileName.name}</p>}
+                                        {fileSystemFileName && <p className='fw-medium text-secondary mt-2'>Selected: {fileSystemFileName.name}</p>}
                                     </div>
                                 ) : (
                                     popButtons ? (
                                         <div>
-                                            <label className='btn border-secondary  btn-outline-secondary fw-bolder mt-3 me-2'>
+                                            <label className='btn border-secondary  btn-outline-secondary fw-medium mt-3 me-2'>
                                                 Camera
                                                 <input
                                                     type='file'
@@ -384,7 +378,7 @@ export function Home() {
                                                     disabled={!!fileSystemFileName}
                                                 />
                                             </label>
-                                            <label className='btn border-secondary btn-outline-secondary fw-bolder mt-3'>
+                                            <label className='btn border-secondary btn-outline-secondary fw-medium mt-3'>
                                                 Browse
                                                 <input
                                                     type='file'
@@ -412,13 +406,13 @@ export function Home() {
                 </Modal.Footer>
             </Modal>
             <div className='container'>
-                <p className='font-family home-text pt-5 fw-bolder fs-3 text-center' style={{ color: '#E10174' }}>
+                <p className='font-family home-text pt-5 fw-medium fs-3 text-center' style={{ color: '#E10174' }}>
                     Ticketing Portal
                 </p>
                 <div className='d-flex flex-column flex-md-row align-items-center justify-content-between mt-4 gap-4 mx-auto'>
                     <div className='card col-12 col-md-4 bg-white shadow-lg rounded py-3 px-4 border-0 text-center'>
                         <div className='d-flex justify-content-center align-items-center mb-3'>
-                            <img src='./ticket.png' alt='Ticket Icon' className='img-fluid rounded-circle' style={{ maxWidth: '150px', height: 'auto' }} />
+                            <img loading="lazy"  src='./ticket.png' alt='Ticket Icon' className='img img-fluid rounded-circle' style={{ maxWidth: '150px', height: 'auto' }} />
                         </div>
                         <div className='d-flex justify-content-center'>
                             <button className='btn btn-primary w-auto' onClick={handleShow}>Open A Ticket</button>
@@ -426,41 +420,41 @@ export function Home() {
                     </div>
                     <div className='col-12 col-md-8 bg-white shadow-lg border-0 rounded p-2'>
                         <div className='d-flex justify-content-center '>
-                            <p className='fs-3 fw-bolder text-dark font-family' >Status Of Tickets</p>
+                            <p className='fs-3 fw-medium text-dark font-family' >Status Of Tickets</p>
                         </div>
                         <div className="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-3 p-3">
                             <Link onClick={handleTotal} to="/totalusertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-3">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-3">
                                     <h6 className="fw-bold">Total</h6>
                                     <p id="Totalvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleNew} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-3">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-3">
                                     <h6 className="fw-bold">New</h6>
                                     <p id="Newvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleOpened} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-2">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
                                     <h6 className="fw-bold">Opened</h6>
                                     <p id="Openedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleInprogress} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-2">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
                                     <h6 className="fw-bold">InProgress</h6>
                                     <p id="Inprocessvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleCompleted} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-2">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
                                     <h6 className="fw-bold">Completed</h6>
                                     <p id="Completedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleReOpened} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-bolder text-center p-2">
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
                                     <h6 className="fw-bold">Reopened</h6>
                                     <p id="reOpenedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>

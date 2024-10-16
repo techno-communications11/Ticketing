@@ -35,7 +35,6 @@ function TotalUserTickets() {
         setLoading(false);
       }
     };
-
     if (ntid) fetchUserTickets();
     else setLoading(false);
   }, []);
@@ -55,8 +54,7 @@ function TotalUserTickets() {
     });
   }, [tickets, statusFilter, dateFilter]);
 
-  const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
+  const currentItems = filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
     dispatch(setId(id));
@@ -99,13 +97,14 @@ function TotalUserTickets() {
             </thead>
             <tbody>
               {currentItems.map((ticket, index) => (
-                <TicketBody ticket={ticket} index={index} handleTicket={handleTicket} />
+                <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}
+                  currentPage={currentPage} itemsPerPage={itemsPerPage} />
               ))}
             </tbody>
           </table>
         </div>
       ) : (
-        <p className='text-center text-primary fw-bolder'>No tickets found for this NTID.</p>
+        <p className='text-center text-primary fw-medium'>No tickets found for this NTID.</p>
       )}
       <PageCountStack
         filteredTickets={filteredTickets}

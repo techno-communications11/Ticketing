@@ -41,14 +41,14 @@ function RequestReopen() {
   const filteredTickets =FilterLogic(tickets,ntidFilter,dateFilter,statusFilter)
   return (
     <div className='container'>
-      <h3 className='text-capitalize text-center  my-3' style={{ color: '#E10174' }}>Requested reopen Tickets</h3>
+      <h3 className='text-capitalize text-center  my-3' style={{ color: '#E10174' }}> Reopen Requested Tickets</h3>
       <Row className='mx-1 mb-3'>
       <Filtering 
         ntidFilter={ntidFilter}
         setntidFilter={setntidFilter}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
-        dateFilter={dateFilter}
+        dateFilter={dateFilter} 
         setDateFilter={setDateFilter}
       />
       </Row>
@@ -56,7 +56,7 @@ function RequestReopen() {
         <thead>
           <tr>
 
-            {['SC.No', 'ntid',  'Full Name',"Status", 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
+            {['SC.No', 'NTID',  'Full Name',"Status", 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
               <th key={header} className='text-center' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
             ))}
           </tr>

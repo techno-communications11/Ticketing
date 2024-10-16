@@ -38,11 +38,13 @@ export function Register() {
     'Head Office',
     'Admin Related',
     'Maintenance Related',
+    'Maintenance_Head',
     'Housing Related',
     'CAM NW',
     'HR Payroll',
     "Reporting",
     "Admin",
+    'Admin_Head',
     "SuperAdmin",
     "District Manager",
     "Employee"
@@ -108,7 +110,6 @@ export function Register() {
       });
 
       if (response.status === 201) {
-        console.log(response.status);
         toast.success("registered successfully", { autoClose: 2000 }); 
       } else {
         toast.error(error.response?.data?.message || "failed to register");
@@ -138,7 +139,7 @@ export function Register() {
 
   const handleFileUpload = async () => {
     if (!selectedFile) {
-      alert('Please select a file first.');
+      toast.error('Please select a file first.');
       return;
     }
 
@@ -154,7 +155,6 @@ export function Register() {
 
       if (response.status === 200) {
         setSelectedFile(null);
-        console.log(response.message, "success");
         toast.success("File uploaded successfully", { autoClose: 2000 });
       } else {
         setError('File upload failed. Please try again.');

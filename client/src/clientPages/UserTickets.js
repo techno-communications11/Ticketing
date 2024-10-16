@@ -13,7 +13,7 @@ const UserTickets = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const [filterDate, setFilterDate] = useState('');
-  const itemsPerPage=8;
+  const itemsPerPage = 8;
 
 
   const selectedStatus = useSelector((state) => state.userTickets.selectedStatus || localStorage.getItem('statusData'));
@@ -37,7 +37,7 @@ const UserTickets = () => {
     }
   }, [ticketArray]);
 
- 
+
 
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
@@ -52,15 +52,15 @@ const UserTickets = () => {
   const filteredTickets = filterDate
     ? ticketArray.filter(ticket => new Date(ticket.completedAt).toISOString().split('T')[0] === filterDate)
     : ticketArray;
-  
-    const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-    const nonCompletedTickets = currentItems.filter(ticket => ticket.requestreopen);
-    const completedTickets = currentItems.filter(ticket => !ticket.requestreopen);
-  
-    const sortedCompletedTickets = completedTickets.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
-    const finalTickets = [...nonCompletedTickets, ...sortedCompletedTickets];
- 
+  const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const nonCompletedTickets = currentItems.filter(ticket => ticket.requestreopen);
+  const completedTickets = currentItems.filter(ticket => !ticket.requestreopen);
+
+  const sortedCompletedTickets = completedTickets.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+  const finalTickets = [...nonCompletedTickets, ...sortedCompletedTickets];
+
 
   return (
     <Container className="mt-1">
@@ -84,45 +84,45 @@ const UserTickets = () => {
         </div>
       ) : (
         <table className='tablerow'>
-        <thead>
-          <tr>
-            {['SC.No', 'NTID', 'Full Name', 'Status', 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
-              <th key={header}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {finalTickets.length > 0 ? (
-            finalTickets.map((ticket, index) => (
-              <tr
-                key={ticket.ticketId}
-                style={ticket.requestreopen ? { color: '#006A4E' } : {}}
-              >
-                <td className='fw-medium'>{index + 1}</td>
-                <td className='fw-medium'>{ticket.ntid}</td>
-                <td className='fw-medium'>{ticket.fullname}</td>
-                <td className='fw-medium'>{ticket.status?.name || '-'}</td>
-                <td className='fw-medium'>{formatDate(ticket.createdAt)}</td>
-                <td className='fw-medium'>
-                  {ticket.completedAt ? formatDate(ticket.completedAt) : '-'}
-                </td>
-                <td className='fw-medium'>
-                  {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : '-'}
-                </td>
-                <td>
-                  <Link to={'/details'}>
-                    <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId)} />
-                  </Link>
-                </td>
-              </tr>
-            ))
-          ) : (
+          <thead>
             <tr>
-              <td colSpan="8">No tickets available</td>
+              {['SC.No', 'NTID', 'Full Name', 'Status', 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
+                <th key={header}>{header}</th>
+              ))}
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {finalTickets.length > 0 ? (
+              finalTickets.map((ticket, index) => (
+                <tr
+                  key={ticket.ticketId}
+                  style={ticket.requestreopen ? { color: '#006A4E' } : {}}
+                >
+                  <td className='fw-medium'>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                  <td className='fw-medium'>{ticket.ntid}</td>
+                  <td className='fw-medium'>{ticket.fullname}</td>
+                  <td className='fw-medium'>{ticket.status?.name || '-'}</td>
+                  <td className='fw-medium'>{formatDate(ticket.createdAt)}</td>
+                  <td className='fw-medium'>
+                    {ticket.completedAt ? formatDate(ticket.completedAt) : '-'}
+                  </td>
+                  <td className='fw-medium'>
+                    {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : '-'}
+                  </td>
+                  <td>
+                    <Link to={'/details'}>
+                      <GrLinkNext className="fw-medium" onClick={() => handleTicket(ticket.ticketId)} />
+                    </Link>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8">No tickets available</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       )}
 
       <PageCountStack
