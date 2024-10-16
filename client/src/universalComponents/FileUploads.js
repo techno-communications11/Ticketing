@@ -28,11 +28,11 @@ function FileUploads({fileInputRef, isLoading, selectedFile,handleFileChange,han
                             onChange={handleFileChange}
                             accept=".csv"
                           />
-                          <p className="fw-bolder text-secondary">Upload files</p>
+                          <p className="fw-medium text-secondary">Upload files</p>
                         </div>
 
                       ) : (
-                        <p className="text-secondary text-center mt-4 fw-bolder">{selectedFile.name}</p>
+                        <p className="text-secondary text-center mt-4 fw-medium">{selectedFile.name}</p>
                       )}
                     </div>
                     <div className="d-flex justify-content-end">

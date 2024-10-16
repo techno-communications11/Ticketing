@@ -11,7 +11,7 @@ import { getDuration } from '../universalComponents/getDuration';
 import '../styles/TicketTable.css'
 import handleTicket from '../universalComponents/handleTicket';
 
-const TicketsTable = ({ statusIds }) => {
+const TicketsTable = ({ statusIds,text }) => {
   const dispatch = useDispatch();
   const [market, setMarket] = useState('');
   const [ntidFilter, setNtidFilter] = useState('');
@@ -66,19 +66,17 @@ const TicketsTable = ({ statusIds }) => {
   
 
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-  const completedTickets = currentItems.filter(ticket => ticket.isSettled); // completed tickets
-  const nonCompletedTickets = currentItems.filter(ticket => !ticket.isSettled); // not completed tickets
+  const completedTickets = currentItems.filter(ticket => ticket.isSettled); 
+  const nonCompletedTickets = currentItems.filter(ticket => !ticket.isSettled); 
   
 
   const sortedCompletedTickets = completedTickets.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
   const finalTickets = [...nonCompletedTickets, ...sortedCompletedTickets];
-  console.log(finalTickets)
+ 
   return (
     <Container className="mt-3">
       <h3 className="d-flex justify-content-center mb-2 font-family" style={{ color: '#E10174' }}>
-        Tickets from Market&nbsp;
-        <span>{market.charAt(0) + market.slice(1).toLowerCase()}</span>
+        {text} Tickets from Market&nbsp;
       </h3>
 
       <Form className="mb-2 d-flex gap-2">
@@ -129,7 +127,7 @@ const TicketsTable = ({ statusIds }) => {
                 </td>
                 <td>
                   <Link to={'/details'}>
-                    <GrLinkNext className="fw-bolder" onClick={() => handleTicket(ticket.ticketId,dispatch)} />
+                    <GrLinkNext className="fw-medium" onClick={() => handleTicket(ticket.ticketId,dispatch)} />
                   </Link>
                 </td>
               </tr>

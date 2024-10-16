@@ -28,7 +28,10 @@ export function NavbarClient() {
     }
   };
 
-  const isDepartments = ['Varun Team', 'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups', 'Deposits', 'Charge Back', 'Commission', 'Inventory', 'Head Office', 'Admin Related', 'Maintenance Related', 'Housing Related', 'CAM NW', 'HR Payroll'].includes(department);
+  const isDepartments = ['Varun Team', 'NTID Mappings', 'Trainings','Maintenance Related','Admin Related',
+     'Accessories Order', 'YUBI Key Setups', 'Deposits', 'Charge Back', 'Commission',
+      'Inventory', 'Head Office', 'Admin_Head', 'Maintenance_Head', 'Housing Related', 
+      'CAM NW', 'HR Payroll'].includes(department);
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -59,7 +62,11 @@ export function NavbarClient() {
         const response = await apiRequest.get('/createTickets/getdepartmenttickets', {
           params: { ntid, statusId: '3' }
         });
-        const fetchedTickets = response.data.filter(ticket => ticket.openedBy === null&& ticket.status.name!=='completed');
+        const fetchedTickets = response.data.filter(ticket =>
+           ticket.openedBy === null
+          &&ticket.assignToTeam===null
+          && ticket.status.name!=='completed');
+        console.log(<response className="data"></response>,"fetched")
         setTickets(fetchedTickets);
       } catch (error) {
         console.error('Failed to fetch tickets:', error);
@@ -87,7 +94,7 @@ export function NavbarClient() {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" navbarScroll>
-            <Navbar.Brand as={Link} to={homeRoute} className='fw-bolder text-dark' style={{ fontSize: '90%' }}>
+            <Navbar.Brand as={Link} to={homeRoute} className='fw-medium text-dark' style={{ fontSize: '90%' }}>
               TECHNO COMMUNICATIONS LLC
             </Navbar.Brand>
           </Nav>
@@ -95,11 +102,11 @@ export function NavbarClient() {
             {token ? (
               <>
                 {(department === 'District Manager' || isDepartments) && (
-                  <div className='d-flex align-items-center me-5'>
+                  <div className='d-flex align-items-center me-5 text-dark'>
                     <Nav.Link
                       as={Link}
                       to={department === 'District Manager' ? '/new' : '/departmentnew'}
-                      className='fw-bolder position-relative'
+                      className='fw-medium position-relative'
                       style={{
                         background: 'linear-gradient(90deg, rgba(63,94,251,1) 0%, rgba(180,27,148,1) 81%)',
                         WebkitBackgroundClip: 'text',
@@ -108,7 +115,7 @@ export function NavbarClient() {
                     >
                       New
                     </Nav.Link>
-                    <span className='badge bg-danger text-white fw-bolder rounded-circle d-flex align-items-center justify-content-center'
+                    <span className='badge bg-danger text-white fw-medium rounded-circle d-flex align-items-center justify-content-center'
                       style={{
                         width: '23px',
                         height: '21px',
@@ -118,25 +125,25 @@ export function NavbarClient() {
                       }}>
                       {department === 'District Manager' ? ticketCount : deptcount.length}
                     </span>
-                    {!isDepartments && <Nav.Link as={Link} to='/openedTickets' className='fw-bolder position-relative'>
+                    {!isDepartments && <Nav.Link as={Link} to='/openedTickets' className='fw-medium position-relative text-dark'>
                       Opened
                     </Nav.Link>}
                    {
                     department !== 'District Manager'&&
-                     <Nav.Link as={Link} to={isDepartments ? '/departmentopened ' : '/'} className='fw-bolder position-relative'>
+                     <Nav.Link as={Link} to={isDepartments ? '/departmentopened ' : '/'} className='fw-medium position-relative text-dark'>
                      Opened
                    </Nav.Link>
                    }
-                    <Nav.Link as={Link} to={department === 'District Manager' ? '/completed ' : 'departmentcompleted'} className='fw-bolder position-relative'>
+                    <Nav.Link as={Link} to={department === 'District Manager' ? '/completed ' : 'departmentcompleted'} className='fw-medium position-relative text-dark'>
                       Completed
                     </Nav.Link>
-                    {!isDepartments && <Nav.Link as={Link} to={department === 'District Manager' ? '/request-reopen' : '/'} className='fw-bolder position-relative'>
-                      Request Reopen
+                    {!isDepartments && <Nav.Link as={Link} to={department === 'District Manager' ? '/request-reopen' : '/'} className='fw-medium position-relative text-dark'>
+                      Reopen-requested
                     </Nav.Link>}
 
                     {
-                      department !== 'District Manager'&&
-                      <Nav.Link as={Link} to={isDepartments ? '/departmentsfromteam ' : '/'} className='fw-bolder position-relative'>
+                      department !== 'District Manager'&&department!=='Maintenance_Head'&& department!=='Admin_Head'&&
+                      <Nav.Link as={Link} to={isDepartments ? '/departmentsfromteam ' : '/'} className='fw-medium position-relative text-dark'>
                       Tickets-From-Team
                     </Nav.Link>
                     }
@@ -144,13 +151,13 @@ export function NavbarClient() {
                 )}
                 {department === "SuperAdmin" && (
                   <>
-                    <Nav.Link as={Link} to='/marketstructureupload' className='me-2 fw-bolder text-black'>
-                      Register market
+                    <Nav.Link as={Link} to='/marketstructureupload' className='me-2 fw-medium text-dark'>
+                      Register-market
                     </Nav.Link>
-                    <Nav.Link as={Link} to='/register' className='me-2 fw-bolder text-black'>
-                      Register user
+                    <Nav.Link as={Link} to='/register' className='me-2 fw-medium text-dark'>
+                      Register-user
                     </Nav.Link>
-                    <Nav.Link as={Link} to='/users' className='me-2 fw-bolder text-black'>
+                    <Nav.Link as={Link} to='/users' className='me-2 fw-medium text-dark'>
                       Users
                     </Nav.Link>
                   </>

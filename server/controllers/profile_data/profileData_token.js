@@ -8,11 +8,10 @@ const GetProfileData_token = async (req, res) => {
       return res.status(400).json({ error: 'User ID is required' });
     }
 
-    // Fetch user data
+    // Fetch user data excluding departmentId
     const user = await prisma.user.findUnique({
-      where: {
-        id: userId
-      },
+      where: { id: userId },
+      select: { ntid: true, fullname: true, DoorCode: true,departmentId:true } // Removed departmentId
     });
 
     if (!user) {
@@ -20,27 +19,29 @@ const GetProfileData_token = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Fetch the department name using the user's departmentId
+    // Fetch department name using departmentId
     const department = await prisma.department.findUnique({
       where: { id: user.departmentId },
       select: { name: true }
     });
 
-    // Fetch the market data
+    // Fetch market data using doorCode
     const marketData = await prisma.marketStructure.findUnique({
       where: { doorCode: user.DoorCode },
       select: {
-        market: { select: { market: true } }, // Fetch the market name
+        market: { select: { market: true } },
         dmName: true,
       }
     });
 
-    // Construct the response object
+    // Construct response without departmentId
     const response = {
-      ...user,
-      departmentName: department ? department.name : null, 
-      market: marketData?.market?.market || null, // Safely accessing market name
-      dmName: marketData?.dmName || null, // Safely accessing dmName
+      ntid: user.ntid,
+      fullname: user.fullname,
+      DoorCode: user.DoorCode,
+      departmentName: department ? department.name : null,
+      market: marketData?.market?.market || null,
+      dmName: marketData?.dmName || null,
     };
 
     res.status(200).json(response);

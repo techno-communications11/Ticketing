@@ -12,8 +12,7 @@ const createTicket = async (req, res) => {
         }
 
         const { ntid, fullname, phone, market, store, department, ticketSubject, description } = req.body;
-        console.log(req.body);  // Consider removing or sanitizing sensitive data in production
-
+        console.log(req.body);  
         try {
             const dmData = await prisma.marketStructure.findMany({
                 where: { storeName: store },
@@ -46,12 +45,7 @@ const createTicket = async (req, res) => {
                 ("0" + currentDate.getUTCMinutes()).slice(-2) +
                 ("0" + currentDate.getUTCSeconds()).slice(-2);
 
-           
 
-            // Check if the status with the custom ID exists
-         
-
-          
             // Create a new ticket
             const newTicket = await prisma.createTicket.create({
                 data: {
@@ -64,7 +58,6 @@ const createTicket = async (req, res) => {
                     department: department, 
                     ticketRegarding: ticketSubject,
                     description,
-                    ticketNowAt:'',
                     status: { connect: { id: '1' } }, 
                     department: { connect: { id: '19' } },
                     assignedTo: dmName,

@@ -19,8 +19,8 @@ export function Login() {
   const Departments = [
     'Varun Team', 'NTID Mappings', 'Trainings', 'Accessories Order',
     'YUBI Key Setups', 'Deposits', 'Charge Back', 'Commission',
-    'Inventory', 'Head Office', 'Admin Related', 'Maintenance Related',
-    'Housing Related', 'CAM NW', 'HR Payroll', 
+    'Inventory', 'Head Office', 'Admin_Head', 'Maintenance_Head',
+    'Housing Related', 'CAM NW', 'HR Payroll', 'Maintenance Related','Admin Related'
   ];
 
   useEffect(() => {
@@ -36,12 +36,12 @@ export function Login() {
     return () => animation.destroy();
   }, []);
 
+
   const validateInputs = (ntid, password) => {
     const ntidRegex = /^(?=.*[a-z])(?=.*\d)[a-zA-Z\d]{3,16}$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+={}[\]|\\:;'",.<>?/~`-])[A-Za-z\d!@#$%^&*()_+={}[\]|\\:;'",.<>?/~`-]{8,20}$/;
 
     let valid = true;
-
     if (!ntidRegex.test(ntid)) {
       setNtidError('NTID should be 3-16 characters long and contain letters and digits.');
       valid = false;
@@ -103,7 +103,7 @@ export function Login() {
       ) : (
         <>
           <div className='my-2 text-center mt-5'>
-            <h2 className='fw-bolder fs-3' style={{ color: '#E10174' }}>TECHNO COMMUNICATIONS LLC</h2>
+            <h2 className='fw-medium fs-3' style={{ color: '#E10174' }}>TECHNO COMMUNICATIONS LLC</h2>
           </div>
 
           <div className='row justify-content-center align-items-center w-100 mt-5'>

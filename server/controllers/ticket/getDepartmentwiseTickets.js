@@ -1,11 +1,11 @@
 import prisma from "../lib/prisma.js";
 
 const GetDepartmentWisetickets = async (req, res) => {
-    const { ntid, statusId } = req.query; // Get NTID and statusId from query parameters
-    console.log(ntid, "NTID", "statusId", statusId); // Log NTID and statusId for debugging
+    const { ntid, statusId } = req.query; 
+    console.log(ntid, "NTID", "statusId", statusId); 
 
     if (!ntid) {
-        return res.status(400).json({ error: 'NTID required' }); // Return 400 if NTID is missing
+        return res.status(400).json({ error: 'NTID required' }); 
     }
 
     try {
@@ -13,12 +13,14 @@ const GetDepartmentWisetickets = async (req, res) => {
             where: { ntid },
             select: { departmentId: true }
         });
+        console.log(user,"uisrs")
 
         if (!user || !user.departmentId) {
             return res.status(404).json({ error: 'User or department not found' });
         }
 
         const departmentId = user.departmentId;
+       
 
         const tickets = await prisma.createTicket.findMany({
             where: { departmentId },
@@ -29,7 +31,7 @@ const GetDepartmentWisetickets = async (req, res) => {
                 status: {
                     select: {
                         id: true,
-                        name: true, // Get the status name
+                        name: true, 
                     }
                 },
                 createdAt: true,

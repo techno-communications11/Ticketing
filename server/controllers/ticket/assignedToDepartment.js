@@ -2,48 +2,44 @@ import prisma from '../lib/prisma.js';
 
 const assignToDepartment = async (req, res) => {
   try {
-    // Log the incoming query parameters
     console.log(req.query, "Incoming query parameters");
 
-    const { department, ticketId, ntid } = req.query;
+    let { department, ticketId, ntid } = req.query;
     console.log(ntid, department, ticketId, "Department assignment details");
 
-    // Validate inputs
     if (!department || !ticketId || !ntid) {
-      return res.status(400).send('Need all the required fields');
+      return res.status(400).send('All required fields (department, ticketId, ntid) must be provided');
     }
 
-    if (!prisma) {
-      console.error('Prisma client is not initialized');
-      return res.status(500).send('Internal Server Error: Prisma client not initialized');
+    if (department === 'Maintenance Related') {
+      department = 'Maintenance_Head';
+    } else if (department === 'Admin') {
+      department = 'Admin_Head';
     }
 
-    // Log the ticket model to see if it's defined
-    console.log(prisma.ticket, "Prisma ticket model"); // Check if this is defined
-
-    // Find the department ID
     const departmentRecord = await prisma.department.findUnique({
       where: { name: department },
       select: { id: true },
     });
 
-    console.log(departmentRecord, 'Fetched department record');
-
-    // Check if department exists
     if (!departmentRecord) {
+      console.error(`Department not found: ${department}`);
       return res.status(404).send('Department not found');
     }
 
-    // Update the ticket with the department ID
     const updatedTicket = await prisma.createTicket.update({
       where: { ticketId: ticketId },
-      data: { departmentId: departmentRecord.id, ticketNowAt: ntid, openedBy:null },
+      data: { 
+        departmentId: departmentRecord.id,  
+        openedBy: null, 
+      },
     });
 
-    // Return the updated ticket
+    console.log(`Ticket ${ticketId} successfully updated and assigned to ${department}`);
     res.status(200).json(updatedTicket);
+
   } catch (err) {
-    console.error(err); // Use console.error for better logging
+    console.error('Error occurred during department assignment:', err);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

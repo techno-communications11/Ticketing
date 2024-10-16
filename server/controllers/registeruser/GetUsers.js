@@ -18,7 +18,15 @@ const GetUsers = async (req, res) => {
       return res.status(404).json({ message: "Logged-in user not found" });
     }
 
-    const { departmentId } = loggedInUser;
+    let { departmentId } = loggedInUser;
+    if(departmentId==='22'){
+      departmentId='11'
+
+    }
+    if(departmentId==='23'){
+      departmentId='12'
+
+    }
 
     // Fetch all team members from the same department
     const teamMembers = await prisma.user.findMany({
@@ -31,7 +39,7 @@ const GetUsers = async (req, res) => {
     if (teamMembers.length === 0) {
       return res.status(404).json({ message: "No team members found in this department" });
     }
-
+ console.log(teamMembers,"team")
     return res.status(200).json({ teamMembers });
   } catch (error) {
     console.error("Error fetching team members:", error);

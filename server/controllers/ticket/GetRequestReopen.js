@@ -19,6 +19,7 @@ const GetRequestReopen = async (req, res) => {
         const tickets = await prisma.createTicket.findMany({
             where: {
                 assignedTo: user.fullname,
+                statusId:'4',
                 requestreopen: true
             },
             include:{

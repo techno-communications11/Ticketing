@@ -10,7 +10,8 @@ const alloted = async (req, res) => {
     const updatedTicket = await prisma.createTicket.update({
       where: { ticketId },
       data: {
-        assignToTeam: user,  
+        assignToTeam: user, 
+        openedBy:null 
       },
     });
 

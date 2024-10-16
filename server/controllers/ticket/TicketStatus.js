@@ -26,7 +26,7 @@ const TicketStatus = async (req, res) => {
       '2': ['3', '4'],
       '3': ['4'],
       '4': ['5'],
-      '5': ['3', '4']
+      '5': ['3', '4','1']
     };
 
     if (validTransitions[ticket.status.id]?.includes(statusId)) {
@@ -34,10 +34,15 @@ const TicketStatus = async (req, res) => {
 
       if (statusId === '4') {
         updateData.completedAt = new Date();
+        updateData.requestreopen=null;
+      } 
+      if (statusId === '3') {
+        updateData.openedBy = null;
       } 
       if (statusId === '5') {
         updateData.completedAt = null;
         updateData.isSettled=null;
+        updateData.assignToTeam=null;
       }
 
       await prisma.createTicket.update({

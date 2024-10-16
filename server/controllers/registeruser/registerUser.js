@@ -37,8 +37,8 @@ const RegisterCode = async (req, res) => {
       // Parse CSV data from file buffer
       let jsonData;
       try {
-        const csvString = req.file.buffer.toString(); // Convert buffer to string
-        jsonData = await csv().fromString(csvString); // Parse CSV from string
+        const csvString = req.file.buffer.toString(); 
+        jsonData = await csv().fromString(csvString); 
         console.log('Parsed CSV Data:', jsonData);
       } catch (parseError) {
         throw new Error(`CSV parsing failed: ${parseError.message}`);
@@ -48,11 +48,11 @@ const RegisterCode = async (req, res) => {
       const userData = jsonData.map(item => removeWhitespaceFromKeys(item));
 
       const usersToInsert = userData.map(item => ({
-        ntid: item.ntid || '',
-        fullname: item.fullname || '',
+        ntid: item.ntid.toLowerCase() || '',
+        fullname: item.fullname.toLowerCase() || '',
         departmentId: item.departmentId|| '1', 
         DoorCode: item.DoorCode || '',
-        password: item.Password || '', // Ensure passwords are handled properly (hashed later)
+        password: item.Password || '', 
       }));
 
       console.log('Data to insert:', usersToInsert);
