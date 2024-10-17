@@ -25,6 +25,10 @@ import DepartmentHome from './Department/DepartmentHome';
 import RequestReopen from './DistrictManager/RequestReopen'
 import Tickets_From_Team from './Department/Tickets_From_Team';
 import DepartmentOpened from './Department/DepartmentOpened';
+import CompletedMA from './MA_Individual/CompletedMA';
+import OpenedMA from './MA_Individual/OpenedMA';
+import NewMA from './MA_Individual/NewMA';
+import MAhome from './MA_Individual/MAhome';
 
 
 const getToken = () => localStorage.getItem('token');
@@ -39,8 +43,9 @@ const marketManagerDepartments = ['Market Manager'];
 const departmentDepartments = [
   'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups', 'Deposits', 'Charge Back',
   'Commission', 'Inventory', 'Head Office', 'Admin_Head', 'Maintenance_Head', 'Housing Related',
-  'CAM NW', 'HR Payroll','Varun Team','Maintenance Related','Admin Related'
+  'CAM NW', 'HR Payroll','Varun Team'
 ];
+const MA_rel=['Maintenance Related','Admin Related'];
 
 const ProtectedRoute = ({ children, allowedDepartments }) => {
   const token = getToken();
@@ -68,6 +73,38 @@ const AppContent = () => {
           element={
             <ProtectedRoute allowedDepartments={superAdminDepartments}>
               <Users />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/MAcompleted"
+          element={
+            <ProtectedRoute allowedDepartments={MA_rel}>
+              <CompletedMA />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/MAopened"
+          element={
+            <ProtectedRoute allowedDepartments={MA_rel}>
+              <OpenedMA />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/MAhome"
+          element={
+            <ProtectedRoute allowedDepartments={MA_rel}>
+              <MAhome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/MAnew"
+          element={
+            <ProtectedRoute allowedDepartments={MA_rel}>
+              <NewMA />
             </ProtectedRoute>
           }
         />
@@ -130,7 +167,7 @@ const AppContent = () => {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute allowedDepartments={[...superAdminDepartments, ...districtManagerDepartments, ...departmentDepartments,...marketManagerDepartments]}>
+            <ProtectedRoute allowedDepartments={[...MA_rel,...superAdminDepartments, ...districtManagerDepartments, ...departmentDepartments,...marketManagerDepartments]}>
               <Profile />
             </ProtectedRoute>
           }
@@ -170,7 +207,7 @@ const AppContent = () => {
         <Route
           path="/details"
           element={
-            <ProtectedRoute allowedDepartments={[...superAdminDepartments, ...departmentDepartments, ...marketManagerDepartments, ...districtManagerDepartments]}>
+            <ProtectedRoute allowedDepartments={[...MA_rel,...superAdminDepartments, ...departmentDepartments, ...marketManagerDepartments, ...districtManagerDepartments]}>
               <IndividualTickets />
             </ProtectedRoute>
           }

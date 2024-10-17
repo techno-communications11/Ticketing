@@ -3,7 +3,7 @@ import Ticket from './Ticket';
 
 function DepartmentOpened() {
   return (
-    <Ticket statusId={'3'} text="Opened Tickets" openedbyUser={true} />
+    <Ticket statusId={'3'} text="Opened" openedbyUser={true} departmentId={'23'} />
   );
 }
 

@@ -387,42 +387,42 @@ export function Home() {
                     </div>
                     <div className='col-12 col-md-8 bg-white shadow-lg border-0 rounded p-2'>
                         <div className='d-flex justify-content-center '>
-                            <p className='fs-3 fw-medium text-dark font-family' >Status Of Tickets</p>
+                            <p className='fs-3 fw-medium font-family' >Status Of Tickets</p>
                         </div>
                         <div className="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-3 p-3">
                             <Link onClick={handleTotal} to="/totalusertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-3">
-                                    <h6 className="fw-bold">Total</h6>
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                                    <h6 className="fw-medium">Total</h6>
                                     <p id="Totalvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleNew} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-3">
-                                    <h6 className="fw-bold">New</h6>
+                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                                    <h6 className="fw-medium">New</h6>
                                     <p id="Newvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleOpened} to="/usertickets" className="col text-decoration-none">
                                 <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-bold">Opened</h6>
+                                    <h6 className="fw-medium">Opened</h6>
                                     <p id="Openedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleInprogress} to="/usertickets" className="col text-decoration-none">
                                 <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-bold">InProgress</h6>
+                                    <h6 className="fw-medium">InProgress</h6>
                                     <p id="Inprocessvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleCompleted} to="/usertickets" className="col text-decoration-none">
                                 <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-bold">Completed</h6>
+                                    <h6 className="fw-medium">Completed</h6>
                                     <p id="Completedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>
                             <Link onClick={handleReOpened} to="/usertickets" className="col text-decoration-none">
                                 <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-bold">Reopened</h6>
+                                    <h6 className="fw-medium">Reopened</h6>
                                     <p id="reOpenedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
                                 </div>
                             </Link>

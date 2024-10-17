@@ -120,7 +120,6 @@ const UserTable = () => {
           </button>
         </div>
       </div>
-
       {isSearching ? (
         <div className='vh-100'>
           <div className='loader d-flex align-items-center justify-content-center vh-80'></div>
@@ -137,14 +136,12 @@ const UserTable = () => {
                 <h2 className="font-family mb-0" style={{ color: '#E10174' }}>Users Information</h2>
                 <h4 className="mb-0" style={{ color: '#E10174' }}>users: {users.length}</h4>
               </div>
-
               <Table striped bordered hover className='table  align-middle text-center'>
                 <thead>
                   <tr>
                   {['SC.No', 'NTID', 'Full Name', 'Market', 'DmName', 'Edit', 'View Profile'].map((header) => (
                   <th key={header} className='text-center' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
                 ))}
-                    
                   </tr>
                 </thead>
                 <tbody>
@@ -238,7 +235,6 @@ const UserTable = () => {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
       />
-
       <ToastContainer />
     </div>
   );

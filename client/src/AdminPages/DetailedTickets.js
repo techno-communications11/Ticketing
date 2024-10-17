@@ -61,10 +61,7 @@ const ShowTickets = () => {
 
   const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter);
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
-  };
+  const toggleDropdown = () => { setDropdownVisible(!dropdownVisible); };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -84,12 +81,10 @@ const ShowTickets = () => {
     dispatch(fetchTickets(selectedMarket.toLowerCase()));
     setDropdownVisible(false);
   };
-  console.log(currentItems)
-
 
   return (
     <Container className="mt-2">
-      <div className="mb-2 font-family text-capitalize d-flex align-items-center" style={{ color: '#E10174' }}>
+      <div className="mb-1 font-family text-capitalize d-flex align-items-center" style={{ color: '#E10174' }}>
         <h3 className="me-1">Tickets from Market {market.toLowerCase()}</h3>
         <h3 className="position-relative me-auto" ref={dropdownRef}>
           <button onClick={toggleDropdown} className="border-0 bg-transparent text-primary">
@@ -120,11 +115,8 @@ const ShowTickets = () => {
           setDateFilter={setDateFilter}
         />
       </div>
-
       {loading ? (
-        <div className='loader d-flex align-items-center justify-content-center vh-80'>
-
-        </div>
+        <div className='loader d-flex align-items-center justify-content-center vh-80'></div>
       ) : (
         <Table bordered hover responsive>
           <thead>
@@ -140,7 +132,7 @@ const ShowTickets = () => {
                 <TicketBody ticket={ticket}
                   index={index}
                   handleTicket={handleTicket}
-                  currentPage={currentPage} // pass the current page
+                  currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
                 />
               ))
@@ -152,7 +144,6 @@ const ShowTickets = () => {
           </tbody>
         </Table>
       )}
-
       <PageCountStack
         filteredTickets={filteredTickets}
         currentPage={currentPage}

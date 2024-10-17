@@ -2,7 +2,8 @@ import prisma from "../lib/prisma.js";
 
 const alloted = async (req, res) => {
   const { user,ticketId } = req.body; 
-  console.log(user,"usr")
+  console.log(user)
+
   
 
   try {

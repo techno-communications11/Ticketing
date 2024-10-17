@@ -1,78 +1,106 @@
 import React, { useEffect, useState } from 'react';
 import { apiRequest } from '../lib/apiRequest';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
-import { setId, fetchIndividualTickets } from '../redux/marketSlice';
 import Filtering from '../universalComponents/Filtering';
-import FilterLogic from '../universalComponents/FilteringLogic';
-import '../styles/loader.css';
+import TicketBody from '../universalComponents/TicketBody';
 import PageCountStack from '../universalComponents/PageCountStack';
 import { Container, Row } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import getDecodedToken from '../universalComponents/decodeToken';
-import TicketBody from '../universalComponents/TicketBody';
+import FilterLogic from '../universalComponents/FilteringLogic';
+import { useDispatch } from 'react-redux';
+import { setId, fetchIndividualTickets } from '../redux/marketSlice';
 
-function Ticket({ statusId, text, openedby, openedbyUser, fullname }) {
-  const dispatch = useDispatch();
+function Ticket({ statusId, indifullname, departmentId, onTicketData, openedby, openedbyUser, fullname,completedAt }) {
   const [tickets, setTickets] = useState([]);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [ntidFilter, setntidFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
-  const [ntidFilter, setntidFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const ntid = getDecodedToken()?.ntid;
     const userId = getDecodedToken()?.id;
-    console.log(userId, "scg")
+
     const fetchUserTickets = async () => {
       try {
         const response = await apiRequest.get('/createTickets/getdepartmenttickets', {
           params: { ntid, statusId }
         });
+
         let fetchedTickets = response.data;
 
+
         if (openedby === null) {
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy === null&&ticket.assignToTeam===null);
-        }
-        if (fullname) {
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.assignToTeam === fullname &&ticket.status.name !== "completed"&&ticket.openedBy===null);
+          fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy === null && ticket.assignToTeam === null&& ticket.status.name!=='completed');
+          console.log(fetchedTickets,'ddp')
         }
 
-        if (openedbyUser) {
-          fetchedTickets = fetchedTickets.filter(
-            ticket =>
-              ticket.status.name !== "completed" &&
-              ticket.openedBy === userId 
+        if (fullname) {
+          fetchedTickets = fetchedTickets.filter(ticket => 
+            ticket.assignToTeam === fullname && 
+            ticket.status.name !== "completed" &&
+            ticket.openedBy === null
           );
         }
-        if (statusId == '4') {
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.status.name === "completed" && ticket.openedBy === userId);
+        if (openedbyUser) {
+          fetchedTickets = fetchedTickets.filter(ticket => 
+            ticket.status.name !== "completed" &&
+            ticket.openedBy === userId
+          );
         }
+        if (statusId === '4') {
+          fetchedTickets = fetchedTickets.filter(ticket => 
+            ticket.status.name === "completed" && 
+            ticket.openedBy === userId
+          );
+        }
+        if (statusId === '3') {
+          if(!openedbyUser)
+          fetchedTickets = fetchedTickets.filter(ticket => 
+            ticket.status.name === "inprogress" &&
+            ticket.openedBy === null 
+          );
+          if(openedbyUser){
+            fetchedTickets = fetchedTickets.filter(ticket => 
+              ticket.status.name !== "completed" &&
+              ticket.openedBy === userId
+            );
+            console.log(fetchedTickets,"ppp")
+          }
+          
+        }
+        
+        
+         
+        
 
         setTickets(fetchedTickets);
-        setAuthenticated(true);
+
+      
       } catch (error) {
         console.error('Failed to fetch tickets:', error);
         toast.error('Failed to fetch tickets');
       }
     };
-    fetchUserTickets();
-  }, [statusId, openedby]);
 
-  const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter);
-  const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    fetchUserTickets();
+  }, [statusId, indifullname, departmentId, openedby, fullname, openedbyUser, onTicketData,completedAt]);
 
   const handleTicket = (id) => {
-    localStorage.setItem("selectedId", id);
+    localStorage.setItem('selectedId', id);
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
 
+  const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter);
+  const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
-    <Container className='mt-1'>
-      <h3 className='my-2 d-flex justify-content-center my-3' style={{ color: '#E10174' }}>{text} Department Tickets</h3>
-      <Row className='mx-1 mb-3'>
+    <Container className="mt-1">
+      <h3 className="my-2 d-flex justify-content-center my-3" style={{ color: '#E10174' }}>Tickets</h3>
+      <Row className="mx-1 mb-3">
         <Filtering
           ntidFilter={ntidFilter}
           setntidFilter={setntidFilter}
@@ -82,7 +110,9 @@ function Ticket({ statusId, text, openedby, openedbyUser, fullname }) {
           setDateFilter={setDateFilter}
         />
       </Row>
-      {authenticated && currentItems.length > 0 && (
+
+      {/* Displaying Tickets Table */}
+      {currentItems.length > 0 ? (
         <div className="table-responsive container">
           <table className="table table-bordered table-hover">
             <thead>
@@ -94,15 +124,22 @@ function Ticket({ statusId, text, openedby, openedbyUser, fullname }) {
             </thead>
             <tbody>
               {currentItems.map((ticket, index) => (
-                <TicketBody ticket={ticket} 
-                index={index} 
-                handleTicket={handleTicket} currentPage={currentPage} itemsPerPage={itemsPerPage}/>
-
+                <TicketBody
+                  key={ticket.id} 
+                  ticket={ticket}
+                  index={index}
+                  handleTicket={handleTicket}
+                  currentPage={currentPage}
+                  itemsPerPage={itemsPerPage}
+                />
               ))}
             </tbody>
           </table>
         </div>
+      ) : (
+        <p className="text-center">No tickets found.</p>
       )}
+
       <PageCountStack
         filteredTickets={filteredTickets}
         currentPage={currentPage}

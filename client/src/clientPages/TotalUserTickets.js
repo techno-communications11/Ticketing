@@ -67,7 +67,6 @@ function TotalUserTickets() {
   return (
     <div className='container-fluid mt-1'>
       <h2 className='my-2 d-flex justify-content-center' style={{ color: '#E10174' }}>Total User Tickets</h2>
-
       <Form className="container mb-2 d-flex gap-2">
         <Form.Group controlId="statusFilter">
           <Form.Select value={statusFilter} onChange={handleFilterChange(setStatusFilter)} className='shadow-none'>

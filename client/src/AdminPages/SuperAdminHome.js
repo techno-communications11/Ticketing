@@ -17,14 +17,18 @@ export function SuperAdminHome() {
   const [ticketCounts, setTicketCounts] = useState({});
   const [marketTicketCounts, setMarketTicketCounts] = useState({});
   const [error, setError] = useState('');
+  const [loading, setIsloading] = useState(false);
+
 
   const fetchMarketData = useCallback(async () => {
     try {
       const data = await getMarkets();
       setMarketData(data);
+      setIsloading(true)
     } catch (err) {
       setError('Failed to load market data.');
     } finally {
+      setIsloading(false)
     }
   }, []);
 
@@ -38,10 +42,12 @@ export function SuperAdminHome() {
         }, {});
         counts.total = Object.values(counts).reduce((sum, count) => sum + count, 0);
         setTicketCounts(counts);
+        setIsloading(true)
       }
     } catch (error) {
       setError('Failed to fetch ticket counts.');
     } finally {
+      setIsloading(false)
     }
   }, []);
 
@@ -62,9 +68,11 @@ export function SuperAdminHome() {
           return acc;
         }, {});
         setMarketTicketCounts(marketTotals);
+        setIsloading(true)
       } catch (error) {
         setError('Failed to fetch market-wise status.');
       } finally {
+        setIsloading(false)
       }
     }
   }, [marketData]);
@@ -86,11 +94,7 @@ export function SuperAdminHome() {
   }, [ticketCounts]);
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
-
-  const handleMarketClick = (market) => {
-    dispatch(setMarket(market));
-  };
-
+  const handleMarketClick = (market) => { dispatch(setMarket(market)); };
   const handleStatusClick = (market, statusId) => {
     localStorage.setItem('marketData', market);
     localStorage.setItem('statusData', statusId);
