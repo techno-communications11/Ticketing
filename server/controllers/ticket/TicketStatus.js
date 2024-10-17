@@ -22,7 +22,7 @@ const TicketStatus = async (req, res) => {
     console.log(`Current Ticket Status: ${ticket.status.id}, Requested Status: ${statusId}`);
 
     const validTransitions = {
-      "1": ['2'],
+      '1': ['2'],
       '2': ['3', '4'],
       '3': ['4'],
       '4': ['5'],
