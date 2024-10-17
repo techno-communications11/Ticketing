@@ -59,7 +59,6 @@ export function Home() {
   const descriptionRef = useRef(null);
   const marketRef = useRef(null);
   const fullnameRef = useRef("");
-  const ticketDepartmentRef=useState(null)
   const [selectedDepartment, setSelectedDepartment] = useState("");
 
   const handleDepartmentChange = (event) => {
@@ -121,7 +120,6 @@ export function Home() {
     const phone = phoneRef.current.value;
     const ticketSubject = ticketSubjectRef.current.value;
     const description = descriptionRef.current.value;
-    const ticketDepartment = ticketDepartmentRef.current.value;
     const market = marketRef.current.value;
     const fullname = fullnameRef.current.value;
     if (!ntid) newErrors.ntid = "NTID is required";
