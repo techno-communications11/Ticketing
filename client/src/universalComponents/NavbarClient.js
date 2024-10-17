@@ -93,7 +93,7 @@ export function NavbarClient() {
                   <div className='d-flex align-items-center me-5 text-dark'>
                     <Nav.Link
                       as={Link}
-                      to={department === 'District Manager' ? '/new' : '/departmentnew'}
+                      to={department === 'District Manager' ? '/new' : isDepartments ? '/departmentnew' : ma_rel?'/MAnew':'/'}
                       className='fw-medium position-relative'
                       style={{
                         background: 'linear-gradient(90deg, rgba(63,94,251,1) 0%, rgba(180,27,148,1) 81%)',
