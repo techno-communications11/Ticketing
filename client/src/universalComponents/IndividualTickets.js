@@ -212,6 +212,9 @@ const Individualmarketss = () => {
       if (response.status === 200) {
         toast.success(`assigned to ${selectedDept}`)
         updateTicketStatus('3');
+        setTimeout(() => {
+          window.location.reload();
+        }, [2000])
       }
     }
     catch (error) {

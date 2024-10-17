@@ -1,60 +1,49 @@
 import { apiRequest } from '../lib/apiRequest';
 import { Container, Navbar, Nav, NavbarBrand } from 'react-bootstrap';
 import { FaUserAlt } from "react-icons/fa";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchStatusWiseTickets } from '../redux/statusSlice';
 
 export function NavbarClient() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [deptcount, setTickets] = useState([]);
-
   const [ticketCount, setTicketCount] = useState(0);
   const token = localStorage.getItem('token');
   const { department, id: userId, ntid,fullname } = token ? jwtDecode(token) : {};
 
   const handleLogout = async () => {
-    try {
-      const response = await apiRequest.post('/auth/logout', {}, { withCredentials: true });
-      if (response.status === 200) {
         localStorage.clear();
-        window.location.href = '/login'; // Navigate and reload
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-    }
+        window.location.href = '/login'; 
   };
 
-  const isDepartments = ['Varun Team', 'NTID Mappings', 'Trainings','Maintenance Related','Admin Related',
+  const isDepartments = ['Varun Team', 'NTID Mappings', 'Trainings',
      'Accessories Order', 'YUBI Key Setups', 'Deposits', 'Charge Back', 'Commission',
       'Inventory', 'Head Office', 'Admin_Head', 'Maintenance_Head', 'Housing Related', 
       'CAM NW', 'HR Payroll'].includes(department);
+      const ma_rel=['Maintenance Related','Admin Related'].includes(department)
 
   useEffect(() => {
     const fetchTickets = async () => {
       if (!userId) return;
-
       try {
         const statuseIds = ['1', '5'];
         const ticketPromises = statuseIds.map(statusId => dispatch(fetchStatusWiseTickets({ id: userId, statusId })));
         const ticketResponses = await Promise.all(ticketPromises);
-
         const totalTickets = ticketResponses.reduce((total, response) => {
           return total + (response.payload?.length || 0);
         }, 0);
-
         setTicketCount(totalTickets);
         localStorage.setItem("NewCount", totalTickets);
       } catch (error) {
         console.error("Error fetching tickets:", error);
       }
     };
-
     fetchTickets();
   }, [dispatch, userId]);
+
 
   useEffect(() => {
     const fetchUserTickets = async () => {
@@ -66,7 +55,6 @@ export function NavbarClient() {
            ticket.openedBy === null
           &&ticket.assignToTeam===null
           && ticket.status.name!=='completed');
-        console.log(<response className="data"></response>,"fetched")
         setTickets(fetchedTickets);
       } catch (error) {
         console.error('Failed to fetch tickets:', error);
@@ -75,6 +63,7 @@ export function NavbarClient() {
     fetchUserTickets();
   }, [userId, ntid]);
 
+
   const isEmployeedepartment = ['Employee', 'District Manager'].includes(department);
   const homeRoute = isEmployeedepartment
     ? '/home'
@@ -82,7 +71,7 @@ export function NavbarClient() {
       ? '/departmentHome'
       : department === 'Market Manager'
         ? '/markethome'
-        : '/superAdminHome';
+        :ma_rel?'/MAhome': '/superAdminHome';
 
   return (
     <Navbar expand="lg" className="shadow-sm">
@@ -90,7 +79,6 @@ export function NavbarClient() {
         <NavbarBrand as={Link} to={homeRoute}>
           <img src='../logo.png' height={30} alt="Logo" />
         </NavbarBrand>
-
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" navbarScroll>
@@ -101,7 +89,7 @@ export function NavbarClient() {
           <Nav className='ms-auto'>
             {token ? (
               <>
-                {(department === 'District Manager' || isDepartments) && (
+                {(department === 'District Manager' || isDepartments||ma_rel) && (
                   <div className='d-flex align-items-center me-5 text-dark'>
                     <Nav.Link
                       as={Link}
@@ -125,24 +113,24 @@ export function NavbarClient() {
                       }}>
                       {department === 'District Manager' ? ticketCount : deptcount.length}
                     </span>
-                    {!isDepartments && <Nav.Link as={Link} to='/openedTickets' className='fw-medium position-relative text-dark'>
+                    {!isDepartments&&!ma_rel && <Nav.Link as={Link} to='/openedTickets' className='fw-medium position-relative text-dark'>
                       Opened
                     </Nav.Link>}
+                   
                    {
                     department !== 'District Manager'&&
-                     <Nav.Link as={Link} to={isDepartments ? '/departmentopened ' : '/'} className='fw-medium position-relative text-dark'>
+                     <Nav.Link as={Link} to={isDepartments ? '/departmentopened ' : ma_rel?'/MAopened':'/'} className='fw-medium position-relative text-dark'>
                      Opened
                    </Nav.Link>
                    }
-                    <Nav.Link as={Link} to={department === 'District Manager' ? '/completed ' : 'departmentcompleted'} className='fw-medium position-relative text-dark'>
+                    <Nav.Link as={Link} to={department === 'District Manager' ? '/completed ' : isDepartments ? '/departmentcompleted ' : ma_rel?'/MAcompleted':'/'} className='fw-medium position-relative text-dark'>
                       Completed
                     </Nav.Link>
-                    {!isDepartments && <Nav.Link as={Link} to={department === 'District Manager' ? '/request-reopen' : '/'} className='fw-medium position-relative text-dark'>
+                    {!ma_rel &&!isDepartments && <Nav.Link as={Link} to={department === 'District Manager' ? '/request-reopen' : '/'} className='fw-medium position-relative text-dark'>
                       Reopen-requested
                     </Nav.Link>}
-
                     {
-                      department !== 'District Manager'&&department!=='Maintenance_Head'&& department!=='Admin_Head'&&
+                      !ma_rel && department !== 'District Manager'&&department!=='Maintenance_Head'&& department!=='Admin_Head'&&
                       <Nav.Link as={Link} to={isDepartments ? '/departmentsfromteam ' : '/'} className='fw-medium position-relative text-dark'>
                       Tickets-From-Team
                     </Nav.Link>

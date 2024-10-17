@@ -20,9 +20,9 @@ export function Login() {
     'Varun Team', 'NTID Mappings', 'Trainings', 'Accessories Order',
     'YUBI Key Setups', 'Deposits', 'Charge Back', 'Commission',
     'Inventory', 'Head Office', 'Admin_Head', 'Maintenance_Head',
-    'Housing Related', 'CAM NW', 'HR Payroll', 'Maintenance Related','Admin Related'
+    'Housing Related', 'CAM NW', 'HR Payroll'
   ];
-
+ const MA_rel=['Maintenance Related','Admin Related']
   useEffect(() => {
     const animContainer = document.getElementById('animation-container');
     const animation = lottie.loadAnimation({
@@ -84,7 +84,9 @@ export function Login() {
         navigate('/departmenthome');
       } else if (department==='Market Manager') {
         navigate('/markethome');
-      } else {
+      } else if(MA_rel.includes(department)){
+        navigate('/MAhome')
+      } else{
         navigate('/superAdminHome');
       }
     } catch (error) {

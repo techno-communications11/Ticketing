@@ -1,9 +1,9 @@
 import React from 'react'
 import { MdOutlineCloudUpload } from "react-icons/md";
 
-function FileUploads({fileInputRef, isLoading, selectedFile,handleFileChange,handleFileUpload,handleFileUploadClick}) {
+function FileUploads({fileInputRef, selectedFile,handleFileChange,handleFileUpload,handleFileUploadClick}) {
   return (
-    <div className="row mt-5">
+    <div className="row">
                 <div className="col-12 col-md-6 order-md-2 d-flex justify-content-center align-items-center">
                   <img src="../csv.png" alt="CSV illustration" className="img-fluid d-none d-md-block" />
                 </div>
@@ -39,9 +39,8 @@ function FileUploads({fileInputRef, isLoading, selectedFile,handleFileChange,han
                       <button
                         className="btn btn-primary w-100"
                         onClick={handleFileUpload}
-                        disabled={isLoading}
                       >
-                        {isLoading ? 'Uploading...' : 'Upload'}
+                        Upload
                       </button>
                     </div>
                   </div>

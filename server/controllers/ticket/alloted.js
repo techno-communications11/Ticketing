@@ -7,12 +7,17 @@ const alloted = async (req, res) => {
   
 
   try {
+    const dept=await prisma.user.findFirst({
+      where:{fullname:user},
+      select:{departmentId:true}
+    })
 
     const updatedTicket = await prisma.createTicket.update({
       where: { ticketId },
       data: {
         assignToTeam: user, 
-        openedBy:null 
+        openedBy:null, 
+        departmentId: dept.departmentId
       },
     });
 

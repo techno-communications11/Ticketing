@@ -6,7 +6,6 @@ const getDecodedToken = () => {
         console.warn("No token found in localStorage");
         return null;
     }
-    
     try {
         return jwtDecode(token);
     } catch (error) {
