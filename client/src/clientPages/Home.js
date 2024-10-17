@@ -147,6 +147,7 @@ export function Home() {
       formData.append("market", marketRef.current.value.toLowerCase());
       formData.append("fullname", fullnameRef.current.value);
       formData.append("department", selectedDepartment);
+      console.log(formData,"ffeegger")
       if (cameraFileName) {
         formData.append("cameraFile", cameraFileName);
       }
@@ -340,7 +341,7 @@ export function Home() {
                             <Form.Select
                                 className="shadow-none text-secondary border rounded mb-2 fw-medium"
                                 isInvalid={!!errors.ticketDepartment}
-                                ref={ticketDepartmentRef}
+                                onChange={handleDepartmentChange}
                                 aria-label="department"
 
                             >
