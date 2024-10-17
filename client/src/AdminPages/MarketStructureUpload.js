@@ -188,7 +188,7 @@ export function MarketStructureUpload() {
                 handleSubmit={handleSubmit}
                 selectedFile={selectedFile}
                 fileInputRef={fileInputRef}
-                isLoading={isLoading} />
+                 />
                 
             )}
           </div>

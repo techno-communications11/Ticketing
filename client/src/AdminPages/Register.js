@@ -110,10 +110,8 @@ export function Register() {
         toast.error("File upload failed. Please try again.", { autoClose: 2000 });
       }
     } catch (error) {
-      setError('An unexpected error occurred');
+      // setError('An unexpected error occurred');
       toast.error("something went wrong ");
-    } finally {
-      setIsLoading(false);
     }
   };
   const handlePasswordToggle = () => { setPasswordVisible(!passwordVisible); };
