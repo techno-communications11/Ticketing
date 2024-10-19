@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import FileUploads from '../universalComponents/FileUploads';
 import ReusableButtons from '../universalComponents/ReusableButtons';
+import { Dropdown } from 'react-bootstrap';
 
 export function Register() {
   const NTIDRef = useRef('');
@@ -25,14 +26,17 @@ export function Register() {
   const [isRoleValid, setIsRoleValid] = useState(true);
 
   const userRoles = [
-    'Varun Team', 'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups', 'Deposits', 'Charge Back', 'Commission',
-    'Inventory', 'Head Office', 'Admin Related', 'Maintenance Related', 'Maintenance_Head', 'Housing Related', 'CAM NW', 'HR Payroll',
-    'Reporting', 'Admin', 'Admin_Head', 'SuperAdmin', 'District Manager', 'Employee'
+    'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
+    'Charge Back/Commission', 'Inventory', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity',
+    'Maintenance ', 'Housing ', 'CAM NW', 'HR Payroll','Maintenance_Head', 'Housing Related',  'Admin_Head', 'SuperAdmin', 'District Manager', 'Employee'
   ];
 
   const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
     return passwordRegex.test(password);
+  };
+  const handleSelect = (role) => {
+    setSelectedRole(role);
   };
 
   const handleSubmit = async (event) => {
@@ -110,7 +114,6 @@ export function Register() {
         toast.error("File upload failed. Please try again.", { autoClose: 2000 });
       }
     } catch (error) {
-      // setError('An unexpected error occurred');
       toast.error("something went wrong ");
     }
   };
@@ -152,18 +155,27 @@ export function Register() {
                     ref={DoorCodeRef} />
                 </div>
                 <div className="mb-2">
-                  <select id="role"
-                    name="Select Role"
-                    className={`form-select border shadow-none fw-medium text-secondary ${!isRoleValid ? 'input-error' : ''}`}
-                    value={selectedRole}
-                    onChange={handleRoleChange}>
-                    <option value="" disabled>Select role</option>
-                    {userRoles.sort().map((roles, index) => (
-                      <option className="fw-medium text-primary"
-                        key={index}
-                        value={roles}>{roles}</option>
-                    ))}
-                  </select>
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      id="roleDropdown"
+                      className={`border bg-transparent text-start  fw-medium w-100 text-secondary ${!isRoleValid ? 'input-error' : ''}`}
+                    >
+                      {selectedRole || 'Select role'}
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu style={{ height: "40vh", overflow: 'scroll' }} className='col-12 col-md-12' >
+                      {userRoles.sort().map((role, index) => (
+                        <Dropdown.Item
+                          key={index}
+                          eventKey={role}
+                          className="fw-medium text-primary shadow-lg"
+                          onClick={() => handleSelect(role)}
+                        >
+                          {role}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
                 </div>
                 <div className="mb-2">
                   <div className="input-group">

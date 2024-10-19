@@ -4,10 +4,12 @@ import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setId, fetchIndividualTickets } from '../redux/marketSlice';
 import PageCountStack from '../universalComponents/PageCountStack';
-import Form from 'react-bootstrap/Form';
 import '../styles/loader.css';
 import decodedToken from '../universalComponents/decodeToken';
 import TicketBody from '../universalComponents/TicketBody';
+import Filtering from '../universalComponents/Filtering';
+import { Container } from 'react-bootstrap';
+import FilterLogic from '../universalComponents/FilteringLogic';
 
 function TotalUserTickets() {
   const dispatch = useDispatch();
@@ -17,8 +19,8 @@ function TotalUserTickets() {
   const [statusFilter, setStatusFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [ntidFilter, setntidFilter] = useState('');
   const itemsPerPage = 8;
-
 
   useEffect(() => {
     const ntid = decodedToken()?.ntid;
@@ -39,51 +41,28 @@ function TotalUserTickets() {
     else setLoading(false);
   }, []);
 
-  const handleFilterChange = (setter) => (e) => {
-    setter(e.target.value);
-    setCurrentPage(1);
-  };
-
-  const filteredTickets = useMemo(() => {
-    return tickets.filter(ticket => {
-      const matchesStatus = statusFilter ? ticket.status.name.toLowerCase().includes(statusFilter.toLowerCase()) : true;
-      const ticketDate = new Date(ticket.createdAt).toISOString().split('T')[0];
-      const filterDate = dateFilter ? new Date(dateFilter).toISOString().split('T')[0] : null;
-      const matchesDate = filterDate ? ticketDate === filterDate : true;
-      return matchesStatus && matchesDate;
-    });
-  }, [tickets, statusFilter, dateFilter]);
-
+  const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter);
   const currentItems = filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
-
   if (loading) return <div className='loader'></div>;
-  const status = ['new', 'opened', 'inprogress', 'completed', 'reopened']
 
   return (
     <div className='container-fluid mt-1'>
       <h2 className='my-2 d-flex justify-content-center' style={{ color: '#E10174' }}>Total User Tickets</h2>
-      <Form className="container mb-2 d-flex gap-2">
-        <Form.Group controlId="statusFilter">
-          <Form.Select value={statusFilter} onChange={handleFilterChange(setStatusFilter)} className='shadow-none'>
-            <option value="">Select Status</option>
-            {
-              status.map((status, index) => (
-                <option key={index} value={status} className="text-capitalize ">{status}</option>
-              ))
-            }
-          </Form.Select>
-        </Form.Group>
-
-        <Form.Group controlId="dateFilter">
-          <Form.Control type="date" value={dateFilter} onChange={handleFilterChange(setDateFilter)} className='shadow-none' />
-        </Form.Group>
-      </Form>
-
+     <Container>
+     <Filtering
+        ntidFilter={ntidFilter}
+        setntidFilter={setntidFilter}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+      />
+     </Container>
       {authenticated && currentItems.length > 0 ? (
         <div className="table-responsive container">
           <table className="table table-bordered table-hover">

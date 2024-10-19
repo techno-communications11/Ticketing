@@ -22,6 +22,7 @@ const TicketDetails = async (req, res) => {
         createdAt: true,
         isSettled:true,
         completedAt:true,
+        requestreopen:true,
         status:{select:{name:true}},
         files: true,
       },

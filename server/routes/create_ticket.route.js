@@ -22,6 +22,7 @@ import GetRequestReopen from '../controllers/ticket/GetRequestReopen.js';
 import Settlement from '../controllers/ticket/Settlement.js';
 import updateOpenedBy from '../controllers/ticket/UpdateOpenedBy.js';
 import alloted from '../controllers/ticket/alloted.js';
+import allDepartCounts from '../controllers/ticket/allDepartCounts.js';
 
  const createTicketsRouter = express.Router();
  createTicketsRouter.post('/uploadTicket',authenticateJWT,CreateTicket)
@@ -46,5 +47,6 @@ import alloted from '../controllers/ticket/alloted.js';
  createTicketsRouter.get('/get_request_reopen_tickets',authenticateJWT,GetRequestReopen)
  createTicketsRouter.put('/update_opened_by',authenticateJWT,updateOpenedBy)
  createTicketsRouter.put('/alloted',authenticateJWT,alloted)
+ createTicketsRouter.get('/alldeptcounts',authenticateJWT,allDepartCounts)
  
 export default createTicketsRouter

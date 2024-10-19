@@ -7,7 +7,6 @@ function NewMA() {
   return (
       <Ticket 
         indifullname={indifullname} 
-        departmentId={'12'} 
         statusId={'3'} 
         openedbyUser={false}
       />

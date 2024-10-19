@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Container, Table } from 'react-bootstrap';
+import { Container, Table, Row, Col } from 'react-bootstrap';
 import '../styles/loader.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTickets } from '../redux/ticketSlice';
@@ -44,7 +44,6 @@ const ShowTickets = () => {
     fetchMarketData();
   }, []);
 
-
   useEffect(() => {
     const storedMarket = localStorage.getItem('marketData');
     if (storedMarket) {
@@ -84,14 +83,17 @@ const ShowTickets = () => {
 
   return (
     <Container className="mt-2">
-      <div className="mb-1 font-family text-capitalize d-flex align-items-center" style={{ color: '#E10174' }}>
-        <h3 className="me-1">Tickets from Market {market.toLowerCase()}</h3>
-        <h3 className="position-relative me-auto" ref={dropdownRef}>
-          <button onClick={toggleDropdown} className="border-0 bg-transparent text-primary">
-            <IoIosArrowDown />
+      <Row className="mb-1 font-family text-capitalize align-items-center" style={{ color: '#E10174' }}>
+        <Col xs={12} md={6} className='d-flex gap-0'>
+        <Col xs={11} md={9}>
+          <h3>Tickets from Market {market.toLowerCase()}</h3>
+        </Col>
+        <Col xs={1} md={3} className="position-relative" ref={dropdownRef}>
+          <button onClick={toggleDropdown} className="border-0 fs-4 right-4 bg-transparent text-primary" style={{ marginLeft: '-20px', marginBottom: '8px' }}>
+          <IoIosArrowDown />
           </button>
           {dropdownVisible && (
-            <div className="dropdown-menu show position-absolute" style={{ top: '90%', right: '0%', zIndex: 1 }}>
+            <div className="dropdown-menu show position-absolute" style={{ top: '90%', right: '0%', zIndex: 1,height:'50vh', overflow:'scroll' }}>
               {marketData.map((data, index) => (
                 <div
                   className="dropdown-item shadow-lg text-primary fw-medium"
@@ -105,16 +107,19 @@ const ShowTickets = () => {
               ))}
             </div>
           )}
-        </h3>
-        <Filtering
-          ntidFilter={ntidFilter}
-          setntidFilter={setntidFilter}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          dateFilter={dateFilter}
-          setDateFilter={setDateFilter}
-        />
-      </div>
+        </Col>
+        </Col>
+        <Col xs={12} md={6}>
+          <Filtering
+            ntidFilter={ntidFilter}
+            setntidFilter={setntidFilter}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+          />
+        </Col>
+      </Row>
       {loading ? (
         <div className='loader d-flex align-items-center justify-content-center vh-80'></div>
       ) : (
@@ -134,6 +139,7 @@ const ShowTickets = () => {
                   handleTicket={handleTicket}
                   currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
+                  key={ticket.TicketId} 
                 />
               ))
             ) : (

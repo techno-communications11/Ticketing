@@ -25,14 +25,13 @@ const Individualmarketss = () => {
   const [getcomment, setGetComment] = useState([]);
   const [users, setUsers] = useState([]);
   const departments = [
-    'Varun Team', 'NTID Mappings', 'Trainings', 'Accessories Order',
-    'YUBI Key Setups', 'Deposits', 'Charge Back', 'Commission', 'Inventory',
-    'Head Office', 'Admin Related', 'Maintenance Related', 'Housing Related', 'CAM NW',
-    'HR Payroll'
+    'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
+    'Charge Back/Commission', 'Inventory', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity',
+    'Maintenance', 'Housing', 'CAM NW', 'HR Payroll'  
   ];
 
   const { ntid: userNtid, department, fullname } = getDecodedToken() || {};
-  console.log(department,"depty")
+  console.log(department, "depty")
 
   const fetchData = async () => {
     try {
@@ -88,7 +87,7 @@ const Individualmarketss = () => {
 
   const updateOpenedBy = async () => {
     try {
-      const endpoint = departments.includes(department)||(department==='Maintenance_Head'||department==='Admin_Head') ? '/createTickets/update_opened_by' : '';
+      const endpoint = departments.includes(department) || (department === 'Maintenance_Head' || department === 'Admin_Head') ? '/createTickets/update_opened_by' : '';
       const response = await apiRequest.put(endpoint, {
         ticketId: markets.ticketId,
       });
@@ -200,7 +199,7 @@ const Individualmarketss = () => {
   };
 
   const onhandleDepartment = (e) => {
-    const selectedDept = e.target.value;
+    const selectedDept = e.target.value||selectedDepartment;
     console.log(selectedDept, "soluted");
     setSelectedDepartment(selectedDept);
     assignToDepartment(selectedDept);
@@ -302,6 +301,8 @@ const Individualmarketss = () => {
     return acc;
   }, 0);
 
+  console.log("request reop", markets)
+
   return (
     <div className="container mt-2">
       <h5 className="mb-3 font-family text-start" style={{ color: '#E10174', fontWeight: 'bold' }}>
@@ -379,9 +380,9 @@ const Individualmarketss = () => {
               )}
             </div>
 
-            <div className="col-md-5 d-flex justify-content-end align-items-center mt-sm-2 mt-xs-2 mt-md-none">
+            <div className="col-md-5 d-flex justify-content-end align-items-center mt-4 text-sm-start ">
               {
-                (departments.includes(department)||department === 'Maintenance_Head'||department === 'Admin_Head') && markets.status?.name !== 'completed' && (
+                (departments.includes(department) || department === 'Maintenance_Head' || department === 'Admin_Head') && markets.status?.name !== 'completed' && (
                   <Dropdown className='mx-2'>
                     <Dropdown.Toggle variant="primary" id="dropdown-basic">
                       Allocate
@@ -409,13 +410,13 @@ const Individualmarketss = () => {
                         <Dropdown.Toggle variant="primary" id="dropdown-basic">
                           Assign to
                         </Dropdown.Toggle>
-                        <Dropdown.Menu style={{ height: '350px', overflow: 'scroll' }}>
+                        <Dropdown.Menu style={{ height: '350px', overflow: 'scroll',width:'50vw' }}>
                           {departments
                             .sort()
                             .filter(dept => {
-                              if (department === 'Maintenance_Head' && dept === 'Maintenance Related') return false;
-                              if (department === 'Admin_Head' && dept === 'Admin Related') return false;
-                              if(dept===department) return false;
+                              if (department === 'Maintenance_Head' && dept === 'Maintenance') return false;
+                              if (department === 'Admin_Head' && dept === 'Admin') return false;
+                              if (dept === department) return false;
                               return true;
                             })
                             .map((dept, index) => (
@@ -438,7 +439,7 @@ const Individualmarketss = () => {
                       className="btn btn-success"
                       onClick={() => handleConfirmAction('4', 'mark as completed')}
                     >
-                      Close Ticket
+                      Close
                     </button>
                   )}
                 </>
@@ -446,7 +447,7 @@ const Individualmarketss = () => {
               {
                 counts >= 1 && department === "Employee" && markets.status?.name === 'completed' && (
                   <Button
-                    variant="primary fw-medium w-auto ms-auto me-3"
+                    variant="primary fw-medium w-auto ms-auto me-3 "
                     onClick={() => handleRequestReopen()}
                     key={comment.id}
                   >
@@ -456,16 +457,19 @@ const Individualmarketss = () => {
               }
 
 
-              {(department === "District Manager" || department === 'Market Manager' || department === 'SuperAdmin') && markets.status?.name === 'completed' && (
+              {(department === "District Manager" || department === 'Market Manager' || department === 'SuperAdmin') && (markets.status?.name === 'completed'&&!markets.isSettled) && (
                 <Button variant="primary fw-medium w-auto me-2 " onClick={() => handleConfirmAction('5', 'reopened')}>
                   Reopen
                 </Button>
               )}
-              {(department === "District Manager") && (markets.status?.name === 'completed' && !markets.isSettled) && (
-                <Button variant="success fw-medium w-auto" onClick={() => handleConfirmSettled()}>
-                  settled
-                </Button>
-              )}
+              {(department === "District Manager") &&
+                ((markets.status?.name === 'completed') &&
+                (!markets.isSettled)) && (
+                  <Button variant="success fw-medium w-auto" onClick={handleConfirmSettled}>
+                    Settled
+                  </Button>
+                )}
+
             </div>
           </div>
         </div>

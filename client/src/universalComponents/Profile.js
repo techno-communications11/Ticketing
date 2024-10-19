@@ -18,8 +18,6 @@ export function Profile() {
   const passwordConformRef = useRef(null);
   const [error, setError] = useState('');
   const [photoUpdated, setPhotoUpdated] = useState(false);
-
-
   const fetchUserData = async () => {
     try {
       const response = await apiRequest.get('/profile/getprofiledata_token');
@@ -33,16 +31,14 @@ export function Profile() {
       setError(err.message);
     }
   };
-
   const fetchProfile = async () => {
     try {
       const response = await apiRequest.get('/profile/getprofilephoto', {
         withCredentials: true
       });
-
       if (response.status === 200) {
         const fileName = response.data.path;
-        const baseURL = 'http://localhost:4000';
+        const baseURL = 'http://192.168.1.6:4000';
         const imageUrl = `${baseURL}/public/images/${fileName}`;
         setUploadedFileUrl(imageUrl);
       } else {
@@ -62,7 +58,6 @@ export function Profile() {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('profilePhoto', file);
-
     try {
       await apiRequest.post('/profile/profilephoto', formData, {
         headers: {
@@ -81,7 +76,6 @@ export function Profile() {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append('profilePhoto', file);
-
     try {
       await apiRequest.put('/profile/updateprofilephoto', formData, {
         headers: {
@@ -142,22 +136,22 @@ export function Profile() {
   };
 
   return (
-    <div className="container mt-5 d-flex flex-column flex-md-row justify-content-center align-items-center">
-      <div className="d-none d-md-flex flex-column align-items-center me-5">
+    <div className="container  mt-sm-5 mt-md-1">
+      <div className=" d-md-flex flex-row justify-content-center align-items-start">
+      <div className="d-none d-md-flex  align-items-center m-auto">
         <img src='./userdata.png' height={300} />
       </div>
 
-      <div className="w-100 border p-3 rounded">
-        <div className="card-body text-center">
-          <div className="d-flex flex-column justify-content-center align-items-center my-3">
+        <div className="col-md-6">
+          <div className="d-flex flex-column justify-content-center align-items-center">
             {uploadedFileUrl == null ? (
               <div
-                className='d-flex flex-column justify-content-center align-items-center border rounded-circle p-2'
+                className="d-flex flex-column justify-content-center align-items-center  rounded-circle"
                 onClick={() => setPopButtons(true)}
                 style={{ cursor: 'pointer', width: '10vw', height: '19vh' }}>
                 {popButtons || ImmediateEdit ? (
-                  <div className='mt-3'>
-                    <label className='btn btn-outline-secondary fw-medium m-1 font-size'>
+                  <div className="mt-2 ">
+                     <label className='btn btn-outline-secondary fw-medium m-1 font-size'>
                       Camera
                       <input
                         type='file'
@@ -179,62 +173,59 @@ export function Profile() {
                   </div>
                 ) : (
                   <div>
-                    <MdOutlineCloudUpload className='upload-image-style' size={50} />
-                    <p className='fw-medium text-secondary'>Upload Photo</p>
+                    <MdOutlineCloudUpload size={50} />
+                    <p className="text-secondary">Upload Photo</p>
                   </div>
                 )}
               </div>
             ) : (
-              uploadedFileUrl && (
-                <>
-                  <div className="mt-3 text-center">
-                    <img src={uploadedFileUrl} alt="Selected" className="img-thumbnail rounded-circle" style={{ width: '100px', height: '100px' }} />
-                  </div>
-                  <div>
-                    <span className='mt-5' style={{ cursor: 'pointer' }} onClick={handleEdit}>
-                      <MdModeEditOutline />
-                    </span>
-                  </div>
-                </>
-              )
+              <div className="mt-2">
+                <img src={uploadedFileUrl} alt="Profile" className="img-thumbnail rounded-circle" style={{ width: '100px', height: '100px' }} />
+                <div className='ms-3 mt-2 fs-6 '>
+                  <span style={{ cursor: 'pointer' }} className='btn btn-outline-primary fs-6' onClick={handleEdit}>
+                    <MdModeEditOutline /> Edit
+                  </span>
+                </div>
+              </div>
             )}
-          </div>  
+          </div>
 
           {userData && (
-             <div className='profile-data'>
-             <div className="col-12 d-flex flex-column my-3 mx-auto w-50">
-               {Object.entries(userData).map(([key, value]) => (
-                 <p key={key} className="card-text d-flex justify-content-between">
-                   <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>
-                   <span>{value}</span>
-                 </p>
-               ))}
-             </div>
+            <div className=" p-1">
+              <div>
+                {Object.entries(userData).map(([key, value]) => (
+                  <p key={key} className="d-flex justify-content-between">
+                    <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>
+                    <span>{value}</span>
+                  </p>
+                ))}
+              </div>
+
               {toggle === false ? (
-                <button className="btn btn-primary w-50" onClick={resetPasswordHandler}>Reset Password</button>
+                <button className="btn btn-primary  w-100" onClick={resetPasswordHandler}>Reset Password</button>
               ) : (
-                <form className='col-12 reset-password-form mx-auto d-flex flex-column gap-2 w-50  mt-3' onSubmit={handleSubmit}>
-                  <div className='d-flex form-group border rounded'>
-                    <input type={passwordVisibleNew ? 'text' : 'password'} placeholder='Enter password' className='form-control border-0 shadow-none' ref={passwordRef} />
-                    <span className='mx-2 mt-1' onClick={handlePasswordToggle} style={{ cursor: 'pointer' }}>
+                <form onSubmit={handleSubmit} >
+                  <div className="form-group d-flex align-items-center border rounded">
+                    <input type={passwordVisibleNew ? 'text' : 'password'} placeholder="Enter password" className="form-control border-0 shadow-none" ref={passwordRef} />
+                    <span onClick={handlePasswordToggle} className="mx-2" style={{ cursor: 'pointer' }}>
                       {passwordVisibleNew ? <FaRegEye /> : <FaEyeSlash />}
                     </span>
                   </div>
-                  <div className='d-flex form-group border rounded'>
-                    <input type={passwordVisibleConfirm ? 'text' : 'password'} placeholder='Confirm password' className='form-control border-0 shadow-none' ref={passwordConformRef} />
-                    <span className='mx-2 mt-1' onClick={handlePasswordConfirmToggle} style={{ cursor: 'pointer' }}>
+                  <div className="form-group d-flex align-items-center mt-1 border rounded">
+                    <input type={passwordVisibleConfirm ? 'text' : 'password'} placeholder="Confirm password" className="form-control border-0 shadow-none" ref={passwordConformRef} />
+                    <span onClick={handlePasswordConfirmToggle} className="mx-2" style={{ cursor: 'pointer' }}>
                       {passwordVisibleConfirm ? <FaRegEye /> : <FaEyeSlash />}
                     </span>
                   </div>
-                  <button type='submit' className='btn btn-primary mt-3'>reset</button>
+                  {error && <small className="text-danger">{error}</small>}
+                  <button type="submit" className="btn btn-primary mt-2 w-100">Update Password</button>
                 </form>
               )}
-              {error && <p className="text-danger">{error}</p>}
             </div>
           )}
         </div>
       </div>
-      <ToastContainer /> 
+      <ToastContainer />
     </div>
   );
 }

@@ -14,6 +14,8 @@ function RequestReopen() {
   const [dateFilter, setDateFilter] = useState('');
   const [ntidFilter, setntidFilter] = useState('');
   const [tickets, setTickets] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
   useEffect(() => {
     const ntid = getDecodedToken()?.ntid;
     const fetchTickets = async () => {
@@ -64,7 +66,12 @@ function RequestReopen() {
         <tbody>
           {tickets.length > 0 ? (
             tickets.map((ticket, index) => (
-              <TicketBody ticket={ticket} index={index} handleTicket={handleTicket}/>
+              <TicketBody ticket={ticket}
+               index={index} 
+               handleTicket={handleTicket}
+               currentPage={currentPage}
+               itemsPerPage={itemsPerPage}
+               />
             ))
           ) : (
             <tr>

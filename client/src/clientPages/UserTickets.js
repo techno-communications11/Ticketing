@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { GrLinkNext } from 'react-icons/gr';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Container, Form } from 'react-bootstrap';
+import { Container, Form, Table } from 'react-bootstrap';
 import PageCountStack from '../universalComponents/PageCountStack';
 import formatDate from '../universalComponents/FormatDate';
 import '../styles/loader.css';
 import { fetchStatusTickets, setUserAndStatus } from '../redux/userStatusSlice';
 import { setId, fetchIndividualTickets } from '../redux/marketSlice';
 import { getDuration } from '../universalComponents/getDuration';
+import '../styles/TicketTable.css'; 
 
 const UserTickets = () => {
   const dispatch = useDispatch();
@@ -36,8 +37,6 @@ const UserTickets = () => {
     }
   }, [ticketArray]);
 
-
-
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
     dispatch(setId(id));
@@ -60,44 +59,55 @@ const UserTickets = () => {
       <h3 className="mb-2 font-family text-center" style={{ color: '#E10174' }}>
         {ticketArray[0]?.status.name.charAt(0).toUpperCase() + ticketArray[0]?.status.name.slice(1) || ''} Tickets
       </h3>
-      <Form className=" w-25">
+      
+      <Form className='w-25' >
         <Form.Group controlId="dateFilter">
           <Form.Control
             type="date"
+            placeholder='mm/dd/yyyy'
             value={filterDate}
             onChange={handleDateChange}
           />
         </Form.Group>
       </Form>
+
       {loading ? (
         <div className='vh-100 d-flex align-items-center justify-content-center'>
           <div className='loader vh-80' />
         </div>
       ) : (
-        <table className='tablerow'>
-          <thead>
-            <tr>
-              {['SC.No', 'NTID', 'Full Name', 'Status', 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
-                <th key={header}>{header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {finalTickets.length > 0 ? (
-              finalTickets.map((ticket, index) => (
-                <tr
-                  key={ticket.ticketId}
-                  style={ticket.requestreopen ? { color: '#006A4E' } : {}}
-                >
-                  <td className='fw-medium'>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                  <td className='fw-medium'>{ticket.ntid}</td>
-                  <td className='fw-medium'>{ticket.fullname}</td>
-                  <td className='fw-medium'>{ticket.status?.name || '-'}</td>
-                  <td className='fw-medium'>{formatDate(ticket.createdAt)}</td>
-                  <td className='fw-medium'>
+        <div className="table-responsive">
+          <Table className='tablerow'>
+            <thead>
+              <tr>
+                {['SC.No', 'NTID', 'Full Name', 'Status', 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
+                  <th key={header}>{header}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {finalTickets.length > 0 ? (
+                finalTickets.map((ticket, index) => (
+                  <tr key={ticket.ticketId}>
+                  <td className='fw-medium' style={ticket.requestreopen ? { color: '#006A4E' } : {}}>
+                    {(currentPage - 1) * itemsPerPage + index + 1}
+                  </td>
+                  <td className='fw-medium' style={ticket.requestreopen ? { color: '#006A4E' } : {}}>
+                    {ticket.ntid}
+                  </td>
+                  <td className='fw-medium' style={ticket.requestreopen ? { color: '#006A4E' } : {}}>
+                    {ticket.fullname}
+                  </td>
+                  <td className='fw-medium' style={ticket.requestreopen ? { color: '#006A4E' } : {}}>
+                    {ticket.status?.name || '-'}
+                  </td>
+                  <td className='fw-medium' style={ticket.requestreopen ? { color: '#006A4E' } : {}}>
+                    {formatDate(ticket.createdAt)}
+                  </td>
+                  <td className='fw-medium' style={ticket.requestreopen ? { color: '#006A4E' } : {}}>
                     {ticket.completedAt ? formatDate(ticket.completedAt) : '-'}
                   </td>
-                  <td className='fw-medium'>
+                  <td className='fw-medium' style={ticket.requestreopen ? { color: '#006A4E' } : {}}>
                     {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : '-'}
                   </td>
                   <td>
@@ -106,15 +116,17 @@ const UserTickets = () => {
                     </Link>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="8">No tickets available</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8">No tickets available</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </div>
       )}
+      
       <PageCountStack
         filteredTickets={filteredTickets}
         currentPage={currentPage}

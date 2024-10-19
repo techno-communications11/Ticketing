@@ -8,10 +8,10 @@ import PageCountStack from '../universalComponents/PageCountStack';
 import { fetchStatusWiseTickets, setMarketAndStatus } from '../redux/statusSlice';
 import { jwtDecode } from 'jwt-decode';
 import { getDuration } from '../universalComponents/getDuration';
-import '../styles/TicketTable.css'
+import '../styles/TicketTable.css';
 import handleTicket from '../universalComponents/handleTicket';
 
-const TicketsTable = ({ statusIds,text }) => {
+const TicketsTable = ({ statusIds, text }) => {
   const dispatch = useDispatch();
   const [market, setMarket] = useState('');
   const [ntidFilter, setNtidFilter] = useState('');
@@ -52,9 +52,6 @@ const TicketsTable = ({ statusIds,text }) => {
       setMarket(combinedTickets[0].market.toUpperCase());
     }
   }, [combinedTickets]);
-  
-
- 
 
   const filteredTickets = useMemo(() => {
     return combinedTickets.filter(ticket => {
@@ -63,83 +60,82 @@ const TicketsTable = ({ statusIds,text }) => {
       return ntidMatch && dateMatch;
     });
   }, [combinedTickets, ntidFilter, dateFilter]);
-  
 
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const completedTickets = currentItems.filter(ticket => ticket.isSettled); 
-  const nonCompletedTickets = currentItems.filter(ticket => !ticket.isSettled); 
-  
-
+  const completedTickets = currentItems.filter(ticket => ticket.isSettled);
+  const nonCompletedTickets = currentItems.filter(ticket => !ticket.isSettled);
   const sortedCompletedTickets = completedTickets.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
   const finalTickets = [...nonCompletedTickets, ...sortedCompletedTickets];
- 
+
   return (
     <Container className="mt-3">
-      <h3 className="d-flex justify-content-center mb-2 font-family" style={{ color: '#E10174' }}>
+      <h3 className="d-flex justify-content-center mb-3 font-family" style={{ color: '#E10174' }}>
         {text} Tickets from Market&nbsp;
       </h3>
 
-      <Form className="mb-2 d-flex gap-2">
-        <Form.Group controlId="ntidFilter">
-          <Form.Control
-            type="text"
-            value={ntidFilter}
-            onChange={(e) => { setNtidFilter(e.target.value); setCurrentPage(1); }}
-            placeholder="Enter NTID"
-            className='shadow-none'
-          />
-        </Form.Group>
+      <div className='col-md-6 col-12'>
+        <Form className=" d-flex gap-2 flex-wrap">
+          <Form.Group controlId="ntidFilter" className="flex-fill">
+            <Form.Control
+              type="text"
+              value={ntidFilter}
+              onChange={(e) => { setNtidFilter(e.target.value); setCurrentPage(1); }}
+              placeholder="Enter NTID"
+              className='shadow-none'
+            />
+          </Form.Group>
 
-        <Form.Group controlId="dateFilter">
-          <Form.Control
-            type="date"
-            value={dateFilter}
-            onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
-          />
-        </Form.Group>
-      </Form>
+          <Form.Group controlId="dateFilter" className="flex-fill">
+            <Form.Control
+              type="date"
+              value={dateFilter}
+              onChange={(e) => { setDateFilter(e.target.value); setCurrentPage(1); }}
+            />
+          </Form.Group>
+        </Form>
+      </div>
 
-      <table className='tablerow'>
-        <thead>
-          <tr>
-            {['SC.No', 'NTID', 'Full Name', 'Status', 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
-              <th key={header}>{header}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {finalTickets.length > 0 ? (
-            finalTickets.map((ticket, index) => (
-              <tr
-                key={ticket.ticketId}
-                style={ticket.isSettled ? { color: 'lightgray' } : {}}
-              >
-                <td className='fw-medium'>{index + 1}</td>
-                <td className='fw-medium'>{ticket.ntid}</td>
-                <td className='fw-medium'>{ticket.fullname}</td>
-                <td className='fw-medium'>{ticket.status.name || '-'}</td>
-                <td className='fw-medium'>{formatDate(ticket.createdAt)}</td>
-                <td className='fw-medium'>
-                  {ticket.completedAt ? formatDate(ticket.completedAt) : '-'}
-                </td>
-                <td className='fw-medium'>
-                  {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : '-'}
-                </td>
-                <td>
-                  <Link to={'/details'}>
-                    <GrLinkNext className="fw-medium" onClick={() => handleTicket(ticket.ticketId,dispatch)} />
-                  </Link>
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div className="table-responsive">
+        <table className='tablerow table'>
+          <thead>
             <tr>
-              <td colSpan="8">No tickets available</td>
+              {['SC.No', 'NTID', 'Full Name', 'Status', 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
+                <th key={header}>{header}</th>
+              ))}
             </tr>
-          )}
-        </tbody>
-      </table>
-
+          </thead>
+          <tbody>
+            {finalTickets.length > 0 ? (
+              finalTickets.map((ticket, index) => (
+                <tr
+                  key={ticket.ticketId}
+                >
+                  <td className='fw-medium' style={ticket.isSettled ? { color: 'lightgray' } : {}}>{index + 1}</td>
+                  <td className='fw-medium' style={ticket.isSettled ? { color: 'lightgray' } : {}}>{ticket.ntid}</td>
+                  <td className='fw-medium' style={ticket.isSettled ? { color: 'lightgray' } : {}}>{ticket.fullname}</td>
+                  <td className='fw-medium' style={ticket.isSettled ? { color: 'lightgray' } : {}}>{ticket.status.name || '-'}</td>
+                  <td className='fw-medium' style={ticket.isSettled ? { color: 'lightgray' } : {}}>{formatDate(ticket.createdAt)}</td>
+                  <td className='fw-medium' style={ticket.isSettled ? { color: 'lightgray' } : {}}>
+                    {ticket.completedAt ? formatDate(ticket.completedAt) : '-'}
+                  </td>
+                  <td className='fw-medium' style={ticket.isSettled ? { color: 'lightgray' } : {}}>
+                    {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : '-'}
+                  </td>
+                  <td>
+                    <Link to={'/details'} style={ticket.isSettled ? { color: 'lightgray' } : {}}>
+                      <GrLinkNext className="fw-medium" onClick={() => handleTicket(ticket.ticketId, dispatch)} />
+                    </Link>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8">No tickets available</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       <PageCountStack
         filteredTickets={filteredTickets}

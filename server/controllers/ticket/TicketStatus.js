@@ -22,15 +22,16 @@ const TicketStatus = async (req, res) => {
     console.log(`Current Ticket Status: ${ticket.status.id}, Requested Status: ${statusId}`);
 
     const validTransitions = {
-      "1": ['2'],
+      '1': ['2'],
       '2': ['3', '4'],
       '3': ['4'],
       '4': ['5'],
-      '5': ['3', '4','1']
+      '5': ['3','4','1']
     };
 
     if (validTransitions[ticket.status.id]?.includes(statusId)) {
       let updateData = { statusId: statusId };
+     
 
       if (statusId === '4') {
         updateData.completedAt = new Date();

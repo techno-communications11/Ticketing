@@ -21,13 +21,14 @@ export function Home() {
     const [cameraFileName, setCameraFileName] = useState(null);
     const [fileSystemFileName, setFileSystemFileName] = useState(null);
     const [selectedStore, setSelectedStore] = useState('Select Store');
+    const [selectedDepartment, setSelectedDepartment] = useState('Select Department');
     const [userData, setUserData] = useState('');
     const [TicketsCount, setTicketsCount] = useState(0);
 
     const Departments = [
-        'Varun Team', 'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
-        'Deposits', 'Charge Back', 'Commission', 'Inventory', 'Head Office', 'Admin Related',
-        'Maintenance Related', 'Housing Related', 'CAM NW', 'HR Payroll'
+         'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
+        'Charge Back/Commission', 'Inventory', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity',
+        'Maintenance ', 'Housing ', 'CAM NW', 'HR Payroll'
     ];
 
     const dispatch = useDispatch();
@@ -47,7 +48,7 @@ export function Home() {
     const descriptionRef = useRef(null);
     const marketRef = useRef(null);
     const fullnameRef = useRef('');
-    const ticketDepartmentRef = useRef('');
+
 
     const handleClose = () => {
         setShow(false);
@@ -63,6 +64,7 @@ export function Home() {
             fullname: '',
         });
         setSelectedStore('Select Store');
+        setSelectedDepartment('select Department')
     };
 
     const handleShow = useCallback(() => {
@@ -84,7 +86,9 @@ export function Home() {
     const handleCameraChange = (event) => { handlefiles(event); }
     const handleFileSystemChange = (event) => { handlefiles(event); };
     const handleStoreSelect = (store) => { setSelectedStore(store); };
-
+    const handleDepartmentSelect = (department) => {
+        setSelectedDepartment(department);
+    };
 
     const validateForm = () => {
         const newErrors = {
@@ -100,7 +104,6 @@ export function Home() {
         const phone = phoneRef.current.value;
         const ticketSubject = ticketSubjectRef.current.value;
         const description = descriptionRef.current.value;
-        const ticketDepartment = ticketDepartmentRef.current.value;
         const market = marketRef.current.value;
         const fullname = fullnameRef.current.value;
         if (!ntid) newErrors.ntid = 'NTID is required';
@@ -110,7 +113,7 @@ export function Home() {
         if (!description) newErrors.description = 'Description is required';
         if (!market) newErrors.market = 'select market';
         if (!fullname) newErrors.fullname = 'no fullname';
-        if (!ticketDepartment) newErrors.ticketDepartment = 'no ticketDepartment'
+        if (selectedDepartment === 'select Department') newErrors.ticketDepartment = 'no ticketDepartment'
         setErrors(newErrors);
         return Object.values(newErrors).every(error => error === '');
     };
@@ -125,7 +128,7 @@ export function Home() {
             formData.append('description', descriptionRef.current.value);
             formData.append('market', marketRef.current.value.toLowerCase());
             formData.append('fullname', fullnameRef.current.value);
-            formData.append('department', ticketDepartmentRef.current.value)
+            formData.append('department', selectedDepartment)
             if (cameraFileName) {
                 formData.append('cameraFile', cameraFileName);
             }
@@ -212,7 +215,6 @@ export function Home() {
         if (objreopened) { animateValue(objreopened, 0, TicketsCount.reopened || 0, 500); }
     }, [TicketsCount]);
 
-
     const handleDataSend = (statusId) => {
         localStorage.setItem('statusData', statusId);
         dispatch(fetchStatusTickets({ statusId }));
@@ -224,7 +226,6 @@ export function Home() {
     const handleInprogress = () => handleDataSend('3');
     const handleCompleted = () => handleDataSend('4');
     const handleReOpened = () => handleDataSend('5');
-
     const handleTotal = () => { navigate('/totalusertickets') };
 
     return (
@@ -248,32 +249,37 @@ export function Home() {
                         </Form.Group>
                         <Form.Group className="mb-1 d-flex gap-1 flex-wrap" controlId="formPhoneNumber">
                             <div className='flex-grow-1 mb-1 mb-md-0'>
-                                <Form.Control className='fw-medium text-secondary shadow-none boorder-0' type="text" value={userData?.fullname || ''} placeholder='Full Name' ref={fullnameRef} readOnly />
+                                <Form.Control className='fw-medium text-secondary shadow-none boorder-0 text-capitalize' type="text" value={userData?.fullname || ''} placeholder='Full Name' ref={fullnameRef} readOnly />
                             </div>
                             <div className='d-flex flex-grow-1 align-items-center'>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Enter your Phone Number"
+                                    placeholder="Enter Phone Number"
                                     isInvalid={!!errors.phone}
                                     ref={phoneRef}
-                                    className='shadow-none fw-medium border'
+                                    className='shadow-none text-secondary fw-medium border'
                                 />
                             </div>
                         </Form.Group>
                         <Form.Group className="mb-1 d-flex gap-1 flex-wrap" controlId="store">
                             <div className='flex-grow-1 mb-1 mb-md-0 '>
-                                <Form.Control ref={marketRef} className='text-secondary fw-medium shadow-none boorder-0' type="text" placeholder='market' value={userData.market?.market || ""} readOnly />
+                                <Form.Control ref={marketRef} className='text-secondary fw-medium shadow-none boorder-0 text-capitalize' type="text" placeholder='market' value={userData.market?.market || ""} readOnly />
                             </div>
                             <Dropdown className='flex-grow-1' id="dropdown-store">
-                                <Dropdown.Toggle className={`bg-white fw-medium text-secondary  w-100`} id="dropdown-basic">
+                                <Dropdown.Toggle className={` text-start bg-white fw-medium text-secondary border shadow-none w-100`} id="dropdown-basic">
                                     {selectedStore}
                                 </Dropdown.Toggle>
-                                <Dropdown.Menu style={{ height: "40vh", overflow: 'scroll' }}>
+                                <Dropdown.Menu style={{ height: "42vh", overflow: 'scroll' }} className='col-12 col-md-12'>
+                                    <input
+                                        placeholder="Search Stores..."
+                                        className=" w-75  form-control border text-muted fw-medium  shadow-none text-center  mb-2 ms-2"
+                                    />
+
                                     {userData?.stores?.map((store, index) => (
                                         <Dropdown.Item
                                             key={index}
                                             onClick={() => handleStoreSelect(store)}
-                                            className='fw-medium text-primary'
+                                            className=' shadow-lg fw-medium text-primary text-start'
                                             isInvalid={!!errors.store}
                                         >
                                             {store}
@@ -284,27 +290,38 @@ export function Home() {
                         </Form.Group>
 
                         <Form.Group controlId="ticketDepartment">
-                            <Form.Select
-                                className="shadow-none text-secondary border rounded mb-1 fw-medium"
-                                isInvalid={!!errors.ticketDepartment}
-                                ref={ticketDepartmentRef}
-                                aria-label="department"
+                            <Dropdown className="mb-1">
+                                <Dropdown.Toggle
+                                    className={`bg-white fw-medium text-start text-secondary border shadow-none w-100 ${errors.ticketDepartment ? 'is-invalid' : ''}`}
+                                    id="ticketDepartmentDropdown"
+                                    aria-label="department"
+                                >
+                                    {selectedDepartment}
+                                </Dropdown.Toggle>
 
-                            >
-                                <option value="" className="fw-medium text-primary">Select Department</option>
-                                {
-                                    Departments.sort().map((department, index) => (
-                                        <option key={index} className="fw-medium text-primary" value={department}>
+                                <Dropdown.Menu style={{ height: "40vh", overflow: 'scroll' }} className='col-12 col-md-12'>
+                                <input
+                                        placeholder="Search Departments..."
+                                        className=" w-75  form-control border shadow-none text-center text-muted fw-medium mb-2 ms-2"
+                                        style={{ border: '1px solid gray' }}
+                                    />
+                                    {Departments.sort().map((department, index) => (
+                                        <Dropdown.Item
+                                            key={index}
+                                            eventKey={department}
+                                            className=" shadow-lg fw-medium text-primary text-capitalize"
+                                            onClick={() => handleDepartmentSelect(department)}
+                                        >
                                             {department}
-                                        </option>
-                                    ))
-                                }
-                            </Form.Select>
+                                        </Dropdown.Item>
+                                    ))}
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </Form.Group>
                         <Form.Group className="mb-1 d-flex align-items-center " controlId="formTicketSubject">
                             <Form.Control
                                 type="text"
-                                className='shadow-none fw-medium boorder-0'
+                                className='shadow-none fw-medium text-secondary boorder-0'
                                 placeholder="Ticket regarding"
                                 isInvalid={!!errors.ticketSubject}
                                 ref={ticketSubjectRef}
@@ -312,7 +329,7 @@ export function Home() {
                         </Form.Group>
                         <Form.Group className="mb-1" controlId="formDescription">
                             <Form.Control
-                                className='shadow-none  fw-medium boorder-0'
+                                className='shadow-none text-secondary  fw-medium boorder-0'
                                 as="textarea"
                                 placeholder="Enter description"
                                 rows={3}
@@ -327,13 +344,13 @@ export function Home() {
                                 style={{ height: '80px', cursor: 'pointer' }}
                             >
                                 {cameraFileName || fileSystemFileName ? (
-                                    <div>
+                                    <div className='mt-4'>
                                         {cameraFileName && <p className='fw-medium text-secondary mt-2'>Selected: {cameraFileName.name}</p>}
                                         {fileSystemFileName && <p className='fw-medium text-secondary mt-2'>Selected: {fileSystemFileName.name}</p>}
                                     </div>
                                 ) : (
                                     popButtons ? (
-                                        <div className='rounded'>
+                                        <div className='rounded '>
                                             <label className='btn border-secondary  btn-outline-secondary fw-medium mt-3  me-2'>
                                                 Camera
                                                 <input
@@ -356,7 +373,7 @@ export function Home() {
                                             </label>
                                         </div>
                                     ) : (
-                                        <div>
+                                        <div className='mt-1'>
                                             <MdOutlineCloudUpload className='fs-1  text-secondary' />
                                             <p className='fw-medium  text-secondary'>Upload files</p>
                                         </div>

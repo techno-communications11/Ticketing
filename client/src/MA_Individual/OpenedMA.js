@@ -5,7 +5,7 @@ import getDecodedToken from '../universalComponents/decodeToken';
 function OpenedMA() {
   const indifullname = getDecodedToken()?.fullname;
   return (
-    <Ticket indifullname={indifullname} departmentId={'12'} statusId={'3'} openedbyUser={true} />
+    <Ticket indifullname={indifullname}  statusId={'3'} openedbyUser={true} />
   );
 }
 

@@ -106,8 +106,8 @@ const UserTable = () => {
 
   return (
     <div className="container">
-      <div className='d-flex justify-content-center mt-2'>
-        <div className='d-flex gap-2 rounded align-items-center w-50 my-3' style={{ border: '1.5px solid gray' }}>
+      <div className='d-flex justify-content-center mt-1'>
+        <div className='col-md-6 d-flex gap-2 rounded align-items-center col-10 my-2' style={{ border: '1.5px solid gray' }}>
           <input
             type="text"
             className='form-control input-form fw-medium border-0 shadow-none'
@@ -131,12 +131,12 @@ const UserTable = () => {
               <div className='loader mb-5'></div>
             </div>
           ) : (
-            <div className="table-responsive">
+            <div>
               <div className="d-flex justify-content-between align-items-center ">
                 <h2 className="font-family mb-0" style={{ color: '#E10174' }}>Users Information</h2>
                 <h4 className="mb-0" style={{ color: '#E10174' }}>users: {users.length}</h4>
               </div>
-              <Table striped bordered hover className='table  align-middle text-center'>
+              <Table striped bordered hover responsive className='table  align-middle text-center'>
                 <thead>
                   <tr>
                   {['SC.No', 'NTID', 'Full Name', 'Market', 'DmName', 'Edit', 'View Profile'].map((header) => (
@@ -216,7 +216,7 @@ const UserTable = () => {
               </div>
             </Form.Group>
             <Modal.Footer>
-              <Button variant="primary" type="submit">Edit</Button>
+              <Button variant="primary" type="submit">Save</Button>
             </Modal.Footer> 
           </Form>
         </Modal.Body>

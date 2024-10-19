@@ -9,8 +9,9 @@ import getDecodedToken from '../universalComponents/decodeToken';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import { useDispatch } from 'react-redux';
 import { setId, fetchIndividualTickets } from '../redux/marketSlice';
+import '../styles/TicketTable.css'
 
-function Ticket({ statusId, indifullname, departmentId, onTicketData, openedby, openedbyUser, fullname,completedAt }) {
+function Ticket({ statusId, indifullname, onTicketData, openedby, openedbyUser, fullname, completedAt, maTickets }) {
   const [tickets, setTickets] = useState([]);
   const [ntidFilter, setntidFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -30,55 +31,51 @@ function Ticket({ statusId, indifullname, departmentId, onTicketData, openedby, 
         });
 
         let fetchedTickets = response.data;
-
+        if (maTickets) {
+          fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy !== null && ticket.assignToTeam !== null && ticket.status.name !== 'completed');
+        }
 
         if (openedby === null) {
-          fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy === null && ticket.assignToTeam === null&& ticket.status.name!=='completed');
-          console.log(fetchedTickets,'ddp')
+          fetchedTickets = fetchedTickets.filter(ticket => ticket.openedBy === null && ticket.assignToTeam === null && ticket.status.name !== 'completed');
+          console.log(fetchedTickets, 'ddp')
         }
 
         if (fullname) {
-          fetchedTickets = fetchedTickets.filter(ticket => 
-            ticket.assignToTeam === fullname && 
+          fetchedTickets = fetchedTickets.filter(ticket =>
+            ticket.assignToTeam === fullname &&
             ticket.status.name !== "completed" &&
             ticket.openedBy === null
           );
         }
         if (openedbyUser) {
-          fetchedTickets = fetchedTickets.filter(ticket => 
+          fetchedTickets = fetchedTickets.filter(ticket =>
             ticket.status.name !== "completed" &&
             ticket.openedBy === userId
           );
         }
         if (statusId === '4') {
-          fetchedTickets = fetchedTickets.filter(ticket => 
-            ticket.status.name === "completed" && 
+          fetchedTickets = fetchedTickets.filter(ticket =>
+            ticket.status.name === "completed" &&
             ticket.openedBy === userId
           );
         }
         if (statusId === '3') {
-          if(!openedbyUser)
-          fetchedTickets = fetchedTickets.filter(ticket => 
-            ticket.status.name === "inprogress" &&
-            ticket.openedBy === null 
-          );
-          if(openedbyUser){
-            fetchedTickets = fetchedTickets.filter(ticket => 
+          if (!openedbyUser)
+            fetchedTickets = fetchedTickets.filter(ticket =>
+              ticket.status.name === "inprogress" &&
+              ticket.openedBy === null
+            );
+          if (openedbyUser) {
+            fetchedTickets = fetchedTickets.filter(ticket =>
               ticket.status.name !== "completed" &&
               ticket.openedBy === userId
             );
-            console.log(fetchedTickets,"ppp")
+            console.log(fetchedTickets, "ppp")
           }
-          
-        }
-        
-        
-         
-        
 
+        }
         setTickets(fetchedTickets);
 
-      
       } catch (error) {
         console.error('Failed to fetch tickets:', error);
         toast.error('Failed to fetch tickets');
@@ -86,7 +83,7 @@ function Ticket({ statusId, indifullname, departmentId, onTicketData, openedby, 
     };
 
     fetchUserTickets();
-  }, [statusId, indifullname, departmentId, openedby, fullname, openedbyUser, onTicketData,completedAt]);
+  }, [statusId, indifullname,  openedby, fullname, openedbyUser, onTicketData, completedAt]);
 
   const handleTicket = (id) => {
     localStorage.setItem('selectedId', id);
@@ -113,7 +110,7 @@ function Ticket({ statusId, indifullname, departmentId, onTicketData, openedby, 
 
       {/* Displaying Tickets Table */}
       {currentItems.length > 0 ? (
-        <div className="table-responsive container">
+        <div className="table-responsive container-fluid">
           <table className="table table-bordered table-hover">
             <thead>
               <tr>
@@ -125,7 +122,7 @@ function Ticket({ statusId, indifullname, departmentId, onTicketData, openedby, 
             <tbody>
               {currentItems.map((ticket, index) => (
                 <TicketBody
-                  key={ticket.id} 
+                  key={ticket.id}
                   ticket={ticket}
                   index={index}
                   handleTicket={handleTicket}
