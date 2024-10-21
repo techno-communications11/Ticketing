@@ -139,6 +139,7 @@ function TotalUserTickets() {
             filteredTickets={filteredTickets}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            itemsPerPage={itemsPerPage}
           />
         </Row>
       )}

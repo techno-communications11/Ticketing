@@ -149,9 +149,9 @@ const UserTable = () => {
                     <tr key={user.ntid} className='fw-medium'>
                       <td className='text-center'>{(currentPage - 1) * itemsPerPage+index + 1}</td>
                       <td className='text-center'>{user.ntid}</td>
-                      <td className='text-center'>{user.fullname}</td>
-                      <td className='text-center'>{user.market ? user.market.market : ""}</td>
-                      <td className='text-center'>{user.dmName}</td>
+                      <td className='text-center text-capitalize'>{user.fullname?.toLowerCase()}</td>
+                      <td className='text-center text-capitalize'>{user.market ? user.market.market : ""}</td>
+                      <td className='text-center text-capitalize'>{user.dmName}</td>
                       <td style={{ cursor: 'pointer' }} className='text-center' onClick={() => handleEdit(user)}>
                         <MdModeEditOutline />
                       </td>
@@ -234,6 +234,7 @@ const UserTable = () => {
         filteredTickets={users}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        itemsPerPage={itemsPerPage}
       />
       <ToastContainer />
     </div>

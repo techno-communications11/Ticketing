@@ -103,6 +103,7 @@ const ShowTickets = () => {
             filteredTickets={filteredTickets}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            itemsPerPage={itemsPerPage}
           />
         </>
       )}

@@ -14,6 +14,8 @@ import { useCallback } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import { Col, Card } from 'react-bootstrap';
+import { Pie } from 'react-chartjs-2';
 
 export function Home() {
     const [show, setShow] = useState(false);
@@ -26,7 +28,7 @@ export function Home() {
     const [TicketsCount, setTicketsCount] = useState(0);
 
     const Departments = [
-         'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
+        'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
         'Charge Back/Commission', 'Inventory', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity',
         'Maintenance ', 'Housing ', 'CAM NW', 'HR Payroll'
     ];
@@ -48,7 +50,6 @@ export function Home() {
     const descriptionRef = useRef(null);
     const marketRef = useRef(null);
     const fullnameRef = useRef('');
-
 
     const handleClose = () => {
         setShow(false);
@@ -213,6 +214,10 @@ export function Home() {
         if (objInProgress) { animateValue(objInProgress, 0, TicketsCount.inprogress || 0, 500); }
         if (objCompleted) { animateValue(objCompleted, 0, TicketsCount.completed || 0, 500); }
         if (objreopened) { animateValue(objreopened, 0, TicketsCount.reopened || 0, 500); }
+        if(totalTickets>0){
+            TicketsCount.Ticket=totalTickets;
+        }
+       
     }, [TicketsCount]);
 
     const handleDataSend = (statusId) => {
@@ -227,6 +232,31 @@ export function Home() {
     const handleCompleted = () => handleDataSend('4');
     const handleReOpened = () => handleDataSend('5');
     const handleTotal = () => { navigate('/totalusertickets') };
+
+    const chartData = {
+        labels: Object.keys(TicketsCount),
+        datasets: [
+            {
+                data: Object.values(TicketsCount),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#5b66FF'],
+                hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#5b66FF'],
+            },
+        ],
+    };
+
+    const chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Ticket Counts by Status',
+            },
+        },
+    };
+
 
     return (
         <div>
@@ -300,7 +330,7 @@ export function Home() {
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu style={{ height: "40vh", overflow: 'scroll' }} className='col-12 col-md-12'>
-                                <input
+                                    <input
                                         placeholder="Search Departments..."
                                         className=" w-75  form-control border shadow-none text-center text-muted fw-medium mb-2 ms-2"
                                         style={{ border: '1px solid gray' }}
@@ -390,63 +420,75 @@ export function Home() {
                 </Modal.Footer>
             </Modal>
             <div className='container'>
-                <p className='font-family home-text pt-5 fw-medium fs-3 text-center' style={{ color: '#E10174' }}>
+                <p className='font-family home-text pt-3 fw-medium fs-3 text-center' style={{ color: '#E10174' }}>
                     Ticketing Portal
                 </p>
-                <div className='d-flex flex-column flex-md-row align-items-center justify-content-between mt-4 gap-4 mx-auto'>
-                    <div className='card col-12 col-md-4 bg-white shadow-lg rounded py-3 px-4 border-0 text-center'>
-                        <div className='d-flex justify-content-center align-items-center mb-3'>
-                            <img loading="lazy" src='./ticket.png' alt='Ticket Icon' className='img img-fluid rounded-circle' style={{ maxWidth: '150px', height: 'auto' }} />
+
+                <div className='row mt-1'>
+                    <div className='col-12 col-md-8 d-flex flex-column'>
+                        <div className=' col-md-12 flex-grow-1 bg-white shadow-lg border-0 rounded p-2 text-center mb-2'>
+                            <div className='d-flex justify-content-center align-items-center mb-3'>
+                                <img loading="lazy" src='./ticket.png' alt='Ticket Icon' className='img img-fluid rounded-circle' style={{ maxWidth: '150px', height: 'auto' }} />
+                            </div>
+                            <div className='d-flex justify-content-center'>
+                                <button className='btn btn-primary w-auto' onClick={handleShow}>Open A Ticket</button>
+                            </div>
                         </div>
-                        <div className='d-flex justify-content-center'>
-                            <button className='btn btn-primary w-auto' onClick={handleShow}>Open A Ticket</button>
+
+                        <div className=' col-12 col-md-12 flex-grow-1 bg-white shadow-lg border-0 rounded p-1'>
+                            <div className=' col-md-12 d-flex justify-content-center'>
+                                <p className='fs-3 fw-medium font-family'>Status Of Tickets</p>
+                            </div>
+                            <div className=" col-12 col-md-12 d-flex row g-3 p-3">
+                                <Link onClick={handleTotal} to="/totalusertickets" className="col-12 col-md-2 text-decoration-none">
+                                    <div className="  col-12 card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                                        <h6 className="fw-medium">Total</h6>
+                                        <p id="Totalvalue" className="fs-1" style={{ color: '#E10174' }}></p>
+                                    </div>
+                                </Link>
+                                <Link onClick={handleNew} to="/usertickets" className="col-12 col-md-2 text-decoration-none">
+                                    <div className="  col-12 card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                                        <h6 className="fw-medium">New</h6>
+                                        <p id="Newvalue" className="fs-1" style={{ color: '#E10174' }}></p>
+                                    </div>
+                                </Link>
+                                <Link onClick={handleOpened} to="/usertickets" className="col-12 col-md-2 text-decoration-none">
+                                    <div className=" col-12  card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                                        <h6 className="fw-medium">Opened</h6>
+                                        <p id="Openedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
+                                    </div>
+                                </Link>
+                                <Link onClick={handleInprogress} to="/usertickets" className="col-12 col-md-2 text-decoration-none">
+                                    <div className=" col-12  card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                                        <h6 className="fw-medium">In Progress</h6>
+                                        <p id="Inprocessvalue" className="fs-1" style={{ color: '#E10174' }}></p>
+                                    </div>
+                                </Link>
+                                <Link onClick={handleCompleted} to="/usertickets" className="col-12 col-md-2 text-decoration-none">
+                                    <div className=" card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                                        <h6 className="fw-medium">Completed</h6>
+                                        <p id="Completedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
+                                    </div>
+                                </Link>
+                                <Link onClick={handleReOpened} to="/usertickets" className="col-12 col-md-2 text-decoration-none">
+                                    <div className=" col-12  card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                                        <h6 className="fw-medium">Reopened</h6>
+                                        <p id="reOpenedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
+                                    </div>
+                                </Link>
+                            </div>
                         </div>
                     </div>
-                    <div className='col-12 col-md-8 bg-white shadow-lg border-0 rounded p-2'>
-                        <div className='d-flex justify-content-center '>
-                            <p className='fs-3 fw-medium font-family' >Status Of Tickets</p>
-                        </div>
-                        <div className="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-3 p-3">
-                            <Link onClick={handleTotal} to="/totalusertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-medium">Total</h6>
-                                    <p id="Totalvalue" className="fs-1" style={{ color: '#E10174' }}></p>
-                                </div>
-                            </Link>
-                            <Link onClick={handleNew} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-medium">New</h6>
-                                    <p id="Newvalue" className="fs-1" style={{ color: '#E10174' }}></p>
-                                </div>
-                            </Link>
-                            <Link onClick={handleOpened} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-medium">Opened</h6>
-                                    <p id="Openedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
-                                </div>
-                            </Link>
-                            <Link onClick={handleInprogress} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-medium">InProgress</h6>
-                                    <p id="Inprocessvalue" className="fs-1" style={{ color: '#E10174' }}></p>
-                                </div>
-                            </Link>
-                            <Link onClick={handleCompleted} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-medium">Completed</h6>
-                                    <p id="Completedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
-                                </div>
-                            </Link>
-                            <Link onClick={handleReOpened} to="/usertickets" className="col text-decoration-none">
-                                <div className="card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                                    <h6 className="fw-medium">Reopened</h6>
-                                    <p id="reOpenedvalue" className="fs-1" style={{ color: '#E10174' }}></p>
-                                </div>
-                            </Link>
-                        </div>
+                    <div className='col-12 col-md-4'>
+                        <Card className="shadow-sm rounded" style={{ height: '99%' }}>
+                            <Pie data={chartData} options={chartOptions} />
+                        </Card>
+
                     </div>
+
                 </div>
             </div>
+
             <ToastContainer />
         </div>
     );

@@ -21,7 +21,7 @@ export function NavbarClient() {
 
   const isDepartments = ['NTID Mappings', 'Trainings',
     'Accessories Order', 'YUBI Key Setups', 'Charge Back/Commission',
-    'Inventory',  'Housing','CAM NW', 'HR Payroll'].includes(department);
+    'Inventory', 'Housing', 'CAM NW', 'HR Payroll'].includes(department);
   const ma_rel = ['Maintenance', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity'].includes(department);
   const MA_New = ['Admin_Head', 'Maintenance_Head'].includes(department);
 
@@ -29,7 +29,7 @@ export function NavbarClient() {
     const fetchTickets = async () => {
       if (!userId) return;
       try {
-        const statuseIds = ['1', '5'];
+        const statuseIds = ['1'];
         const ticketPromises = statuseIds.map(statusId => dispatch(fetchStatusWiseTickets({ id: userId, statusId })));
         const ticketResponses = await Promise.all(ticketPromises);
         const totalTickets = ticketResponses.reduce((total, response) => {
@@ -141,7 +141,7 @@ export function NavbarClient() {
                       Completed
                     </Nav.Link>
                     {!ma_rel && !isDepartments && !MA_New && <Nav.Link as={Link} to={department === 'District Manager' ? '/request-reopen' : '/'} className='fw-medium position-relative text-dark'>
-                    ReopenQuest
+                      ReopenQuest
                     </Nav.Link>}
                     {
                       !ma_rel && department !== 'District Manager' && department !== 'Maintenance_Head' && department !== 'Admin_Head' &&
@@ -151,19 +151,20 @@ export function NavbarClient() {
                     }
                   </div>
                 )}
+                 {(department==='District Manager'||department==='SuperAdmin')&&(<Nav.Link as={Link} to={department==='SuperAdmin'?'/market&department':department==='District Manager'?'/dmtabs':'/'} className='me-2 fw-medium text-dark'>
+                      Insights
+                    </Nav.Link>)}
                 {department === "SuperAdmin" && (
                   <Nav>
-                    <Nav.Link as={Link} to='/market&department' className='me-2 fw-medium text-dark'>
-                    Insights
-                    </Nav.Link>
+                   
                     <Nav.Link as={Link} to='/marketstructureupload' className='me-2 fw-medium text-dark'>
-                    MarketEnroll
+                      MarketEnroll
                     </Nav.Link>
                     <Nav.Link as={Link} to='/register' className='me-2 fw-medium text-dark'>
-                    UserEnroll
+                      UserEnroll
                     </Nav.Link>
                     <Nav.Link as={Link} to='/users' className='me-2 fw-medium text-dark'>
-                    Users
+                      Users
                     </Nav.Link>
                   </Nav>
                 )}

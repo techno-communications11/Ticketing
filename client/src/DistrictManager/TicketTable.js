@@ -141,6 +141,7 @@ const TicketsTable = ({ statusIds, text }) => {
         filteredTickets={filteredTickets}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        itemsPerPage={itemsPerPage}
       />
     </Container>
   );

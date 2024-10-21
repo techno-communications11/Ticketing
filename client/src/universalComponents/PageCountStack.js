@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
-function PageCountStack({ filteredTickets, currentPage, setCurrentPage }) {
+function PageCountStack({ filteredTickets, currentPage, setCurrentPage,itemsPerPage }) {
   
-  const itemsPerPage = 8;
   const pageCount = Math.ceil(filteredTickets?.length / itemsPerPage);
   const handleChangePage = (_, value) => setCurrentPage(value);
     return (
