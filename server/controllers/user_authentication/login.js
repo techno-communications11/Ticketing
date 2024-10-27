@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 
@@ -7,7 +7,6 @@ const login = async (req, res) => {
   console.log(ntid, password);
 
   try {
-    // Fetch the user from the database
     const user = await prisma.user.findUnique({
       where: { ntid: ntid },
       select: {
@@ -20,7 +19,7 @@ const login = async (req, res) => {
         department: {
           select: {
             id: true,
-            name: true // Fetch the department name
+            name: true 
           }
         }
       }
@@ -29,21 +28,14 @@ const login = async (req, res) => {
       where: { doorCode: user.DoorCode },
       include: {
         market: { 
-          select: { market: true }, // Fetch the market name
+          select: { market: true }, 
         },
       },
     });
-    console.log("User found:", user.ntid, "Market:", market?.market?.market);
-
-
-    
-
-    // Check if user exists
     if (!user) {
       return res.status(401).json({ message: "Invalid username or password" });
     }
 
-    // Check if department exists
     if (!user.department.id) {
       return res.status(400).json({ message: "Department not found" });
     }
@@ -58,8 +50,7 @@ const login = async (req, res) => {
     const token = jwt.sign(
       {
         id: user.id,
-        department: user.department.name, // Use the department name directly
-        // market: market.market.market,
+        department: user.department.name,
         ntid: user.ntid,
         fullname: user.fullname
       },
@@ -67,13 +58,10 @@ const login = async (req, res) => {
       { expiresIn: tokenExpiration }
     );
     res.cookie('token', token, {
-      httpOnly: true, // This makes the cookie accessible only via the HTTP protocol
-      maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+      httpOnly: true, 
+      maxAge: 1000 * 60 * 60 * 24 * 7 
     });
-
-    // Respond to the client
     res.status(200).json({ message: "Login successful", token });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Failed to login" });

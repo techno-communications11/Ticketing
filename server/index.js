@@ -8,30 +8,16 @@ import authrouter from './routes/auth.route.js';
 import createTickets from './routes/create_ticket.route.js'; 
 import profileRoute from './routes/profile_data.route.js';
 import marketRoute from './routes/market.route.js';
-
-
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-const allowedOrigins = [
-    process.env.CLIENT_URL,         // for localhost access
-  ];
-  
   app.use(cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
+    origin: true, 
+    credentials: true, 
   }));
-  
   
 app.use(cookieParser())
 app.use('/public', express.static(path.join(process.cwd(), 'public')));

@@ -4,7 +4,6 @@ import { Button } from 'react-bootstrap';
 
 function Comment({handleCommentChange,handleSubmit,comment}) {
   return (
-   
       <form onSubmit={handleSubmit} className="w-100 d-flex align-items-center border rounded mt-2">
                   <textarea
                     value={comment}

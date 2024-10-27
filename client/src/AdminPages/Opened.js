@@ -55,19 +55,23 @@ const ShowTickets = () => {
 
   return (
     <Container className="mt-2">
-      <div className="d-flex align-items-center mb-2">
-        <h3 className="mb-0 font-family text-capitalize me-auto" style={{ color: '#E10174' }}>
+      <div className="col-12 d-flex flex-column flex-md-row align-items-center mb-2">
+        <h3 className="col-12 col-md-5  mb-0 font-family text-capitalize" style={{ color: '#E10174' }}>
           Tickets from Market {market.toLowerCase()}
         </h3>
-        <Filtering
-          ntidFilter={ntidFilter}
-          setntidFilter={setntidFilter}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          dateFilter={dateFilter}
-          setDateFilter={setDateFilter}
-        />
+        <div className='col-12 col-md-7 d-flex justify-content-md-end'>
+          <Filtering
+            ntidFilter={ntidFilter}
+            setntidFilter={setntidFilter}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+          />
+        </div>
       </div>
+
+
 
       {loading ? (
         <div className="vh-100 d-flex align-items-center justify-content-center">

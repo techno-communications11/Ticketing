@@ -4,7 +4,7 @@ import lottie from 'lottie-web';
 import animationData from '../universalComponents/Animation.json';
 import { apiRequest } from '../lib/apiRequest';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; 
+import { jwtDecode } from 'jwt-decode';
 
 export function Login() {
   const ntidRef = useRef(null);
@@ -17,11 +17,12 @@ export function Login() {
   const navigate = useNavigate();
 
   const Departments = [
-    'Varun Team', 'NTID Mappings', 'Trainings', 'Accessories Order',
-    'YUBI Key Setups', 'Deposits', 'Charge Back', 'Commission',
-    'Inventory', 'Head Office', 'Admin_Head', 'Maintenance_Head',
-    'Housing Related', 'CAM NW', 'HR Payroll', 'Maintenance Related','Admin Related'
+     'NTID Mappings', 'Trainings', 'Accessories Order',
+    'YUBI Key Setups',  'Charge Back/Commission',
+    'Inventory',  'Admin_Head', 'Maintenance_Head',
+    'Housing', 'CAM NW', 'HR Payroll',
   ];
+  const MA_rel = ['Maintenance', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity'];
 
   useEffect(() => {
     const animContainer = document.getElementById('animation-container');
@@ -35,7 +36,6 @@ export function Login() {
 
     return () => animation.destroy();
   }, []);
-
 
   const validateInputs = (ntid, password) => {
     const ntidRegex = /^(?=.*[a-z])(?=.*\d)[a-zA-Z\d]{3,16}$/;
@@ -76,19 +76,20 @@ export function Login() {
 
       localStorage.setItem('token', token);
       const { department } = jwtDecode(token);
-      console.log(department, "dept")
-      localStorage.setItem('dept', department)
+      localStorage.setItem('dept', department);
       if (department === 'Employee' || department === 'District Manager') {
         navigate('/home');
       } else if (Departments.includes(department)) {
         navigate('/departmenthome');
-      } else if (department==='Market Manager') {
+      } else if (department === 'Market Manager') {
         navigate('/markethome');
+      } else if (MA_rel.includes(department)) {
+        navigate('/MAhome');
       } else {
         navigate('/superAdminHome');
       }
     } catch (error) {
-      console.error('Login error:', error); 
+      console.error('Login error:', error);
       setError(error.response?.data?.message || 'Something went wrong. Please try again later.');
     } finally {
       setIsLoading(false);
@@ -98,8 +99,7 @@ export function Login() {
   return (
     <div className='container-fluid d-flex flex-column align-items-center justify-content-center mt-5'>
       {isLoading ? (
-        <div className='loader d-flex align-items-center justify-content-center'>
-        </div>
+        <div className='loader d-flex align-items-center justify-content-center'></div>
       ) : (
         <>
           <div className='my-2 text-center mt-5'>
@@ -109,7 +109,7 @@ export function Login() {
           <div className='row justify-content-center align-items-center w-100 mt-5'>
             <div id='animation-container' className='col-12 col-md-6 col-lg-4 mb-4 d-none d-sm-block'></div>
 
-            <div className='col-12 col-md-6 col-lg-4'>
+            <div className='col-12 col-md-6 col-lg-4 d-flex justify-content-center align-items-center'>
               <form className='bg-white p-4 rounded box-shadow shadow-lg w-100' onSubmit={handleSubmit}>
                 <h4 className='text-dark font-weight-bold d-flex justify-content-center'>Login</h4>
 

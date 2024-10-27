@@ -1,7 +1,7 @@
 .tablerow {
     width: 100%;
     border-collapse: collapse; 
-    margin-top: 20px; 
+    margin-top: 10px; 
 }
 
 .tablerow th,
@@ -38,4 +38,7 @@
     display: flex;
     align-items: center; 
     justify-content: center; 
+}
+.text-shrink {
+    white-space: nowrap;       
 }

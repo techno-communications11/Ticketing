@@ -2,16 +2,22 @@ import prisma from "../lib/prisma.js";
 
 const alloted = async (req, res) => {
   const { user,ticketId } = req.body; 
-  console.log(user,"usr")
+  console.log(user)
+
   
 
   try {
+    const dept=await prisma.user.findFirst({
+      where:{fullname:user},
+      select:{departmentId:true}
+    })
 
     const updatedTicket = await prisma.createTicket.update({
       where: { ticketId },
       data: {
         assignToTeam: user, 
-        openedBy:null 
+        openedBy:null, 
+        departmentId: dept.departmentId
       },
     });
 
