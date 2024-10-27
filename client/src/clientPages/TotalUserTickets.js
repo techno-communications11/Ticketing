@@ -10,6 +10,7 @@ import TicketBody from '../universalComponents/TicketBody';
 import Filtering from '../universalComponents/Filtering';
 import { Container } from 'react-bootstrap';
 import FilterLogic from '../universalComponents/FilteringLogic';
+import { useMyContext } from '../universalComponents/MyContext';
 
 function TotalUserTickets() {
   const dispatch = useDispatch();
@@ -21,15 +22,27 @@ function TotalUserTickets() {
   const [currentPage, setCurrentPage] = useState(1);
   const [ntidFilter, setntidFilter] = useState('');
   const itemsPerPage = 8;
-
+  let {adminntid,statusId } = useMyContext();
+  const localStorageNtid = decodedToken()?.ntid; // Get ntid from local storage
+  const ntid = adminntid || localStorageNtid;
+  statusId = statusId !== "" ? statusId : localStorage.getItem('statusId');
+  console.log(statusId,"yyy")
   useEffect(() => {
-    const ntid = decodedToken()?.ntid;
     const fetchUserTickets = async () => {
       setLoading(true);
       try {
-        const response = await apiRequest.get(`/createTickets/usertickets?ntid=${ntid}`);
-        setTickets(response.data);
-        setAuthenticated(true);
+        let url = `/createTickets/usertickets`;
+        if (statusId) {
+          url +=`?statusId=${statusId}` ;
+        } else {
+          url += `?ntid=${ntid}`;
+        }
+        const response = await apiRequest.get(url);
+        if(response.status===200){
+          setTickets(response.data);
+          setAuthenticated(true);
+        }
+        
       } catch (error) {
         console.error('Failed to fetch tickets:', error);
         toast.error('Failed to fetch tickets');
@@ -39,7 +52,7 @@ function TotalUserTickets() {
     };
     if (ntid) fetchUserTickets();
     else setLoading(false);
-  }, []);
+  }, [statusId,ntid]);
 
   const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter);
   const currentItems = filteredTickets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -88,6 +101,7 @@ function TotalUserTickets() {
         filteredTickets={filteredTickets}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        itemsPerPage={itemsPerPage}
       />
     </div>
   );

@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { MdDownload, MdFilterList } from 'react-icons/md';
 import * as XLSX from 'xlsx';
-import { Table, Row, Col, Spinner, Form, Modal } from 'react-bootstrap';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Table, Row, Col, Form } from 'react-bootstrap';
 import { apiRequest } from '../lib/apiRequest';
-
-// Register the necessary chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend);
+import PageCountStack from '../universalComponents/PageCountStack';
+import {Container} from 'react-bootstrap';
 
 const DepartmentWise = () => {
   const [ticketCounts, setTicketCounts] = useState({});
@@ -16,24 +13,21 @@ const DepartmentWise = () => {
   const [filter, setFilter] = useState('');
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
-  const [showModal, setShowModal] = useState(false); 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7; 
 
-  // Function to handle potential non-numeric values
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
 
-  // Fetch ticket counts from the API
   const fetchAllTickets = useCallback(async () => {
     setLoading(true);
-    setError(''); // Reset error before fetching
+    setError('');
     try {
-      const response = await apiRequest.get('/createTickets/alldeptcounts'); // Ensure the endpoint is correct
-      const ticketData = response.data; // Assuming this is where the department data resides
-
+      const response = await apiRequest.get('/createTickets/alldeptcounts');
+      const ticketData = response.data;
       if (typeof ticketData !== 'object' || !Object.keys(ticketData).length) {
         throw new Error('No ticket data received.');
       }
 
-      // Initialize counts object
       const counts = Object.keys(ticketData).reduce((acc, department) => {
         const { total = 0, new: newTickets = 0, opened = 0, inProgress = 0, completed = 0, reopened = 0 } = ticketData[department];
         acc[department] = { total, new: newTickets, opened, inProgress, completed, reopened };
@@ -53,13 +47,10 @@ const DepartmentWise = () => {
     fetchAllTickets();
   }, [fetchAllTickets]);
 
-  // Handle department click to show modal
   const handleDepartmentClick = (department) => {
     setSelectedDepartment(department);
-    setShowModal(true); 
   };
 
-  // Download ticket counts as an Excel file
   const downloadStatus = () => {
     const dataArray = Object.entries(ticketCounts).map(([department, counts]) => ({
       Department: department,
@@ -77,58 +68,22 @@ const DepartmentWise = () => {
     XLSX.writeFile(workbook, 'department_ticket_counts.xlsx');
   };
 
-  // Prepare data for the pie chart
-  const pieChartData = useMemo(() => {
-    if (!selectedDepartment) return { labels: [], datasets: [] };
-
-    const counts = ticketCounts[selectedDepartment] || {};
-    console.log('Counts for selected department:', counts);
-
-    return {
-      labels: ['Total', 'New', 'Opened', 'In Progress', 'Completed', 'Reopened'],
-      datasets: [{
-        label: 'Status Wise Tickets',
-        data: [
-          safeNumber(counts.total),
-          safeNumber(counts.new),
-          safeNumber(counts.opened),
-          safeNumber(counts.inProgress),
-          safeNumber(counts.completed),
-          safeNumber(counts.reopened),
-        ],
-        backgroundColor: ['#E10179', '#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF'],
-      }],
-    };
-  }, [selectedDepartment, ticketCounts]);
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { position: 'top' },
-      title: {
-        display: true,
-        text: `Status Wise Tickets for ${selectedDepartment || 'Department'}`,
-      },
-    },
-  };
-
-  // Filter ticket counts based on user input
   const filteredTicketCounts = Object.entries(ticketCounts).filter(([department]) =>
-    department.toLowerCase().includes(filter.toLowerCase())
+    department.toLowerCase()?.includes(filter.toLowerCase())
   );
+  const currentItems = filteredTicketCounts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
+    <Container>
     <Row>
       {loading ? (
-        <div className="loader">
-          <Spinner animation="border" />
-        </div>
+        <div className="loader"></div>
       ) : (
         <div>
-          {error && <div className="alert alert-danger">{error}</div>} {/* Display error if any */}
+          {error && <div className="alert alert-danger">{error}</div>}
           <Col md={12}>
-            <h4 className="d-flex justify-content-center font-family fw-medium">Department Wise Ticket Counts</h4>
-            <Row className="container mt-1 mb-1 d-flex justify-content-center">
+            <h4 className="d-flex justify-content-center font-family fw-medium" style={{ color: '#E10174' }}>Department Wise Ticket Counts</h4>
+            <Row className=" mt-1 mb-1 d-flex justify-content-center">
               <Col md={12} sm={12} xs={12} className="d-flex flex-wrap justify-content-start">
                 <div className="d-flex flex-wrap w-100 gap-2">
                   <button className="btn btn-outline-success fw-medium" onClick={downloadStatus}>
@@ -138,11 +93,12 @@ const DepartmentWise = () => {
               </Col>
             </Row>
 
-            <div className="container table-responsive-sm mt-2">
+            <div className=" table-responsive-sm mt-2">
               <Table striped bordered hover className="table align-middle text-center">
                 <thead>
                   <tr>
-                    <th className="text-decoration-none fw-medium" style={{ backgroundColor: '#E10174', color: 'white' }}>
+                    <th  style={{ backgroundColor: '#E10174', color: 'white' }}>SINO</th>
+                    <th className="text-decoration-none fw-medium"  style={{ backgroundColor: '#E10174', color: 'white' }}>
                       Department
                       <MdFilterList 
                         className="ms-2" 
@@ -165,8 +121,9 @@ const DepartmentWise = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTicketCounts.map(([department, counts]) => (
-                    <tr key={department} onClick={() => handleDepartmentClick(department)}>
+                  {currentItems.map(([department, counts],index) => (
+                    <tr key={department} onClick={() => handleDepartmentClick(department)} style={{ cursor: 'pointer' }}>
+                     <td>{index+1}</td>
                       <td>{department}</td>
                       <td>{safeNumber(counts.total)}</td>
                       <td>{safeNumber(counts.new)}</td>
@@ -180,17 +137,16 @@ const DepartmentWise = () => {
               </Table>
             </div>
           </Col>
-
-          <Col md={12}>
-            <div className="position-relative " style={{height:'50vh',zIndex: 1}} >
-              {selectedDepartment && (
-                <Pie options={chartOptions} data={pieChartData} />
-              )}
-            </div>
-          </Col>
+          <PageCountStack
+        filteredTickets={filteredTicketCounts}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+      />
         </div>
       )}
     </Row>
+    </Container>
   );
 };
 

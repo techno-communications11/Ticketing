@@ -79,11 +79,11 @@ export function Login() {
       localStorage.setItem('dept', department);
       if (department === 'Employee' || department === 'District Manager') {
         navigate('/home');
-      } else if (Departments.includes(department)) {
+      } else if (Departments?.includes(department)||MA_rel?.includes(department)) {
         navigate('/departmenthome');
       } else if (department === 'Market Manager') {
         navigate('/markethome');
-      } else if (MA_rel.includes(department)) {
+      } else if (MA_rel?.includes(department)) {
         navigate('/MAhome');
       } else {
         navigate('/superAdminHome');

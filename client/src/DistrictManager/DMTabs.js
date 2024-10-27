@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import MarketWise from './MarketWise';
-import DepartmentWise from './DepartmentWise';
-import DM_insights from './DM_insights';
-import User_Insights from './User_Insights';
+import EmployeesInsights from './EmployeesInsights';
+import TotalMarketInsights from './TotalMarketInsights';
+import { useMyContext } from '../universalComponents/MyContext';
 
-function Market_Department(props) {
+function DMTabs(props) {
   const { children, value, index, ...other } = props;
+  
 
   return (
     <div
@@ -24,7 +24,7 @@ function Market_Department(props) {
   );
 }
 
-Market_Department.propTypes = {
+DMTabs.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
@@ -39,6 +39,7 @@ function a11yProps(index) {
 
 export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
+  const { dm } = useMyContext();
 
   const handleChange = ( event,newValue) => {
     setValue(newValue);
@@ -47,25 +48,19 @@ export default function BasicTabs() {
   return (
     <Box sx={{ width: '100%' }} className="container fw-medium">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
+        <p>{dm}</p>
         <Tabs value={value} onChange={handleChange}   aria-label="basic tabs example" >
-          <Tab className='fw-bolder' label="MarketWise_Insights" {...a11yProps(0)} />
-          <Tab className='fw-bolder' label="DepartmentWise_Insights" {...a11yProps(1)} />
-          <Tab className='fw-bolder' label="DM_Insights" {...a11yProps(2)} />
-          <Tab className='fw-bolder' label="Users_Insights" {...a11yProps(3)} />
+          <Tab className='fw-bolder' label="Market Insights" {...a11yProps(0)} />
+          <Tab className='fw-bolder' label="Employees Insights" {...a11yProps(1)} />
         </Tabs>
       </Box>
-      <Market_Department value={value} index={0}>
-        <MarketWise/>
-      </Market_Department>
-      <Market_Department value={value} index={1}>
-        <DepartmentWise/>
-      </Market_Department>
-      <Market_Department value={value} index={2}>
-        <DM_insights/>
-      </Market_Department>
-      <Market_Department value={value} index={3}>
-        <User_Insights/>
-      </Market_Department>
+      <DMTabs value={value} index={0}>
+      <TotalMarketInsights dm={dm}/>
+      </DMTabs>
+      <DMTabs value={value} index={1}>
+      <EmployeesInsights dm={dm}/>
+      </DMTabs>
+     
     </Box>
   );
 }

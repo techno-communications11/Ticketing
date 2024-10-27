@@ -21,7 +21,7 @@ function TotalUserTickets() {
   const [dateFilter, setDateFilter] = useState('');
   const [ntidFilter, setntidFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 7;
   const dispatch = useDispatch();
   const { ntid } = getDecodedToken();
 
@@ -82,8 +82,8 @@ function TotalUserTickets() {
 
   return (
     <Container className='mt-0'>
-      <Row className="d-flex justify-content-center gap-5  my-2">
-        <Col xs={12} lg={2} className='card text-center shadow-sm rounded p-3'>
+      <Row className="d-flex justify-content-center gap-2  my-2">
+        <Col xs={12} lg={1} className='card text-center shadow-sm rounded p-1'>
           <Link to={"/opened"} onClick={() => handleStatusClick('Total')} className='text-decoration-none fw-medium text-black'>
             <h4>Total</h4>
             <h1 style={{ color: '#E10174' }}>{tickets.length || 0}</h1>
@@ -91,7 +91,7 @@ function TotalUserTickets() {
         </Col>
 
         {Object.entries(counts).map(([statusName, count], index) => (
-          <Col key={index} xs={12} lg={2} className='card text-center shadow-sm p-3 rounded'>
+          <Col key={index} xs={12} lg={2} className='card text-center shadow-sm p-1 rounded'>
             <Link to={"/opened"} onClick={() => handleStatusClick(statusName)} className='text-decoration-none fw-medium text-black'>
               <h4>{statusName || 0}</h4>
               <h1 style={{ color: '#E10174' }}>{count}</h1>
@@ -139,6 +139,7 @@ function TotalUserTickets() {
             filteredTickets={filteredTickets}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            itemsPerPage={itemsPerPage}
           />
         </Row>
       )}

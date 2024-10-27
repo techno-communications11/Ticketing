@@ -55,7 +55,7 @@ const TicketsTable = ({ statusIds, text }) => {
 
   const filteredTickets = useMemo(() => {
     return combinedTickets.filter(ticket => {
-      const ntidMatch = ntidFilter ? ticket.ntid?.toLowerCase().includes(ntidFilter.toLowerCase()) : true;
+      const ntidMatch = ntidFilter ? ticket.ntid?.toLowerCase()?.includes(ntidFilter.toLowerCase()) : true;
       const dateMatch = dateFilter ? new Date(ticket.createdAt).toISOString().split('T')[0] === new Date(dateFilter).toISOString().split('T')[0] : true;
       return ntidMatch && dateMatch;
     });
@@ -141,6 +141,7 @@ const TicketsTable = ({ statusIds, text }) => {
         filteredTickets={filteredTickets}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        itemsPerPage={itemsPerPage}
       />
     </Container>
   );

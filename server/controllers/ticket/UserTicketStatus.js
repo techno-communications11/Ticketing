@@ -1,11 +1,11 @@
 import prisma from "../lib/prisma.js";
 
 const UserTicketStatus = async (req, res) => {
-    const userId = req.user.id; // Ensure this is being set correctly
-    const { statusId } = req.query; // Access statusId from query parameters
-    console.log(userId, statusId, "userId and statusId"); // Log for debugging
+    // const userId = req.user.id; // Ensure this is being set correctly
+    const { statusId,ntid } = req.query; // Access statusId from query parameters
+    // console.log(userId, statusId, "userId and statusId"); // Log for debugging
 
-    if (!userId) {
+    if (!ntid) {
         return res.status(400).json('Invalid user ID');
     }
 
@@ -16,7 +16,7 @@ const UserTicketStatus = async (req, res) => {
     try {
         const tickets = await prisma.createTicket.findMany({
             where: {
-                userId: userId,
+                ntid: ntid,
                 statusId: statusId
             },
             select: {

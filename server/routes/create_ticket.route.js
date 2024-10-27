@@ -23,6 +23,11 @@ import Settlement from '../controllers/ticket/Settlement.js';
 import updateOpenedBy from '../controllers/ticket/UpdateOpenedBy.js';
 import alloted from '../controllers/ticket/alloted.js';
 import allDepartCounts from '../controllers/ticket/allDepartCounts.js';
+import fetchUserTicketsStats from '../controllers/fetchUserTicketsStats.js'
+import User_Insights from '../controllers/ticket/User_insights.js';
+import DM_Insights from '../controllers/ticket/Dm_Insights.js';
+import GetMarketInsights from '../controllers/ticket/GetMarketInsights.js';
+import GetDepartmentTickets from '../controllers/ticket/GetDepartmentTickets.js'
 
  const createTicketsRouter = express.Router();
  createTicketsRouter.post('/uploadTicket',authenticateJWT,CreateTicket)
@@ -48,5 +53,10 @@ import allDepartCounts from '../controllers/ticket/allDepartCounts.js';
  createTicketsRouter.put('/update_opened_by',authenticateJWT,updateOpenedBy)
  createTicketsRouter.put('/alloted',authenticateJWT,alloted)
  createTicketsRouter.get('/alldeptcounts',authenticateJWT,allDepartCounts)
+ createTicketsRouter.get('/fetchuserticketsstats',authenticateJWT, fetchUserTicketsStats);
+ createTicketsRouter.get('/userinsights',authenticateJWT, User_Insights);
+ createTicketsRouter.get('/dminsights',authenticateJWT, DM_Insights);
+ createTicketsRouter.get('/getmarketinsights',authenticateJWT, GetMarketInsights);
+ createTicketsRouter.get('/getDepartmentStats/:department',authenticateJWT, GetDepartmentTickets);
  
 export default createTicketsRouter

@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { MdDownload, MdFilterList } from 'react-icons/md'; // Import the filter icon
 import * as XLSX from 'xlsx';
 import { Link } from 'react-router-dom';
-import { Table, Row, Col, Spinner, Form } from 'react-bootstrap';
+import { Table, Row, Col, Form } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { Pie } from 'react-chartjs-2'; // Import Pie chart
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import getMarkets from '../universalComponents/GetMarkets';
 import { setMarket } from '../redux/marketSlice';
 import { fetchStatusWiseTickets, setMarketAndStatus } from '../redux/statusSlice';
 import { apiRequest } from '../lib/apiRequest';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import PageCountStack from '../universalComponents/PageCountStack';
+import {Container} from 'react-bootstrap';
 
 function MarketWise() {
   const [marketTicketCounts, setMarketTicketCounts] = useState({});
@@ -22,6 +20,8 @@ function MarketWise() {
   const [isFilterVisible, setIsFilterVisible] = useState(false); // State for showing/hiding filter input
   const [selectedMarket, setSelectedMarket] = useState(null); // State for selected market
   const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
 
@@ -63,7 +63,7 @@ function MarketWise() {
 
   const handleMarketClick = (market) => {
     dispatch(setMarket(market));
-    setSelectedMarket(market); // Set selected market for pie chart
+    setSelectedMarket(market); 
   };
 
   const handleStatusClick = (market, statusId) => {
@@ -71,7 +71,6 @@ function MarketWise() {
     dispatch(setMarketAndStatus({ market, statusId }));
   };
 
-  // Download Market Status as Excel
   const downloadStatus = () => {
     const dataArray = Object.entries(marketTicketCounts).map(([market, counts]) => ({
       Market: market,
@@ -111,12 +110,9 @@ function MarketWise() {
     fetchMarketWiseStatus();
   }, [marketData, fetchMarketWiseStatus]);
 
-  // Filtered market ticket counts
   const filteredMarketCounts = Object.entries(marketTicketCounts).filter(([market]) =>
-    market.toLowerCase().includes(filter.toLowerCase())
+    market.toLowerCase()?.includes(filter.toLowerCase())
   );
-
-  // Automatically update selected market based on filtered data
   useEffect(() => {
     if (filteredMarketCounts.length > 0) {
       setSelectedMarket(filteredMarketCounts[0][0]); // Set to the first filtered market
@@ -125,58 +121,20 @@ function MarketWise() {
     }
   }, [filteredMarketCounts]);
 
-  // Pie chart data for visualizing ticket counts by market status
-  const pieChartData = useMemo(() => {
-    if (!selectedMarket) return { labels: [], datasets: [] };
-
-    const counts = marketTicketCounts[selectedMarket] || {};
-    const labels = ['Total','New', 'Opened', 'In Progress', 'Completed', 'Reopened'];
-    const data = [
-        safeNumber(counts.total),
-      safeNumber(counts.new),
-      safeNumber(counts.opened),
-      safeNumber(counts.inprogress),
-      safeNumber(counts.completed),
-      safeNumber(counts.reopened),
-    ];
-
-    return {
-      labels,
-      datasets: [
-        {
-          label: 'Status Wise Tickets',
-          data,
-          backgroundColor: ['#E10179','#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF'],
-        },
-      ],
-    };
-  }, [selectedMarket, marketTicketCounts]);
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Status Wise Tickets for ' + (selectedMarket || 'Market'),
-      },
-    },
-  };
+  const currentItems = filteredMarketCounts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <Row>
+    <Container>
+    <Row >
       {loading ? (
         <div className="loader">
-       
         </div>
       ) : (
         <div>
           <Col md={12}>
-            <h4 className="d-flex justify-content-center font-family fw-medium">Market Wise Ticket Counts</h4>
+            <h4 className="d-flex justify-content-center font-family fw-medium" style={{color:'#E10174'}}>Market Wise Ticket Counts</h4>
 
-            <Row className="container mt-1 mb-1 d-flex justify-content-center">
+            <Row className=" mt-1 mb-1 d-flex justify-content-center">
               <Col md={12} sm={12} xs={12} className="d-flex flex-wrap justify-content-start">
                 <div className="d-flex flex-wrap w-100 gap-2">
                   <button className="btn btn-outline-success fw-medium" onClick={downloadStatus}>
@@ -189,16 +147,17 @@ function MarketWise() {
               </Col>
             </Row>
 
-            <div className="container table-responsive-sm mt-2" style={{zindex:0}}>
+            <div className=" table-responsive-sm mt-1" style={{ zindex: 0 }}>
               <Table striped bordered hover className="table align-middle text-center">
                 <thead>
                   <tr>
+                    <th style={{ backgroundColor: '#E10174', color: 'white' }}>SINO</th>
                     <th className="text-decoration-none fw-medium" style={{ backgroundColor: '#E10174', color: 'white' }}>
                       Market
-                      <MdFilterList 
-                        className="ms-2" 
-                        onClick={() => setIsFilterVisible(!isFilterVisible)} 
-                        style={{ cursor: 'pointer' }} 
+                      <MdFilterList
+                        className="ms-2"
+                        onClick={() => setIsFilterVisible(!isFilterVisible)}
+                        style={{ cursor: 'pointer' }}
                       />
                       {isFilterVisible && (
                         <Form.Control
@@ -219,60 +178,61 @@ function MarketWise() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredMarketCounts.map(([market, counts]) => (
+                  {currentItems.map(([market, counts], index) => (
                     <tr key={market}>
-                    <td>
-                      <Link to="/marketDetailedTicket" onClick={() => handleMarketClick(market)} className="text-capitalize text-decoration-none fw-medium text-black">
-                        {market}
-                      </Link>
-                    </td>
-                    <td>
-                      <Link to="/opened" onClick={(e) => { e.stopPropagation(); handleStatusClick(market, '0'); }} className="text-decoration-none fw-medium text-black">
-                        {safeNumber(counts.total)}
-                      </Link>
-                    </td>
-                    <td>
-                      <Link to="/opened" onClick={() => handleStatusClick(market, "1")} className="text-decoration-none fw-medium text-black">
-                        {safeNumber(counts.new)}
-                      </Link>
-                    </td>
-                    <td>
-                      <Link to="/opened" onClick={() => handleStatusClick(market, "2")} className="text-decoration-none fw-medium text-black">
-                        {safeNumber(counts.opened)}
-                      </Link>
-                    </td>
-                    <td>
-                      <Link to="/opened" onClick={() => handleStatusClick(market, "3")} className="text-decoration-none fw-medium text-black">
-                        {safeNumber(counts.inprogress)}
-                      </Link>
-                    </td>
-                    <td>
-                      <Link to="/opened" onClick={() => handleStatusClick(market, "4")} className="text-decoration-none fw-medium text-black">
-                        {safeNumber(counts.completed)}
-                      </Link>
-                    </td>
-                    <td>
-                      <Link to="/opened" onClick={() => handleStatusClick(market, "5")} className="text-decoration-none fw-medium text-black">
-                        {safeNumber(counts.reopened)}
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+                      <th>{index + 1}</th>
+                      <td>
+                        <Link to="/marketDetailedTicket" onClick={() => handleMarketClick(market)} className="text-capitalize text-decoration-none fw-medium text-black">
+                          {market}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link to="/opened" onClick={(e) => { e.stopPropagation(); handleStatusClick(market, '0'); }} className="text-decoration-none fw-medium text-black">
+                          {safeNumber(counts.total)}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link to="/opened" onClick={() => handleStatusClick(market, "1")} className="text-decoration-none fw-medium text-black">
+                          {safeNumber(counts.new)}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link to="/opened" onClick={() => handleStatusClick(market, "2")} className="text-decoration-none fw-medium text-black">
+                          {safeNumber(counts.opened)}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link to="/opened" onClick={() => handleStatusClick(market, "3")} className="text-decoration-none fw-medium text-black">
+                          {safeNumber(counts.inprogress)}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link to="/opened" onClick={() => handleStatusClick(market, "4")} className="text-decoration-none fw-medium text-black">
+                          {safeNumber(counts.completed)}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link to="/opened" onClick={() => handleStatusClick(market, "5")} className="text-decoration-none fw-medium text-black">
+                          {safeNumber(counts.reopened)}
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </Table>
             </div>
           </Col>
+          <PageCountStack
+            filteredTickets={filteredMarketCounts}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+          />
 
-          <Col md={12}>
-            <div className="position-relative " style={{height:'50vh',zIndex: 1}} >
-              {selectedMarket && (
-                <Pie options={chartOptions} data={pieChartData} />
-              )}
-            </div>
-          </Col>
         </div>
       )}
     </Row>
+    </Container>
   );
 }
 

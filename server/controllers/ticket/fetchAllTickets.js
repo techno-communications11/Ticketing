@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma.js";
 
 export const fetchAllTickets = async (req, res) => {
-  console.log("Fetching all tickets");
+  
 
   try {
     // Fetch all tickets from the database

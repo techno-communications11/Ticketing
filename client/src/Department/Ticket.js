@@ -43,7 +43,7 @@ function Ticket({ statusId, indifullname, onTicketData, openedby, openedbyUser, 
         if (fullname) {
           fetchedTickets = fetchedTickets.filter(ticket =>
             ticket.assignToTeam === fullname &&
-            ticket.status.name !== "completed" &&
+            ticket.status.name === "inprogress" &&
             ticket.openedBy === null
           );
         }
