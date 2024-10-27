@@ -3,7 +3,7 @@ const filterByNtid = (ticket, ntidFilter) => {
 };
 
 const filterByStatus = (ticket, statusFilter) => {
-  return statusFilter ? ticket.status.name.toLowerCase().includes(statusFilter.toLowerCase()) : true;
+  return statusFilter ? ticket.status.name.toLowerCase()?.includes(statusFilter.toLowerCase()) : true;
 };
 
 const isValidDate = (dateString) => {

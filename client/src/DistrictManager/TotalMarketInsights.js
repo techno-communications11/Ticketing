@@ -8,8 +8,9 @@ import { Container, Row, Col } from 'react-bootstrap';
 // Register necessary Chart.js components
 Chart.register(ArcElement, Tooltip, Legend);
 
-function TotalMarketInsights() {
-    const fullname = getDecodedToken()?.fullname;
+function TotalMarketInsights({dm}) {
+    const fullname = dm?dm:getDecodedToken()?.fullname;
+    console.log(fullname,"fullname")    
     const [storeInsights, setStoreInsights] = useState({});
 
     useEffect(() => {

@@ -9,7 +9,7 @@ import { setMarket } from '../redux/marketSlice';
 import { fetchStatusWiseTickets, setMarketAndStatus } from '../redux/statusSlice';
 import { apiRequest } from '../lib/apiRequest';
 import PageCountStack from '../universalComponents/PageCountStack';
-
+import {Container} from 'react-bootstrap';
 
 function MarketWise() {
   const [marketTicketCounts, setMarketTicketCounts] = useState({});
@@ -21,7 +21,7 @@ function MarketWise() {
   const [selectedMarket, setSelectedMarket] = useState(null); // State for selected market
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
 
@@ -111,7 +111,7 @@ function MarketWise() {
   }, [marketData, fetchMarketWiseStatus]);
 
   const filteredMarketCounts = Object.entries(marketTicketCounts).filter(([market]) =>
-    market.toLowerCase().includes(filter.toLowerCase())
+    market.toLowerCase()?.includes(filter.toLowerCase())
   );
   useEffect(() => {
     if (filteredMarketCounts.length > 0) {
@@ -124,7 +124,7 @@ function MarketWise() {
   const currentItems = filteredMarketCounts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <Container-fluid>
+    <Container>
     <Row >
       {loading ? (
         <div className="loader">
@@ -232,7 +232,7 @@ function MarketWise() {
         </div>
       )}
     </Row>
-    </Container-fluid>
+    </Container>
   );
 }
 

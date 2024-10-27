@@ -4,7 +4,7 @@ import * as XLSX from 'xlsx';
 import { Table, Row, Col, Form } from 'react-bootstrap';
 import { apiRequest } from '../lib/apiRequest';
 import PageCountStack from '../universalComponents/PageCountStack';
-
+import {Container} from 'react-bootstrap';
 
 const DepartmentWise = () => {
   const [ticketCounts, setTicketCounts] = useState({});
@@ -69,12 +69,12 @@ const DepartmentWise = () => {
   };
 
   const filteredTicketCounts = Object.entries(ticketCounts).filter(([department]) =>
-    department.toLowerCase().includes(filter.toLowerCase())
+    department.toLowerCase()?.includes(filter.toLowerCase())
   );
   const currentItems = filteredTicketCounts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <Conatainer-fluid>
+    <Container>
     <Row>
       {loading ? (
         <div className="loader"></div>
@@ -146,7 +146,7 @@ const DepartmentWise = () => {
         </div>
       )}
     </Row>
-    </Conatainer-fluid>
+    </Container>
   );
 };
 

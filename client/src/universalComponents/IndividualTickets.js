@@ -87,7 +87,7 @@ const Individualmarketss = () => {
 
   const updateOpenedBy = async () => {
     try {
-      const endpoint = departments.includes(department) || (department === 'Maintenance_Head' || department === 'Admin_Head') ? '/createTickets/update_opened_by' : '';
+      const endpoint = departments?.includes(department) || (department === 'Maintenance_Head' || department === 'Admin_Head') ? '/createTickets/update_opened_by' : '';
       const response = await apiRequest.put(endpoint, {
         ticketId: markets.ticketId,
       });
@@ -120,7 +120,7 @@ const Individualmarketss = () => {
           if (department === 'Market Manager') {
             navigate('/markethome')
           }
-          if (department.includes(department)) {
+          if (department?.includes(department)) {
             navigate('/departmenthome')
           }
           if (department === 'District Manager') {
@@ -382,7 +382,7 @@ const Individualmarketss = () => {
 
             <div className="col-md-5 d-flex justify-content-end align-items-center mt-4 text-sm-start ">
               {
-                (departments.includes(department) || department === 'Maintenance_Head' || department === 'Admin_Head') && markets.status?.name !== 'completed' && (
+                (departments?.includes(department) || department === 'Maintenance_Head' || department === 'Admin_Head') && markets.status?.name !== 'completed' && (
                   <Dropdown className='mx-2'>
                     <Dropdown.Toggle variant="primary" id="dropdown-basic">
                       Allocate

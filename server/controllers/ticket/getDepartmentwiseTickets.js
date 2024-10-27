@@ -28,6 +28,7 @@ const GetDepartmentWisetickets = async (req, res) => {
                 ticketId: true,
                 ntid: true,
                 fullname: true,
+                departmentId:true,
                 status: {
                     select: {
                         id: true,

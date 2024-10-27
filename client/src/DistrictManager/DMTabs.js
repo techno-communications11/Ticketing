@@ -5,9 +5,11 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import EmployeesInsights from './EmployeesInsights';
 import TotalMarketInsights from './TotalMarketInsights';
+import { useMyContext } from '../universalComponents/MyContext';
 
 function DMTabs(props) {
   const { children, value, index, ...other } = props;
+  
 
   return (
     <div
@@ -37,6 +39,7 @@ function a11yProps(index) {
 
 export default function BasicTabs() {
   const [value, setValue] = React.useState(0);
+  const { dm } = useMyContext();
 
   const handleChange = ( event,newValue) => {
     setValue(newValue);
@@ -45,17 +48,17 @@ export default function BasicTabs() {
   return (
     <Box sx={{ width: '100%' }} className="container fw-medium">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
+        <p>{dm}</p>
         <Tabs value={value} onChange={handleChange}   aria-label="basic tabs example" >
           <Tab className='fw-bolder' label="Market Insights" {...a11yProps(0)} />
           <Tab className='fw-bolder' label="Employees Insights" {...a11yProps(1)} />
-          
         </Tabs>
       </Box>
       <DMTabs value={value} index={0}>
-      <TotalMarketInsights/>
+      <TotalMarketInsights dm={dm}/>
       </DMTabs>
       <DMTabs value={value} index={1}>
-      <EmployeesInsights/>
+      <EmployeesInsights dm={dm}/>
       </DMTabs>
      
     </Box>

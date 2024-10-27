@@ -118,9 +118,9 @@ export function Register() {
     }
   };
   const handlePasswordToggle = () => { setPasswordVisible(!passwordVisible); };
-  const handleRoleChange = (e) => { setSelectedRole(e.target.value); };
+  // const handleRoleChange = (e) => { setSelectedRole(e.target.value); };
   return (
-    <div className="container">
+    <div className="container mt-5">
       <div className="row align-items-center justify-content-center">
         <div className="col-12 col-md-6 col-lg-10">
           <ReusableButtons
@@ -130,7 +130,7 @@ export function Register() {
             activeForm={activeForm}
           />
           {activeForm === 'register' ? (
-            <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center mt-5">
               <form onSubmit={handleSubmit} className="col-12 col-md-4 shadow-lg p-3 rounded">
                 <h4 className="text-center font-family mb-2">Register User</h4>
                 <div className="mb-2">

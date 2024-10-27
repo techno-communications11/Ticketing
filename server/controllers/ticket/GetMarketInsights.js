@@ -2,7 +2,7 @@ import prisma from "../lib/prisma.js";
 
 const GetMarketInsights = async (req, res) => {
   const { fullname } = req.query;
-  console.log(fullname,"fn")
+  console.log(fullname, "fn");
 
   if (!fullname) {
     return res.status(400).json("Need fullname");
@@ -13,7 +13,7 @@ const GetMarketInsights = async (req, res) => {
     where: { assignedTo: fullname },
     select: { status: { select: { name: true } } }
   });
-  console.log(tickets,"tics")
+  console.log(tickets, "tics");
 
   // Initialize an empty object to hold the counts of each status
   const counts = {};
@@ -24,12 +24,20 @@ const GetMarketInsights = async (req, res) => {
 
     if (counts[statusName]) {
       counts[statusName] += 1;
-    } else {
+    } else {  
       counts[statusName] = 1;
     }
   });
-  counts.Total=counts.completed+counts.inprogress+counts.opened+counts.reopened;
- console.log(counts,"ccser")
+
+  // Calculate total by summing up each status count, ensuring undefined counts are treated as 0
+  counts.Total = 
+    (counts.new || 0) +
+    (counts.completed || 0) +
+    (counts.inprogress || 0) +
+    (counts.opened || 0) +
+    (counts.reopened || 0);
+
+  console.log(counts, "ccser");
   return res.status(200).json(counts);
 };
 

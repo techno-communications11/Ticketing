@@ -19,7 +19,7 @@ const UserTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 10 ;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,10 +49,10 @@ const UserTable = () => {
       const dmName = user.dmName ? user.dmName.toLowerCase() : '';
   
       return (
-        ntid.includes(input) ||
-        fullname.includes(input) ||
-        market.includes(input) ||
-        dmName.includes(input)
+        ntid?.includes(input) ||
+        fullname?.includes(input) ||
+        market?.includes(input) ||
+        dmName?.includes(input)
       );
     });
     setUsers(filteredUsers);

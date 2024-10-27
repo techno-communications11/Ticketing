@@ -101,7 +101,7 @@ export function MarketStructureUpload() {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-5">
         <div className="row w-100 align-items-center justify-content-center">
           <div className="col-12 col-md-8 col-lg-10 col-xl-8 ">
             <ReusableButtons bigText={'Register Market'}

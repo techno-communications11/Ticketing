@@ -14,8 +14,9 @@ import { useCallback } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-import { Col, Card } from 'react-bootstrap';
+import {  Card } from 'react-bootstrap';
 import { Pie } from 'react-chartjs-2';
+import getDecodedToken from '../universalComponents/decodeToken';
 
 export function Home() {
     const [show, setShow] = useState(false);
@@ -26,6 +27,8 @@ export function Home() {
     const [selectedDepartment, setSelectedDepartment] = useState('Select Department');
     const [userData, setUserData] = useState('');
     const [TicketsCount, setTicketsCount] = useState(0);
+    const {ntid}=getDecodedToken();
+    
 
     const Departments = [
         'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
@@ -220,17 +223,17 @@ export function Home() {
        
     }, [TicketsCount]);
 
-    const handleDataSend = (statusId) => {
+    const handleDataSend = (statusId,ntid) => {
         localStorage.setItem('statusData', statusId);
-        dispatch(fetchStatusTickets({ statusId }));
-        dispatch(setUserAndStatus({ statusId }));
+        dispatch(fetchStatusTickets({ statusId,ntid}));
+        dispatch(setUserAndStatus({ statusId,ntid }));
     };
 
-    const handleNew = () => handleDataSend('1');
-    const handleOpened = () => handleDataSend('2');
-    const handleInprogress = () => handleDataSend('3');
-    const handleCompleted = () => handleDataSend('4');
-    const handleReOpened = () => handleDataSend('5');
+    const handleNew = () => handleDataSend('1',ntid);
+    const handleOpened = () => handleDataSend('2',ntid);
+    const handleInprogress = () => handleDataSend('3',ntid);
+    const handleCompleted = () => handleDataSend('4',ntid);
+    const handleReOpened = () => handleDataSend('5',ntid);
     const handleTotal = () => { navigate('/totalusertickets') };
 
     const chartData = {

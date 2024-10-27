@@ -5,6 +5,8 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { animateValue } from '../universalComponents/AnnimationCount';
 import { apiRequest } from '../lib/apiRequest';
 import '../styles/loader.css';
+import { useMyContext } from '../universalComponents/MyContext';
+import { useNavigate } from 'react-router-dom';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -12,6 +14,8 @@ export function SuperAdminHome() {
   const [ticketCounts, setTicketCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const {setStatusId}=useMyContext();
+  const navigate=useNavigate();
 
   const fetchStatusTickets = useCallback(async () => {
     try {
@@ -68,6 +72,29 @@ export function SuperAdminHome() {
       },
     },
   };
+  const handleSperAdminStats = async (statusId) => {
+    // Mapping status names to IDs
+    const statusMap = {
+        Total: '0',
+        New: '1',
+        Opened: '2',
+        Inprogress: '3',
+        Completed: '4',
+        Reopened: '5'
+    };
+
+    // Get the corresponding status ID, defaulting to '0' if not found
+    statusId = statusMap[statusId] || '0';
+    if(statusId){
+      localStorage.setItem('statusId',statusId)
+      setStatusId(statusId)
+      navigate('/totalusertickets')
+    }
+ 
+
+   
+};
+
 
   return (
     <Container className="mt-4">
@@ -87,7 +114,7 @@ export function SuperAdminHome() {
               <Row className="justify-content-center">
                 {Object.entries(ticketCounts).map(([key, value]) => (
                   <Col xs={12} sm={6} md={6} lg={4} key={key} className="mb-3">
-                    <Card className="shadow-sm text-center p-3 h-100 rounded">
+                    <Card className="shadow-sm text-center p-3 h-100 rounded" style={{cursor:'pointer'}} onClick={()=>handleSperAdminStats(key.charAt(0).toUpperCase() + key.slice(1))}>
                       <h5 className="font-family">{key.charAt(0).toUpperCase() + key.slice(1)}</h5>
                       <p id={`${key}Tickets`} style={{ color: '#E10174', fontSize: '40px', fontWeight: 'bold' }}>
                         {safeNumber(value)}
