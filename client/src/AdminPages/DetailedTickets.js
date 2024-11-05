@@ -7,21 +7,70 @@ import { fetchIndividualTickets, setId } from '../redux/marketSlice';
 import getMarkets from '../universalComponents/GetMarkets';
 import { IoIosArrowDown } from "react-icons/io";
 import PageCountStack from '../universalComponents/PageCountStack';
-import Filtering from '../universalComponents/Filtering';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import TicketBody from '../universalComponents/TicketBody';
+import { IoFilterSharp } from "react-icons/io5";
+import { BsCalendar2DateFill } from "react-icons/bs";
+import NtidFilter from "../universalComponents/NtidFilter";
+import CreatedAt from "../universalComponents/CreatedAt";
+import CompletedAt from "../universalComponents/CompletedAt";
+import FullnameFilter from '../universalComponents/FullNameFilter'
+import StatusFilter from '../universalComponents/StatusFilter';
+// import '../styles/TicketTable.css'
 
 const ShowTickets = () => {
   const dispatch = useDispatch();
+  const [statusFilter, setStatusFilter] = useState("");
+  const [completedAt, setCompletedAt] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [fullnameFilter,setFullnameFilter]=useState('');
   const [marketData, setMarketData] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [market, setMarket] = useState('');
   const [ntidFilter, setntidFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [dateFilter, setDateFilter] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(8);
+  const [itemsPerPage] = useState(11);
   const dropdownRef = useRef(null);
+  const [statusToggle, setStatusToggle] = useState(false);
+  const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
+  const [createdAtToggle, setCreatedAtToggle] = useState(false);
+  const [completedAtToggle, setCompletedAtToggle] = useState(false);
+  const [fullnameToggle, setFullnameToggle] = useState(false);
+  const handleFullnameFilterClick = () => {
+    setFullnameToggle(!fullnameToggle)
+    setStatusToggle(false);
+    setNtidFilterToggle(false);
+    setCreatedAtToggle(false);
+    setCompletedAtToggle(false);
+  };
+
+  const handleStatusFilterClick = () => {
+    setStatusToggle(!statusToggle);
+    setNtidFilterToggle(false);
+    setCreatedAtToggle(false);
+    setCompletedAtToggle(false);
+  };
+
+  const handleNTIDFilterClick = () => {
+    setNtidFilterToggle(!ntidFilterToggle);
+    setStatusToggle(false);
+    setCreatedAtToggle(false);
+    setCompletedAtToggle(false);
+  };
+
+  const handleCreatedAtFilterClick = () => {
+    setCreatedAtToggle(!createdAtToggle);
+    setStatusToggle(false);
+    setNtidFilterToggle(false);
+    setCompletedAtToggle(false);
+  };
+
+  const handleCompletedFilterClick = () => {
+    setCompletedAtToggle(!completedAtToggle);
+    setStatusToggle(false);
+    setNtidFilterToggle(false);
+    setCreatedAtToggle(false);
+  };
 
   const handleTicket = (id) => {
     localStorage.setItem('selectedId', id);
@@ -57,8 +106,15 @@ const ShowTickets = () => {
       dispatch(fetchTickets(selectedMarket.toLowerCase()));
     }
   }, [selectedMarket, dispatch]);
+  const filteredTickets = FilterLogic(
+    tickets || [], 
+    ntidFilter || "", 
+    createdAt || "", 
+    completedAt || "", 
+    statusFilter || "",
+    fullnameFilter||""
+  );
 
-  const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter);
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const toggleDropdown = () => { setDropdownVisible(!dropdownVisible); };
 
@@ -80,56 +136,154 @@ const ShowTickets = () => {
     dispatch(fetchTickets(selectedMarket.toLowerCase()));
     setDropdownVisible(false);
   };
+ 
 
   return (
     <Container className="mt-2">
-      <Row className="mb-1 font-family text-capitalize align-items-center" style={{ color: '#E10174' }}>
-        <Col xs={12} md={6} className='d-flex gap-0'>
+    <Row className="mb-1 font-family text-capitalize align-items-center" style={{ color: '#E10174' }}>
+    <Col xs={12} md={6} className='d-flex gap-0'>
         <Col xs={11} md={9}>
-          <h3>Tickets from Market {market.toLowerCase()}</h3>
+            <h3>Tickets from Market {market.toLowerCase()}</h3>
         </Col>
-        <Col xs={1} md={3} className="position-relative" ref={dropdownRef}>
-          <button onClick={toggleDropdown} className="border-0 fs-4 right-4 bg-transparent text-primary" style={{ marginLeft: '-20px', marginBottom: '8px' }}>
-          <IoIosArrowDown />
-          </button>
-          {dropdownVisible && (
-            <div className="dropdown-menu show position-absolute" style={{ top: '90%', right: '0%', zIndex: 1,height:'50vh', overflow:'scroll' }}>
-              {marketData.map((data, index) => (
-                <div
-                  className="dropdown-item shadow-lg text-primary fw-medium"
-                  onClick={handleMarketChange}
-                  style={{ cursor: "pointer" }}
-                  data-value={data.market.toLowerCase()}
-                  key={index}
-                >
-                  {data.market.toUpperCase()}
+        <Col xs={1} md={3} className="position-relative" ref={dropdownRef} style={{right:'100px'}}>
+            <button onClick={toggleDropdown} className="border-0 fs-4 bg-transparent text-primary">
+                <IoIosArrowDown />
+            </button>
+            {dropdownVisible && (
+                <div className="dropdown-menu show position-absolute overflow-auto" style={{height:'50vh'}} >
+                    {marketData.map((data, index) => (
+                        <div
+                            style={{ cursor: 'pointer' }}
+                            className="dropdown-item shadow-lg text-primary fw-medium"
+                            onClick={handleMarketChange}
+                            data-value={data.market.toLowerCase()}
+                            key={index}
+                        >
+                            {data.market.toUpperCase()}
+                        </div>
+                    ))}
                 </div>
-              ))}
-            </div>
-          )}
+            )}
         </Col>
-        </Col>
-        <Col xs={12} md={6}>
-          <Filtering
-            ntidFilter={ntidFilter}
-            setntidFilter={setntidFilter}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-            dateFilter={dateFilter}
-            setDateFilter={setDateFilter}
-          />
-        </Col>
-      </Row>
+    </Col>
+</Row>
+
       {loading ? (
         <div className='loader d-flex align-items-center justify-content-center vh-80'></div>
       ) : (
         <Table bordered hover responsive>
           <thead>
-            <tr>
-              {['SC.No', 'NTID', 'Full Name', 'Status', 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
-                <th key={header} className='text-center' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
-              ))}
-            </tr>
+          <tr>
+                {[
+                  "SC.No",
+                  "NTID",
+                  "Full Name",
+                  "Status",
+                  "CreatedAt",
+                  "CompletedAt",
+                  "Duration",
+                  "Details",
+                ].map((header) => (
+                  <th
+                    key={header}
+                    className="text-center"
+                    style={{ backgroundColor: "#E10174", color: "white" }}
+                  >
+                    {header}
+                    {header === "Status" && (
+                      <>
+                        <IoFilterSharp
+                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          onClick={handleStatusFilterClick}
+                        />
+                        {statusToggle && (
+                          <div className="dropdown-menu show">
+                            <StatusFilter
+                              setStatusToggle={setStatusToggle}
+                              statusFilter={statusFilter}
+                              setStatusFilter={setStatusFilter}
+                              setCurrentPage={setCurrentPage}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {header === "Full Name" && (
+                      <>
+                        <IoFilterSharp
+                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          onClick={handleFullnameFilterClick}
+                        />
+                        {fullnameToggle && (
+                          <div className="dropdown-menu show">
+                            <FullnameFilter
+                              setFullnameFilterToggle={setFullnameToggle}
+                              fullnameFilter={fullnameFilter}
+                              setFullnameFilter={setFullnameFilter}
+                              setCurrentPage={setCurrentPage}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {header === "NTID" && (
+                      <>
+                        <IoFilterSharp
+                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          onClick={handleNTIDFilterClick}
+                        />
+
+                        {ntidFilterToggle && (
+                          <div className="dropdown-menu show">
+                            <NtidFilter
+                              setNtidFilterToggle={setNtidFilterToggle}
+                              ntidFilter={ntidFilter}
+                              setntidFilter={setntidFilter}
+                              setCurrentPage={setCurrentPage}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {header === "CreatedAt" && (
+                      <>
+                        <BsCalendar2DateFill
+                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          onClick={handleCreatedAtFilterClick}
+                        />
+                        {createdAtToggle && (
+                          <div className="dropdown-menu show">
+                            <CreatedAt
+                              setCreatedAtToggle={setCreatedAtToggle}
+                              createdAt={createdAt}
+                              setCreatedAt={setCreatedAt}
+                              setCurrentPage={setCurrentPage}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {header === "CompletedAt" && (
+                      <>
+                        <BsCalendar2DateFill
+                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          onClick={handleCompletedFilterClick}
+                        />
+                        {completedAtToggle && (
+                          <div className="dropdown-menu show">
+                            <CompletedAt
+                              setCompletedAtToggle={setCompletedAtToggle}
+                              completedAt={completedAt}
+                              setCompletedAt={setCompletedAt}
+                              setCurrentPage={setCurrentPage}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </th>
+                ))}
+              </tr>
           </thead>
           <tbody>
             {currentItems.length > 0 ? (

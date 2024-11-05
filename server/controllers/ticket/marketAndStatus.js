@@ -2,6 +2,7 @@ import prisma from "../lib/prisma.js";
 
 export const marketAndStatus = async (req, res) => {
   const { id, market, statusId } = req.query;
+  console.log(market,"mmmmmm")
   console.log(id, market, statusId, "Received query parameters");
 
   if ((!id || !market) && !statusId) {
@@ -54,7 +55,7 @@ export const marketAndStatus = async (req, res) => {
       if (statusId === '0'&& market) {
         tickets = await prisma.createTicket.findMany({
           where: {
-            market: market.toLowerCase(),
+            market: market  ,
           },
           select: {
             ticketId: true,
@@ -78,7 +79,7 @@ export const marketAndStatus = async (req, res) => {
         // Fetch tickets for the specified market and statusId
         tickets = await prisma.createTicket.findMany({
           where: {
-            market: market.toLowerCase(),
+            market: market,
             statusId: statusId,
           },
           select: {

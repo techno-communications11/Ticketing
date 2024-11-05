@@ -4,7 +4,7 @@ const UserTicketStatus = async (req, res) => {
     // const userId = req.user.id; // Ensure this is being set correctly
     const { statusId,ntid } = req.query; // Access statusId from query parameters
     // console.log(userId, statusId, "userId and statusId"); // Log for debugging
-
+ console.log(ntid,"ytyffxh")
     if (!ntid) {
         return res.status(400).json('Invalid user ID');
     }

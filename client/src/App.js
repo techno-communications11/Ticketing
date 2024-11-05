@@ -35,7 +35,7 @@ import DMTabs from './DistrictManager/DMTabs'
 import { MyProvider } from './universalComponents/MyContext';
 import Inprogress from './DistrictManager/Inprogress';
 import Reopened from './DistrictManager/Reopened';
-
+import DepartmentsInsightsData from './DistrictManager/DepartmentsInsightsData';
 
 
 const getToken = () => localStorage.getItem('token');
@@ -249,6 +249,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute allowedDepartments={[...MA_New,...MA_rel,...superAdminDepartments, ...departmentDepartments, ...marketManagerDepartments, ...districtManagerDepartments]}>
               <IndividualTickets />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/distinsights"
+          element={
+            <ProtectedRoute allowedDepartments={[ ...departmentDepartments,...districtManagerDepartments,...superAdminDepartments,]}>
+              <DepartmentsInsightsData />
             </ProtectedRoute>
           }
         />

@@ -1,25 +1,21 @@
-const filterByNtid = (ticket, ntidFilter) => {
-  return ntidFilter.trim() ? ticket.ntid === ntidFilter.trim() : true;
-};
-
-const filterByStatus = (ticket, statusFilter) => {
-  return statusFilter ? ticket.status.name.toLowerCase()?.includes(statusFilter.toLowerCase()) : true;
-};
-
-const isValidDate = (dateString) => {
-  const date = new Date(dateString);
-  return !isNaN(date); 
-};
-
-const FilterLogic = (tickets, ntidFilter, dateFilter, statusFilter) => {
+function FilterLogic(tickets, ntidFilter, createdAt, completedAt, statusFilter, fullnameFilter) {
   return tickets.filter(ticket => {
-    const dateMatches = !dateFilter || (isValidDate(ticket.createdAt) && new Date(ticket.createdAt).toISOString().split('T')[0] === dateFilter);
-    return (
-      filterByNtid(ticket, ntidFilter) &&
-      filterByStatus(ticket, statusFilter) &&
-      dateMatches
-    );
+    const matchesNTID = ntidFilter ? ticket.ntid.includes(ntidFilter) : true;
+    const matchesName = fullnameFilter 
+      ? ticket.fullname?.toLowerCase().includes(fullnameFilter.toLowerCase()) 
+      : true;
+    const matchesStatus = statusFilter 
+      ? ticket.status?.name.toLowerCase() === statusFilter.toLowerCase() 
+      : true;
+    const matchesCreatedAt = createdAt 
+      ? new Date(ticket.createdAt).toISOString().split('T')[0] >= new Date(createdAt).toISOString().split('T')[0] 
+      : true;
+    const matchesCompletedAt = completedAt 
+      ? new Date(ticket.completedAt).toISOString().split('T')[0] <= new Date(completedAt).toISOString().split('T')[0] 
+      : true;
+
+    return matchesNTID && matchesName && matchesStatus && matchesCreatedAt && matchesCompletedAt;
   });
-};
+}
 
 export default FilterLogic;
