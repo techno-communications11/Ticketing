@@ -60,5 +60,7 @@ import Callback from '../controllers/ticket/Callback.js';
  createTicketsRouter.get('/dminsights',authenticateJWT, DM_Insights);
  createTicketsRouter.get('/getmarketinsights',authenticateJWT, GetMarketInsights);
  createTicketsRouter.get('/getDepartmentStats/:department',authenticateJWT, GetDepartmentTickets);
+ createTicketsRouter.get('/departmentInsights',authenticateJWT, DepartmentInsights);
+ createTicketsRouter.put('/callback',authenticateJWT,Callback)
  
 export default createTicketsRouter
