@@ -37,7 +37,6 @@ import Inprogress from './DistrictManager/Inprogress';
 import Reopened from './DistrictManager/Reopened';
 import DepartmentsInsightsData from './DistrictManager/DepartmentsInsightsData';
 
-
 const getToken = () => localStorage.getItem('token');
 const decodeToken = () => {
   const token = getToken();

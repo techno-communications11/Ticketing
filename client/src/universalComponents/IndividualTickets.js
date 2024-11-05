@@ -23,6 +23,7 @@ const Individualmarketss = () => {
   const [comment, setComment] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [getcomment, setGetComment] = useState([]);
+  const [userCommnetCount,setuserCommentCount]=useState(0);
   const [users, setUsers] = useState([]);
   const departments = [
     "NTID Mappings",
@@ -281,7 +282,19 @@ const Individualmarketss = () => {
     } finally {
       setSelectedDepartment("");
     }
-  };
+  }
+
+  
+    let count=0;
+    getcomment.map(comment => {
+      if (comment.createdBy === markets.fullname) {
+         count++;
+        }
+      }
+     
+    )
+  
+
 
   const handleTicketAction = async (action) => {
     const actionText = action === "settle" ? "settle" : "request to reopen";
@@ -554,50 +567,23 @@ const Individualmarketss = () => {
                             ))}
                         </Dropdown.Menu>
                       </Dropdown>
-                    )}
-                    {department === "District Manager" &&
-                      markets.departmentId !== "19"&&markets.
-                      requestreopen===null && (
-                        <button
-                          className="btn btn-success me-2"
-                          onClick={() => handleCallbackAction()}
-                        >
-                          Call Back
-                        </button>
-                      )}
-                    {department === "District Manager" &&
-                    markets.status?.name !== "completed" &&
-                    markets.departmentId === "19" ? (
-                      <button
-                        className="btn btn-success"
-                        onClick={() =>
-                          handleConfirmAction("4", "mark as completed")
-                        }
-                      >
-                        Close
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                    {department !== "District Manager" &&
-                    markets.status?.name !== "completed" &&
-                    markets.departmentId !== "19" ? (
-                      <button
-                        className="btn btn-success"
-                        onClick={() =>
-                          handleConfirmAction("4", "mark as completed")
-                        }
-                      >
-                        Close
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </>
-                )}
-              {counts >= 1 &&
-                department === "Employee" &&
-                markets.status?.name === "completed" && (
+                    )
+                  }
+
+
+                  {markets.status?.name !== 'completed' && (
+                    <button
+                      className="btn btn-success"
+                      onClick={() => handleConfirmAction('4', 'mark as completed')}
+                    >
+                      Close
+                    </button>
+                  )}
+                </>
+              )}
+              
+              {
+                counts >= 1 && department === "Employee" && markets.status?.name === 'completed' && (
                   <Button
                     variant="primary fw-medium w-auto ms-auto me-3 "
                     onClick={() => handleRequestReopen()}
