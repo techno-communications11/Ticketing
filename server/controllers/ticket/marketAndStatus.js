@@ -55,7 +55,7 @@ export const marketAndStatus = async (req, res) => {
       if (statusId === '0'&& market) {
         tickets = await prisma.createTicket.findMany({
           where: {
-            market: market  ,
+            market:market,
           },
           select: {
             ticketId: true,

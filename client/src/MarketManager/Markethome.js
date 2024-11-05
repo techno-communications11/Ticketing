@@ -99,7 +99,7 @@ function TotalUserTickets() {
     fullnameFilter||""
   );
 
-  let market = [...new Set(tickets.map(ticket => ticket.market))];
+  let market = [...new Set(tickets.map(ticket => ticket.market))][0];
   // const filteredTickets = FilterLogic(tickets, ntidFilter, dateFilter, statusFilter)
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -125,7 +125,8 @@ function TotalUserTickets() {
         statusName === 'opened' ? '2' :
           statusName === 'inprogress' ? '3' :
             statusName === 'completed' ? '4' :
-              statusName === 'reopened' ? '5' : statusName === 'Total' ? '0' : '';
+              statusName === 'reopened' ? '5' :
+               statusName === 'Total' ? '0' : '';
 
     localStorage.setItem('marketData', market);
     localStorage.setItem('statusData', statusId);
@@ -157,16 +158,7 @@ function TotalUserTickets() {
       <h3 className='mt-1 d-flex justify-content-center text-capitalize fw-medium mb-3' style={{ color: '#E10174' }}>
         Total Market Tickets
       </h3>
-      {/* <Row className='me-3 mb-1'>
-        {/* <Filtering
-          ntidFilter={ntidFilter}
-          setntidFilter={setntidFilter}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          dateFilter={dateFilter}
-          setDateFilter={setDateFilter}
-        /> */}
-      {/* </Row> */} 
+
 
       {authenticated && currentItems.length > 0 && (
         <Row className="table-responsive container">
