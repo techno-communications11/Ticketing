@@ -14,7 +14,7 @@ export function SuperAdminHome() {
   const [ticketCounts, setTicketCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const {setStatusId}=useMyContext();
+  const {setStatusId,setNtid}=useMyContext();
   const navigate=useNavigate();
 
   const fetchStatusTickets = useCallback(async () => {
@@ -48,12 +48,14 @@ export function SuperAdminHome() {
   }, [ticketCounts]);
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
+  const filteredInsights = Object.entries(ticketCounts)
+    .filter(([key]) => key !== "total");
 
   const chartData = {
-    labels: Object.keys(ticketCounts),
+    labels: filteredInsights.map(([key]) => key),  // The status labels (excluding "Total")
     datasets: [
       {
-        data: Object.values(ticketCounts),
+        data: filteredInsights.map(([, value]) => value),
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF','#5b66FF'], 
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF','#5b66FF'],
       },
@@ -88,11 +90,9 @@ export function SuperAdminHome() {
     if(statusId){
       localStorage.setItem('statusId',statusId)
       setStatusId(statusId)
+      setNtid(null)
       navigate('/totalusertickets')
     }
- 
-
-   
 };
 
 

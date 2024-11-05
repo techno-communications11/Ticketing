@@ -28,6 +28,8 @@ import User_Insights from '../controllers/ticket/User_insights.js';
 import DM_Insights from '../controllers/ticket/Dm_Insights.js';
 import GetMarketInsights from '../controllers/ticket/GetMarketInsights.js';
 import GetDepartmentTickets from '../controllers/ticket/GetDepartmentTickets.js'
+import DepartmentInsights from '../controllers/ticket/DepartmentInsights.js';
+import Callback from '../controllers/ticket/Callback.js';
 
  const createTicketsRouter = express.Router();
  createTicketsRouter.post('/uploadTicket',authenticateJWT,CreateTicket)

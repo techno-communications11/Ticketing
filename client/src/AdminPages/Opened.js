@@ -265,6 +265,12 @@ const ShowTickets = () => {
                     itemsPerPage={itemsPerPage}
                   />
                 ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="text-center">
+                    No tickets found.
+                  </td>
+                </tr>
               )}
             </tbody>
           </Table>
