@@ -27,16 +27,16 @@ const GetDepartmentTickets = async (req, res) => {
     }
 
     const tickets = await prisma.createTicket.findMany({
-      where: {
-        departmentId: departmentId[0].id, // Assuming departmentId[0].id is defined correctly
-        OR: [
-          {
-            openedBy: userid,                // Match tickets opened by the user
-          },
-          {
-            assignToTeam: username.fullname            // Match tickets assigned to the user
-          },
-        ],
+        where: {
+          departmentId: departmentId[0].id, // Assuming departmentId[0].id is defined correctly
+          OR: [
+            {
+              openedBy: userid,                // Match tickets opened by the user
+            },
+            {
+              assignToTeam: username.fullname            // Match tickets assigned to the user
+            },
+          ],
       },
       select: {
         status: {

@@ -1,135 +1,150 @@
-import React, { useEffect, useState } from 'react';
-import { apiRequest } from '../lib/apiRequest';
-import { Form } from 'react-bootstrap';
-import { MdFilterList } from 'react-icons/md';
-import PageCountStack from '../universalComponents/PageCountStack';
-import { setUserAndStatus, fetchStatusTickets } from '../redux/userStatusSlice';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useMyContext } from '../universalComponents/MyContext';
-import * as XLSX from 'xlsx'; // Import XLSX
-import { MdDownload } from 'react-icons/md';
+import React, { useEffect, useState } from "react";
+import { apiRequest } from "../lib/apiRequest";
+import { MdDownload } from "react-icons/md";
+import { IoFilterSharp } from "react-icons/io5"; // Added IoFilterSharp import
+import PageCountStack from "../universalComponents/PageCountStack";
+import { useNavigate } from "react-router-dom";
+import { useMyContext } from "../universalComponents/MyContext";
+import * as XLSX from "xlsx"; // Import XLSX
+import "../styles/loader.css";
+import FullNameFilter from "../universalComponents/FullNameFilter"; // Assuming these are components for filtering
+import NtidFilter from "../universalComponents//NtidFilter";
 
-function User_insights() {
+function UserInsights() {
   const [userStats, setUserStats] = useState([]);
-  const [nameFilter, setNameFilter] = useState('');
-  const [ntidFilter, setNtidFilter] = useState('');
-  const [isFilterVisible1, setIsFilterVisible1] = useState(false);
-  const [isFilterVisible2, setIsFilterVisible2] = useState(false);
+  const [fullnameFilter, setFullnameFilter] = useState("");
+  const [ntidFilter, setNtidFilter] = useState("");
+  const [fullnameToggle, setFullnameToggle] = useState(false);
+  const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
-  const dispatch = useDispatch();
+  const itemsPerPage = 9;
   const navigate = useNavigate();
   const { setNtid } = useMyContext();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchUserStats = async () => {
+      setLoading(true);
       try {
-        const response = await apiRequest.get('/createTickets/userinsights');
-        setUserStats(response.data);
-        console.log(response.data,"dtsst")
+        const response = await apiRequest.get("/createTickets/userinsights");
+        if (isMounted) setUserStats(response.data);
       } catch (error) {
-        console.error('Error fetching user ticket stats:', error);
+        console.error("Error fetching user ticket stats:", error);
+      } finally {
+        if (isMounted) setLoading(false);
       }
     };
 
-    fetchUserStats(); // Fetch data when component mounts
+    fetchUserStats();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const filteredUserStats = userStats.filter(user =>
-    user.fullname.toLowerCase()?.includes(nameFilter.toLowerCase()) &&
-    user.ntid.toLowerCase()?.includes(ntidFilter.toLowerCase())
+  if (loading) {
+    return <div className="loader"></div>;
+  }
+
+  const filteredUserStats = userStats.filter(
+    (user) =>
+      user.fullname.toLowerCase().includes(fullnameFilter.toLowerCase()) &&
+      user.ntid.toLowerCase().includes(ntidFilter.toLowerCase())
   );
 
-  const currentItems = filteredUserStats.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const handleDataSend = (statusId, ntid) => {
-    localStorage.setItem('statusData', statusId);
-    dispatch(fetchStatusTickets({ statusId, ntid }));
-    dispatch(setUserAndStatus({ statusId, ntid }));
-    navigate("/usertickets");
-  };
+  const currentItems = filteredUserStats.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
-  const handleStatusClick = (ntid, statusId) => () => handleDataSend(statusId, ntid);
   const handleTotalTickets = (AdminsDatantid) => () => {
-    console.log(AdminsDatantid, 'AdminsDatantid')
     setNtid(AdminsDatantid);
     if (AdminsDatantid) {
-      navigate('/totalusertickets');
+      navigate("/totalusertickets");
     } else {
       console.error("NTID is not available");
     }
   };
 
-  // Function to export data to Excel
   const exportToExcel = () => {
-    const data = filteredUserStats.map(user => ({
-      ntid: user.ntid,
-      fullName: user.fullname,
-      totalTickets: user.ticketStats.totalTickets,
-      new: user.ticketStats.new || 0,
-      opened: user.ticketStats.opened || 0,
-      inProgress: user.ticketStats.inprogress || 0,
-      reopened: user.ticketStats.reopened || 0,
-      completed: user.ticketStats.completed || 0,
-      requestReopen: user.ticketStats.requestreopenCount || 0,
+    const data = filteredUserStats.map(({ ntid, fullname, ticketStats }) => ({
+      ntid,
+      fullName: fullname,
+      totalTickets: ticketStats.totalTickets,
+      new: ticketStats.new || 0,
+      opened: ticketStats.opened || 0,
+      inProgress: ticketStats.inprogress || 0,
+      reopened: ticketStats.reopened || 0,
+      completed: ticketStats.completed || 0,
+      requestReopen: ticketStats.requestreopenCount || 0,
     }));
 
-    const ws = XLSX.utils.json_to_sheet(data); // Convert to sheet
-    const wb = XLSX.utils.book_new(); // Create a new workbook
-    XLSX.utils.book_append_sheet(wb, ws, 'User Insights'); // Append the sheet to the workbook
-    XLSX.writeFile(wb, 'User_Insights.xlsx'); // Trigger download
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "User Insights");
+    XLSX.writeFile(wb, "User_Insights.xlsx");
   };
 
+  const handleFullnameFilterClick = () => setFullnameToggle(!fullnameToggle);
+  const handleNTIDFilterClick = () => setNtidFilterToggle(!ntidFilterToggle);
 
   return (
     <div className="container">
-      <h3 className='text-center' style={{ color: '#E10174' }}>Users Tickets Insights</h3>
+      <h3 className="text-center" style={{ color: "#E10174" }}>
+        Users Tickets Insights
+      </h3>
 
-      <button className="btn btn-outline-success fw-medium" onClick={exportToExcel}>
-                    <MdDownload /> Download as Excel File
-                  </button>
-      {/* Button to download Excel file */}
-      {/* <button className="btn btn-transparent outline-success mb-3" onClick={exportToExcel}>
-        Download as Excel File
-      </button> */}
+      <button
+        className="btn btn-outline-success fw-medium"
+        onClick={exportToExcel}
+        disabled={filteredUserStats.length === 0}
+      >
+        <MdDownload /> Download as Excel File
+      </button>
 
       <table className="table table-bordered table-striped">
         <thead className="table-light">
-          <tr className='tablerow'>
+          <tr className="tablerow">
             <th>SINo</th>
             <th>
               NTID
-              <MdFilterList
-                className="ms-2"
-                onClick={() => setIsFilterVisible1(!isFilterVisible1)}
-                style={{ cursor: 'pointer', fontSize: '20px' }}
-              />
-              {isFilterVisible1 && (
-                <Form.Control
-                  type="text"
-                  placeholder="Filter by NTID"
-                  value={ntidFilter}
-                  onChange={(e) => setNtidFilter(e.target.value)}
-                  className="mt-1"
+              <>
+                <IoFilterSharp
+                  style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                  onClick={handleNTIDFilterClick}
                 />
-              )}
+                {ntidFilterToggle && (
+                  <div className="dropdown-menu show">
+                    <NtidFilter
+                      setNtidFilterToggle={setNtidFilterToggle}
+                      ntidFilter={ntidFilter}
+                      setNtidFilter={setNtidFilter}
+                      setCurrentPage={setCurrentPage}
+                    />
+                  </div>
+                )}
+              </>
             </th>
             <th>
               Fullname
-              <MdFilterList
-                className="ms-2"
-                onClick={() => setIsFilterVisible2(!isFilterVisible2)}
-                style={{ cursor: 'pointer', fontSize: '20px' }}
-              />
-              {isFilterVisible2 && (
-                <Form.Control
-                  type="text"
-                  placeholder="Filter by Fullname"
-                  value={nameFilter}
-                  onChange={(e) => setNameFilter(e.target.value)}
-                  className="mt-1"
+              <>
+                <IoFilterSharp
+                  style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                  onClick={handleFullnameFilterClick}
                 />
-              )}
+                {fullnameToggle && (
+                  <div className="dropdown-menu show">
+                    <FullNameFilter
+                      setFullnameFilterToggle={setFullnameToggle}
+                      fullnameFilter={fullnameFilter}
+                      setFullnameFilter={setFullnameFilter}
+                      setCurrentPage={setCurrentPage}
+                    />
+                  </div>
+                )}
+              </>
             </th>
             <th>Total</th>
             <th>New</th>
@@ -137,30 +152,44 @@ function User_insights() {
             <th>InProgress</th>
             <th>Reopened</th>
             <th>Completed</th>
-            <th style={{ backgroundColor: '#117a65' }}>Request Reopen</th>
+            <th style={{ backgroundColor: "#117a65" }}>Request Reopen</th>
           </tr>
         </thead>
         <tbody>
-          {currentItems.length > 0 ? (
-            currentItems.map((user, index) => (
-              <tr key={user.ntid} className='tablerow'>
-                <td className='text-centre'>{index + 1}</td>
-                <td className='text-centre' onClick={handleTotalTickets(user.ntid)} style={{ cursor: 'pointer' }}>{user.ntid}</td>
-                <td className='text-centre text-capitalize' onClick={handleTotalTickets(user.ntid)} style={{ cursor: 'pointer' }}>{user.fullname?.toLowerCase()}</td>
-                <td className='text-centre' onClick={handleTotalTickets(user.ntid)} style={{ cursor: 'pointer' }}>{user.ticketStats.totalTickets}</td>
-                <td className='text-centre' onClick={handleStatusClick(user.ntid, '1')} style={{ cursor: 'pointer' }}>{user.ticketStats.new}</td>
-                <td className='text-centre' onClick={handleStatusClick(user.ntid, '2')} style={{ cursor: 'pointer' }}>{user.ticketStats.opened}</td>
-                <td className='text-centre' onClick={handleStatusClick(user.ntid, '3')} style={{ cursor: 'pointer' }}>{user.ticketStats.inprogress}</td>
-                <td className='text-centre' onClick={handleStatusClick(user.ntid, '4')} style={{ cursor: 'pointer' }}>{user.ticketStats.completed}</td>
-                <td className='text-centre' onClick={handleStatusClick(user.ntid, '5')} style={{ cursor: 'pointer' }}>{user.ticketStats.reopened}</td>
-                <td className='text-centre'>{user.ticketStats.requestreopenCount}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="10" className="text-center">No data found.</td>
+          {currentItems.map(({ ntid, fullname, ticketStats }, index) => (
+            <tr key={ntid}>
+              <td className="text-center">{index + 1}</td>
+              <td
+                className="text-center"
+                onClick={handleTotalTickets(ntid)}
+                style={{ cursor: "pointer" }}
+              >
+                {ntid}
+              </td>
+              <td
+                className="text-center text-capitalize"
+                onClick={handleTotalTickets(ntid)}
+                style={{ cursor: "pointer" }}
+              >
+                {fullname.toLowerCase()}
+              </td>
+              <td
+                className="text-center"
+                onClick={handleTotalTickets(ntid)}
+                style={{ cursor: "pointer" }}
+              >
+                {ticketStats.totalTickets}
+              </td>
+              <td className="text-center">{ticketStats.new || 0}</td>
+              <td className="text-center">{ticketStats.opened || 0}</td>
+              <td className="text-center">{ticketStats.inProgress || 0}</td>
+              <td className="text-center">{ticketStats.reopened || 0}</td>
+              <td className="text-center">{ticketStats.completed || 0}</td>
+              <td className="text-center">
+                {ticketStats.requestreopenCount || 0}
+              </td>
             </tr>
-          )}
+          ))}
         </tbody>
       </table>
 
@@ -174,4 +203,4 @@ function User_insights() {
   );
 }
 
-export default User_insights;
+export default UserInsights;
