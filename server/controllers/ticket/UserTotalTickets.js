@@ -3,19 +3,19 @@ import prisma from '../lib/prisma.js';
 const getUserTickets = async (req, res) => {
   try {
     const { ntid, statusId } = req.query;
-
-    // Ensure only one of ntid or statusId is provided
-    if ((!ntid && !statusId) || (ntid && statusId)) {
-      return res.status(400).json({ message: 'Provide either NTID or Status ID, but not both' });
-    }
+    console.log('Received NTID dwmw dj :', ntid, 'Received Status IDnknknfk jdxgw:', statusId);
 
     // Build filter condition
-    const filter = ntid
-      ? { ntid: ntid }
-      : statusId === '0'
-      ? { statusId: { in: ['1', '2', '3', '4', '5'] } }
-      : { statusId: statusId };
+    const filter = {
+      
+      ...(ntid ? { ntid: ntid } : {}),
+      ...(statusId === '0' 
+        ? { statusId: { in: ['1', '2', '3', '4', '5'] } } 
+        : { statusId: statusId }
+      )
+    };
 
+    // Fetch tickets based on the filter
     const tickets = await prisma.createTicket.findMany({
       where: filter,
       select: {
@@ -32,8 +32,10 @@ const getUserTickets = async (req, res) => {
       }
     });
 
+    console.log('Fetched Tickets:', tickets);
+
     if (tickets.length === 0) {
-      return res.status(404).json({ message: 'No tickets found for the provided parameter' });
+      return res.status(404).json({ message: 'No tickets found for the provided parameters' });
     }
 
     res.status(200).json(tickets);

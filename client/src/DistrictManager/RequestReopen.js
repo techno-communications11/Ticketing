@@ -1,21 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { Table,Row } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { IoFilterSharp } from "react-icons/io5";
+import { BsCalendar2DateFill } from "react-icons/bs";
 import getDecodedToken from '../universalComponents/decodeToken';
 import { apiRequest } from '../lib/apiRequest';
 import { setId, fetchIndividualTickets } from '../redux/marketSlice';
-import { useDispatch } from 'react-redux';
-import Filtering from '../universalComponents/Filtering';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import TicketBody from '../universalComponents/TicketBody';
+import NtidFilter from "../universalComponents/NtidFilter";
+import CreatedAt from "../universalComponents/CreatedAt";
+import CompletedAt from "../universalComponents/CompletedAt";
+import FullnameFilter from '../universalComponents/FullNameFilter'
+import StatusFilter from '../universalComponents/StatusFilter';
+import PageCountStack from '../universalComponents/PageCountStack';
 
 function RequestReopen() {
   const dispatch = useDispatch();
-  const [statusFilter, setStatusFilter] = useState('');
-  const [dateFilter, setDateFilter] = useState('');
-  const [ntidFilter, setntidFilter] = useState('');
   const [tickets, setTickets] = useState([]);
+  const [filters, setFilters] = useState({
+    statusToggle: false,
+    ntidFilterToggle: false,
+    createdAtToggle: false,
+    completedAtToggle: false,
+    fullnameToggle: false,
+  });
+  const [filterValues, setFilterValues] = useState({
+    status: "",
+    ntid: "",
+    createdAt: "",
+    completedAt: "",
+    fullname: "",
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  // Fetch tickets
   useEffect(() => {
     const ntid = getDecodedToken()?.ntid;
     const fetchTickets = async () => {
@@ -24,7 +43,7 @@ function RequestReopen() {
           params: { ntid }
         });
         setTickets(response.data);
-        console.log(response.data,"req,re")
+        console.log(response.data, "req,re");
       } catch (error) {
         console.error('Error fetching tickets:', error);
       }
@@ -34,52 +53,95 @@ function RequestReopen() {
       fetchTickets();
     }
   }, []);
+
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
 
-  const filteredTickets =FilterLogic(tickets,ntidFilter,dateFilter,statusFilter)
+  // Handle filter toggle
+  const handleFilterToggle = (filterName) => {
+    setFilters((prev) => ({
+      ...prev,
+      [filterName]: !prev[filterName],
+      statusToggle: filterName === 'statusToggle' ? !prev.statusToggle : false,
+      ntidFilterToggle: filterName === 'ntidFilterToggle' ? !prev.ntidFilterToggle : false,
+      createdAtToggle: filterName === 'createdAtToggle' ? !prev.createdAtToggle : false,
+      completedAtToggle: filterName === 'completedAtToggle' ? !prev.completedAtToggle : false,
+      fullnameToggle: filterName === 'fullnameToggle' ? !prev.fullnameToggle : false,
+    }));
+  };
+
+  const filteredTickets = FilterLogic(tickets || [], filterValues.ntid, filterValues.createdAt, filterValues.completedAt, filterValues.status, filterValues.fullname);
+
   return (
     <div className='container'>
-      <h3 className='text-capitalize text-center  my-3' style={{ color: '#E10174' }}> Reopen Requested Tickets</h3>
-      <Row className='mx-1 mb-3'>
-      <Filtering 
-        ntidFilter={ntidFilter}
-        setntidFilter={setntidFilter}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        dateFilter={dateFilter} 
-        setDateFilter={setDateFilter}
-      />
-      </Row>
+      <h3 className='text-capitalize text-center my-3' style={{ color: '#E10174' }}>Reopen Requested Tickets</h3>
       <Table striped bordered hover>
         <thead>
           <tr>
-
-            {['SC.No', 'NTID',  'Full Name',"Status", 'CreatedAt', 'CompletedAt', 'Duration', 'Details'].map((header) => (
-              <th key={header} className='text-center' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
+            {["SC.No", "NTID", "Full Name", "Status", "CreatedAt", "CompletedAt", "Duration", "Details"].map((header) => (
+              <th key={header} className="text-center" style={{ backgroundColor: "#E10174", color: "white" }}>
+                {header}
+                {header === "Status" && (
+                  <>
+                    <IoFilterSharp style={{ cursor: "pointer", marginLeft: '0.5rem' }} onClick={() => handleFilterToggle('statusToggle')} />
+                    {filters.statusToggle && <StatusFilter statusFilter={filterValues.status} setStatusFilter={(status) => setFilterValues(prev => ({ ...prev, status }))} />}
+                  </>
+                )}
+                {header === "Full Name" && (
+                  <>
+                    <IoFilterSharp style={{ cursor: "pointer", marginLeft: '0.5rem' }} onClick={() => handleFilterToggle('fullnameToggle')} />
+                    {filters.fullnameToggle && <FullnameFilter fullnameFilter={filterValues.fullname} setFullnameFilter={(fullname) => setFilterValues(prev => ({ ...prev, fullname }))} />}
+                  </>
+                )}
+                {header === "NTID" && (
+                  <>
+                    <IoFilterSharp style={{ cursor: "pointer", marginLeft: '0.5rem' }} onClick={() => handleFilterToggle('ntidFilterToggle')} />
+                    {filters.ntidFilterToggle && <NtidFilter ntidFilter={filterValues.ntid} setntidFilter={(ntid) => setFilterValues(prev => ({ ...prev, ntid }))} />}
+                  </>
+                )}
+                {header === "CreatedAt" && (
+                  <>
+                    <BsCalendar2DateFill style={{ cursor: "pointer", marginLeft: '0.5rem' }} onClick={() => handleFilterToggle('createdAtToggle')} />
+                    {filters.createdAtToggle && <CreatedAt createdAt={filterValues.createdAt} setCreatedAt={(createdAt) => setFilterValues(prev => ({ ...prev, createdAt }))} />}
+                  </>
+                )}
+                {header === "CompletedAt" && (
+                  <>
+                    <BsCalendar2DateFill style={{ cursor: "pointer", marginLeft: '0.5rem' }} onClick={() => handleFilterToggle('completedAtToggle')} />
+                    {filters.completedAtToggle && <CompletedAt completedAt={filterValues.completedAt} setCompletedAt={(completedAt) => setFilterValues(prev => ({ ...prev, completedAt }))} />}
+                  </>
+                )}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {tickets.length > 0 ? (
-            tickets.map((ticket, index) => (
-              <TicketBody ticket={ticket}
-               index={index} 
-               handleTicket={handleTicket}
-               currentPage={currentPage}
-               itemsPerPage={itemsPerPage}
+          {filteredTickets.length > 0 ? (
+            filteredTickets.map((ticket, index) => (
+              <TicketBody key={index} 
+              currentPage={currentPage}
+              ticket={ticket} 
+              index={index}
+              handleTicket={handleTicket}
+              itemsPerPage={itemsPerPage}
                />
             ))
           ) : (
             <tr>
-              <td colSpan="6" className="text-center">No tickets found.</td>
+              <td colSpan="8" className="text-center">No tickets found.</td>
             </tr>
           )}
         </tbody>
       </Table>
+      <PageCountStack
+        filteredTickets={filteredTickets}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        itemsPerPage={itemsPerPage}
+      />
     </div>
   );
 }

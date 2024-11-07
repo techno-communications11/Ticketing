@@ -56,6 +56,7 @@ const UserTable = () => {
       );
     });
     setUsers(filteredUsers);
+    setCurrentPage(1)
   };
 
   const handleEdit = (user) => {

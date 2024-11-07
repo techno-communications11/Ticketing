@@ -8,10 +8,11 @@ const MyProvider = ({ children }) => {
     const [dm, setDm] = useState("");
     const [adminntid, setNtid] = useState("");
     const [statusId, setStatusId] = useState("");
-    console.log(statusId,"tharyb")      
+    const [fullname, setFullName] = useState("");
+    console.log(dm,statusId,fullname)
 
     return (
-        <MyContext.Provider value={{ dm, setDm,adminntid,setNtid,statusId,setStatusId }}>
+        <MyContext.Provider value={{ dm, setDm,adminntid,setNtid,statusId,setStatusId ,fullname,setFullName}}>
             {children}
         </MyContext.Provider>
     );

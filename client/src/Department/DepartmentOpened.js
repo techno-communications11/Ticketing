@@ -1,9 +1,13 @@
 import React from 'react';
 import Ticket from './Ticket';
+import getDecodedToken from '../universalComponents/decodeToken';
 
 function DepartmentOpened() {
+  const userId = getDecodedToken()?.id;
+  console.log(typeof(userId))
+
   return (
-    <Ticket statusId={'3'} text="Opened" openedbyUser={true} />
+    <Ticket status={'3'} openedBy={userId}  fullname={null} />
   );
 }
 

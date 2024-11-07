@@ -23,6 +23,7 @@ const TicketDetails = async (req, res) => {
         isSettled:true,
         completedAt:true,
         requestreopen:true,
+        departmentId:true,
         status:{select:{name:true}},
         files: true,
       },

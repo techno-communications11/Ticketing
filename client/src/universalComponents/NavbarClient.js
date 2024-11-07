@@ -138,7 +138,7 @@ export function NavbarClient() {
                       </Nav.Link>
                     }
                     {!ma_rel && !isDepartments && !MA_New && <Nav.Link as={Link} to={department === 'District Manager' ? '/inprogress' : '/'} className='fw-medium position-relative text-dark'>
-                      inprogress
+                      Assigned
                     </Nav.Link>}
                     <Nav.Link as={Link} to={department === 'District Manager' ? '/completed' : isDepartments ? '/departmentcompleted' : ma_rel ? '/MAcompleted' : MA_New ? '/departmentcompleted' : '/'} className='fw-medium position-relative text-dark'>
                       Completed

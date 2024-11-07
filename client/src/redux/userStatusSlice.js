@@ -4,7 +4,6 @@ import { apiRequest } from '../lib/apiRequest';
 export const fetchStatusTickets = createAsyncThunk(
   'statusTickets/fetchstatusTickets',
   async ({ statusId,ntid }) => {
-    console.log("data", statusId);
     const response = await apiRequest.get('/createTickets/userandstatus', {
       params: { statusId,ntid }, // Correctly pass statusId as a query parameter
     });
