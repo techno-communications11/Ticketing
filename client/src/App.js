@@ -28,7 +28,7 @@ import DepartmentOpened from './Department/DepartmentOpened';
 import CompletedMA from './MA_Individual/CompletedMA';
 import OpenedMA from './MA_Individual/OpenedMA';
 import NewMA from './MA_Individual/NewMA';
-import MAhome from './MA_Individual/mAhome'
+import MAhome from './MA_Individual/MAhome'
 import MA_head from './Department/MA_head';
 import Market_Department from './AdminPages/Market_Department'
 import DMTabs from './DistrictManager/DMTabs'
