@@ -462,7 +462,7 @@ export function Home() {
             </Form.Group>
 
             <Form.Group controlId="ticketDepartment">
-            <Dropdown className='flex-grow-1' id="dropdown-department">
+            <Dropdown className='flex-grow-1 mb-1' id="dropdown-department">
             <Dropdown.Toggle className={`text-start bg-white fw-medium text-secondary border shadow-none w-100`} id="dropdown-basic">
                 {selectedDepartment || "Select a Department"}
             </Dropdown.Toggle>

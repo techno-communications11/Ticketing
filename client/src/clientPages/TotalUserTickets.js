@@ -81,6 +81,7 @@ function TotalUserTickets() {
       let url = `/createTickets/usertickets`; // Base URL
 
       try {
+        console.log(adminntid,"assdsss")
         if (adminntid) {
           params.append("ntid", adminntid); // Append ntid if it has a value
         }
@@ -116,7 +117,6 @@ function TotalUserTickets() {
     // Only call fetchUserTickets if adminntid is not null
     fetchUserTickets();
   }, [statusId, adminntid]);
-  console.log(statusFilter, "uuuuuuuuuuuuuuu");
 
   const filteredTickets = FilterLogic(
     tickets || [],

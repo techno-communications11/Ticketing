@@ -75,7 +75,7 @@ export function NavbarClient() {
     <Navbar expand="lg" className="shadow-sm">
       <Container fluid>
         <NavbarBrand as={Link} to={homeRoute} className='d-flex mb-2'>
-          <img src='../logo.png' height={30} alt="Logo" />
+          <img src='../logo.png' height={40} alt="Logo" />
           <Nav className="me-auto" navbarScroll>
             <Navbar.Brand as={Link} to={homeRoute} className='fw-medium text-dark ms-2 fs-6' style={{ fontSize: '90%' }}>
               TECHNO COMMUNICATIONS LLC

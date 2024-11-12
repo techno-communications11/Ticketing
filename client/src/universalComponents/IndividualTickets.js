@@ -96,7 +96,7 @@ const Individualmarketss = () => {
   
         // Ensure the cameraFile is correctly formatted
         if (fileName||cameraFile) {
-          const formattedUrl = `http://192.168.1.27:4000/${cameraFile.replace(/\\/g, "/")}`;
+          const formattedUrl = `http://192.168.1.16:4000/${cameraFile.replace(/\\/g, "/")}`;
           console.log('File URL:', formattedUrl); // Log the constructed URL for debugging
           setUploadedFileUrl(formattedUrl);
         } else {
@@ -615,6 +615,14 @@ const Individualmarketss = () => {
                     Settled
                   </Button>
                 )}
+                {
+                  department==='District Manager'&& markets.departmentId!=='19'&&markets.status?.name!=='completed' &&<Button
+                  variant="success fw-medium w-auto"
+                  onClick={handleCallbackAction}
+                >
+                  Callback
+                </Button>
+                }
             </div>
           </div>
         </div>
@@ -634,7 +642,7 @@ const Individualmarketss = () => {
           <img src={uploadedFileUrl} alt="Ticket File" className="img-fluid" />
         </Modal.Body>
       </Modal>
-      {department === "Employee" && markets.status?.name === "completed" && (
+      {department === "Employee" && markets.status?.name === "completed"&&markets.isSettled!==true && (
         <span className="text-danger fw-medium">
           * Enter comment describing the purpose of reopening the ticket before
           requesting reopen

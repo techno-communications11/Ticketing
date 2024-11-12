@@ -2,7 +2,6 @@ import prisma from "../lib/prisma.js";
 
 const GetDepartmentTickets = async (req, res) => {
   const { department } = req.params
-  console.log(department,"dept")
   const userid=req.user.id;
 
   if (!department) {

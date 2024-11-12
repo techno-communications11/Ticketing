@@ -5,7 +5,9 @@ import { Table, Row, Col } from "react-bootstrap";
 import { apiRequest } from "../lib/apiRequest";
 import PageCountStack from "../universalComponents/PageCountStack";
 import { Container } from "react-bootstrap";
-import DepartmentSelectDropdown from '../universalComponents/DepartmentSelectDropdown'
+import DepartmentSelectDropdown from "../universalComponents/DepartmentSelectDropdown";
+import { useNavigate } from "react-router-dom";
+import { useMyContext } from "../universalComponents/MyContext";
 
 const DepartmentWise = () => {
   const [ticketCounts, setTicketCounts] = useState({});
@@ -14,7 +16,9 @@ const DepartmentWise = () => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7; 
+  const itemsPerPage = 7;
+  const {setStatusId,setDepartment}=useMyContext()
+   const navigate=useNavigate()
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
 
@@ -90,25 +94,13 @@ const DepartmentWise = () => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  // const handleDepartmentChange = (e) => {
-  //   const { options } = e.target;
-  //   const selectedOptions = [];
-  //   for (let i = 0; i < options.length; i++) {
-  //     if (options[i].selected) {
-  //       selectedOptions.push(options[i].value);
-  //     }
-  //   }
-  //   setSelectedDepartments(selectedOptions);
-  // };
-
-  // const handleSelectAll = (e) => {
-  //   if (e.target.checked) {
-  //     setSelectedDepartments(Object.keys(ticketCounts));
-  //   } else {
-  //     setSelectedDepartments([]);
-  //   }
-  // };
+  const navigateToDepartmentTickets = (department, statusId) => {
+    localStorage.setItem("department", department);
+    console.log(department,statusId,'deeee')
+    setDepartment(department);
+    setStatusId(statusId);
+    navigate('/showdeptwiseticks');
+  };
 
   return (
     <Container>
@@ -196,13 +188,27 @@ const DepartmentWise = () => {
                     {currentItems.map(([department, counts], index) => (
                       <tr key={department}>
                         <td>{index + 1}</td>
-                        <td>{department}</td>
-                        <td>{safeNumber(counts.total)}</td>
-                        <td>{safeNumber(counts.new)}</td>
-                        <td>{safeNumber(counts.opened)}</td>
-                        <td>{safeNumber(counts.inProgress)}</td>
-                        <td>{safeNumber(counts.completed)}</td>
-                        <td>{safeNumber(counts.reopened)}</td>
+                        <td onClick={() => navigateToDepartmentTickets(department, "0")} style={{cursor:'pointer'}}>
+                          {department}
+                        </td>
+                        <td onClick={() => navigateToDepartmentTickets(department, "0")} style={{cursor:'pointer'}}>
+                          {safeNumber(counts.total)}
+                        </td>
+                        <td onClick={() => navigateToDepartmentTickets(department, "1")} style={{cursor:'pointer'}}>
+                          {safeNumber(counts.new)}
+                        </td>
+                        <td onClick={() => navigateToDepartmentTickets(department, "2")} style={{cursor:'pointer'}}>
+                          {safeNumber(counts.opened)}
+                        </td>
+                        <td onClick={() => navigateToDepartmentTickets(department, "3")} style={{cursor:'pointer'}}>
+                          {safeNumber(counts.inProgress)}
+                        </td>
+                        <td onClick={() => navigateToDepartmentTickets(department, "4")} style={{cursor:'pointer'}}>
+                          {safeNumber(counts.completed)}
+                        </td>
+                        <td onClick={() => navigateToDepartmentTickets(department, "5")} style={{cursor:'pointer'}}>
+                          {safeNumber(counts.reopened)}
+                        </td>
                       </tr>
                     ))}
                   </tbody>

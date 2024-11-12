@@ -36,6 +36,7 @@ import { MyProvider } from './universalComponents/MyContext';
 import Inprogress from './DistrictManager/Inprogress';
 import Reopened from './DistrictManager/Reopened';
 import DepartmentsInsightsData from './DistrictManager/DepartmentsInsightsData';
+import ShowdepartWiseTicks from './AdminPages/ShowdepartWiseTicks';
 
 const getToken = () => localStorage.getItem('token');
 const decodeToken = () => {
@@ -48,7 +49,7 @@ const districtManagerDepartments = ['District Manager', 'Employee'];
 const marketManagerDepartments = ['Market Manager'];
 const departmentDepartments = [
   'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',  'Charge Back/Commission',
-   'Inventory',  'Housing Related',
+   'Inventory',  'Housing',
   'CAM NW', 'HR Payroll',
 ];
 const MA_rel=['Maintenance','Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity'];
@@ -136,6 +137,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute allowedDepartments={superAdminDepartments}>
               <Register />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/showdeptwiseticks"
+          element={
+            <ProtectedRoute allowedDepartments={superAdminDepartments}>
+              <ShowdepartWiseTicks />
             </ProtectedRoute>
           }
         />

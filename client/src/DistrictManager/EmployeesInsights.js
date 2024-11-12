@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { apiRequest } from "../lib/apiRequest";
-import { Pie } from "react-chartjs-2";
 import { MdFilterList } from "react-icons/md"; // Import the filter icon
 import Form from "react-bootstrap/Form"; // Import Form component from react-bootstrap
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is included
@@ -34,7 +33,6 @@ const EmployeesInsights = ({ dm }) => {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [fullname]);
 
@@ -42,15 +40,18 @@ const EmployeesInsights = ({ dm }) => {
   const filteredData = ticketData.filter((user) =>
     user.ntid.toLowerCase()?.includes(filter.toLowerCase())
   );
-  const handleDataSend = (statusId, ntid) => {
+  const handleDataSend = (AdminsDatantid,statusId) => {
+    console.log(AdminsDatantid,"ntidppp",statusId,"stausIdpp")
     localStorage.setItem("statusData", statusId);
-    dispatch(fetchStatusTickets({ statusId, ntid }));
-    dispatch(setUserAndStatus({ statusId, ntid }));
+    dispatch(fetchStatusTickets({ ntid:AdminsDatantid,statusId}));
+    dispatch(setUserAndStatus({  ntid:AdminsDatantid,statusId }));
     navigate("/usertickets");
   };
 
-  const handleStatusClick = (ntid, statusId) => () =>
-    handleDataSend(statusId, ntid);
+  const handleStatusClick = (AdminsDatantid, statusId) => () =>{
+    console.log(AdminsDatantid,'ntidzz',statusId,"sttausIdzzz")
+    handleDataSend( AdminsDatantid,statusId);
+}
   const handleTotalTickets = (AdminsDatantid) => () => {
     console.log(AdminsDatantid, "AdminsDatantid");
     setNtid(AdminsDatantid);

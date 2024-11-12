@@ -40,10 +40,10 @@ function DepartmentsInsightsData() {
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const currentStatusId = statusId || localStorage.getItem('statusData');
   const currentDm = dm || localStorage.getItem('dm');
- console.log(statusFilter,"ssss")  
+  
   const getStatusLabel = (currentStatusId) => {
     switch (currentStatusId) {
-      case 'Total':
+      case '0':
         return "Total";
       case '1':
         return "new";

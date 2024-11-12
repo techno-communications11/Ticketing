@@ -19,7 +19,7 @@ function UserInsights() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
   const navigate = useNavigate();
-  const { setNtid } = useMyContext();
+  const { setNtid,setStatusId } = useMyContext();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -59,8 +59,9 @@ function UserInsights() {
     currentPage * itemsPerPage
   );
 
-  const handleTotalTickets = (AdminsDatantid) => () => {
+  const handleTotalTickets = (AdminsDatantid,status) => () => {
     setNtid(AdminsDatantid);
+    setStatusId(status)
     if (AdminsDatantid) {
       navigate("/totalusertickets");
     } else {
@@ -150,8 +151,8 @@ function UserInsights() {
             <th>New</th>
             <th>Opened</th>
             <th>InProgress</th>
-            <th>Reopened</th>
             <th>Completed</th>
+            <th>Reopened</th>
             <th style={{ backgroundColor: "#117a65" }}>Request Reopen</th>
           </tr>
         </thead>
@@ -161,31 +162,31 @@ function UserInsights() {
               <td className="text-center">{index + 1}</td>
               <td
                 className="text-center"
-                onClick={handleTotalTickets(ntid)}
+                onClick={handleTotalTickets(ntid,"0")}
                 style={{ cursor: "pointer" }}
               >
                 {ntid}
               </td>
               <td
                 className="text-center text-capitalize"
-                onClick={handleTotalTickets(ntid)}
+                onClick={handleTotalTickets(ntid,"0")}
                 style={{ cursor: "pointer" }}
               >
                 {fullname.toLowerCase()}
               </td>
               <td
                 className="text-center"
-                onClick={handleTotalTickets(ntid)}
+                onClick={handleTotalTickets(ntid,"0")}
                 style={{ cursor: "pointer" }}
               >
                 {ticketStats.totalTickets}
               </td>
-              <td className="text-center">{ticketStats.new || 0}</td>
-              <td className="text-center">{ticketStats.opened || 0}</td>
-              <td className="text-center">{ticketStats.inProgress || 0}</td>
-              <td className="text-center">{ticketStats.reopened || 0}</td>
-              <td className="text-center">{ticketStats.completed || 0}</td>
-              <td className="text-center">
+              <td className="text-center" onClick={handleTotalTickets(ntid,"1")} style={{ cursor: "pointer" }}>{ticketStats.new || 0}</td>
+              <td className="text-center" onClick={handleTotalTickets(ntid,"2")} style={{ cursor: "pointer" }}>{ticketStats.opened || 0}</td>
+              <td className="text-center" onClick={handleTotalTickets(ntid,"3")} style={{ cursor: "pointer" }}>{ticketStats.inprogress || 0}</td>
+              <td className="text-center" onClick={handleTotalTickets(ntid,"4")} style={{ cursor: "pointer" }}>{ticketStats.completed || 0}</td>
+              <td className="text-center" onClick={handleTotalTickets(ntid,"5")} style={{ cursor: "pointer" }}>{ticketStats.reopened || 0}</td>
+              <td className="text-center" >
                 {ticketStats.requestreopenCount || 0}
               </td>
             </tr>

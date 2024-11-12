@@ -38,7 +38,7 @@ export function Profile() {
       });
       if (response.status === 200) {
         const fileName = response.data.path;
-        const baseURL = 'http://192.168.1.5:4000';
+        const baseURL = 'http://192.168.1.16:4000';
         const imageUrl = `${baseURL}/public/images/${fileName}`;
         setUploadedFileUrl(imageUrl);
       } else {

@@ -2,7 +2,7 @@ import prisma from "../lib/prisma.js";
 
 export const marketAndStatus = async (req, res) => {
   const { id, market, statusId } = req.query;
-  console.log(market,"mmmmmm")
+  console.log(market,"mmmmmm",statusId,"stiii",id,"idddd")
   console.log(id, market, statusId, "Received query parameters");
 
   if ((!id || !market) && !statusId) {
@@ -61,7 +61,7 @@ export const marketAndStatus = async (req, res) => {
             ticketId: true,
             ntid: true,
             fullname: true,
-            market: true,
+            market: true, 
             selectStore: true,
             phoneNumber: true,
             ticketRegarding: true,

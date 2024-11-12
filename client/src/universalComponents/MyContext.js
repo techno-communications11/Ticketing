@@ -5,14 +5,22 @@ const MyContext = createContext();
 
 // Create a Provider Component
 const MyProvider = ({ children }) => {
-    const [dm, setDm] = useState("");
-    const [adminntid, setNtid] = useState("");
-    const [statusId, setStatusId] = useState("");
-    const [fullname, setFullName] = useState("");
-    console.log(dm,statusId,fullname)
+    const [state, setState] = useState({
+        department: "",
+        dm: "",
+        adminntid: "",
+        statusId: "",
+        fullname: "",
+    });
+
+    const setDepartment = (department) => setState((prev) => ({ ...prev, department }));
+    const setStatusId = (statusId) => setState((prev) => ({ ...prev, statusId }));
+    const setDm = (dm) => setState((prev) => ({ ...prev, dm }));
+    const setNtid = (adminntid) => setState((prev) => ({ ...prev, adminntid }));
+    const setFullName = (fullname) => setState((prev) => ({ ...prev, fullname }));
 
     return (
-        <MyContext.Provider value={{ dm, setDm,adminntid,setNtid,statusId,setStatusId ,fullname,setFullName}}>
+        <MyContext.Provider value={{ ...state, setDepartment, setDm, setNtid, setStatusId, setFullName }}>
             {children}
         </MyContext.Provider>
     );
@@ -23,5 +31,5 @@ const useMyContext = () => {
     return useContext(MyContext);
 };
 
-// Export both the context and the provider
+// Export the provider and hook
 export { MyProvider, useMyContext };

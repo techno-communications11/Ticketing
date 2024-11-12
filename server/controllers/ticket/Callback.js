@@ -34,6 +34,7 @@ const Callback = async (req, res) => {
       data: { 
         departmentId: departmentRecord.id,  
         openedBy: null,
+        assignToTeam:null,
         statusId: status, // Ensure this matches your schema
       },
     });

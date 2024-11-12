@@ -1,8 +1,7 @@
 import prisma from "../lib/prisma.js";
 
 const GetDepartmentWisetickets = async (req, res) => {
-    const { ntid, statusId } = req.query; 
-    console.log(ntid, "NTID", "statusId", statusId); 
+    const { ntid } = req.query; 
 
     if (!ntid) {
         return res.status(400).json({ error: 'NTID required' }); 
