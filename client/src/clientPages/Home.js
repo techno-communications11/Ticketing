@@ -133,6 +133,7 @@ export function Home() {
       ticketSubject: "",
       description: "",
       market: "",
+      department:""
     };
     const ntid = ntidRef.current.value;
     const phone = phoneRef.current.value;
@@ -165,12 +166,15 @@ export function Home() {
       formData.append("market", marketRef.current.value.toLowerCase());
       formData.append("fullname", fullnameRef.current.value);
       formData.append("department", selectedDepartment);
+      console.log(formData,'ffffffffffffer')
       if (cameraFileName) {
         formData.append("cameraFile", cameraFileName);
       }
       if (fileSystemFileName) {
         formData.append("fileSystemFile", fileSystemFileName);
       }
+      console.log(formData,'ffffffffffffer')
+
       apiRequest
         .post("/createTickets/uploadTicket", formData, {
           headers: {

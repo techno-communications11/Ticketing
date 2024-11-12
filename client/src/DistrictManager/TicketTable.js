@@ -225,7 +225,7 @@ const TicketsTable = ({ statusIds, text }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="8">No tickets available</td>
+                <td colSpan="8" className='text-center'>No tickets available</td>
               </tr>
             )}
           </tbody>

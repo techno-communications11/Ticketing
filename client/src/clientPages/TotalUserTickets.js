@@ -155,7 +155,7 @@ function TotalUserTickets() {
         Total User Tickets
       </h2>
 
-      {authenticated && currentItems.length > 0 ? (
+      {authenticated &&  (
         <div className="table-responsive container" style={{ zIndex: 1 }}>
           <table className="table table-bordered table-hover">
             <thead>
@@ -272,7 +272,7 @@ function TotalUserTickets() {
               </tr>
             </thead>
             <tbody>
-              {currentItems.map((ticket, index) => (
+              {currentItems.length > 0 ?currentItems.map((ticket, index) => (
                 <TicketBody
                   key={ticket.id}
                   ticket={ticket}
@@ -281,14 +281,15 @@ function TotalUserTickets() {
                   currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
                 />
-              ))}
+              )):( <tr>
+                {/* Set the colspan to match the number of columns in your table */}
+                <td colSpan="8" className="text-center">
+                  No tickets found
+                </td>
+              </tr>)}
             </tbody>
           </table>
         </div>
-      ) : (
-        <p className="text-center text-primary fw-medium">
-          No tickets found for this NTID.
-        </p>
       )}
       <PageCountStack
         filteredTickets={filteredTickets}

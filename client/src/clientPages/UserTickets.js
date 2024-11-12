@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { GrLinkNext } from "react-icons/gr";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +13,8 @@ import { getDuration } from "../universalComponents/getDuration";
 import "../styles/TicketTable.css";
 import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
- import getDecodedToken from "../universalComponents/decodeToken";
+import getDecodedToken from "../universalComponents/decodeToken";
+
 const UserTickets = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,41 +24,35 @@ const UserTickets = () => {
   const [createdAt, setCreatedAt] = useState("");
 
   const itemsPerPage = 8;
-  const ntids=getDecodedToken()?.ntid;
- 
+  const ntids = getDecodedToken()?.ntid;
+
   const selectedStatus = useSelector((state) => state.userTickets.selectedStatus);
   const { statustickets: userTickets, loading } = useSelector((state) => state.userTickets);
   const tickets = useSelector((state) => state.tickets.tickets);
   const ticketArray = Array.isArray(userTickets) ? userTickets : Array.isArray(tickets) ? tickets : [];
 
   useEffect(() => {
-    // On component mount, check for status in localStorage
     const statusToFetch = selectedStatus || localStorage.getItem('statusData');
-    console.log(statusToFetch,"stf")
     if (statusToFetch) {
-      localStorage.setItem('statusData', statusToFetch);
-      dispatch(fetchStatusTickets({ statusId: statusToFetch,ntid:ntids }));
-      dispatch(setUserAndStatus({ statusId: statusToFetch }));
+      try {
+        localStorage.setItem('statusData', statusToFetch);
+        dispatch(fetchStatusTickets({ statusId: statusToFetch, ntid: ntids }));
+        dispatch(setUserAndStatus({ statusId: statusToFetch }));
+      } catch (error) {
+        console.error("Failed to fetch status tickets:", error);
+      }
     }
-  }, [dispatch, selectedStatus]);
+  }, [dispatch, selectedStatus, ntids]);
 
- 
-
-  const handleTicket = (id) => {
+  const handleTicket = useCallback((id) => {
     localStorage.setItem("selectedId", id);
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
-  };
+  }, [dispatch]);
 
-  const handleCreatedAtFilterClick = () => {
-    setCreatedAtToggle((prev) => !prev);
-  };
+  const handleCreatedAtFilterClick = () => setCreatedAtToggle((prev) => !prev);
+  const handleCompletedAtFilterClick = () => setCompletedAtToggle((prev) => !prev);
 
-  const handleCompletedAtFilterClick = () => {
-    setCompletedAtToggle((prev) => !prev);
-  };
-
-  // Filter tickets based on createdAt state
   const filteredTickets = createdAt
     ? ticketArray.filter(
         (ticket) =>
@@ -70,24 +65,24 @@ const UserTickets = () => {
     currentPage * itemsPerPage
   );
 
-  const nonCompletedTickets = currentItems.filter(
-    (ticket) => ticket.requestreopen
-  );
-  const completedTickets = currentItems.filter(
-    (ticket) => !ticket.requestreopen
-  );
-
+  const nonCompletedTickets = currentItems.filter((ticket) => ticket.requestreopen);
+  const completedTickets = currentItems.filter((ticket) => !ticket.requestreopen);
   const sortedCompletedTickets = completedTickets.sort(
     (a, b) => new Date(b.completedAt) - new Date(a.completedAt)
   );
-
   const finalTickets = [...nonCompletedTickets, ...sortedCompletedTickets];
+
+  const getStatusColor = (ticket) => {
+    if (ticket.requestreopen) return { color: "#006A4E" };
+    if (ticket.isSettled===true) return { color: "gray" };
+    return {};
+  };
 
   return (
     <Container className="mt-1">
       <h3 className="mb-2 font-family text-center" style={{ color: "#E10174" }}>
-        {ticketArray[0]?.status.name.charAt(0).toUpperCase() +
-          ticketArray[0]?.status.name.slice(1) || ""}{" "}
+        {ticketArray[0]?.status.name?.charAt(0).toUpperCase() +
+          ticketArray[0]?.status.name?.slice(1) || ""}{" "}
         Tickets
       </h3>
 
@@ -121,6 +116,7 @@ const UserTickets = () => {
                         <BsCalendar2DateFill
                           style={{ cursor: "pointer", marginLeft: "0.5rem" }}
                           onClick={handleCreatedAtFilterClick}
+                          aria-label="Toggle Created At Filter"
                         />
                         {createdAtToggle && (
                           <div className="dropdown-menu show">
@@ -139,6 +135,7 @@ const UserTickets = () => {
                         <BsCalendar2DateFill
                           style={{ cursor: "pointer", marginLeft: "0.5rem" }}
                           onClick={handleCompletedAtFilterClick}
+                          aria-label="Toggle Completed At Filter"
                         />
                         {completedAtToggle && (
                           <div className="dropdown-menu show">
@@ -160,54 +157,31 @@ const UserTickets = () => {
               {finalTickets.length > 0 ? (
                 finalTickets.map((ticket, index) => (
                   <tr key={ticket.ticketId}>
-                    <td
-                      className="fw-medium"
-                      style={ticket.requestreopen ? { color: "#006A4E" } : {}}
-                    >
+                    <td className="fw-medium" style={getStatusColor(ticket)}>
                       {(currentPage - 1) * itemsPerPage + index + 1}
                     </td>
-                    <td
-                      className="fw-medium"
-                      style={ticket.requestreopen ? { color: "#006A4E" } : {}}
-                    >
+                    <td className="fw-medium" style={getStatusColor(ticket)}>
                       {ticket.ntid}
                     </td>
-                    <td
-                      className="fw-medium"
-                      style={ticket.requestreopen ? { color: "#006A4E" } : {}}
-                    >
+                    <td className="fw-medium" style={getStatusColor(ticket)}>
                       {ticket.fullname}
                     </td>
-                    <td
-                      className="fw-medium"
-                      style={ticket.requestreopen ? { color: "#006A4E" } : {}}
-                    >
+                    <td className="fw-medium" style={getStatusColor(ticket)}>
                       {ticket.status?.name || "-"}
                     </td>
-                    <td
-                      className="fw-medium"
-                      style={ticket.requestreopen ? { color: "#006A4E" } : {}}
-                    >
+                    <td className="fw-medium" style={getStatusColor(ticket)}>
                       {formatDate(ticket.createdAt)}
                     </td>
-                    <td
-                      className="fw-medium"
-                      style={ticket.requestreopen ? { color: "#006A4E" } : {}}
-                    >
-                      {ticket.completedAt
-                        ? formatDate(ticket.completedAt)
-                        : "-"}
+                    <td className="fw-medium" style={getStatusColor(ticket)}>
+                      {ticket.completedAt ? formatDate(ticket.completedAt) : "-"}
                     </td>
-                    <td
-                      className="fw-medium"
-                      style={ticket.requestreopen ? { color: "#006A4E" } : {}}
-                    >
+                    <td className="fw-medium" style={getStatusColor(ticket)}>
                       {ticket.completedAt
                         ? getDuration(ticket.createdAt, ticket.completedAt)
                         : "-"}
                     </td>
                     <td>
-                      <Link to={"/details"}>
+                      <Link to={"/details"} aria-label="View Ticket Details">
                         <GrLinkNext
                           className="fw-medium"
                           onClick={() => handleTicket(ticket.ticketId)}
@@ -218,7 +192,7 @@ const UserTickets = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8">No tickets available</td>
+                  <td colSpan="8" className="text-center">No tickets available</td>
                 </tr>
               )}
             </tbody>

@@ -405,6 +405,7 @@ const Individualmarketss = () => {
                 "Selected Store": markets.selectStore,
                 "Phone Number": markets.phoneNumber,
                 "Ticket Regarding": markets.ticketRegarding,
+                'selected department':markets.selectedDepartment,
                 Description: markets.description,
                 "Created At": formatDate(markets.createdAt),
               }).map(([key, value]) => (
@@ -487,7 +488,7 @@ const Individualmarketss = () => {
                 )}
               {(department === "Employee" ||
                 department === "District Manager") &&
-                markets.status?.name === "completed" && (
+                markets.status?.name === "completed" && markets.isSettled!==true&& (
                   <Comment
                     comment={comment}
                     handleCommentChange={handleCommentChange}
@@ -520,6 +521,7 @@ const Individualmarketss = () => {
                     </Dropdown.Menu>
                   </Dropdown>
                 )}
+                
               {department !== "Employee" &&
                 department !== "SuperAdmin" &&
                 markets.ntid !== userNtid && (
@@ -571,7 +573,15 @@ const Individualmarketss = () => {
                   }
 
 
-                  {markets.status?.name !== 'completed' && (
+                  {markets.status?.name !== 'completed'&&markets.departmentId==='19' && (
+                    <button
+                      className="btn btn-success"
+                      onClick={() => handleConfirmAction('4', 'mark as completed')}
+                    >
+                      Close
+                    </button>
+                  )}
+                   {markets.status?.name !== 'completed'&& departments.includes(department) && (
                     <button
                       className="btn btn-success"
                       onClick={() => handleConfirmAction('4', 'mark as completed')}
@@ -583,7 +593,7 @@ const Individualmarketss = () => {
               )}
               
               {
-                counts >= 1 && department === "Employee" && markets.status?.name === 'completed' && (
+                counts >= 1 && department === "Employee" && markets.status?.name === 'completed' && !markets.isSettled && (
                   <Button
                     variant="primary fw-medium w-auto ms-auto me-3 "
                     onClick={() => handleRequestReopen()}

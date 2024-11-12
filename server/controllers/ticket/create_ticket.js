@@ -12,7 +12,7 @@ const createTicket = async (req, res) => {
         }
 
         const { ntid, fullname, phone, market, store, department, ticketSubject, description } = req.body;
-        console.log(req.body);  
+        console.log(req.body,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");  
         try {
             const dmData = await prisma.marketStructure.findMany({
                 where: { storeName: store },
@@ -55,7 +55,7 @@ const createTicket = async (req, res) => {
                     phoneNumber,
                     market,
                     selectStore: store,
-                    department: department, 
+                    selectedDepartment: department, 
                     ticketRegarding: ticketSubject,
                     description,
                     status: { connect: { id: '1' } }, 

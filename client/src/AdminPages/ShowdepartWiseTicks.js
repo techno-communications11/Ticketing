@@ -13,7 +13,12 @@ import FullnameFilter from "../universalComponents/FullNameFilter";
 import StatusFilter from "../universalComponents/StatusFilter";
 import { useMyContext } from "../universalComponents/MyContext";
 import { apiRequest } from "../lib/apiRequest";
+import { useDispatch } from "react-redux";
+import { setId, fetchIndividualTickets } from "../redux/marketSlice";
+
+
 const ShowdepartWiseTicks = () => {
+  const dispatch = useDispatch();
   const { department, statusId } = useMyContext();
   const [tickets, setTickets] = useState([]);
   const [market, setMarket] = useState("");
@@ -109,6 +114,12 @@ const ShowdepartWiseTicks = () => {
       currentPage * itemsPerPage
     );
   }, [filteredTickets, currentPage, itemsPerPage]);
+
+  const handleTicket = (id) => {
+    localStorage.setItem("selectedId", id);
+    dispatch(setId(id));
+    dispatch(fetchIndividualTickets(id));
+  };
 
   return (
     <Container className="mt-2">
@@ -239,6 +250,7 @@ const ShowdepartWiseTicks = () => {
                     index={index}
                     currentPage={currentPage}
                     itemsPerPage={itemsPerPage}
+                    handleTicket={handleTicket}
                   />
                 ))
               ) : (

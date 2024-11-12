@@ -28,6 +28,7 @@ model CreateTicket {
   market            String
   selectStore       String
   ticketRegarding   String
+  selectedDepartment String?
   description       String
   files             String
   assignedTo        String

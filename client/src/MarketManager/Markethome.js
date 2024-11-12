@@ -160,7 +160,7 @@ function TotalUserTickets() {
       </h3>
 
 
-      {authenticated && currentItems.length > 0 && (
+      {authenticated  && (
         <Row className="table-responsive container">
           <table className="table table-bordered table-hover">
             <thead>
@@ -193,6 +193,7 @@ function TotalUserTickets() {
                               statusFilter={statusFilter}
                               setStatusFilter={setStatusFilter}
                               setCurrentPage={setCurrentPage}
+                              setStatusToggle={setStatusToggle}
                             />
                           </div>
                         )}
@@ -210,6 +211,7 @@ function TotalUserTickets() {
                             fullnameFilter={fullnameFilter}
                             setFullnameFilter={setFullnameFilter}
                             setCurrentPage={setCurrentPage}
+                            setFullnameFilterToggle={setFullnameToggle}
                           />
                         </div>
                         )}
@@ -228,6 +230,7 @@ function TotalUserTickets() {
                               ntidFilter={ntidFilter}
                               setntidFilter={setntidFilter}
                               setCurrentPage={setCurrentPage}
+                              setNtidFilterToggle={setNtidFilterToggle}
                             />
                           </div>
                         )}
@@ -245,6 +248,7 @@ function TotalUserTickets() {
                               createdAt={createdAt}
                               setCreatedAt={setCreatedAt}
                               setCurrentPage={setCurrentPage}
+                              setCreatedAtToggle={setCreatedAtToggle}
                             />
                           </div>
                         )}
@@ -262,6 +266,7 @@ function TotalUserTickets() {
                               completedAt={completedAt}
                               setCompletedAt={setCompletedAt}
                               setCurrentPage={setCurrentPage}
+                              setCompletedAtToggle={setCompletedAtToggle}
                             />
                           </div>
                         )}
@@ -272,7 +277,7 @@ function TotalUserTickets() {
               </tr>
             </thead>
             <tbody>
-              {currentItems.map((ticket, index) => (
+              {currentItems.length > 0&&currentItems.map((ticket, index) => (
                 <TicketBody ticket={ticket}
                 index={index} 
                 handleTicket={handleTicket}
