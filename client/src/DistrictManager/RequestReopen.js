@@ -24,7 +24,7 @@ function RequestReopen() {
   const [ntidFilter, setntidFilter] = useState("");
   const [fullnameFilter, setFullnameFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 30;
   const [statusToggle, setStatusToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
   const [createdAtToggle, setCreatedAtToggle] = useState(false);

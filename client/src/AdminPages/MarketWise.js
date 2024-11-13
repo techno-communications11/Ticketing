@@ -24,7 +24,7 @@ function MarketWise() {
   const [selectedMarkets, setSelectedMarkets] = useState([]); // State for selected markets
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const itemsPerPage = 30;
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
 

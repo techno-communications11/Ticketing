@@ -28,7 +28,7 @@ const ShowdepartWiseTicks = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("");
   const [ntidFilter, setntidFilter] = useState("");
-  const itemsPerPage = 8;
+  const itemsPerPage = 30;
   console.log(typeof(statusId));
   // Filter toggle states
   const [statusToggle, setStatusToggle] = useState(false);

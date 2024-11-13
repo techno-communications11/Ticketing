@@ -17,7 +17,7 @@ function DM_insights() {
   const [filter, setFilter] = useState("");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 30;
   const navigate = useNavigate();
   const { setDm } = useMyContext();
   const dropdownRef = useRef(null);

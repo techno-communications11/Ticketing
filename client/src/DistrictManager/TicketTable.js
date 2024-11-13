@@ -15,13 +15,14 @@ import FullnameFilter from '../universalComponents/FullNameFilter';
 import StatusFilter from '../universalComponents/StatusFilter';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import TicketBody from '../universalComponents/TicketBody';
+import '../styles/TicketTable.css'
 
 const TicketsTable = ({ statusIds, text }) => {
   const dispatch = useDispatch();
   const [market, setMarket] = useState('');
   const [tickets, setTickets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 30;
 
   // Filters and Toggles
   const [statusFilter, setStatusFilter] = useState("");
@@ -112,7 +113,7 @@ const TicketsTable = ({ statusIds, text }) => {
 
       <div className="table-responsive">
         <Table striped bordered hover>
-          <thead>
+          <thead className="sticky-thead">
             <tr>
               {["SC.No", "NTID", "Full Name", "Status", "CreatedAt", "CompletedAt", "Duration", "Details"].map((header) => (
                 <th key={header} className="text-center" style={{ backgroundColor: "#E10174", color: "white" }}>

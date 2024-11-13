@@ -23,7 +23,7 @@ const UserTickets = () => {
   const [completedAt, setCompletedAt] = useState("");
   const [createdAt, setCreatedAt] = useState("");
 
-  const itemsPerPage = 8;
+  const itemsPerPage = 30;
   const ntids = getDecodedToken()?.ntid;
 
   const selectedStatus = useSelector((state) => state.userTickets.selectedStatus);

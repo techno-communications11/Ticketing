@@ -17,7 +17,7 @@ function UserInsights() {
   const [fullnameToggle, setFullnameToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const itemsPerPage = 30;
   const navigate = useNavigate();
   const { setNtid,setStatusId } = useMyContext();
   const [loading, setLoading] = useState(false);

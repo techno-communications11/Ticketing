@@ -27,7 +27,7 @@ const ShowTickets = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("");
   const [ntidFilter, setntidFilter] = useState("");
-  const itemsPerPage = 8;
+  const itemsPerPage = 30;
   const [statusToggle, setStatusToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
   const [createdAtToggle, setCreatedAtToggle] = useState(false);

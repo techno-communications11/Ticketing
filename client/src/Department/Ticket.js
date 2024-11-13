@@ -28,7 +28,7 @@ function Ticket({ status,openedBy,fullname, }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [ntidFilter, setntidFilter] = useState("");
   const [fullnameFilter, setFullnameFilter] = useState("");
-  const itemsPerPage = 11;
+  const itemsPerPage = 30;
   let {  statusId } = useMyContext();
 
   const [statusToggle, setStatusToggle] = useState(false);

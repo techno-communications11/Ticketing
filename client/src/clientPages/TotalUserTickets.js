@@ -27,7 +27,7 @@ function TotalUserTickets() {
   const [currentPage, setCurrentPage] = useState(1);
   const [ntidFilter, setntidFilter] = useState("");
   const [fullnameFilter, setFullnameFilter] = useState("");
-  const itemsPerPage = 11;
+  const itemsPerPage = 30;
   let { adminntid, statusId } = useMyContext();
   // var ntid = adminntid;
 

@@ -29,7 +29,7 @@ function TotalUserTickets() {
   const [ntidFilter, setntidFilter] = useState("");
   const [fullnameFilter,setFullnameFilter]=useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 30;
   const dispatch = useDispatch();
   const { ntid } = getDecodedToken();
   const [statusToggle, setStatusToggle] = useState(false);
@@ -137,7 +137,7 @@ function TotalUserTickets() {
   if (loading) return <div className='loader'></div>;
 
   return (
-    <Container className='mt-0'>
+    <Container className='mt-5'>
       <Row className="d-flex justify-content-center gap-2  my-2">
         <Col xs={12} lg={1} className='card text-center shadow-sm rounded p-1'>
           <Link to={"/opened"} onClick={() => handleStatusClick('Total')} className='text-decoration-none fw-medium text-black'>
@@ -155,7 +155,7 @@ function TotalUserTickets() {
           </Col>
         ))}
       </Row>
-      <h3 className='mt-1 d-flex justify-content-center text-capitalize fw-medium mb-3' style={{ color: '#E10174' }}>
+      <h3 className='mt-1 d-flex justify-content-center text-capitalize fw-medium  mt-5' style={{ color: '#E10174' }}>
         Total Market Tickets
       </h3>
 

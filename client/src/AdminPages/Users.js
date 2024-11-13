@@ -19,7 +19,7 @@ const UserTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10 ;
+  const itemsPerPage = 30 ;
 
   useEffect(() => {
     const fetchData = async () => {

@@ -26,7 +26,7 @@ function DepartmentsInsightsData() {
 
   // Pagination and filters state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 30;
   const [statusFilter, setStatusFilter] = useState("");
   const [fullnameFilter, setFullnameFilter] = useState("");
   const [ntidFilter, setntidFilter] = useState("");

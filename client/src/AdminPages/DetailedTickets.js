@@ -29,7 +29,7 @@ const ShowTickets = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [market, setMarket] = useState('');
   const [ntidFilter, setntidFilter] = useState('');
-  const [itemsPerPage] = useState(11);
+  const [itemsPerPage] = useState(30);
   const dropdownRef = useRef(null);
   const [statusToggle, setStatusToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);

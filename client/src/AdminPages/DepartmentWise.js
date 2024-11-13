@@ -16,7 +16,7 @@ const DepartmentWise = () => {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 30;
   const {setStatusId,setDepartment}=useMyContext()
    const navigate=useNavigate()
 
