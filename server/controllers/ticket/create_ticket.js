@@ -1,8 +1,10 @@
 import uploadImages from '../../multer/imageUpload.js';
 import prisma from '../lib/prisma.js';
+import { uploadToS3 } from '../../multer/imageUpload.js';  // Import the S3 upload function
 
 const createTicket = async (req, res) => {
-    uploadImages.fields([{ name: 'cameraFile', maxCount: 1 }, { name: 'fileSystemFile', maxCount: 1 }])(req, res, async (err) => {
+    // Set up multer to accept multiple files per field
+    uploadImages.fields([{ name: 'cameraFile', maxCount: 5 }, { name: 'fileSystemFile', maxCount: 5 }])(req, res, async (err) => {
         if (err) {
             return res.status(400).send('Error uploading files.');
         }
@@ -12,7 +14,7 @@ const createTicket = async (req, res) => {
         }
 
         const { ntid, fullname, phone, market, store, department, ticketSubject, description } = req.body;
-        console.log(req.body,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");  
+
         try {
             const dmData = await prisma.marketStructure.findMany({
                 where: { storeName: store },
@@ -34,8 +36,25 @@ const createTicket = async (req, res) => {
                 return res.status(400).send('Missing required form fields.');
             }
 
-            const cameraFile = req.files['cameraFile'] ? req.files['cameraFile'][0] : null;
-            const fileSystemFile = req.files['fileSystemFile'] ? req.files['fileSystemFile'][0] : null;
+            // Handle camera files upload
+            let cameraFileUrls = [];
+            if (req.files['cameraFile']) {
+                const cameraFiles = req.files['cameraFile']; // An array of files
+                for (let file of cameraFiles) {
+                    const fileUrl = await uploadToS3(file);  // Upload each file to S3 and get URL
+                    cameraFileUrls.push(fileUrl);
+                }
+            }
+
+            // Handle file system files upload
+            let fileSystemFileUrls = [];
+            if (req.files['fileSystemFile']) {
+                const fileSystemFiles = req.files['fileSystemFile']; // An array of files
+                for (let file of fileSystemFiles) {
+                    const fileUrl = await uploadToS3(file);  // Upload each file to S3 and get URL
+                    fileSystemFileUrls.push(fileUrl);
+                }
+            }
 
             const currentDate = new Date();
             const TicketId = ntid + currentDate.getUTCFullYear() +
@@ -45,8 +64,7 @@ const createTicket = async (req, res) => {
                 ("0" + currentDate.getUTCMinutes()).slice(-2) +
                 ("0" + currentDate.getUTCSeconds()).slice(-2);
 
-
-            // Create a new ticket
+            // Create a new ticket in the database
             const newTicket = await prisma.createTicket.create({
                 data: {
                     ticketId: TicketId,
@@ -58,21 +76,22 @@ const createTicket = async (req, res) => {
                     selectedDepartment: department, 
                     ticketRegarding: ticketSubject,
                     description,
-                    status: { connect: { id: '1' } }, 
-                    department: { connect: { id: '19' } },
+                    status: { connect: { id: '1' } },  // Assuming status 1 exists
+                    department: { connect: { id: '19' } },  // Assuming department ID is 19
                     assignedTo: dmName,
-                    files: JSON.stringify({
-                        cameraFile: cameraFile ? cameraFile.path : null,
-                        fileSystemFile: fileSystemFile ? fileSystemFile.path : null
-                    }),
+                    files: {
+                        cameraFiles: cameraFileUrls,  // Store an array of S3 URLs
+                        fileSystemFiles: fileSystemFileUrls,  // Store an array of S3 URLs
+                    },
                     user: {
                         connect: {
-                            id: req.user.id
+                            id: req.user.id  // Assuming user authentication middleware is in place
                         }
                     },
-                    createdAt: new Date()
+                    createdAt: new Date(),
                 }
             });
+            console.log(newTicket,"ticketnew")
 
             res.status(200).json({
                 message: 'Ticket created successfully',

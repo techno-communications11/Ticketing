@@ -45,3 +45,15 @@
 
 
 
+/* Custom styling for carousel buttons */
+/* .carousel-control-prev, .carousel-control-next {
+    background-color: transparent; /* Change background color to black */
+  
+  .carousel-control-prev-icon, .carousel-control-next-icon {
+    background-color: rgb(19, 13, 13); /* Change icon color to white */
+    border-radius: 50%; /* Optional: make buttons circular */
+  }
+  
+  /* .carousel-indicators li {
+    background-color: transparen; /* Change indicator dots to black */
+  

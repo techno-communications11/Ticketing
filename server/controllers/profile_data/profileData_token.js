@@ -1,6 +1,8 @@
+import { S3Client } from "@aws-sdk/client-s3";
 import prisma from "../lib/prisma.js";
 
 const GetProfileData_token = async (req, res) => {
+
   try {
     const userId = req.user.id;
 

@@ -31,6 +31,7 @@ import GetDepartmentTickets from '../controllers/ticket/GetDepartmentTickets.js'
 import DepartmentInsights from '../controllers/ticket/DepartmentInsights.js';
 import Callback from '../controllers/ticket/Callback.js';
 import DepartmentWiseTickets from '../controllers/ticket/DepartmentWiseTickets.js';
+import getTicketFiles from '../controllers/ticket/getTicketFiles.js';
 
  const createTicketsRouter = express.Router();
  createTicketsRouter.post('/uploadTicket',authenticateJWT,CreateTicket)
@@ -64,5 +65,7 @@ import DepartmentWiseTickets from '../controllers/ticket/DepartmentWiseTickets.j
  createTicketsRouter.get('/departmentInsights',authenticateJWT, DepartmentInsights);
  createTicketsRouter.put('/callback',authenticateJWT,Callback)
  createTicketsRouter.get('/DepartmentWiseTickets',authenticateJWT,DepartmentWiseTickets)
+ createTicketsRouter.get('/getticketfiles/:ticketId', authenticateJWT, getTicketFiles);
+
  
 export default createTicketsRouter

@@ -26,11 +26,10 @@ const TicketDetails = async (req, res) => {
         selectedDepartment:true,
         departmentId:true,
         status:{select:{name:true}},
-        files: true,
       },
     });
 
-    console.log(details, "det");
+    // console.log(details, "det");
 
     if (!details) {
       return res.status(404).json({ error: 'Ticket not found' });

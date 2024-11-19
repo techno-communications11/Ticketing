@@ -22,8 +22,8 @@ import { useMyContext } from "../universalComponents/MyContext";
 export function Home() {
   const [show, setShow] = useState(false);
   const [popButtons, setPopButtons] = useState(false);
-  const [cameraFileName, setCameraFileName] = useState(null);
-  const [fileSystemFileName, setFileSystemFileName] = useState(null);
+  const [cameraFileName, setCameraFileName] = useState([]);
+  const [fileSystemFileName, setFileSystemFileName] = useState([]);
   const [selectedStore, setSelectedStore] = useState("Select Store");
   const [selectedDepartment, setSelectedDepartment] =
     useState("Select Department");
@@ -91,12 +91,12 @@ export function Home() {
 
   useEffect(() => {}, [handleShow]);
 
-  const handlefiles = (event) => {
-    if (event.target.files.length > 0) {
-      setCameraFileName(event.target.files[0]);
-      setFileSystemFileName(null);
-    }
-  };
+  // const handlefiles = (event) => {
+  //   if (event.target.files?.length > 0) {
+  //     setCameraFileName(event.target.files[0]);
+  //     setFileSystemFileName(null);
+  //   }
+  // };
 
   useEffect(() => {
     if (searchDepartment) {
@@ -109,13 +109,38 @@ export function Home() {
     }
 }, [searchDepartment]);
 
-  const handleCameraChange = (event) => {
-    handlefiles(event);
-  };
-  const handleFileSystemChange = (event) => {
-    handlefiles(event);
-  };
-  const handleStoreSelect = (store) => {
+const handleCameraChange = (e) => {
+  const selectedFiles = Array.from(e.target.files);
+  const totalFiles = selectedFiles.length + (cameraFileName?.length || 0) + (fileSystemFileName?.length || 0);
+
+  // Only proceed if the total selected files are 5 or fewer
+  if (totalFiles <= 5) {
+    setCameraFileName((prev) => [...(prev || []), ...selectedFiles]);
+  } else {
+    alert("You can select up to 5 files in total.");
+  }
+};
+
+const handleFileSystemChange = (e) => {
+  const selectedFiles = Array.from(e.target.files);
+  const totalFiles = selectedFiles.length + (cameraFileName?.length || 0) + (fileSystemFileName?.length || 0);
+
+  // Only proceed if the total selected files are 5 or fewer
+  if (totalFiles <= 5) {
+    setFileSystemFileName((prev) => [...(prev || []), ...selectedFiles]);
+  } else {
+    alert("You can select up to 5 files in total.");
+  }
+};
+
+// Safely get the total selected files count with optional chaining
+const filesSelected = (cameraFileName?.length || 0) + (fileSystemFileName?.length || 0);
+
+
+
+// const filesSelected = cameraFileName?.length + fileSystemFileName?.length;
+
+const handleStoreSelect = (store) => {
     setSelectedStore(store);
     setSearchStore("");
   };
@@ -140,7 +165,7 @@ export function Home() {
     const ticketSubject = ticketSubjectRef.current.value;
     const description = descriptionRef.current.value;
     const market = marketRef.current.value;
-    const fullname = fullnameRef.current.value;
+    const fullname = fullnameRef.current.valueOf;
     if (!ntid) newErrors.ntid = "NTID is required";
     if (!phone) newErrors.phone = "Phone number is required";
     if (selectedStore === "Select Store")
@@ -164,17 +189,26 @@ export function Home() {
       formData.append("ticketSubject", ticketSubjectRef.current.value);
       formData.append("description", descriptionRef.current.value);
       formData.append("market", marketRef.current.value.toLowerCase());
-      formData.append("fullname", fullnameRef.current.value);
+      formData.append("fullname", fullnameRef.current.value);  // Correct this line
       formData.append("department", selectedDepartment);
-      console.log(formData,'ffffffffffffer')
-      if (cameraFileName) {
-        formData.append("cameraFile", cameraFileName);
+  
+      // Loop through cameraFileName array and append each file
+      if (cameraFileName && cameraFileName.length > 0) {
+        cameraFileName.forEach((file) => {
+          formData.append("cameraFile", file); // Appending each file individually
+        });
       }
-      if (fileSystemFileName) {
-        formData.append("fileSystemFile", fileSystemFileName);
+  
+      // Loop through fileSystemFileName array and append each file
+      if (fileSystemFileName && fileSystemFileName.length > 0) {
+        fileSystemFileName.forEach((file) => {
+          formData.append("fileSystemFile", file); // Appending each file individually
+        });
       }
-      console.log(formData,'ffffffffffffer')
-
+  
+      console.log(formData, 'Form Data:', formData);
+  
+      // Send the form data using the API request
       apiRequest
         .post("/createTickets/uploadTicket", formData, {
           headers: {
@@ -211,6 +245,7 @@ export function Home() {
         });
     }
   };
+  
 
   const handleNTIDBlur = async () => {
     try {
@@ -445,7 +480,7 @@ export function Home() {
                     placeholder="Search Stores..."
                     className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
                   />
-                  {filteredStores.length > 0 ? (
+                  {filteredStores?.length > 0 ? (
                     filteredStores.sort().map((store, index) => (
                       <Dropdown.Item
                         key={index}
@@ -476,7 +511,7 @@ export function Home() {
                     placeholder="Search Departments..."
                     className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
                 />
-                {filteredDepartments.length > 0 ? (
+                {filteredDepartments?.length > 0 ? (
                     filteredDepartments.map((department, index) => (
                         <Dropdown.Item
                             key={index}
@@ -518,55 +553,63 @@ export function Home() {
               />
             </Form.Group>
             <Form.Group className="mb-1" controlId="fileUpload">
-              <div
-                className="border text-center"
-                onClick={() => setPopButtons(true)}
-                style={{ height: "80px", cursor: "pointer" }}
-              >
-                {cameraFileName || fileSystemFileName ? (
-                  <div className="mt-4">
-                    {cameraFileName && (
-                      <p className="fw-medium text-secondary mt-2">
-                        Selected: {cameraFileName.name}
-                      </p>
-                    )}
-                    {fileSystemFileName && (
-                      <p className="fw-medium text-secondary mt-2">
-                        Selected: {fileSystemFileName.name}
-                      </p>
-                    )}
-                  </div>
-                ) : popButtons ? (
-                  <div className="rounded ">
-                    <label className="btn border-secondary  btn-outline-secondary fw-medium mt-3  me-2">
-                      Camera
-                      <input
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                        style={{ display: "none" }}
-                        onChange={handleCameraChange}
-                        disabled={!!fileSystemFileName}
-                      />
-                    </label>
-                    <label className="btn border-secondary btn-outline-secondary fw-medium mt-3">
-                      Browse
-                      <input
-                        type="file"
-                        style={{ display: "none" }}
-                        onChange={handleFileSystemChange}
-                        disabled={!!cameraFileName}
-                      />
-                    </label>
-                  </div>
-                ) : (
-                  <div className="mt-1">
-                    <MdOutlineCloudUpload className="fs-1  text-secondary" />
-                    <p className="fw-medium  text-secondary">Upload files</p>
-                  </div>
-                )}
-              </div>
-            </Form.Group>
+            <div>
+            <div>
+            <div>
+      <div
+        className="border text-center"
+        onClick={() => setPopButtons(true)} // Open the file input options
+        style={{ height: "80px", cursor: "pointer" }}
+      >
+        {filesSelected > 0 ? (
+          <div className="mt-4">
+            {cameraFileName?.length > 0 && (
+              <p className="fw-medium text-secondary mt-2">
+                {cameraFileName?.length} camera file(s) selected
+              </p>
+            )}
+            {fileSystemFileName?.length > 0 && (
+              <p className="fw-medium text-secondary mt-2">
+                {fileSystemFileName?.length} file(s) selected
+              </p>
+            )}
+          </div>
+        ) : popButtons ? (
+          <div className="rounded ">
+            <label className="btn border-secondary btn-outline-secondary fw-medium mt-3 me-2">
+              Camera
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                multiple
+                style={{ display: "none" }}
+                onChange={handleCameraChange}
+                disabled={cameraFileName?.length + fileSystemFileName?.length >= 5} // Disable if total files >= 5
+              />
+            </label>
+            <label className="btn border-secondary btn-outline-secondary fw-medium mt-3">
+              Browse
+              <input
+                type="file"
+                multiple
+                style={{ display: "none" }}
+                onChange={handleFileSystemChange}
+                disabled={cameraFileName?.length + fileSystemFileName?.length >= 5} // Disable if total files >= 5
+              />
+            </label>
+          </div>
+        ) : (
+          <div className="mt-1">
+            <MdOutlineCloudUpload className="fs-1 text-secondary" />
+            <p className="fw-medium text-secondary">Upload files</p>
+          </div>
+        )}
+      </div>
+    </div>
+    </div>
+    </div>
+    </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>

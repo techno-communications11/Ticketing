@@ -33,21 +33,24 @@ export function Profile() {
   };
   const fetchProfile = async () => {
     try {
-      const response = await apiRequest.get('/profile/getprofilephoto', {
-        withCredentials: true
-      });
-      if (response.status === 200) {
-        const fileName = response.data.path;
-        const baseURL = 'http://192.168.1.16:4000';
-        const imageUrl = `${baseURL}/public/images/${fileName}`;
-        setUploadedFileUrl(imageUrl);
-      } else {
-        throw new Error('Failed to retrieve profile photo');
-      }
+        const response = await apiRequest.get('/profile/getprofilephoto', {
+            withCredentials: true
+        });
+        if (response.status === 200) {
+            const imageUrl = response.data.fileUrl;  // This is a signed URL
+            setUploadedFileUrl(imageUrl);
+        } else {
+            throw new Error('Failed to retrieve profile photo');
+        }
     } catch (error) {
-      console.error('Error retrieving file:', error);
+        console.error('Error retrieving file:', error);
     }
-  };
+};
+
+
+
+  
+  
 
   useEffect(() => {
     fetchUserData();
@@ -72,29 +75,11 @@ export function Profile() {
     }
   };
 
-  const handleFileChangeUpdate = async (event) => {
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append('profilePhoto', file);
-    try {
-      await apiRequest.put('/profile/updateprofilephoto', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        withCredentials: true
-      });
-      setPhotoUpdated(prev => !prev);
-      toast.success('Profile photo updated successfully!'); 
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      toast.error('Error updating profile photo');
-    }
-  };
+  
 
   const handleFileInputChange = (event) => {
     if (event.target.files.length > 0) {
       handleFileChange(event);
-      handleFileChangeUpdate(event);
     }
   };
 
@@ -134,6 +119,7 @@ export function Profile() {
       }
     }
   };
+  console.log(uploadedFileUrl,"uploadedfileurl")
 
   return (
     <div className="container  mt-sm-5 mt-md-1">

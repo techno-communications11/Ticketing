@@ -5,8 +5,7 @@ import ProfilePhoto from '../controllers/profile_data/profile_photo.js';
 import authenticateJWT from '../controllers/user_authentication/authMiddleWare.js';
 import GetProfileData_token from '../controllers/profile_data/profileData_token.js';
 import getProfilePhoto from '../controllers/profile_data/getProfilePhoto.js';
-import updateprofilePhoto from '../controllers/profile_data/updateProfilePhoto.js';
-
+// import getTicketFiles from '../controllers/ticket/getTicketFiles.js';
 
 
 
@@ -17,7 +16,8 @@ ProfilephotoRouter.get('/getprofiledata_token',authenticateJWT,GetProfileData_to
 ProfilephotoRouter.get('/getprofiledata_ntid',authenticateJWT,GetProfileData_NTID)
 ProfilephotoRouter.post('/profilephoto',authenticateJWT,ProfilePhoto)
 ProfilephotoRouter.get('/getprofilephoto',authenticateJWT,getProfilePhoto)
-ProfilephotoRouter.put('/updateprofilephoto',authenticateJWT,updateprofilePhoto)
+// ProfilephotoRouter.get('/getticketfiles',authenticateJWT,getTicketFiles)
+
 
 
 export default ProfilephotoRouter

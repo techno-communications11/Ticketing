@@ -12,11 +12,12 @@ import { HiArrowSmRight } from "react-icons/hi";
 import Comment from "./Comment";
 import getDecodedToken from "./decodeToken";
 import formatDate from "./FormatDate";
+import { Carousel } from 'react-bootstrap';
 
 const Individualmarketss = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
+  const [uploadedFileUrl, setUploadedFileUrl] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const { markets, loading } = useSelector((state) => state.market);
   const selectedId = useSelector((state) => state.market.selectedId);
@@ -38,14 +39,22 @@ const Individualmarketss = () => {
     "CAM NW",
     "HR Payroll",
   ];
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const container = document.getElementById('imageContainer');
+      if (container) {
+        container.scrollLeft += 100; // Adjust this value to control the scroll speed
+      }
+    }, 3000); // Scroll every 3 seconds
+
+    return () => clearInterval(interval); // Clean up on component unmount
+  }, []);
 
   const { ntid: userNtid, department, fullname } = getDecodedToken() || {};
-  console.log(department, "depty");
 
   const fetchData = async () => {
     try {
       const response = await apiRequest.get("/auth/GetUsers");
-      console.log("API Response:", response);
       const fetchedUsers = response.data.teamMembers || [];
       const filterdata = fetchedUsers.filter(
         (name) => name.fullname !== fullname
@@ -86,29 +95,38 @@ const Individualmarketss = () => {
   }, [selectedId, dispatch]);
 
   useEffect(() => {
-    if (markets?.files) {
-      try {
-        const filesObj = JSON.parse(markets.files);
-        const cameraFile = filesObj.cameraFile; // Change to access cameraFile
-        const fileName = filesObj.fileSystemFile; 
-        // Log the parsed files object for debugging
-        console.log('Parsed Files Object:', filesObj);
-  
-        // Ensure the cameraFile is correctly formatted
-        if (fileName||cameraFile) {
-          const formattedUrl = `http://192.168.1.26:4000/${cameraFile.replace(/\\/g, "/")}`;
-          console.log('File URL:', formattedUrl); // Log the constructed URL for debugging
-          setUploadedFileUrl(formattedUrl);
-        } else {
-          console.warn('Camera file not found in the files object.');
-          setUploadedFileUrl(null);
-        }
-      } catch (error) {
-        console.error('Error parsing files JSON:', error);
-        setUploadedFileUrl(null);
-      }
+    if (!markets?.ticketId) {
+      console.warn('No ticketId available in markets');
+      setUploadedFileUrl(null);
+      return;
     }
-  }, [markets]);
+
+    const fetchFiles = async () => {
+    try {
+      const apiUrl = `/createTickets/getticketfiles/${markets.ticketId}`; // Ensure markets.ticketId is correct
+      const response = await apiRequest.get(apiUrl);
+
+      // Destructure signedUrls directly from the response data
+      const { signedUrls } = response.data; 
+
+      console.log('Fetched signed URLs:', signedUrls);
+
+      // Check if signedUrls array is populated
+      if (signedUrls && signedUrls.length > 0) {
+        setUploadedFileUrl(signedUrls); // Store the signed URLs in state
+      } else {
+        console.warn('No files found for the specified ticketId');
+        setUploadedFileUrl([]); // Clear the state if no files are found
+      }
+    } catch (error) {
+      console.error('Error fetching files:', error);
+      setUploadedFileUrl([]); // Reset the state on error
+    }
+  };
+
+    fetchFiles();
+  }, [markets.ticketId]);
+  // console.log('setUploadedFileUrl',uploadedFileUrl)
   
   
 
@@ -243,7 +261,6 @@ const Individualmarketss = () => {
 
   const onhandleDepartment = (e) => {
     const selectedDept = e.target.value || selectedDepartment;
-    console.log(selectedDept, "soluted");
     setSelectedDepartment(selectedDept);
     assignToDepartment(selectedDept);
   };
@@ -293,7 +310,7 @@ const Individualmarketss = () => {
       }
      
     )
-  
+    
 
 
   const handleTicketAction = async (action) => {
@@ -380,7 +397,6 @@ const Individualmarketss = () => {
     return acc;
   }, 0);
 
-  console.log("request reop", markets);
 
   return (
     <div className="container mt-2">
@@ -450,29 +466,34 @@ const Individualmarketss = () => {
           </div>
 
           <div className="col-md-4 mb-3 text-center">
-            <div className="card shadow-sm rounded">
-              {uploadedFileUrl ? (
+          <div className="card shadow-sm rounded">
+        {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
+          <Carousel>
+            {uploadedFileUrl.map((url, index) => (
+              <Carousel.Item key={index}>
                 <img
-                  src={uploadedFileUrl}
-                  alt="Ticket File"
-                  className="card-img-top img-thumbnail cursor-pointer image-fluid"
-                  onClick={() => setShowModal(true)}
+                  src={url}
+                  alt={`Ticket File ${index + 1}`}
+                  className="d-block w-100 img-fluid"
                   style={{
-                    height: "250px",
-                    objectFit: "contain",
-                    width: "100%",
-                  }} // Adjust image size
+                    height: '250px',
+                    objectFit: 'cover', // Ensure image fills the container without distortion
+                  }}
+                  onClick={() => setShowModal(true)} // Open modal on image click
                 />
-              ) : (
-                <div
-                  className="card-img-top img-thumbnail text-center d-flex justify-content-center align-items-center"
-                  style={{ height: "250px", width: "100%" }}
-                >
-                  <span>No Image</span>
-                </div>
-              )}
-            </div>
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        ) : (
+          <div
+            className="card-img-top img-thumbnail text-center d-flex justify-content-center align-items-center"
+            style={{ height: '250px', width: '100%' }}
+          >
+            <span>No Images Available</span>
           </div>
+        )}
+      </div>
+    </div>
 
           <div className="row mb-2">
             <div className="col-md-7 d-flex align-items-center">
@@ -649,8 +670,28 @@ const Individualmarketss = () => {
           <Modal.Title>Ticket Image</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <img src={uploadedFileUrl} alt="Ticket File" className="img-fluid" />
-        </Modal.Body>
+  {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
+    <Carousel>
+      {uploadedFileUrl.map((url, index) => (
+        <Carousel.Item key={index}>
+          <img
+            src={url}
+            alt={`Ticket File ${index + 1}`}
+            className="d-block w-100 img-fluid"
+            style={{
+              height: 'auto',
+              objectFit: 'contain',
+            }}
+          />
+        </Carousel.Item>
+      ))}
+    </Carousel>
+  ) : (
+    <div className="text-center">No Images Available</div>
+  )}
+</Modal.Body>
+
+
       </Modal>
       {department === "Employee" && markets.status?.name === "completed"&&markets.isSettled!==true && (
         <span className="text-danger fw-medium">

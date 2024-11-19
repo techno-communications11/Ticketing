@@ -1,16 +1,22 @@
 import multer from 'multer';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import dotenv from 'dotenv';
+import sharp from 'sharp';
 
-const imageStorage = multer.diskStorage({
-    destination: (req, file, callback)=> {
-        callback(null, 'public/images');
+dotenv.config();
+
+// Configure AWS S3 Client
+const s3 = new S3Client({
+    region: process.env.BUCKET_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
-    filename:  (req, file, callback)=> {
-        callback(null, `${Date.now()}_${file.originalname}`);
-    }
 });
 
+// Multer configuration for in-memory storage
 const imageUpload = multer({
-    storage: imageStorage,
+    storage: multer.memoryStorage(),
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (allowedTypes.includes(file.mimetype)) {
@@ -18,7 +24,40 @@ const imageUpload = multer({
         } else {
             cb(new Error('Invalid file type'), false);
         }
-    }
+    },
 });
+
+
+
+// Function to upload image to S3 with resizing
+export const uploadToS3 = async (file) => {
+    const fileKey = `profilePhotos/${Date.now()}-${file.originalname}`; // Store only the relative path
+
+    try {
+        // Resize the image before uploading to S3
+        const resizedBuffer = await sharp(file.buffer)
+            .resize(500, 500, { 
+                fit: sharp.fit.cover,
+                position: sharp.strategy.entropy,
+            })
+            .toBuffer();
+
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: fileKey, // Use the relative file path
+            Body: resizedBuffer, 
+            ContentType: file.mimetype,
+        };
+
+        const command = new PutObjectCommand(params);
+        await s3.send(command); // Execute the S3 command
+
+        // Return only the relative path of the file, not the full URL
+        return fileKey;
+    } catch (err) {
+        throw new Error('Failed to upload image to S3: ' + err.message);
+    }
+};
+    
 
 export default imageUpload;

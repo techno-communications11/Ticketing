@@ -146,36 +146,36 @@ const EmployeesInsights = ({ dm }) => {
                 </td>
                 <td
                   className="text-center"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleStatusClick(user.ntid, "1")}
+                  // style={{ cursor: "pointer" }}
+                  // onClick={handleStatusClick(user.ntid, "1")}
                 >
                   {user.newTickets}
                 </td>
                 <td
                   className="text-center"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleStatusClick(user.ntid, "2")}
+                  // style={{ cursor: "pointer" }}
+                  // onClick={handleStatusClick(user.ntid, "2")}
                 >
                   {user.openedTickets}
                 </td>
                 <td
                   className="text-center"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleStatusClick(user.ntid, "3")}
+                  // style={{ cursor: "pointer" }}
+                  // onClick={handleStatusClick(user.ntid, "3")}
                 >
                   {user.inprogressTickets}
                 </td>
                 <td
                   className="text-center"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleStatusClick(user.ntid, "4")}
+                  // style={{ cursor: "pointer" }}
+                  // onClick={handleStatusClick(user.ntid, "4")}
                 >
                   {user.completedTickets}
                 </td>
                 <td
                   className="text-center"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleStatusClick(user.ntid, "5")}
+                  // style={{ cursor: "pointer" }}
+                  // onClick={handleStatusClick(user.ntid, "5")}
                 >
                   {user.reopenedTickets}
                 </td>
