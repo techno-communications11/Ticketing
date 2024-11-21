@@ -679,7 +679,7 @@ const Individualmarketss = () => {
             alt={`Ticket File ${index + 1}`}
             className="d-block w-100 img-fluid"
             style={{
-              height: 'auto',
+              height: '500px',
               objectFit: 'contain',
             }}
           />

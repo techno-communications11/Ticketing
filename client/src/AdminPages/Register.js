@@ -28,7 +28,7 @@ export function Register() {
   const userRoles = [
     'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
     'Charge Back/Commission', 'Inventory', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity',
-    'Maintenance ', 'Housing ', 'CAM NW', 'HR Payroll','Maintenance_Head', 'Housing Related',  'Admin_Head', 'SuperAdmin', 'District Manager', 'Employee'
+    'Maintenance ', 'Housing ', 'CAM NW', 'HR Payroll','Market Manager', 'Housing Related',  'SuperAdmin', 'District Manager', 'Employee'
   ];
 
   const validatePassword = (password) => {

@@ -48,8 +48,8 @@ const RegisterCode = async (req, res) => {
       const userData = jsonData.map(item => removeWhitespaceFromKeys(item));
 
       const usersToInsert = userData.map(item => ({
-        ntid: item.ntid.toLowerCase() || '',
-        fullname: item.fullname.toLowerCase() || '',
+        ntid: item.NTID || '',
+        fullname: item.Name || '',  
         departmentId: item.departmentId|| '1', 
         DoorCode: item.DoorCode || '',
         password: item.Password || '', 

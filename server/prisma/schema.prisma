@@ -85,13 +85,12 @@ model ProfilePhoto {
 
 model marketStructure {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
-  boiId        String         @unique
+  bdiId        String         @unique
   storeName    String
   marketId     String
   market       Markets        @relation(fields: [marketId], references: [id]) // Defines the one-to-many relationship
   dmName       String
   doorCode     String         @unique
-  StoreAddress String
-  storeEmail   String
+  storeAddress String
   createdAt    DateTime       @default(now())
 }

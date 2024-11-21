@@ -17,6 +17,7 @@ const userData = async (req, res) => {
                 }
             }
         });
+        console.log(responseData,"resp")
 
         const doorCodes = responseData.map(user => user.DoorCode).filter(Boolean); // Filter out any undefined values
 
