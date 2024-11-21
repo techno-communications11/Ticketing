@@ -62,10 +62,10 @@ export function NavbarClient() {
     fetchUserTickets();
   }, [userId, ntid]);
 
-  const isEmployeedepartment = ['Employee', 'District Manager']?.includes(department);
+  const isEmployeedepartment = ['Employee']?.includes(department);
   const homeRoute = isEmployeedepartment
     ? '/home'
-    : isDepartments
+    :department==='District Manager'?'/dmtabs': isDepartments
       ? '/departmenthome'
       : department === 'Market Manager'
         ? '/markethome'
@@ -158,7 +158,7 @@ export function NavbarClient() {
                     }
                   </div>
                 )}
-                 {(department==='District Manager'||department==='SuperAdmin')&&(<Nav.Link as={Link} to={department==='SuperAdmin'?'/market&department':department==='District Manager'?'/dmtabs':'/'} className='me-2 fw-medium text-dark'>
+                 {(department==='SuperAdmin')&&(<Nav.Link as={Link} to={department==='SuperAdmin'?'/market&department':department==='District Manager'?'/dmtabs':'/'} className='me-2 fw-medium text-dark'>
                       Insights
                     </Nav.Link>)}
                 {department === "SuperAdmin" && (

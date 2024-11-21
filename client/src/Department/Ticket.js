@@ -84,6 +84,7 @@ function Ticket({ status,openedBy,fullname, }) {
         });
   
         let fetchedTickets = response.data;
+        console.log(response.data)
   
         // Apply filters based on props
         if (openedBy === null && status === '3' && fullname === null) {
@@ -105,11 +106,9 @@ function Ticket({ status,openedBy,fullname, }) {
             ticket.status.id === '4' &&
             ticket.openedBy === openedBy
           );
-        }  else   if (fullname) {
+        }  else if (fullname) {
           fetchedTickets = fetchedTickets.filter(ticket =>
-            ticket.assignToTeam === fullname &&
-            ticket.status.name === "inprogress" &&
-            ticket.openedBy === null
+            ticket.assignToTeam === fullname&&ticket.openedBy===null
           );
         }
   

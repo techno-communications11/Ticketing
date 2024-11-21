@@ -100,6 +100,14 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute allowedDepartments={districtManagerDepartments}>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
           <Route
           path="/MAhead"
           element={
@@ -284,14 +292,7 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute allowedDepartments={districtManagerDepartments}>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
+         
         <Route
           path="/usertickets"
           element={
@@ -328,7 +329,7 @@ const AppContent = () => {
         <Route
           path="/dmtabs"
           element={
-            <ProtectedRoute allowedDepartments={['District Manager','SuperAdmin']}>
+            <ProtectedRoute allowedDepartments={['District Manager',"SuperAdmin"]}>
               <DMTabs/>
             </ProtectedRoute>
           }

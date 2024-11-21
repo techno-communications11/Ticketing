@@ -121,7 +121,7 @@ function UserInsights() {
                     <NtidFilter
                       setNtidFilterToggle={setNtidFilterToggle}
                       ntidFilter={ntidFilter}
-                      setNtidFilter={setNtidFilter}
+                      setntidFilter={setNtidFilter}
                       setCurrentPage={setCurrentPage}
                     />
                   </div>

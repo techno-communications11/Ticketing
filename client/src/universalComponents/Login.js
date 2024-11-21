@@ -77,8 +77,10 @@ export function Login() {
       localStorage.setItem('token', token);
       const { department } = jwtDecode(token);
       localStorage.setItem('dept', department);
-      if (department === 'Employee' || department === 'District Manager') {
+      if (department === 'Employee') {
         navigate('/home');
+      }else if(department==='District Manager'){
+        navigate('/dmtabs');
       } else if (Departments?.includes(department)||MA_rel?.includes(department)) {
         navigate('/departmenthome');
       } else if (department === 'Market Manager') {
