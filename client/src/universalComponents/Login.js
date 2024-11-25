@@ -109,9 +109,9 @@ export function Login() {
           </div>
 
           <div className='row justify-content-center align-items-center w-100 mt-5'>
-            <div id='animation-container' className='col-12 col-md-6 col-lg-4 mb-4 d-none d-sm-block'></div>
+            <img className='col-12 col-md-6 col-lg-4 mb-4 d-none d-sm-block h-50 me-5' src='./logoT.png'></img>
 
-            <div className='col-12 col-md-6 col-lg-4 d-flex justify-content-center align-items-center'>
+            <div className='col-12 mt-5 col-md-6 col-lg-4 d-flex justify-content-center align-items-center'>
               <form className='bg-white p-4 rounded box-shadow shadow-lg w-100' onSubmit={handleSubmit}>
                 <h4 className='text-dark font-weight-bold d-flex justify-content-center'>Login</h4>
 
