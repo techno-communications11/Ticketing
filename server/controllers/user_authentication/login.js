@@ -1,4 +1,4 @@
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma.js';
 import jwt from 'jsonwebtoken';
 
@@ -24,14 +24,14 @@ const login = async (req, res) => {
         }
       }
     });
-    const market = await prisma.marketStructure.findUnique({
-      where: { doorCode: user.DoorCode },
-      include: {
-        market: { 
-          select: { market: true }, 
-        },
-      },
-    });
+    // const market = await prisma.marketStructure.findUnique({
+    //   where: { doorCode: user.DoorCode },
+    //   include: {
+    //     market: { 
+    //       select: { market: true }, 
+    //     },
+    //   },
+    // });
     if (!user) {
       return res.status(401).json({ message: "Invalid username or password" });
     }
@@ -39,12 +39,15 @@ const login = async (req, res) => {
     if (!user.department.id) {
       return res.status(400).json({ message: "Department not found" });
     }
+    if (!password) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+    
 
-    // Compare the provided password with the hashed password
-    // const isPasswordValid = await bcrypt.compare(password, user.password);
-    // if (!isPasswordValid) {
-    //   return res.status(401).json({ message: "Invalid username or password" });
-    // }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+if (!isPasswordValid) {
+  return res.status(401).json({ message: "Invalid username or password" });
+}
 
     const tokenExpiration = '7d';
     const token = jwt.sign(

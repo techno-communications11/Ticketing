@@ -27,7 +27,8 @@ export function Register() {
 
   const userRoles = [
     'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
-    'Charge Back/Commission', 'Inventory', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity',
+    'Charge Back/Commission', 'Inventory',
+     'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity',
     'Maintenance ', 'Housing ', 'CAM NW', 'HR Payroll','Market Manager', 'Housing Related',  'SuperAdmin', 'District Manager', 'Employee'
   ];
 
@@ -50,7 +51,7 @@ export function Register() {
     setIsFullnameValid(!!fullname);
     setIsDoorCodeValid(!!DoorCode);
     setIsRoleValid(!!selectedRole);
-    if (!isFullnameValid || !isPasswordValid || isDoorCodeValid || !isRoleValid) {
+    if (!isFullnameValid || !isPasswordValid || !isDoorCodeValid || !isRoleValid) {
       toast.error("enter details")
     }
 
@@ -72,7 +73,7 @@ export function Register() {
       const response = await apiRequest.post('/auth/register', { ntid, fullname, DoorCode, selectedRole, selectMarketValue, password });
       if (response.status === 201) {
         toast.success("Registered successfully", { autoClose: 2000 });
-      } else {
+      } else {  
         toast.error(response.data?.message || "Failed to register");
       }
     } catch (error) {
@@ -136,7 +137,7 @@ export function Register() {
                 <div className="mb-2">
                   <input type="text"
                     id="ntid"
-                    placeholder="NTID"
+                    placeholder="NTID or Email"
                     className={`fw-medium text-secondary form-control border shadow-none ${!isNtidValid ? 'input-error' : ''}`}
                     ref={NTIDRef} />
                 </div>
