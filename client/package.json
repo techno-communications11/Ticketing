@@ -37,8 +37,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "serve": "serve -s build -l 3100",
+    "dev": "cross-env NODE_ENV=development react-scripts start",
+    "prod": "cross-env NODE_ENV=production serve -s build -l 3100"
   },
   "eslintConfig": {
     "extends": [
@@ -57,5 +58,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
