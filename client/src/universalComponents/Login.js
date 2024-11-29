@@ -38,14 +38,14 @@ export function Login() {
   }, []);
 
   const validateInputs = (ntid, password) => {
-    const ntidRegex = /^(?=.*[a-z])(?=.*\d)[a-zA-Z\d]{3,16}$/;
+    // const ntidRegex = /^(?=.*[a-z])(?=.*\d)[a-zA-Z\d]{3,16}$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+={}[\]|\\:;'",.<>?/~`-])[A-Za-z\d!@#$%^&*()_+={}[\]|\\:;'",.<>?/~`-]{8,20}$/;
 
     let valid = true;
-    if (!ntidRegex.test(ntid)) {
-      setNtidError('NTID should be 3-16 characters long and contain letters and digits.');
-      valid = false;
-    }
+    // if (!ntidRegex.test(ntid)) {
+    //   setNtidError('NTID should be 3-16 characters long and contain letters and digits.');
+    //   valid = false;
+    // }
 
     if (!passwordRegex.test(password)) {
       setPasswordError('Password must be 8-20 characters with letters, digits, and special characters.');

@@ -1,6 +1,7 @@
 import multer from 'multer';
 import prisma from '../lib/prisma.js';
 import csv from 'csvtojson';
+import bcrypt from 'bcrypt';
 
 // Configure Multer to store file in memory instead of disk
 const storage = multer.memoryStorage();
@@ -47,13 +48,15 @@ const RegisterCode = async (req, res) => {
       // Process and clean data
       const userData = jsonData.map(item => removeWhitespaceFromKeys(item));
 
-      const usersToInsert = userData.map(item => ({
-        ntid: item.NTID || '',
-        fullname: item.Name || '',  
-        departmentId: item.departmentId|| '1', 
-        DoorCode: item.DoorCode || '',
-        password: item.Password || '', 
-      }));
+      const usersToInsert = await Promise.all(
+        userData.map(async (item) => ({
+          ntid: item.NTID || '',
+          fullname: item.Name || '',
+          departmentId: item.departmentId || '',
+          DoorCode: item.DoorCode || '',
+          password: item.password ? await bcrypt.hash(item.password, 10) : '',
+        }))
+      );
 
       console.log('Data to insert:', usersToInsert);
 
