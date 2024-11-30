@@ -14,10 +14,10 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-  app.use(cors({
-    origin: true, 
-    credentials: true, 
-  }));
+app.use(cors({
+  origin: true, 
+  credentials: true, 
+}));
   
 app.use(cookieParser())
 app.use('/public', express.static(path.join(process.cwd(), 'public')));
@@ -33,8 +33,8 @@ app.use((err, req, res, next) => {
 });
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4500;
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running ${PORT}`);
-  });
+  console.log(`Server is running ${PORT}`);
+});

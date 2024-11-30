@@ -17,7 +17,7 @@ import getcomment from '../controllers/ticket/GetComments.js';
 import assignToDepartment from '../controllers/ticket/assignedToDepartment.js';
 import GetMarketTickets from '../controllers/ticket/GetMarketTickets.js';
 import GetDepartmentWisetickets from '../controllers/ticket/getDepartmentwiseTickets.js';
-import requestReopenTicket from '../controllers/ticket/RequestReopenTicket.js';
+import requestReopenTicket from '../controllers/ticket/requestReopenTicket.js';
 import GetRequestReopen from '../controllers/ticket/GetRequestReopen.js';
 import Settlement from '../controllers/ticket/Settlement.js';
 import updateOpenedBy from '../controllers/ticket/UpdateOpenedBy.js';
