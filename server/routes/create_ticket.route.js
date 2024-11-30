@@ -32,10 +32,12 @@ import DepartmentInsights from '../controllers/ticket/DepartmentInsights.js';
 import Callback from '../controllers/ticket/Callback.js';
 import DepartmentWiseTickets from '../controllers/ticket/DepartmentWiseTickets.js';
 import getTicketFiles from '../controllers/ticket/getTicketFiles.js';
+import fetchStores from '../controllers/ticket/fetchStores.js';
 
  const createTicketsRouter = express.Router();
  createTicketsRouter.post('/uploadTicket',authenticateJWT,CreateTicket)
  createTicketsRouter.get('/ticketcount',authenticateJWT,TicketCount)
+ createTicketsRouter.get('/fetchstores',authenticateJWT,fetchStores)
  createTicketsRouter.get('/detailedTickets', authenticateJWT,detailedTicketsWithMarket)
  createTicketsRouter.get('/Ticketdetails', authenticateJWT,TicketDetails)
  createTicketsRouter.put('/updateprogress', authenticateJWT,TicketStatus)

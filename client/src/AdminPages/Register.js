@@ -25,8 +25,8 @@ export function Register() {
   const [isDoorCodeValid, setIsDoorCodeValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [isRoleValid, setIsRoleValid] = useState(true);
-  const data=getDecodedToken().department;
-  console.log(data,"yyyy")
+  // const data=getDecodedToken().department;
+  // console.log(data,"yyyy")
 
   const userRoles = [
     'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
@@ -175,7 +175,7 @@ export function Register() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu style={{ height: "40vh", overflow: 'scroll' }} className='col-12 col-md-12' >
-                      {userRoles.filter((x)=>x!=data).sort().map((role, index) => (
+                      {userRoles.map((role, index) => (
                         <Dropdown.Item
                           key={index}
                           eventKey={role}

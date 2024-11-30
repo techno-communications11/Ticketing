@@ -248,7 +248,8 @@ function MarketWise() {
                   <tbody>
                     {currentItems.map(([market, counts], index) => (
                       <tr key={market}>
-                        <th>{index + 1}</th>
+                    
+                      <th   className="text-decoration-none fw-medium"  >{index + 1}</th>
                         <td>
                           <Link
                             to="/marketDetailedTicket"

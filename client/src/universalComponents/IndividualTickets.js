@@ -431,7 +431,7 @@ const Individualmarketss = () => {
                 </div>
               ))}
               <div className="mt-2 mb-2 col-md-12">
-                <h5 className="text-start fw-bold text-secondary">Comments:</h5>
+                <h5 className="text-start fw-medium text-secondary">Comments:</h5>
                 {getcomment.length > 0 ? (
                   getcomment
                     .sort(

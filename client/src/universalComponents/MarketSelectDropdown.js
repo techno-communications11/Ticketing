@@ -58,7 +58,7 @@ function MarketSelectDropdown({ marketData ,isFilterVisible,setIsFilterVisible,s
               value={market.market}
               checked={selectedMarkets.includes(market.market)}
               onChange={handleMarketChange}
-              className="mb-1 fw-medium text-primary text-capitalize fw-bolder shadow-lg dropdown-item"
+              className="mb-1 fw-medium text-primary text-capitalize fw-mediumer shadow-lg dropdown-item"
             />
           ))}
         </div>

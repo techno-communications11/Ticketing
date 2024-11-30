@@ -105,7 +105,7 @@ export function SuperAdminHome() {
         <div>
           <Row>
             <Col md={12} className="text-center mb-4">
-              <h4 className="fw-bold font-family">Ticket Status Overview</h4>
+              <h4 className=" font-family">Ticket Status Overview</h4>
             </Col>
           </Row>
 
@@ -113,8 +113,8 @@ export function SuperAdminHome() {
             <Col xs={12} md={6} lg={6} className="mb-4">
               <Row className="justify-content-center">
                 {Object.entries(ticketCounts).map(([key, value]) => (
-                  <Col xs={12} sm={6} md={6} lg={4} key={key} className="mb-3">
-                    <Card className="shadow-sm text-center p-3 h-100 rounded" style={{cursor:'pointer'}} onClick={()=>handleSperAdminStats(key.charAt(0).toUpperCase() + key.slice(1))}>
+                  <Col xs={12} sm={6} md={6} lg={4} key={key} className="mb-3 ">
+                    <Card className="shadow-sm text-center p-3 h-100 rounded " style={{cursor:'pointer',fontWeight:'800'}} onClick={()=>handleSperAdminStats(key.charAt(0).toUpperCase() + key.slice(1))}>
                       <h5 className="font-family">{key.charAt(0).toUpperCase() + key.slice(1)}</h5>
                       <p id={`${key}Tickets`} style={{ color: '#E10174', fontSize: '40px', fontWeight: 'bold' }}>
                         {safeNumber(value)}

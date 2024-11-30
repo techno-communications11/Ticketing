@@ -19,7 +19,7 @@ function FileUploads({
       </div>
       <div className="col-12 col-md-6 order-md-1 mt-4 mt-md-0">
         <div className="bg-body shadow-lg rounded p-4">
-          <h4 className="text-center fw-bold mb-4 font-family">Upload</h4>
+          <h4 className="text-center fw-medium mb-4 font-family">Upload</h4>
           <h6 className="text-danger">
             Note<sup>*</sup>: Only CSV files can be uploaded.
           </h6>

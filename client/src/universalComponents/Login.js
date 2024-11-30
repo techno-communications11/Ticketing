@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FaRegEye, FaEyeSlash } from 'react-icons/fa';
 import lottie from 'lottie-web';
-import animationData from '../universalComponents/Animation.json';
+// import animationData from '../universalComponents/Animation.json';
 import { apiRequest } from '../lib/apiRequest';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -31,7 +31,7 @@ export function Login() {
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      animationData,
+      // animationData,
     });
 
     return () => animation.destroy();

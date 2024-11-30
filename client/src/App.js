@@ -32,6 +32,7 @@ import Inprogress from './DistrictManager/Inprogress';
 import Reopened from './DistrictManager/Reopened';
 import DepartmentsInsightsData from './DistrictManager/DepartmentsInsightsData';
 import ShowdepartWiseTicks from './AdminPages/ShowdepartWiseTicks';
+import { AdminTicketCreate } from './AdminPages/AdminTicketCreate';
 
 const getToken = () => localStorage.getItem('token');
 const decodeToken = () => {
@@ -74,6 +75,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute allowedDepartments={superAdminDepartments}>
               <Users />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/admincreateticket"
+          element={
+            <ProtectedRoute allowedDepartments={superAdminDepartments}>
+              <AdminTicketCreate />
             </ProtectedRoute>
           }
         />

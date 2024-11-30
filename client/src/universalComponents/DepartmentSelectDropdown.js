@@ -82,7 +82,7 @@ function DepartmentSelectDropdown({
               value={market.department}
               checked={selectedDepartments.includes(market.department)}
               onChange={handleDepartmentChange}
-              className="mb-1 fw-medium text-primary text-capitalize fw-bolder shadow-lg dropdown-item"
+              className="mb-1 fw-medium text-primary text-capitalize fw-mediumer shadow-lg dropdown-item"
             />
           ))}
         </div>

@@ -157,6 +157,9 @@ export function NavbarClient() {
                     </Nav.Link>)}
                 {department === "SuperAdmin" && (
                   <Nav>
+                    <Nav.Link as={Link} to='/admincreateticket' className='me-2 fw-medium text-dark'>
+                      create Ticket
+                    </Nav.Link>
                    
                     <Nav.Link as={Link} to='/marketstructureupload' className='me-2 fw-medium text-dark'>
                       MarketEnroll

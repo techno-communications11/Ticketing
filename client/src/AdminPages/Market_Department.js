@@ -48,10 +48,10 @@ export default function BasicTabs() {
     <Box sx={{ width: '100%' }} className="container fw-medium">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
         <Tabs value={value} onChange={handleChange}   aria-label="basic tabs example" >
-          <Tab className='fw-bolder' label="MarketWise_Insights" {...a11yProps(0)} />
-          <Tab className='fw-bolder' label="DepartmentWise_Insights" {...a11yProps(1)} />
-          <Tab className='fw-bolder' label="DM_Insights" {...a11yProps(2)} />
-          <Tab className='fw-bolder' label="Users_Insights" {...a11yProps(3)} />
+          <Tab className='fw-bold' label="MarketWise_Insights" {...a11yProps(0)} />
+          <Tab className='fw-bold' label="DepartmentWise_Insights" {...a11yProps(1)} />
+          <Tab className='fw-bold' label="DM_Insights" {...a11yProps(2)} />
+          <Tab className='fw-bold' label="Users_Insights" {...a11yProps(3)} />
         </Tabs>
       </Box>
       <Market_Department value={value} index={0}>
