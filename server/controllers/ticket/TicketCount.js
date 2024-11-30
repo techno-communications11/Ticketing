@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const TicketCount = async (req, res) => {
+  console.log("Ticket counting")
   try {
     // Fetch ticket counts grouped by statusId
     const counts = await prisma.createTicket.groupBy({
@@ -38,7 +39,7 @@ const TicketCount = async (req, res) => {
       };
     });
 
-    console.log(formattedCounts);
+    // console.log(formattedCounts);
 
     // Send the response to the client
     res.status(200).json(formattedCounts);

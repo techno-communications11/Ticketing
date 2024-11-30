@@ -2,7 +2,7 @@ import prisma from "../lib/prisma.js";
 
 const UserTicketStatus = async (req, res) => {
     const { statusId,ntid } = req.query; // Access statusId from query parameters
- console.log(ntid,"ytyffxh")
+//  console.log(ntid,"ytyffxh")
     if (!ntid) {
         return res.status(400).json('Invalid user ID');
     }
@@ -31,7 +31,7 @@ const UserTicketStatus = async (req, res) => {
                 requestreopen:true,
             },
         });
-        console.log(tickets,"kkkkkkkkkkkkkkkkk");
+        // console.log(tickets,"kkkkkkkkkkkkkkkkk");
         res.status(200).json(tickets);
     } catch (error) {
         console.error('Error fetching tickets:', error); // Log the error for debugging

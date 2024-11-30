@@ -5,7 +5,7 @@ import prisma from '../lib/prisma.js';
 const UpdateUser = async (req, res) => {
     const updatedData = req.body;
 
-    console.log('Incoming update data:', updatedData); // Log incoming data
+    // console.log('Incoming update data:', updatedData); // Log incoming data
 
     try {
         const hashedPassword = await bcrypt.hash(updatedData.password, 10);

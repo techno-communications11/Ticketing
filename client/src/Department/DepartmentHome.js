@@ -3,20 +3,20 @@ import { Container, Row, Col, Card } from "react-bootstrap";
 import { Pie } from "react-chartjs-2"; // Import the Pie chart component
 import getDecodedToken from "../universalComponents/decodeToken";
 import { apiRequest } from "../lib/apiRequest";
-import { useMyContext } from "../universalComponents/MyContext";
 import { useNavigate } from "react-router-dom";
+import { useMyContext } from "../universalComponents/MyContext";
 
 function DepartmentHome() {
   const department = getDecodedToken()?.department;
   const [counts, setCounts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const {setStatusId,setFullName}=useMyContext()
   const navigate=useNavigate();
-  const fullname=getDecodedToken()?.fullname;
+  const {setStatusId,setDepartment}=useMyContext()
   
 
   useEffect(() => {
     const getStatusOfDepartment = async () => {
+      console.log(department,"ppppppppp")
       setLoading(true);
       try {
         const response = await apiRequest.get(
@@ -70,9 +70,11 @@ const handleClick=(status)=>{
   if(status==='reopened'){
     status='5'
   }
-  setStatusId(status)
-  setFullName(fullname)
-  navigate('/distinsights')
+  localStorage.setItem("department", department);
+    console.log(department,status,'deeee')
+    setDepartment(department);
+    setStatusId(status);
+    navigate('/showdeptwiseticks');
   
   
 }

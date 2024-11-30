@@ -16,7 +16,6 @@ import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from '../universalComponents/FullNameFilter'
 import StatusFilter from '../universalComponents/StatusFilter';
-// import '../styles/TicketTable.css'
 
 const ShowTickets = () => {
   const dispatch = useDispatch();

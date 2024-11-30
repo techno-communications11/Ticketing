@@ -48,15 +48,21 @@ const RegisterCode = async (req, res) => {
       // Process and clean data
       const userData = jsonData.map(item => removeWhitespaceFromKeys(item));
 
-      const usersToInsert = await Promise.all(
-        userData.map(async (item) => ({
-          ntid: item.NTID || '',
-          fullname: item.Name || '',
-          departmentId: item.departmentId || '',
-          DoorCode: item.DoorCode || '',
-          password: item.password ? await bcrypt.hash(item.password, 10) : '',
-        }))
-      );
+      // Prepare data to insert, filtering out rows with empty NTID
+      const usersToInsert = (await Promise.all(userData.map(async (item) => {
+        const department = await prisma.department.findUnique({
+          where: { name: item.selectedRole },
+        });
+        if (!department) return null;
+        return {
+          ntid: item.ntid,
+          fullname: item.fullname,
+          departmentId: department.id,
+          DoorCode: item.DoorCode,
+          password: item.Password ? await bcrypt.hash(item.Password, 10) : '',
+        };
+      }))).filter(Boolean);
+      
 
       console.log('Data to insert:', usersToInsert);
 
@@ -65,7 +71,7 @@ const RegisterCode = async (req, res) => {
         where: {
           OR: [
             { ntid: { in: usersToInsert.map(user => user.ntid) } },
-            { DoorCode: { in: usersToInsert.map(user => user.DoorCode) } }
+            // { DoorCode: { in: usersToInsert.map(user => user.DoorCode) } }
           ]
         }
       });

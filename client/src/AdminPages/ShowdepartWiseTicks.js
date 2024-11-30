@@ -15,6 +15,7 @@ import { useMyContext } from "../universalComponents/MyContext";
 import { apiRequest } from "../lib/apiRequest";
 import { useDispatch } from "react-redux";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
+import getDecodedToken from "../universalComponents/decodeToken";
 
 
 const ShowdepartWiseTicks = () => {
@@ -29,14 +30,15 @@ const ShowdepartWiseTicks = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [ntidFilter, setntidFilter] = useState("");
   const itemsPerPage = 30;
-  console.log(typeof(statusId));
+  // console.log(typeof(statusId));
   // Filter toggle states
   const [statusToggle, setStatusToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
   const [createdAtToggle, setCreatedAtToggle] = useState(false);
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [fullnameToggle, setFullnameToggle] = useState(false);
-
+  const userData=getDecodedToken();
+  console.log(userData.department,"ooooooooooo")
   const fetchTickets = async () => {
     try {
       const response = await apiRequest.get("/createTickets/DepartmentWiseTickets", {
@@ -106,14 +108,22 @@ const ShowdepartWiseTicks = () => {
   );
 
   const currentItems = useMemo(() => {
-    const sortedTickets = [...filteredTickets].sort(
+    let sortedTickets = [...filteredTickets].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
+  
+    // Apply filtering if the user's department is not 'SuperAdmin'
+    if (userData.department !== 'SuperAdmin') {
+      sortedTickets = sortedTickets.filter((tick) => tick.openedBy === userData.id);
+    }
+  
+    // Paginate the sorted and filtered tickets
     return sortedTickets.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
-  }, [filteredTickets, currentPage, itemsPerPage]);
+  }, [filteredTickets, currentPage, itemsPerPage, userData]);
+  
 
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);

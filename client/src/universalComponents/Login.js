@@ -22,7 +22,7 @@ export function Login() {
     'Inventory',  'Admin_Head', 'Maintenance_Head',
     'Housing', 'CAM NW', 'HR Payroll',
   ];
-  const MA_rel = ['Maintenance', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity'];
+  const MA_rel = ['Maintenance', 'Admin'];
 
   useEffect(() => {
     const animContainer = document.getElementById('animation-container');

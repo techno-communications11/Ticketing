@@ -27,7 +27,7 @@ import fetchUserTicketsStats from '../controllers/fetchUserTicketsStats.js'
 import User_Insights from '../controllers/ticket/User_insights.js';
 import DM_Insights from '../controllers/ticket/Dm_Insights.js';
 import GetMarketInsights from '../controllers/ticket/GetMarketInsights.js';
-import GetDepartmentTickets from '../controllers/ticket/GetDepartmentTickets.js'
+import GetDepartmentTicketsCounts from '../controllers/ticket/GetDepartmentTicketsCounts.js'
 import DepartmentInsights from '../controllers/ticket/DepartmentInsights.js';
 import Callback from '../controllers/ticket/Callback.js';
 import DepartmentWiseTickets from '../controllers/ticket/DepartmentWiseTickets.js';
@@ -61,7 +61,7 @@ import getTicketFiles from '../controllers/ticket/getTicketFiles.js';
  createTicketsRouter.get('/userinsights',authenticateJWT, User_Insights);
  createTicketsRouter.get('/dminsights',authenticateJWT, DM_Insights);
  createTicketsRouter.get('/getmarketinsights',authenticateJWT, GetMarketInsights);
- createTicketsRouter.get('/getDepartmentStats/:department',authenticateJWT, GetDepartmentTickets);
+ createTicketsRouter.get('/getDepartmentStats/:department',authenticateJWT, GetDepartmentTicketsCounts);
  createTicketsRouter.get('/departmentInsights',authenticateJWT, DepartmentInsights);
  createTicketsRouter.put('/callback',authenticateJWT,Callback)
  createTicketsRouter.get('/DepartmentWiseTickets',authenticateJWT,DepartmentWiseTickets)

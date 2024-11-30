@@ -25,7 +25,7 @@ const alloted = async (req, res) => {
       where: { ticketId },
       data: {
         assignToTeam: user,
-        openedBy: null,  // Set openedBy to null
+        openedBy: null,
         departmentId: dept.departmentId,
       },
     });

@@ -21,9 +21,7 @@ export function NavbarClient() {
 
   const isDepartments = ['NTID Mappings', 'Trainings',
     'Accessories Order', 'YUBI Key Setups', 'Charge Back/Commission',
-    'Inventory', 'Housing', 'CAM NW', 'HR Payroll']?.includes(department);
-  const ma_rel = ['Maintenance', 'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity']?.includes(department);
-  const MA_New = ['Admin_Head', 'Maintenance_Head']?.includes(department);
+    'Inventory', 'Housing', 'CAM NW', 'HR Payroll','Maintenance', 'Admin']?.includes(department)
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -68,8 +66,7 @@ export function NavbarClient() {
     :department==='District Manager'?'/dmtabs': isDepartments
       ? '/departmenthome'
       : department === 'Market Manager'
-        ? '/markethome'
-        : ma_rel ? '/MAhome' : MA_New ? '/departmenthome' : '/superAdminHome';
+        ? '/markethome':'/superAdminHome'
 
   return (
     <Navbar expand="lg" className="shadow-sm">
@@ -88,7 +85,7 @@ export function NavbarClient() {
           <Nav className='ms-auto d-flex flex-column flex-lg-row'>
             {token ? (
               <>
-                {(department === 'District Manager' || isDepartments || ma_rel || MA_New) && (
+                {(department === 'District Manager' || isDepartments) && (
                   <div className='d-md-flex align-items-start me-2 text-dark'>
                     <div className='d-flex'>
                       <Nav.Link
@@ -97,12 +94,7 @@ export function NavbarClient() {
                           department === 'District Manager'
                             ? '/new'
                             : isDepartments
-                              ? '/departmentnew'
-                              : ma_rel
-                                ? '/MAnew'
-                                : MA_New
-                                  ? '/MAhead'
-                                  : '/'
+                              ? '/departmentnew' : '/'
                         }
                         className="d-flex align-items-center fw-medium position-relative "
                         style={{
@@ -128,30 +120,32 @@ export function NavbarClient() {
 
                     </div>
 
-                    {!isDepartments && !ma_rel && !MA_New && <Nav.Link as={Link} to='/openedTickets' className='fw-medium position-relative text-dark'>
+                    {!isDepartments&& <Nav.Link as={Link} to='/openedTickets' className='fw-medium position-relative text-dark'>
                       Opened
                     </Nav.Link>}
                     {
                       department !== 'District Manager' &&
-                      <Nav.Link as={Link} to={isDepartments ? '/departmentopened' : ma_rel ? '/MAopened' : MA_New ? '/departmentopened' : '/'} className='fw-medium position-relative text-dark'>
+                      <Nav.Link as={Link} to={isDepartments ? '/departmentopened'  : '/'} className='fw-medium position-relative text-dark'>
                         Opened
                       </Nav.Link>
                     }
-                    {!ma_rel && !isDepartments && !MA_New && <Nav.Link as={Link} to={department === 'District Manager' ? '/inprogress' : '/'} className='fw-medium position-relative text-dark'>
+                    {!isDepartments  && <Nav.Link as={Link} to={department === 'District Manager' ? '/inprogress' : '/'} className='fw-medium position-relative text-dark'>
                       Assigned
                     </Nav.Link>}
-                    <Nav.Link as={Link} to={department === 'District Manager' ? '/completed' : isDepartments ? '/departmentcompleted' : ma_rel ? '/MAcompleted' : MA_New ? '/departmentcompleted' : '/'} className='fw-medium position-relative text-dark'>
+                    <Nav.Link as={Link} to={department === 'District Manager' ? '/completed' : isDepartments ? '/departmentcompleted' : '/'} className='fw-medium position-relative text-dark'>
                       Completed
                     </Nav.Link>
-                    {!ma_rel && !isDepartments && !MA_New && <Nav.Link as={Link} to={department === 'District Manager' ? '/request-reopen' : '/'} className='fw-medium position-relative text-dark'>
+
+
+                    {!isDepartments && <Nav.Link as={Link} to={department === 'District Manager' ? '/request-reopen' : '/'} className='fw-medium position-relative text-dark'>
                       ReopenQuest
                     </Nav.Link>}
                     
-                    {!ma_rel && !isDepartments && !MA_New && <Nav.Link as={Link} to={department === 'District Manager' ? '/reopened' : '/'} className='fw-medium position-relative text-dark'>
+                    {!isDepartments  && <Nav.Link as={Link} to={department === 'District Manager' ? '/reopened' : '/'} className='fw-medium position-relative text-dark'>
                      reopened
                     </Nav.Link>}
                     {
-                      !ma_rel && department !== 'District Manager' && department !== 'Maintenance_Head' && department !== 'Admin_Head' &&
+                      isDepartments && department !== 'District Manager' &&
                       <Nav.Link as={Link} to={isDepartments ? '/departmentsfromteam' : '/'} className='fw-medium position-relative text-dark'>
                         TeamTickets
                       </Nav.Link>

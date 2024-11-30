@@ -3,7 +3,7 @@ import prisma from '../lib/prisma.js';
 const getUserTickets = async (req, res) => {
   try {
     const { ntid, statusId } = req.query;
-    console.log('Received NTID dwmw dj :', ntid, 'Received Status IDnknknfk jdxgw:', statusId);
+    // console.log('Received NTID dwmw dj :', ntid, 'Received Status IDnknknfk jdxgw:', statusId);
 
     // Build filter condition
     const filter = {
@@ -32,7 +32,7 @@ const getUserTickets = async (req, res) => {
       }
     });
 
-    console.log('Fetched Tickets:', tickets);
+    // console.log('Fetched Tickets:', tickets);
 
     if (tickets.length === 0) {
       return res.status(404).json({ message: 'No tickets found for the provided parameters' });

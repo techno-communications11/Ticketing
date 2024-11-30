@@ -2,7 +2,7 @@ import prisma from "../lib/prisma.js";
 
 const DepartmentWiseTickets = async (req, res) => {
     const { department, statusId } = req.query;
-    console.log(department, typeof(statusId));
+    // console.log(department, typeof(statusId));
 
     if (!department || statusId === undefined) {
         return res.status(400).json({ error: 'department and statusId are required' });

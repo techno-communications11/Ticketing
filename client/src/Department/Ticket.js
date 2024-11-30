@@ -108,7 +108,7 @@ function Ticket({ status,openedBy,fullname, }) {
           );
         }  else if (fullname) {
           fetchedTickets = fetchedTickets.filter(ticket =>
-            ticket.assignToTeam === fullname&&ticket.openedBy===null
+            ticket.assignToTeam === fullname && ticket.openedBy===null
           );
         }
   

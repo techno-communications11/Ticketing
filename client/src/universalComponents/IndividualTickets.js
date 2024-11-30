@@ -12,7 +12,7 @@ import { HiArrowSmRight } from "react-icons/hi";
 import Comment from "./Comment";
 import getDecodedToken from "./decodeToken";
 import formatDate from "./FormatDate";
-import { Carousel } from 'react-bootstrap';
+import { Carousel } from "react-bootstrap";
 
 const Individualmarketss = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Individualmarketss = () => {
   const [comment, setComment] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [getcomment, setGetComment] = useState([]);
-  const [userCommnetCount,setuserCommentCount]=useState(0);
+  // const [userCommnetCount,setuserCommentCount]=useState(0);
   const [users, setUsers] = useState([]);
   const departments = [
     "NTID Mappings",
@@ -33,7 +33,7 @@ const Individualmarketss = () => {
     "YUBI Key Setups",
     "Charge Back/Commission",
     "Inventory",
-    "Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity",
+    "Admin",
     "Maintenance",
     "Housing",
     "CAM NW",
@@ -41,7 +41,7 @@ const Individualmarketss = () => {
   ];
   useEffect(() => {
     const interval = setInterval(() => {
-      const container = document.getElementById('imageContainer');
+      const container = document.getElementById("imageContainer");
       if (container) {
         container.scrollLeft += 100; // Adjust this value to control the scroll speed
       }
@@ -78,6 +78,7 @@ const Individualmarketss = () => {
             `/createTickets/getcomment/?ticketId=${storedId}`
           );
           setGetComment(response.data);
+          console.log(response.data, "datatatta");
         } catch (err) {
           console.log("Error fetching comments.", err);
         }
@@ -96,48 +97,43 @@ const Individualmarketss = () => {
 
   useEffect(() => {
     if (!markets?.ticketId) {
-      console.warn('No ticketId available in markets');
+      console.warn("No ticketId available in markets");
       setUploadedFileUrl(null);
       return;
     }
 
     const fetchFiles = async () => {
-    try {
-      const apiUrl = `/createTickets/getticketfiles/${markets.ticketId}`; // Ensure markets.ticketId is correct
-      const response = await apiRequest.get(apiUrl);
+      try {
+        const apiUrl = `/createTickets/getticketfiles/${markets.ticketId}`; // Ensure markets.ticketId is correct
+        const response = await apiRequest.get(apiUrl);
 
-      // Destructure signedUrls directly from the response data
-      const { signedUrls } = response.data; 
+        // Destructure signedUrls directly from the response data
+        const { signedUrls } = response.data;
 
-      console.log('Fetched signed URLs:', signedUrls);
+        console.log("Fetched signed URLs:", signedUrls);
 
-      // Check if signedUrls array is populated
-      if (signedUrls && signedUrls.length > 0) {
-        setUploadedFileUrl(signedUrls); // Store the signed URLs in state
-      } else {
-        console.warn('No files found for the specified ticketId');
-        setUploadedFileUrl([]); // Clear the state if no files are found
+        // Check if signedUrls array is populated
+        if (signedUrls && signedUrls.length > 0) {
+          setUploadedFileUrl(signedUrls); // Store the signed URLs in state
+        } else {
+          console.warn("No files found for the specified ticketId");
+          setUploadedFileUrl([]); // Clear the state if no files are found
+        }
+      } catch (error) {
+        console.error("Error fetching files:", error);
+        setUploadedFileUrl([]); // Reset the state on error
       }
-    } catch (error) {
-      console.error('Error fetching files:', error);
-      setUploadedFileUrl([]); // Reset the state on error
-    }
-  };
+    };
 
     fetchFiles();
   }, [markets.ticketId]);
   // console.log('setUploadedFileUrl',uploadedFileUrl)
-  
-  
 
   const updateOpenedBy = async () => {
     try {
-      const endpoint =
-        departments?.includes(department) ||
-        department === "Maintenance_Head" ||
-        department === "Admin_Head"
-          ? "/createTickets/update_opened_by"
-          : "";
+      const endpoint = departments?.includes(department)
+        ? "/createTickets/update_opened_by"
+        : "";
       const response = await apiRequest.put(endpoint, {
         ticketId: markets.ticketId,
       });
@@ -282,7 +278,7 @@ const Individualmarketss = () => {
     } finally {
       setSelectedDepartment("");
     }
-  }
+  };
 
   const onhandleAllot = async (user) => {
     try {
@@ -299,19 +295,14 @@ const Individualmarketss = () => {
     } finally {
       setSelectedDepartment("");
     }
-  }
+  };
 
-  
-    let count=0;
-    getcomment.map(comment => {
-      if (comment.createdBy === markets.fullname) {
-         count++;
-        }
-      }
-     
-    )
-    
-
+  let count = 0;
+  getcomment.map((comment) => {
+    if (comment.createdBy === markets.fullname) {
+      count++;
+    }
+  });
 
   const handleTicketAction = async (action) => {
     const actionText = action === "settle" ? "settle" : "request to reopen";
@@ -372,20 +363,22 @@ const Individualmarketss = () => {
   const handleConfirmSettled = () => handleTicketAction("settle");
   const handleRequestReopen = () => handleTicketAction("reopen");
 
-  const handleCallbackAction = async() => {
+  const handleCallbackAction = async () => {
     try {
       const response = await apiRequest.put(
-        `/createTickets/callback/?department=${'District Manager'}&ticketId=${markets.ticketId}`
+        `/createTickets/callback/?department=${"District Manager"}&ticketId=${
+          markets.ticketId
+        }`
       );
       if (response.status === 200) {
-        toast.success(`assigned to ${'District Manager'}`);
+        toast.success(`assigned to ${"District Manager"}`);
         // updateTicketStatus("3");
         setTimeout(() => {
           window.location.reload();
         }, [2000]);
       }
     } catch (error) {
-      toast.error(`error assigning to ${'District Manager'}`);
+      toast.error(`error assigning to ${"District Manager"}`);
     } finally {
       setSelectedDepartment("");
     }
@@ -396,7 +389,6 @@ const Individualmarketss = () => {
     }
     return acc;
   }, 0);
-
 
   return (
     <div className="container mt-2">
@@ -415,85 +407,95 @@ const Individualmarketss = () => {
           <div className="col-md-8">
             <div className="row">
               {Object.entries({
-                NTID: markets.ntid,
-                "Full Name": markets.fullname,
-                Market: markets.market,
-                "Selected Store": markets.selectStore,
-                "Phone Number": markets.phoneNumber,
-                "Ticket Regarding": markets.ticketRegarding,
-                'selected department':markets.selectedDepartment,
-                Description: markets.description,
-                "Created At": formatDate(markets.createdAt),
+                NTID: String(markets.ntid || ""),
+                "Full Name": String(markets.fullname || ""),
+                Market: String(markets.market || ""),
+                "Selected Store": String(markets.selectStore || ""),
+                "Phone Number": String(markets.phoneNumber || ""),
+                "Ticket Regarding": String(markets.ticketRegarding || ""),
+                "Selected Department": String(markets.selectedDepartment || ""),
+                Description: String(markets.description || ""),
+                "Created At": formatDate(markets.createdAt) || "",
               }).map(([key, value]) => (
                 <div className="col-md-6 mb-2" key={key}>
                   <h6 className="card-subtitle mb-1 text-muted fw-medium">
                     {key}
                   </h6>
-                  <p className="card-text">{value}</p>
+                  <p className="card-text">
+                    {typeof value === "string"
+                      ? value.length < 50
+                        ? value
+                        : `${value.slice(0, 40)}\n ${value.slice(40)}`
+                      : value || "N/A"}
+                  </p>
                 </div>
               ))}
-            </div>
-
-            <div className="mt-2 mb-2 col-md-12">
-              <h5 className="text-start fw-bold text-secondary">Comments:</h5>
-              {getcomment.length > 0 ? (
-                getcomment
-                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                  .map((comment, index) => (
-                    <div
-                      key={index}
-                      className="comment-item mb-3"
-                      style={{ lineHeight: "1" }}
-                    >
-                      <small className="ms-2 fs-6 text-muted fw-medium">
-                        <HiArrowSmRight /> {comment.comment}
-                      </small>
-                      <br />
-                      <small
-                        className="ms-2 text-muted"
+              <div className="mt-2 mb-2 col-md-12">
+                <h5 className="text-start fw-bold text-secondary">Comments:</h5>
+                {getcomment.length > 0 ? (
+                  getcomment
+                    .sort(
+                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
+                    .map((comment, index) => (
+                      <div
+                        key={index}
+                        className="comment-item mb-3"
                         style={{ lineHeight: "1" }}
                       >
-                        Commented By:{" "}
-                        <span className="fw-medium"> {comment.createdBy}</span>{" "}
-                        | {formatDate(comment.createdAt)}
-                      </small>
-                    </div>
-                  ))
-              ) : (
-                <p>No comments available for this ticket.</p>
-              )}
+                        <small className="ms-2 fs-6 text-muted fw-medium">
+                          <HiArrowSmRight /> {comment.comment}
+                        </small>
+                        <br />
+                        <small
+                          className="ms-2 text-muted"
+                          style={{ lineHeight: "1" }}
+                        >
+                          Commented By:{" "}
+                          <span className="fw-medium">
+                            {" "}
+                            {comment.createdBy}
+                          </span>{" "}
+                          | {formatDate(comment.createdAt)}
+                        </small>
+                      </div>
+                    ))
+                ) : (
+                  <p>No comments available for this ticket.</p>
+                )}
+              </div>
             </div>
           </div>
 
           <div className="col-md-4 mb-3 text-center">
-          <div className="card shadow-sm rounded">
-        {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
-          <Carousel>
-            {uploadedFileUrl.map((url, index) => (
-              <Carousel.Item key={index}>
-                <img
-                  src={url}
-                  alt={`Ticket File ${index + 1}`}
-                  className="d-block w-100 img-fluid"
-                  style={{
-                    height: '250px',
-                    objectFit: 'cover', // Ensure image fills the container without distortion
-                  }}
-                  onClick={() => setShowModal(true)} // Open modal on image click
-                />
-              </Carousel.Item>
-            ))}
-          </Carousel>
-        ) : (
-          <div
-            className="card-img-top img-thumbnail text-center d-flex justify-content-center align-items-center"
-            style={{ height: '250px', width: '100%' }}
-          >
-            <span>No Images Available</span>
+            <div className="card shadow-sm rounded">
+              {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
+                <Carousel>
+                  {uploadedFileUrl.map((url, index) => (
+                    <Carousel.Item key={index}>
+                      <img
+                        src={url}
+                        alt={`Ticket File ${index + 1}`}
+                        className="d-block w-100 img-fluid"
+                        style={{
+                          height: "250px",
+                          objectFit: "cover", // Ensure image fills the container without distortion
+                        }}
+                        onClick={() => setShowModal(true)} // Open modal on image click
+                      />
+                    </Carousel.Item>
+                  ))}
+                </Carousel>
+              ) : (
+                <div
+                  className="card-img-top img-thumbnail text-center d-flex justify-content-center align-items-center"
+                  style={{ height: "250px", width: "100%" }}
+                >
+                  <span>No Images Available</span>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div>
-    </div>
 
           <div className="row mb-2">
             <div className="col-md-7 d-flex align-items-center">
@@ -509,7 +511,7 @@ const Individualmarketss = () => {
                 )}
               {(department === "Employee" ||
                 department === "District Manager") &&
-                markets.status?.name === "completed" && markets.isSettled!==true&& (
+                markets.status?.name === "completed" && (
                   <Comment
                     comment={comment}
                     handleCommentChange={handleCommentChange}
@@ -519,9 +521,7 @@ const Individualmarketss = () => {
             </div>
 
             <div className="col-md-5 d-flex justify-content-end align-items-center mt-4 text-sm-start ">
-              {(departments?.includes(department) ||
-                department === "Maintenance_Head" ||
-                department === "Admin_Head") &&
+              {departments?.includes(department) &&
                 markets.status?.name !== "completed" && (
                   <Dropdown className="mx-2">
                     <Dropdown.Toggle variant="primary" id="dropdown-basic">
@@ -542,40 +542,28 @@ const Individualmarketss = () => {
                     </Dropdown.Menu>
                   </Dropdown>
                 )}
-                
+
               {department !== "Employee" &&
                 department !== "SuperAdmin" &&
                 markets.ntid !== userNtid && (
                   <>
-                    {markets.status?.name !== "completed"&& markets.departmentId==='19' && (
-                      <Dropdown className="mx-2">
-                        <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                          Assign to
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu
-                          style={{
-                            height: "350px",
-                            overflow: "scroll",
-                            width: "50vw",
-                          }}
-                        >
-                          {departments
-                            .sort()
-                            .filter((dept) => {
-                              if (
-                                department === "Maintenance_Head" &&
-                                dept === "Maintenance"
-                              )
-                                return false;
-                              if (
-                                department === "Admin_Head" &&
-                                dept === "Admin"
-                              )
-                                return false;
-                              if (dept === department) return false;
-                              return true;
-                            })
-                            .map((dept, index) => (
+                    {markets.status?.name !== "completed" &&
+                      markets.departmentId === "19" && (
+                        <Dropdown className="mx-2">
+                          <Dropdown.Toggle
+                            variant="primary"
+                            id="dropdown-basic"
+                          >
+                            Assign to
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu
+                            style={{
+                              height: "350px",
+                              overflow: "scroll",
+                              width: "50vw",
+                            }}
+                          >
+                            {departments.sort().map((dept, index) => (
                               <Dropdown.Item
                                 key={index}
                                 onClick={() =>
@@ -588,33 +576,38 @@ const Individualmarketss = () => {
                                 {dept}
                               </Dropdown.Item>
                             ))}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    )
-                  }
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      )}
 
+                    {markets.status?.name !== "completed" &&
+                      markets.departmentId === "19" && (
+                        <button
+                          className="btn btn-success"
+                          onClick={() =>
+                            handleConfirmAction("4", "mark as completed")
+                          }
+                        >
+                          Close
+                        </button>
+                      )}
+                    {markets.status?.name !== "completed" &&
+                      departments.includes(department) && (
+                        <button
+                          className="btn btn-success"
+                          onClick={() =>
+                            handleConfirmAction("4", "mark as completed")
+                          }
+                        >
+                          Close
+                        </button>
+                      )}
+                  </>
+                )}
 
-                  {markets.status?.name !== 'completed'&&markets.departmentId==='19' && (
-                    <button
-                      className="btn btn-success"
-                      onClick={() => handleConfirmAction('4', 'mark as completed')}
-                    >
-                      Close
-                    </button>
-                  )}
-                   {markets.status?.name !== 'completed'&& departments.includes(department) && (
-                    <button
-                      className="btn btn-success"
-                      onClick={() => handleConfirmAction('4', 'mark as completed')}
-                    >
-                      Close
-                    </button>
-                  )}
-                </>
-              )}
-              
-              {
-                counts >= 1 && department === "Employee" && markets.status?.name === 'completed' && !markets.isSettled && (
+              {counts >= 1 &&
+                department === "Employee" &&
+                markets.status?.name === "completed" && (
                   <Button
                     variant="primary fw-medium w-auto ms-auto me-3 "
                     onClick={() => handleRequestReopen()}
@@ -627,8 +620,7 @@ const Individualmarketss = () => {
               {(department === "District Manager" ||
                 department === "Market Manager" ||
                 department === "SuperAdmin") &&
-                markets.status?.name === "completed" &&
-                !markets.isSettled && (
+                markets.status?.name === "completed" && (
                   <Button
                     variant="primary fw-medium w-auto me-2 "
                     onClick={() => handleConfirmAction("5", "reopened")}
@@ -646,14 +638,17 @@ const Individualmarketss = () => {
                     Settled
                   </Button>
                 )}
-                {
-                  (department==='District Manager'||department==='Market Manager') && (markets.departmentId!=='19')&&markets.status?.name!=='completed' &&<Button
-                  variant="success fw-medium w-auto"
-                  onClick={handleCallbackAction}
-                >
-                  Callback
-                </Button>
-                }
+              {(department === "District Manager" ||
+                department === "Market Manager") &&
+                markets.departmentId !== "19" &&
+                markets.status?.name !== "completed" && (
+                  <Button
+                    variant="success fw-medium w-auto"
+                    onClick={handleCallbackAction}
+                  >
+                    Callback
+                  </Button>
+                )}
             </div>
           </div>
         </div>
@@ -670,35 +665,35 @@ const Individualmarketss = () => {
           <Modal.Title>Ticket Image</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-  {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
-    <Carousel>
-      {uploadedFileUrl.map((url, index) => (
-        <Carousel.Item key={index}>
-          <img
-            src={url}
-            alt={`Ticket File ${index + 1}`}
-            className="d-block w-100 img-fluid"
-            style={{
-              height: '500px',
-              objectFit: 'contain',
-            }}
-          />
-        </Carousel.Item>
-      ))}
-    </Carousel>
-  ) : (
-    <div className="text-center">No Images Available</div>
-  )}
-</Modal.Body>
-
-
+          {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
+            <Carousel>
+              {uploadedFileUrl.map((url, index) => (
+                <Carousel.Item key={index}>
+                  <img
+                    src={url}
+                    alt={`Ticket File ${index + 1}`}
+                    className="d-block w-100 img-fluid"
+                    style={{
+                      height: "500px",
+                      objectFit: "contain",
+                    }}
+                  />
+                </Carousel.Item>
+              ))}
+            </Carousel>
+          ) : (
+            <div className="text-center">No Images Available</div>
+          )}
+        </Modal.Body>
       </Modal>
-      {department === "Employee" && markets.status?.name === "completed"&&markets.isSettled!==true && (
-        <span className="text-danger fw-medium">
-          * Enter comment describing the purpose of reopening the ticket before
-          requesting reopen
-        </span>
-      )}
+      {department === "Employee" &&
+        markets.status?.name === "completed" &&
+        markets.isSettled !== true && (
+          <span className="text-danger fw-medium">
+            * Enter comment describing the purpose of reopening the ticket
+            before requesting reopen
+          </span>
+        )}
       <ToastContainer />
     </div>
   );

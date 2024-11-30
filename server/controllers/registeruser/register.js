@@ -3,9 +3,10 @@ import prisma from '../lib/prisma.js';
 
 const register = async (req, res) => {
   const { ntid, fullname, DoorCode, selectedRole, password } = req.body;
+  console.log(req.body);
 
   // Validate input (You can replace this with a more robust validation approach)
-  if (!ntid || !fullname || !DoorCode || !selectedRole || !password) {
+  if (!ntid || !fullname  || !selectedRole || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 

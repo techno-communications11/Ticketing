@@ -19,14 +19,7 @@ const GetUsers = async (req, res) => {
     }
 
     let { departmentId } = loggedInUser;
-    if(departmentId==='22'){
-      departmentId='11'
-
-    }
-    if(departmentId==='23'){
-      departmentId='12'
-
-    }
+    
 
     // Fetch all team members from the same department
     const teamMembers = await prisma.user.findMany({

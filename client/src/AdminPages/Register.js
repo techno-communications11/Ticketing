@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import FileUploads from '../universalComponents/FileUploads';
 import ReusableButtons from '../universalComponents/ReusableButtons';
 import { Dropdown } from 'react-bootstrap';
+import getDecodedToken from '../universalComponents/decodeToken';
 
 export function Register() {
   const NTIDRef = useRef('');
@@ -24,12 +25,16 @@ export function Register() {
   const [isDoorCodeValid, setIsDoorCodeValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [isRoleValid, setIsRoleValid] = useState(true);
+  const data=getDecodedToken().department;
+  console.log(data,"yyyy")
 
   const userRoles = [
     'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
     'Charge Back/Commission', 'Inventory',
-     'Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity',
-    'Maintenance ', 'Housing ', 'CAM NW', 'HR Payroll','Market Manager', 'Housing Related',  'SuperAdmin', 'District Manager', 'Employee'
+     'Admin',
+    'Maintenance', 'Housing ', 'CAM NW', 'HR Payroll','Market Manager', 'Housing', 
+     'SuperAdmin',
+      'District Manager', 'Employee'
   ];
 
   const validatePassword = (password) => {
@@ -49,9 +54,9 @@ export function Register() {
 
     setIsNtidValid(!!ntid);
     setIsFullnameValid(!!fullname);
-    setIsDoorCodeValid(!!DoorCode);
+    // setIsDoorCodeValid(!!DoorCode);
     setIsRoleValid(!!selectedRole);
-    if (!isFullnameValid || !isPasswordValid || !isDoorCodeValid || !isRoleValid) {
+    if (!isFullnameValid || !isPasswordValid ||!isRoleValid) {
       toast.error("enter details")
     }
 
@@ -65,12 +70,12 @@ export function Register() {
       setIsPasswordValid(true);
     }
 
-    if (!ntid || !fullname || !DoorCode || !selectedRole) {
+    if (!ntid || !fullname ||  !selectedRole) {
       return;
     }
 
     try {
-      const response = await apiRequest.post('/auth/register', { ntid, fullname, DoorCode, selectedRole, selectMarketValue, password });
+      const response = await apiRequest.post('/auth/register', { ntid, fullname, DoorCode, selectedRole, password });
       if (response.status === 201) {
         toast.success("Registered successfully", { autoClose: 2000 });
       } else {  
@@ -79,8 +84,13 @@ export function Register() {
     } catch (error) {
       toast.error("An unexpected error occurred");
     } finally {
-      setSelectMarketValue('');
+      // setSelectMarketValue('');
       setSelectedRole('');
+      NTIDRef.current.value="";
+      fullNameRef.current.value="";
+      DoorCodeRef.current.value
+      ="";
+      passwordRef.current.value="";
     }
   };
 
@@ -152,7 +162,7 @@ export function Register() {
                   <input type="text"
                     id="doorCode"
                     placeholder="Door Code"
-                    className={`fw-medium text-secondary form-control border shadow-none ${!isDoorCodeValid ? 'input-error' : ''}`}
+                    className={`fw-medium text-secondary form-control border shadow-none`}
                     ref={DoorCodeRef} />
                 </div>
                 <div className="mb-2">
@@ -165,7 +175,7 @@ export function Register() {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu style={{ height: "40vh", overflow: 'scroll' }} className='col-12 col-md-12' >
-                      {userRoles.sort().map((role, index) => (
+                      {userRoles.filter((x)=>x!=data).sort().map((role, index) => (
                         <Dropdown.Item
                           key={index}
                           eventKey={role}

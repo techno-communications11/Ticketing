@@ -11,11 +11,7 @@ const assignToDepartment = async (req, res) => {
       return res.status(400).send('All required fields (department, ticketId, ntid) must be provided');
     }
 
-    if (department === 'Maintenance Related') {
-      department = 'Maintenance_Head';
-    } else if (department === 'Admin') {
-      department = 'Admin_Head';
-    }
+   
 
     const departmentRecord = await prisma.department.findUnique({
       where: { name: department },
