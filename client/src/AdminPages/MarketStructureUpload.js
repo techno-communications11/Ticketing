@@ -138,7 +138,7 @@ export function MarketStructureUpload() {
     <div className="container mt-5">
         <div className="row w-100 align-items-center justify-content-center">
           <div className="col-12 col-md-8 col-lg-10 col-xl-8 ">
-            <ReusableButtons bigText={'Register Market'}
+            <ReusableButtons bigText={'Register Store'}
               smallText={'Upload'}
               setActiveForm={setActiveForm}
               activeForm={activeForm} />
@@ -148,7 +148,7 @@ export function MarketStructureUpload() {
                   <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                   <Form onSubmit={handleSubmit} className="shadow-lg rounded p-4">
   <div className="text-center mb-4">
-    <h4 className="font-family">Register Market</h4>
+    <h4 className="font-family">Register Store</h4>
   </div>
   <Form.Group className="mb-2">
     <Form.Control

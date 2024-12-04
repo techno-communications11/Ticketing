@@ -31,6 +31,7 @@ function DepartmentHome() {
         setLoading(false);
       }
     };
+    console.log(counts,'counntsss')
 
     if (department) {
       getStatusOfDepartment();

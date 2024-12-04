@@ -97,7 +97,7 @@ function Ticket({ status,openedBy,fullname, }) {
         } else if (openedBy && status === '3' && fullname === null) {
           // For DepartmentOpened - tickets opened by a specific user with status 3
           fetchedTickets = fetchedTickets.filter(ticket =>
-            ticket.status.id === '3' &&
+           ( ticket.status.id === '3'||ticket.status.id==='2') &&
             ticket.openedBy === openedBy
           );
         } else if (openedBy && status === '4' && fullname === null) {

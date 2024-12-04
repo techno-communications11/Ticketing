@@ -92,7 +92,7 @@ const UserTickets = () => {
         </div>
       ) : (
         <div className="table-responsive">
-          <Table>
+          <Table bordered>
             <thead>
               <tr>
                 {[
@@ -157,33 +157,33 @@ const UserTickets = () => {
               {finalTickets.length > 0 ? (
                 finalTickets.map((ticket, index) => (
                   <tr key={ticket.ticketId}>
-                    <td className="fw-medium" style={getStatusColor(ticket)}>
+                    <td className="fw-medium text-center" style={getStatusColor(ticket)}>
                       {(currentPage - 1) * itemsPerPage + index + 1}
                     </td>
-                    <td className="fw-medium" style={getStatusColor(ticket)}>
+                    <td className="fw-medium text-center" style={getStatusColor(ticket)}>
                       {ticket.ntid}
                     </td>
-                    <td className="fw-medium" style={getStatusColor(ticket)}>
+                    <td className="fw-medium text-center" style={getStatusColor(ticket)}>
                       {ticket.fullname}
                     </td>
-                    <td className="fw-medium" style={getStatusColor(ticket)}>
+                    <td className="fw-medium text-center" style={getStatusColor(ticket)}>
                       {ticket.status?.name || "-"}
                     </td>
-                    <td className="fw-medium" style={getStatusColor(ticket)}>
+                    <td className="fw-medium text-center" style={getStatusColor(ticket)}>
                       {formatDate(ticket.createdAt)}
                     </td>
-                    <td className="fw-medium" style={getStatusColor(ticket)}>
+                    <td className="fw-medium text-center" style={getStatusColor(ticket)}>
                       {ticket.completedAt ? formatDate(ticket.completedAt) : "-"}
                     </td>
-                    <td className="fw-medium" style={getStatusColor(ticket)}>
+                    <td className="fw-medium text-center" style={getStatusColor(ticket)}>
                       {ticket.completedAt
                         ? getDuration(ticket.createdAt, ticket.completedAt)
                         : "-"}
                     </td>
-                    <td>
+                    <td  className="fw-medium text-center">
                       <Link to={"/details"} aria-label="View Ticket Details">
                         <GrLinkNext
-                          className="fw-medium"
+                         
                           onClick={() => handleTicket(ticket.ticketId)}
                         />
                       </Link>

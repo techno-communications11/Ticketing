@@ -85,6 +85,7 @@ const createTicket = async (req, res) => {
                     status: { connect: { id: '1' } },
                     department: departmentConnect, // Default or provided department
                     assignedTo: dmName,
+                    openedBy:null,
                     files: {
                         cameraFiles: cameraFileUrls,
                         fileSystemFiles: fileSystemFileUrls,

@@ -108,7 +108,7 @@ const TicketsTable = ({ statusIds, text }) => {
   return (
     <Container className="mt-3">
       <h3 className="d-flex justify-content-center mb-3 font-family" style={{ color: '#E10174' }}>
-        {text} Tickets from Market {market}
+        {text} Tickets
       </h3>
 
       <div className="table-responsive">

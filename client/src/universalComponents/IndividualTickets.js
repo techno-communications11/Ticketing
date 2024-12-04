@@ -193,10 +193,10 @@ const Individualmarketss = () => {
         }, [2000]);
       }
       if (statusId === "3" && response.status === 200) {
-        toast.success("Ticket status updated!", {
-          position: "top-right",
-          autoClose: 2000,
-        });
+        // toast.success("Ticket status updated!", {
+        //   position: "top-right",
+        //   autoClose: 2000,
+        // });
         setTimeout(() => {
           navigate("/openedTickets");
           window.location.reload();

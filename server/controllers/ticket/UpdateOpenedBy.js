@@ -18,9 +18,9 @@ const updateOpenedBy = async (req, res) => {
     }
 
     // Check if statusId is '3'
-    if (ticket.statusId !== '3') {
-      return res.status(400).json({ message: "Action not allowed for this ticket" });
-    }
+    // if (ticket.statusId !== '3') {
+    //   return res.status(400).json({ message: "Action not allowed for this ticket" });
+    // }
 
     // Proceed with the update if statusId is '3'
     const updatedTicket = await prisma.createTicket.update({
