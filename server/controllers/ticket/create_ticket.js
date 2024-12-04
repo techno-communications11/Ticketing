@@ -51,7 +51,7 @@ const createTicket = async (req, res) => {
 
             // Generate ticket ID
             const currentDate = new Date();
-            const TicketId = `${ntid}${currentDate.getUTCFullYear()}${("0" + (currentDate.getUTCMonth() + 1)).slice(-2)}${("0" + currentDate.getUTCDate()).slice(-2)}${("0" + currentDate.getUTCHours()).slice(-2)}${("0" + currentDate.getUTCMinutes()).slice(-2)}${("0" + currentDate.getUTCSeconds()).slice(-2)}`;
+            const TicketId = `${ntid.slice(0,3)}${currentDate.getUTCFullYear()}${("0" + (currentDate.getUTCMonth() + 1)).slice(-2)}${("0" + currentDate.getUTCDate()).slice(-2)}${("0" + currentDate.getUTCHours()).slice(-2)}${("0" + currentDate.getUTCMinutes()).slice(-2)}${("0" + currentDate.getUTCSeconds()).slice(-2)}`;
 
             // Handle departmentId or use default
             let departmentConnect;

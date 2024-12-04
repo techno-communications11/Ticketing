@@ -3,17 +3,19 @@ import prisma from "../lib/prisma.js";
 const GetProfileData_NTID = async (req, res) => {
   try {
     const id = req.user.id;
+    console.log(id,"iddd")
 
     if (!id) {
       return res.status(400).json({ message: "Incorrect ID" });
     }
 
+    // Fetch user details
     const user = await prisma.user.findUnique({
       where: { id: id },
       select: {
         ntid: true,
         fullname: true,
-        DoorCode: true, 
+        DoorCode: true,
       },
     });
 
@@ -21,52 +23,48 @@ const GetProfileData_NTID = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const doorCode = user.DoorCode;
+    let market = null;
+    let stores = [];
 
-    if (!doorCode) {
-      return res.status(400).json({ message: "Door Code not found for user" });
+    // Fetch related data only if DoorCode is present
+    if (user.DoorCode) {
+      market = await prisma.marketStructure.findUnique({
+        where: { doorCode: user.DoorCode },
+        select: {
+          market: {
+            select: { id: true, market: true },
+          },
+        },
+      });
+
+      if (market) {
+        const selectedMarketId = market.market.id;
+
+        stores = await prisma.marketStructure.findMany({
+          where: {
+            market: {
+              id: selectedMarketId,
+            },
+          },
+          select: {
+            storeName: true,
+          },
+        });
+      }
     }
 
-    const market = await prisma.marketStructure.findUnique({
-      where: { doorCode: doorCode }, 
-      select: {
-        market: { 
-          select: { id:true,market: true },
-      },
-      },
-    });
-    console.log(market,'dats')
-
-    if (!market) {
-      return res.status(404).json({ message: "Market not found for the given door code" });
-    }
-
-    const selectedMarket = market.market.id;
-    console.log(selectedMarket,"selected marklet")
-
-    // Fetch stores related to the selected market
-    const stores = await prisma.marketStructure.findMany({
-      where: { 
-        market: { // Assuming `markets` is the relation field
-          id: selectedMarket // Use the correct field name to filter the market
-        }
-      },
-      select: {
-        storeName: true,
-      },
-    });
-    
- console.log(stores,'stores')
-    const result = { 
-      ...user, 
-      market: market.market|| 'No Market', // Handle null/undefined cases
-      stores: stores.map(store => store.storeName) 
+    // Prepare the final result
+    const result = {
+      ntid: user.ntid,
+      fullname: user.fullname,
+      doorCode: user.DoorCode || "No Door Code",
+      market: market ? market.market : "No Market",
+      stores: stores.map((store) => store.storeName),
     };
-    console.log(result,'res')
 
     res.status(200).json(result);
   } catch (error) {
-    console.error("Error retrieving user data:", error); // More specific error logging
+    console.error("Error retrieving user data:", error);
     res.status(500).json({ message: "Failed to retrieve user data" });
   }
 };
