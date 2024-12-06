@@ -8,20 +8,22 @@ import { useDispatch } from "react-redux";
 import { fetchStatusWiseTickets } from "../redux/statusSlice";
 import { useLocation } from "react-router-dom";
 import "../styles/TicketTable.css";
+import { useNavigate } from "react-router-dom";
 
 export function NavbarClient() {
   const dispatch = useDispatch();
   const [deptcount, setTickets] = useState([]);
   const [ticketCount, setTicketCount] = useState(0);
   const token = localStorage.getItem("token");
+  const navigate=useNavigate();
   const { department, id: userId, ntid } = token ? jwtDecode(token) : {};
 
-  const {pathname} = useLocation();
-  console.log(pathname, "goy po");
+  const { pathname } = useLocation();
+  // console.log(pathname, "goy po");
 
   const handleLogout = async () => {
     localStorage.clear();
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   const isDepartments = [
@@ -160,7 +162,9 @@ export function NavbarClient() {
                         as={Link}
                         to="/openedTickets"
                         className={`fw-medium position-relative ${
-                          pathname === "/openedTickets" ? "text-danger fw-bolder" : "text-dark"
+                          pathname === "/openedTickets"
+                            ? "text-danger fw-bolder"
+                            : "text-dark"
                         }`}
                       >
                         Viewed
@@ -171,7 +175,9 @@ export function NavbarClient() {
                         as={Link}
                         to={isDepartments ? "/departmentopened" : "/"}
                         className={`fw-medium position-relative ${
-                          pathname === "/departmentopened" ? "text-danger fw-bolder" : "text-dark"
+                          pathname === "/departmentopened"
+                            ? "text-danger fw-bolder"
+                            : "text-dark"
                         }`}
                       >
                         Viewed
@@ -186,12 +192,27 @@ export function NavbarClient() {
                             : "/"
                         }
                         className={`fw-medium position-relative ${
-                          pathname === "/inprogress" ? "text-danger fw-bolder" : "text-dark"
+                          pathname === "/inprogress"
+                            ? "text-danger fw-bolder"
+                            : "text-dark"
                         }`}
                       >
                         Assigned
                       </Nav.Link>
                     )}
+
+                   {department==='District Manager' && <Nav.Link
+                      as={Link}
+                      to={'/dmcreateticket'}
+                      className={`fw-medium position-relative ${
+                        pathname === "/dmcreateticket" 
+                          ? "text-danger fw-bolder"
+                          : "text-dark"
+                      }`}
+                    >
+                      create Ticket
+                    </Nav.Link>}
+
                     <Nav.Link
                       as={Link}
                       to={
@@ -202,7 +223,10 @@ export function NavbarClient() {
                           : "/"
                       }
                       className={`fw-medium position-relative ${
-                        pathname === "/departmentcompleted"|| pathname==='/completed' ? "text-danger fw-bolder" : "text-dark"
+                        pathname === "/departmentcompleted" ||
+                        pathname === "/completed"
+                          ? "text-danger fw-bolder"
+                          : "text-dark"
                       }`}
                     >
                       Completed
@@ -217,7 +241,9 @@ export function NavbarClient() {
                             : "/"
                         }
                         className={`fw-medium position-relative ${
-                          pathname === "/request-reopen" ? "text-danger fw-bolder" : "text-dark"
+                          pathname === "/request-reopen"
+                            ? "text-danger fw-bolder"
+                            : "text-dark"
                         }`}
                       >
                         ReopenQuest
@@ -231,7 +257,9 @@ export function NavbarClient() {
                           department === "District Manager" ? "/reopened" : "/"
                         }
                         className={`fw-medium position-relative ${
-                          pathname === "/reopened" ? "text-danger fw-bolder" : "text-dark"
+                          pathname === "/reopened"
+                            ? "text-danger fw-bolder"
+                            : "text-dark"
                         }`}
                       >
                         reopened
@@ -242,7 +270,9 @@ export function NavbarClient() {
                         as={Link}
                         to={isDepartments ? "/departmentsfromteam" : "/"}
                         className={`fw-medium position-relative ${
-                          pathname === "/departmentsfromteam" ? "text-danger fw-bolder" : "text-dark"
+                          pathname === "/departmentsfromteam"
+                            ? "text-danger fw-bolder"
+                            : "text-dark"
                         }`}
                       >
                         TeamTickets
@@ -261,7 +291,9 @@ export function NavbarClient() {
                         : "/"
                     }
                     className={`fw-medium position-relative ${
-                      pathname==="/market&department" ? "text-danger fw-bolder" : "text-dark"
+                      pathname === "/market&department"
+                        ? "text-danger fw-bolder"
+                        : "text-dark"
                     }`}
                   >
                     Insights
@@ -273,7 +305,9 @@ export function NavbarClient() {
                       as={Link}
                       to="/admincreateticket"
                       className={`fw-medium position-relative ${
-                        pathname === "/admincreateticket" ? "text-danger fw-bolder" : "text-dark"
+                        pathname === "/admincreateticket"
+                          ? "text-danger fw-bolder"
+                          : "text-dark"
                       }`}
                     >
                       create Ticket
@@ -282,19 +316,22 @@ export function NavbarClient() {
                     <Nav.Link
                       as={Link}
                       to="/marketstructureupload"
-                     className={`fw-medium position-relative ${
-                          pathname === "/marketstructureupload" ? "text-danger fw-bolder" : "text-dark"
-                        }`}
+                      className={`fw-medium position-relative ${
+                        pathname === "/marketstructureupload"
+                          ? "text-danger fw-bolder"
+                          : "text-dark"
+                      }`}
                     >
                       StoreEnroll
                     </Nav.Link>
                     <Nav.Link
                       as={Link}
                       to="/register"
-                     className={`fw-medium position-relative ${
-                          pathname === "/register" ? "text-danger fw-bolder" : "text-dark"
-                        }`}
-                       
+                      className={`fw-medium position-relative ${
+                        pathname === "/register"
+                          ? "text-danger fw-bolder"
+                          : "text-dark"
+                      }`}
                     >
                       UserEnroll
                     </Nav.Link>
@@ -302,7 +339,9 @@ export function NavbarClient() {
                       as={Link}
                       to="/users"
                       className={`fw-medium position-relative ${
-                        pathname === "/users" ? "text-danger fw-bolder" : "text-dark"
+                        pathname === "/users"
+                          ? "text-danger fw-bolder"
+                          : "text-dark"
                       }`}
                     >
                       Users

@@ -33,6 +33,9 @@ import Reopened from './DistrictManager/Reopened';
 import DepartmentsInsightsData from './DistrictManager/DepartmentsInsightsData';
 import ShowdepartWiseTicks from './AdminPages/ShowdepartWiseTicks';
 import { AdminTicketCreate } from './AdminPages/AdminTicketCreate';
+import {DmsCreateTicket} from './DistrictManager/DmsCreateTicket';
+import GetAllDeptTickets from './Department/GetAllDeptTickets';
+
 
 const getToken = () => localStorage.getItem('token');
 const decodeToken = () => {
@@ -137,6 +140,14 @@ const AppContent = () => {
           }
         />
          <Route
+          path="/getalldepartmenttickets"
+          element={
+            <ProtectedRoute allowedDepartments={departmentDepartments}>
+              <GetAllDeptTickets />
+            </ProtectedRoute>
+          }
+        />
+         <Route
           path="/departmentsfromteam"
           element={
             <ProtectedRoute allowedDepartments={departmentDepartments}>
@@ -149,6 +160,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute allowedDepartments={departmentDepartments}>
               <DepartmentOpened />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/dmcreateticket"
+          element={
+            <ProtectedRoute allowedDepartments={districtManagerDepartments}>
+              <DmsCreateTicket />
             </ProtectedRoute>
           }
         />

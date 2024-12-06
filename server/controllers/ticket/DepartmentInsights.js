@@ -1,8 +1,8 @@
 import prisma from "../lib/prisma.js";
 
 const DepartmentInsights = async (req, res) => {
-  const { department, statusId, dm, fullname } = req.query;
-  console.log(department, statusId, dm, fullname, "rbjfgrjfgbjghesg");
+  const { department, statusId, dm, fullname,usersId } = req.query;
+  console.log(department, statusId, dm, fullname, usersId,"rbjfgrjfgbjghesg");
 
   try {
     // Get the department ID for the specified department name
@@ -42,7 +42,7 @@ const DepartmentInsights = async (req, res) => {
           departmentId: departmentId, // Assuming departmentId[0].id is defined correctly
           OR: [
             {
-              openedBy: req.user.id,                // Match tickets opened by the user
+              openedBy: usersId,                // Match tickets opened by the user
             },
             {
               assignToTeam: fullname            // Match tickets assigned to the user

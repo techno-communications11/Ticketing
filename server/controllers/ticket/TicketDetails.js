@@ -24,7 +24,9 @@ const TicketDetails = async (req, res) => {
         completedAt:true,
         requestreopen:true,
         selectedDepartment:true,
+        subdepartment:true,
         departmentId:true,
+        userId:true,
         status:{select:{name:true}},
       },
     });

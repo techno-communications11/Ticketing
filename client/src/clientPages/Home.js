@@ -33,20 +33,45 @@ export function Home() {
   const { setNtid } = useMyContext();
   const [searchStore, setSearchStore] = useState("");
   const [filteredStores, setFilteredStores] = useState(userData?.stores || []);
+    const [selectedSubDepartment,setSelectedSubDepartment]=useState("");
+
+
+    const admin = [
+      "Internet",
+      "Power",
+      "Gas",
+      "Water & Sewer",
+      "Alarm",
+      "Dumpster",
+      "Alarm Permit",
+      "Camera Setup",
+      "Shopper Trak",
+      "Store Email ID",
+      "Phone Line",
+      "GPS Tracker",
+      "Ordering",
+      "Other"
+    ];
+  const [filteredSubDepartments, setFilteredSubDepartments] = useState(admin);
+ const [searchSubDepartment, setSearchSubDepartment] = useState("");
 
   const Departments = [
-    "NTID Mappings",
-    "Trainings",
-    "Accessories Order",
-    "YUBI Key Setups",
-    "Charge Back/Commission",
-    "Inventory",
-    "Admin/Supplies/License/Utilities/Permits/Internet/Telephone/LoomisTechnical/Electricity",
-    "Maintenance ",
-    "Housing ",
-    "CAM NW",
-    "HR Payroll",
+    // "NTID Mappings",
+    // "Trainings",
+    // "Accessories Order",
+    // "YUBI Key Setups",
+    // "Charge Back/Commission",
+    // "Inventory",
+    "Admin",
+    // "Maintenance ",
+    // "Housing ",
+    // "CAM NW",
+    // "HR Payroll",
   ];
+
+
+ 
+
   const [searchDepartment, setSearchDepartment] = useState('');
   const [filteredDepartments, setFilteredDepartments] = useState(Departments);
   const dispatch = useDispatch();
@@ -91,7 +116,16 @@ export function Home() {
 
   useEffect(() => {}, [handleShow]);
 
- 
+  useEffect(() => {
+    if (searchSubDepartment) {
+      const filtered = admin.filter((admin) =>
+        admin.toLowerCase().includes(searchSubDepartment.toLowerCase())
+      );
+      setFilteredSubDepartments(filtered);
+    } else {
+      setFilteredSubDepartments(admin || []);
+    }
+  }, [searchSubDepartment, admin]);
 
   useEffect(() => {
     if (searchDepartment) {
@@ -179,13 +213,14 @@ const handleStoreSelect = (store) => {
     if (validateForm()) {
       const formData = new FormData();
       formData.append("ntid", ntidRef.current.value);
-      formData.append("phone", phoneRef.current.value);
+      formData.append("phone", phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10));
       formData.append("store", selectedStore);
       formData.append("ticketSubject", ticketSubjectRef.current.value);
       formData.append("description", descriptionRef.current.value);
       formData.append("market", marketRef.current.value.toLowerCase());
       formData.append("fullname", fullnameRef.current.value);  // Correct this line
       formData.append("department", selectedDepartment);
+      formData.append("subdepartment", selectedSubDepartment);
   
       // Loop through cameraFileName array and append each file
       if (cameraFileName && cameraFileName.length > 0) {
@@ -335,6 +370,11 @@ const handleStoreSelect = (store) => {
   const handleInprogress = () => handleDataSend("3", ntid);
   const handleCompleted = () => handleDataSend("4", ntid);
   const handleReOpened = () => handleDataSend("5", ntid);
+
+  const handleSubDepartmentSelect = (department) => {
+    setSelectedSubDepartment(department);
+    setSearchSubDepartment("");
+  };
 
   const handleTotalTickets = (AdminsDatantid) => () => {
     console.log(AdminsDatantid, "ooooooooo");
@@ -524,7 +564,48 @@ const handleStoreSelect = (store) => {
                 )}
             </Dropdown.Menu>
         </Dropdown>
+        {selectedDepartment === "Admin" && (
+        <div>
+          <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
+                <Dropdown.Toggle
+                  className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
+                  id="dropdown-basic"
+                >
+                  {selectedSubDepartment || "Select Sub Department"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu
+                  style={{ height: "42vh", overflow: "scroll" }}
+                  className="col-12 col-md-12"
+                >
+                  <input
+                    onChange={(e) => setSearchSubDepartment(e.target.value)}
+                    placeholder="Search Sub Departments..."
+                    className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                  />
+                  {filteredSubDepartments?.length > 0 ? (
+                    filteredSubDepartments.map((department, index) => (
+                      <Dropdown.Item
+                        key={index}
+                        onClick={() => handleSubDepartmentSelect(department)}
+                        className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                        isInvalid={!!errors.department}
+                      >
+                        {department}
+                      </Dropdown.Item>
+                    ))
+                  ) : (
+                    <Dropdown.Item disabled className="text-muted text-start">
+                      No departments found
+                    </Dropdown.Item>
+                  )}
+                </Dropdown.Menu>
+              </Dropdown>
+        </div>
+      )}
+
+       
             </Form.Group>
+           
             <Form.Group
               className="mb-1 d-flex align-items-center "
               controlId="formTicketSubject"

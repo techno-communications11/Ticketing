@@ -63,7 +63,7 @@ import fetchStores from '../controllers/ticket/fetchStores.js';
  createTicketsRouter.get('/userinsights',authenticateJWT, User_Insights);
  createTicketsRouter.get('/dminsights',authenticateJWT, DM_Insights);
  createTicketsRouter.get('/getmarketinsights',authenticateJWT, GetMarketInsights);
- createTicketsRouter.get('/getDepartmentStats/:department',authenticateJWT, GetDepartmentTicketsCounts);
+ createTicketsRouter.get('/getDepartmentStats/:department/:usersId', authenticateJWT, GetDepartmentTicketsCounts);
  createTicketsRouter.get('/departmentInsights',authenticateJWT, DepartmentInsights);
  createTicketsRouter.put('/callback',authenticateJWT,Callback)
  createTicketsRouter.get('/DepartmentWiseTickets',authenticateJWT,DepartmentWiseTickets)

@@ -15,6 +15,7 @@ const login = async (req, res) => {
         ntid: true,
         fullname: true,
         DoorCode: true,
+        subDepartment:true,
      
         department: {
           select: {
@@ -24,7 +25,7 @@ const login = async (req, res) => {
         }
       }
     });
-    // const market = await prisma.marketStructure.findUnique({
+    // const markets = await prisma.marketStructure.findUnique({
     //   where: { doorCode: user.DoorCode },
     //   include: {
     //     market: { 
@@ -55,7 +56,9 @@ if (!isPasswordValid) {
         id: user.id,
         department: user.department.name,
         ntid: user.ntid,
-        fullname: user.fullname
+        fullname: user.fullname,
+        // market:markets.market
+        subDepartment:user.subDepartment,
       },
       process.env.JWT_SECRET_KEY,
       { expiresIn: tokenExpiration }

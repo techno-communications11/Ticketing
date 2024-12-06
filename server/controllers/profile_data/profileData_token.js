@@ -1,4 +1,4 @@
-import { S3Client } from "@aws-sdk/client-s3";
+// import { S3Client } from "@aws-sdk/client-s3";
 import prisma from "../lib/prisma.js";
 
 const GetProfileData_token = async (req, res) => {
@@ -13,7 +13,7 @@ const GetProfileData_token = async (req, res) => {
     // Fetch user data excluding departmentId
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { ntid: true, fullname: true, DoorCode: true,departmentId:true } // Removed departmentId
+      select: { ntid: true, fullname: true, DoorCode: true,departmentId:true,subDepartment:true } // Removed departmentId
     });
 
     if (!user) {
@@ -40,10 +40,11 @@ const GetProfileData_token = async (req, res) => {
     const response = {
       ntid: user.ntid,
       fullname: user.fullname,
-      DoorCode: user.DoorCode,
-      departmentName: department ? department.name : null,
-      market: marketData?.market?.market || null,
-      dmName: marketData?.dmName || null,
+      DoorCode: user.DoorCode||"N/A",
+      departmentName: department ? department.name : "N/A",
+      market: marketData?.market?.market || 'N/A',
+      dmName: marketData?.dmName || 'N/A',
+      role:user.subDepartment||"N/A",
     };
 
     res.status(200).json(response);

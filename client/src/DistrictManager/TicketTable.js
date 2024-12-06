@@ -17,7 +17,7 @@ import FilterLogic from '../universalComponents/FilteringLogic';
 import TicketBody from '../universalComponents/TicketBody';
 import '../styles/TicketTable.css'
 
-const TicketsTable = ({ statusIds, text }) => {
+const TicketsTable = ({ statusIds, text,logedInuser }) => {
   const dispatch = useDispatch();
   const [market, setMarket] = useState('');
   const [tickets, setTickets] = useState([]);
@@ -61,21 +61,35 @@ const TicketsTable = ({ statusIds, text }) => {
   useEffect(() => {
     const storedMarket = userId?.id;
     const hasFetched = localStorage.getItem("hasFetched");
-
+  
     if (storedMarket && !hasFetched) {
       const fetchTickets = async () => {
+        // Fetch all tickets based on statusIds without filtering by openedBy yet
         const allTickets = await Promise.all(
           statusIds.map(statusId => dispatch(fetchStatusWiseTickets({ id: storedMarket, statusId })))
         );
+        
         const combined = allTickets.flatMap(ticket => ticket.payload || []);
-        setTickets(combined);
+        
+        // After fetching, filter the tickets based on `openedBy` and `statusIds`
+        let filteredTickets = combined;
+  
+        // If `openedBy` is provided, filter tickets based on `openedBy`
+        if (logedInuser) {
+          filteredTickets = filteredTickets.filter(ticket => ticket.openedBy === logedInuser);
+        }
+  
+        // Update state with the filtered tickets
+        setTickets(filteredTickets);
       };
-
+  
       fetchTickets();
       statusIds.forEach(statusId => dispatch(setMarketAndStatus({ id: storedMarket, statusId })));
       localStorage.setItem("hasFetched", true);
     }
-  }, []);
+  }, [statusIds, userId, logedInuser]); // Added `openedBy` as a dependency
+  
+  
 
   useEffect(() => {
     // Reset hasFetched on component unmount

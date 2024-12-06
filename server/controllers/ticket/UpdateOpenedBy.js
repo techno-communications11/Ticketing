@@ -1,8 +1,8 @@
 import prisma from "../lib/prisma.js";
 
 const updateOpenedBy = async (req, res) => {
-  const { ticketId } = req.body; 
-  const userId = req.user.id;
+  const { ticketId,usersId } = req.body; 
+  // const userId = req.user.id;
 
   try {
     // console.log(`Checking ticket ${ticketId} before updating openedBy`);
@@ -26,7 +26,7 @@ const updateOpenedBy = async (req, res) => {
     const updatedTicket = await prisma.createTicket.update({
       where: { ticketId },
       data: {
-        openedBy: userId,  // Update the openedBy field with the user's ID
+        openedBy: usersId,  // Update the openedBy field with the user's ID
       },
     });
 

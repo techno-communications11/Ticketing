@@ -15,6 +15,7 @@ model User {
   password      String
   createdAt     DateTime      @default(now())
   departmentId  String
+  subDepartment String?
   department    Department    @relation(fields: [departmentId], references: [id])
   profilePhoto  ProfilePhoto?
   tickets       CreateTicket[] @relation("UserTickets")
@@ -29,6 +30,7 @@ model CreateTicket {
   selectStore        String
   ticketRegarding    String
   selectedDepartment String?
+  subdepartment String?
   description        String
   files              Json     // Change this to an array of strings
   assignedTo         String

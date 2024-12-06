@@ -24,20 +24,22 @@ const Individualmarketss = () => {
   const [comment, setComment] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [getcomment, setGetComment] = useState([]);
+  const [hasUpdated, setHasUpdated] = useState(false);
   // const [userCommnetCount,setuserCommentCount]=useState(0);
+  // const usersId=getDecodedToken().id;
   const [users, setUsers] = useState([]);
   const departments = [
-    "NTID Mappings",
-    "Trainings",
-    "Accessories Order",
-    "YUBI Key Setups",
-    "Charge Back/Commission",
-    "Inventory",
+    // "NTID Mappings",
+    // "Trainings",
+    // "Accessories Order",
+    // "YUBI Key Setups",
+    // "Charge Back/Commission",
+    // "Inventory",
     "Admin",
-    "Maintenance",
-    "Housing",
-    "CAM NW",
-    "HR Payroll",
+    // "Maintenance",
+    // "Housing",
+    // "CAM NW",
+    // "HR Payroll",
   ];
   useEffect(() => {
     const interval = setInterval(() => {
@@ -50,7 +52,9 @@ const Individualmarketss = () => {
     return () => clearInterval(interval); // Clean up on component unmount
   }, []);
 
-  const { ntid: userNtid, department, fullname } = getDecodedToken() || {};
+  const { ntid: userNtid, department, fullname, subDepartment,  } = getDecodedToken() || {};
+  const usersId=getDecodedToken().id;
+
 
   const fetchData = async () => {
     try {
@@ -89,6 +93,7 @@ const Individualmarketss = () => {
 
   useEffect(() => {
     const storedId = localStorage.getItem("selectedId");
+    console.log(storedId,"strid")
     if (storedId && (!selectedId || selectedId !== storedId)) {
       dispatch(setId(storedId));
       dispatch(fetchIndividualTickets(storedId));
@@ -110,9 +115,6 @@ const Individualmarketss = () => {
         // Destructure signedUrls directly from the response data
         const { signedUrls } = response.data;
 
-        console.log("Fetched signed URLs:", signedUrls);
-
-        // Check if signedUrls array is populated
         if (signedUrls && signedUrls.length > 0) {
           setUploadedFileUrl(signedUrls); // Store the signed URLs in state
         } else {
@@ -127,15 +129,16 @@ const Individualmarketss = () => {
 
     fetchFiles();
   }, [markets.ticketId]);
-  // console.log('setUploadedFileUrl',uploadedFileUrl)
-
+  console.log('setUploadedFileUrl',uploadedFileUrl)
   const updateOpenedBy = async () => {
+    console.log("update opened by")
     try {
       const endpoint = departments?.includes(department)
         ? "/createTickets/update_opened_by"
         : "";
       const response = await apiRequest.put(endpoint, {
         ticketId: markets.ticketId,
+        usersId,
       });
 
       if (response.status === 200) {
@@ -145,10 +148,13 @@ const Individualmarketss = () => {
       console.error("Error updating opened by:", err);
     }
   };
+  
+  // const xid='67507d4385001812fe9ca5a0'
 
+ 
   useEffect(() => {
     const updateInitialStatus = async () => {
-      if (markets.ntid !== userNtid && department !== "SuperAdmin") {
+      if (markets.userId !== usersId && department !== "SuperAdmin") {
         await updateTicketStatus("2");
       }
     };
@@ -156,56 +162,39 @@ const Individualmarketss = () => {
     updateOpenedBy();
     fetchData();
   }, [markets, userNtid, department]);
+  
+  
+  
 
   const updateTicketStatus = async (statusId) => {
+    console.log(`Status ID: ${statusId}, Ticket ID: ${markets.ticketId}, User ID: ${usersId}`);
     try {
       const response = await apiRequest.put(
-        `/createTickets/updateprogress/?statusId=${statusId}&ticketId=${markets.ticketId}`
+        `/createTickets/updateprogress/?statusId=${statusId}&ticketId=${markets.ticketId}&usersId=${usersId}`
       );
-      if (statusId === "4" && response.status === 200) {
-        toast.success("Ticket marked as completed!", {
-          position: "top-right",
-          autoClose: 2000,
-        });
-        setTimeout(() => {
-          if (department === "Market Manager") {
-            navigate("/markethome");
-          }
-          if (department?.includes(department)) {
-            navigate("/departmenthome");
-          }
-          if (department === "District Manager") {
-            navigate("/completed");
-          } else {
-            navigate("/details");
-          }
-          window.location.reload();
-        }, [2000]);
-      }
-
-      if (statusId === "5" && response.status === 200) {
-        toast.success("Ticket marked as reopened!", {
-          position: "top-right",
-          autoClose: 2000,
-        });
-        setTimeout(() => {
-          window.location.reload();
-        }, [2000]);
-      }
-      if (statusId === "3" && response.status === 200) {
-        // toast.success("Ticket status updated!", {
-        //   position: "top-right",
-        //   autoClose: 2000,
-        // });
-        setTimeout(() => {
-          navigate("/openedTickets");
-          window.location.reload();
-        }, [2000]);
+      console.log("Status update response:", response.data);
+      if (response.status === 200) {
+        if (statusId === "4") {
+          toast.success("Ticket marked as completed!", {
+            position: "top-right",
+            autoClose: 2000,
+          });
+        } else if (statusId === "2") {
+          toast.success("Ticket status updated to Open!", {
+            position: "top-right",
+            autoClose: 2000,
+          });
+        }
       }
     } catch (error) {
-      console.error(`Error updating ticket status to ${statusId}:`, error);
+      console.error(`Error updating status to ${statusId}:`, error);
+      // toast.error("Failed to update ticket status", {
+      //   position: "top-right",
+      //   autoClose: 2000,
+      // });
     }
   };
+
 
   const handleConfirmAction = async (action, text) => {
     const result = await Swal.fire({
@@ -257,30 +246,38 @@ const Individualmarketss = () => {
 
   const onhandleDepartment = (e) => {
     const selectedDept = e.target.value || selectedDepartment;
+    console.log(selectedDept,"selec")
     setSelectedDepartment(selectedDept);
     assignToDepartment(selectedDept);
   };
 
   const assignToDepartment = async (selectedDept) => {
+    console.log('assign trigged',markets.ticketId,selectedDept);
     try {
       const response = await apiRequest.put(
-        `/createTickets/assigntodepartment/?department=${selectedDept}&ticketId=${markets.ticketId}&ntid=${userNtid}`
+        `/createTickets/assigntodepartment/?department=${selectedDept}&ticketId=${markets.ticketId}`
       );
+  
       if (response.status === 200) {
-        toast.success(`assigned to ${selectedDept}`);
-        updateTicketStatus("3");
-        setTimeout(() => {
-          window.location.reload();
-        }, [2000]);
+        console.log("Assigned to department:", selectedDept);
+        toast.success(`Assigned to ${selectedDept}`);
+        // Make sure status is updated to 3 after department assignment
+        await updateTicketStatus("3");
+        setTimeout(()=>{
+ window.location.reload();
+        },[2000])
       }
     } catch (error) {
-      toast.error(`error assigning to ${selectedDept}`);
+      console.error("Error assigning department:", error);
+      toast.error("Failed to assign department.");
     } finally {
       setSelectedDepartment("");
     }
   };
+  
 
   const onhandleAllot = async (user) => {
+    console.log('alot trigged',markets.ticketId,user);
     try {
       const response = await apiRequest.put("/createTickets/alloted", {
         user,
@@ -288,7 +285,11 @@ const Individualmarketss = () => {
       });
       if (response.status === 200) {
         toast.success(`assigned to ${user}`);
-        updateTicketStatus("3");
+        await updateTicketStatus("3");
+        setTimeout(()=>{
+          navigate('/departmenthome')
+        },[3000])
+        
       }
     } catch (error) {
       toast.error(`error assigning to ${user}`);
@@ -296,6 +297,7 @@ const Individualmarketss = () => {
       setSelectedDepartment("");
     }
   };
+
 
   let count = 0;
   getcomment.map((comment) => {
@@ -310,11 +312,9 @@ const Individualmarketss = () => {
       action === "settle"
         ? "Are you sure you want to settle this ticket?"
         : "Are you sure you want to request reopening this ticket?";
-
+  
     const { isConfirmed } = await Swal.fire({
-      title: `Confirm ${
-        actionText.charAt(0).toUpperCase() + actionText.slice(1)
-      }`,
+      title: `Confirm ${actionText.charAt(0).toUpperCase() + actionText.slice(1)}`,
       text: confirmationText,
       icon: "warning",
       showCancelButton: true,
@@ -323,17 +323,18 @@ const Individualmarketss = () => {
       confirmButtonText: `Yes, ${actionText} it!`,
       cancelButtonText: "Cancel",
     });
-
+  
     if (isConfirmed) {
       try {
         const endpoint =
           action === "settle"
             ? "/createTickets/settlement"
             : "/createTickets/request-reopen";
+  
         const response = await apiRequest.put(endpoint, {
           ticketId: markets.ticketId,
         });
-
+  
         if (response.status === 200) {
           Swal.fire({
             icon: "success",
@@ -341,13 +342,9 @@ const Individualmarketss = () => {
             text: `The ticket has been ${actionText}d successfully.`,
             confirmButtonColor: "#E10174",
           });
-
-          if (department === "District Manager" && action === "settle") {
-            navigate("/completed");
-          }
-          if (department === "Employee" && action === "reopen") {
-            navigate("/home");
-          }
+  
+          if (department === "District Manager" && action === "settle") navigate("/completed");
+          else if (department === "Employee" && action === "reopen") navigate("/home");
         }
       } catch (error) {
         console.error(`Error requesting ${actionText}:`, error);
@@ -360,19 +357,20 @@ const Individualmarketss = () => {
       }
     }
   };
+  
+  
   const handleConfirmSettled = () => handleTicketAction("settle");
   const handleRequestReopen = () => handleTicketAction("reopen");
 
   const handleCallbackAction = async () => {
+    console.log('callback trigged',markets.ticketId,usersId);
     try {
       const response = await apiRequest.put(
-        `/createTickets/callback/?department=${"District Manager"}&ticketId=${
-          markets.ticketId
-        }`
+        `/createTickets/callback/?department=${"District Manager"}&ticketId=${markets.ticketId}&usersId=${usersId}`
       );
       if (response.status === 200) {
         toast.success(`assigned to ${"District Manager"}`);
-        // updateTicketStatus("3");
+        await updateTicketStatus("2");
         setTimeout(() => {
           window.location.reload();
         }, [2000]);
@@ -414,6 +412,7 @@ const Individualmarketss = () => {
                 "Phone Number": String(markets.phoneNumber || ""),
                 "Ticket Regarding": String(markets.ticketRegarding || ""),
                 "Selected Department": String(markets.selectedDepartment || ""),
+                "Selected Sub Department": String(markets.subdepartment || ""),
                 Description: String(markets.description || ""),
                 "Created At": formatDate(markets.createdAt) || "",
               }).map(([key, value]) => (
@@ -501,7 +500,7 @@ const Individualmarketss = () => {
             <div className="col-md-7 d-flex align-items-center">
               {department !== "Employee" &&
                 department !== "SuperAdmin" &&
-                markets.ntid !== userNtid &&
+                markets.userId !== usersId &&
                 markets.status?.name !== "completed" && (
                   <Comment
                     comment={comment}
@@ -545,7 +544,7 @@ const Individualmarketss = () => {
 
               {department !== "Employee" &&
                 department !== "SuperAdmin" &&
-                markets.ntid !== userNtid && (
+                markets.usersId !== usersId && (
                   <>
                     {markets.status?.name !== "completed" &&
                       markets.departmentId === "19" && (
@@ -580,7 +579,7 @@ const Individualmarketss = () => {
                         </Dropdown>
                       )}
 
-                    {markets.status?.name !== "completed" &&
+{markets.status?.name !== "completed" &&
                       markets.departmentId === "19" && (
                         <button
                           className="btn btn-success"
@@ -628,20 +627,20 @@ const Individualmarketss = () => {
                     Reopen
                   </Button>
                 )}
-              {department === "District Manager" &&
+              {(department === "District Manager"||subDepartment==='Manager') &&
                 markets.status?.name === "completed" &&
                 !markets.isSettled && (
                   <Button
                     variant="success fw-medium w-auto"
                     onClick={handleConfirmSettled}
                   >
-                    Settled
+                    Settle
                   </Button>
                 )}
               {(department === "District Manager" ||
                 department === "Market Manager") &&
                 markets.departmentId !== "19" &&
-                markets.status?.name !== "completed" && (
+                markets.status?.name !== "completed" && markets.userId!==usersId && (
                   <Button
                     variant="success fw-medium w-auto"
                     onClick={handleCallbackAction}

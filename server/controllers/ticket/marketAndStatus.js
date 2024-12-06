@@ -42,6 +42,7 @@ export const marketAndStatus = async (req, res) => {
           description: true,
           createdAt: true,
           isSettled:true,
+          openedBy:true,
           completedAt: true,
           status: { select: { name: true } },
           files: true,
@@ -67,6 +68,7 @@ export const marketAndStatus = async (req, res) => {
             ticketRegarding: true,
             description: true,
             createdAt: true,
+            openedBy:true,
             completedAt: true,
             
             status: { select: { name: true } },
@@ -92,6 +94,7 @@ export const marketAndStatus = async (req, res) => {
             ticketRegarding: true,
             description: true,
             createdAt: true,
+            openedBy:true,
             completedAt: true,
             status: { select: { name: true } },
             files: true,

@@ -4,10 +4,10 @@ const assignToDepartment = async (req, res) => {
   try {
     console.log(req.query, "Incoming query parameters");
 
-    let { department, ticketId, ntid } = req.query;
-    console.log(ntid, department, ticketId, "Department assignment details");
+    let { department, ticketId} = req.query;
+    console.log(department, ticketId, "Department assignment details");
 
-    if (!department || !ticketId || !ntid) {
+    if (!department || !ticketId) {
       return res.status(400).send('All required fields (department, ticketId, ntid) must be provided');
     }
 
@@ -17,6 +17,7 @@ const assignToDepartment = async (req, res) => {
       where: { name: department },
       select: { id: true },
     });
+    // const statusIds="3";
 
     if (!departmentRecord) {
       console.error(`Department not found: ${department}`);
@@ -27,7 +28,8 @@ const assignToDepartment = async (req, res) => {
       where: { ticketId: ticketId },
       data: { 
         departmentId: departmentRecord.id,  
-        openedBy: null, 
+        openedBy: null,
+        // statusId: statusIds,
       },
     });
 

@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import FileUploads from '../universalComponents/FileUploads';
 import ReusableButtons from '../universalComponents/ReusableButtons';
 import { Dropdown } from 'react-bootstrap';
-import getDecodedToken from '../universalComponents/decodeToken';
+// import getDecodedToken from '../universalComponents/decodeToken';
 
 export function Register() {
   const NTIDRef = useRef('');
@@ -16,26 +16,30 @@ export function Register() {
   const DoorCodeRef = useRef('');
   const fileInputRef = useRef(null);
   const [selectedRole, setSelectedRole] = useState('');
-  const [selectMarketValue, setSelectMarketValue] = useState('');
+  // const [selectMarketValue, setSelectMarketValue] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [activeForm, setActiveForm] = useState('register');
   const [isNtidValid, setIsNtidValid] = useState(true);
   const [isFullnameValid, setIsFullnameValid] = useState(true);
-  const [isDoorCodeValid, setIsDoorCodeValid] = useState(true);
+  // const [isDoorCodeValid, setIsDoorCodeValid] = useState(true);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [isRoleValid, setIsRoleValid] = useState(true);
   // const data=getDecodedToken().department;
   // console.log(data,"yyyy")
+  const [selectedSubRole, setSelectedSubRole] = useState('');
 
   const userRoles = [
-    'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
-    'Charge Back/Commission', 'Inventory',
+    // 'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',
+    // 'Charge Back/Commission', 'Inventory',
      'Admin',
-    'Maintenance', 'Housing ', 'CAM NW', 'HR Payroll','Market Manager', 'Housing', 
+    // 'Maintenance', 'Housing ', 'CAM NW', 'HR Payroll',
+    'Market Manager',
+    //  'Housing', 
      'SuperAdmin',
       'District Manager', 'Employee'
   ];
+  const subUserroles=['Manager','User']
 
   const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
@@ -43,6 +47,9 @@ export function Register() {
   };
   const handleSelect = (role) => {
     setSelectedRole(role);
+  };
+  const handleSubSelect = (role) => {
+    setSelectedSubRole(role);
   };
 
   const handleSubmit = async (event) => {
@@ -73,9 +80,10 @@ export function Register() {
     if (!ntid || !fullname ||  !selectedRole) {
       return;
     }
+    console.log( ntid, fullname, DoorCode, selectedRole,selectedSubRole, password,"data")
 
     try {
-      const response = await apiRequest.post('/auth/register', { ntid, fullname, DoorCode, selectedRole, password });
+      const response = await apiRequest.post('/auth/register', { ntid, fullname, DoorCode, selectedRole,selectedSubRole, password });
       if (response.status === 201) {
         toast.success("Registered successfully", { autoClose: 2000 });
       } else {  
@@ -85,6 +93,7 @@ export function Register() {
       toast.error("An unexpected error occurred");
     } finally {
       // setSelectMarketValue('');
+      selectedSubRole('');
       setSelectedRole('');
       NTIDRef.current.value="";
       fullNameRef.current.value="";
@@ -112,7 +121,8 @@ export function Register() {
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      const response = await apiRequest.post('/auth/registeruser', formData, {
+      console.log(formData,"ffmd")
+      const response = await apiRequest.post('/auth/registeruse', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -188,6 +198,31 @@ export function Register() {
                     </Dropdown.Menu>
                   </Dropdown>
                 </div>
+                {
+                   <div className="mb-2">
+                   <Dropdown>
+                     <Dropdown.Toggle
+                       id="roleDropdown"
+                       className={`border bg-transparent text-start  fw-medium w-100 text-secondary ${!isRoleValid ? 'input-error' : ''}`}
+                     >
+                       {selectedSubRole || 'Select Subrole'}
+                     </Dropdown.Toggle>
+ 
+                     <Dropdown.Menu style={{ height: "40vh", overflow: 'scroll' }} className='col-12 col-md-12' >
+                       {subUserroles.map((role, index) => (
+                         <Dropdown.Item
+                           key={index}
+                           eventKey={role}
+                           className="fw-medium text-primary shadow-lg"
+                           onClick={() => handleSubSelect(role)}
+                         >
+                           {(selectedRole!=='Employee'&&selectedRole!=='District Manager'&&selectedRole!=='SuperAdmin'&&selectedRole!=='Market Manager')?role:""}
+                         </Dropdown.Item>
+                       ))}
+                     </Dropdown.Menu>
+                   </Dropdown>
+                 </div>
+                }
                 <div className="mb-2">
                   <div className="input-group">
                     <input

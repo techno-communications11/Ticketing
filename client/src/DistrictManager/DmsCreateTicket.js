@@ -2,23 +2,20 @@ import React, { useState, useRef } from "react";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Dropdown from "react-bootstrap/Dropdown";
-import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineCloudUpload } from "react-icons/md";
 import { apiRequest } from "../lib/apiRequest";
 import { useEffect } from "react";
-import { animateValue } from "../universalComponents/AnnimationCount";
-import { setUserAndStatus, fetchStatusTickets } from "../redux/userStatusSlice";
-import { useDispatch } from "react-redux";
+
 import { useCallback } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import { Button, Card } from "react-bootstrap";
-import { Pie } from "react-chartjs-2";
 import getDecodedToken from "../universalComponents/decodeToken";
-import { useMyContext } from "../universalComponents/MyContext";
+import Button from "react-bootstrap/esm/Button";
 
-export function AdminTicketCreate() {
+
+
+export function DmsCreateTicket() {
   const [show, setShow] = useState(false);
   const [popButtons, setPopButtons] = useState(false);
   const [cameraFileName, setCameraFileName] = useState([]);
@@ -26,47 +23,21 @@ export function AdminTicketCreate() {
   const [selectedStore, setSelectedStore] = useState("Select Store");
   const [selectedDepartment, setSelectedDepartment] =
     useState("Select Department");
+    const [searchSubDepartment, setSearchSubDepartment] = useState("");
+    const [selectedSubDepartment,setSelectedSubDepartment]=useState("");
   const [userData, setUserData] = useState("");
-  const [TicketsCount, setTicketsCount] = useState(0);
-  const { ntid } = getDecodedToken();
-  const { setNtid } = useMyContext();
+  
   const [searchStore, setSearchStore] = useState("");
   const [filteredStores, setFilteredStores] = useState(userData?.stores || []);
   const [Stores, setStores] = useState([]);
   const [selectedMarket, setSelectedMarket] = useState("");
   const [AssignTo, setAssignTo] = useState("");  // Default to empty string if no department is selected
- const [selectedSubDepartment,setSelectedSubDepartment]=useState("");
-
-  const markets = [
-    { _id: "1", market: "arizona" },
-    { _id: "2", market: "colorado" },
-    { _id: "3", market: "dallas" },
-    { _id: "4", market: "el paso" },
-    { _id: "5", market: "florida" },
-    { _id: "6", market: "houston" },
-    { _id: "7", market: "los angeles" },
-    { _id: "8", market: "memphis" },
-    { _id: "9", market: "nashville" },
-    { _id: "10", market: "north carol" },
-    { _id: "11", market: "sacramento" },
-    { _id: "12", market: "san diego" },
-    { _id: "13", market: "san francisco" },
-    { _id: "14", market: "bay area" },
-  ];
-
-  const Departments = [
-    // "NTID Mappings",
-    // "Trainings",
-    // "Accessories Order",
-    // "YUBI Key Setups",
-    // "Charge Back/Commission",
-    // "Inventory",
-    "Admin",
-    // "Maintenance ",
-    // "Housing ",
-    // "CAM NW",
-    // "HR Payroll",
-  ];
+  const [selectedNTIDUser, setSelectedNTIDUser] = useState("");
+  const [selectedNTID, setSelectedNTID] = useState(""); // State for the selected NTID
+  const [searchNTID, setSearchNTID] = useState(""); // State for search input
+  const [filteredNTID, setFilteredNTID] = useState([]); // State for filtered NTIDs
+  const [ntids, setNTids] = useState([]);
+  console.log(AssignTo,'sss')
   const admin = [
     "Internet",
     "Power",
@@ -83,13 +54,124 @@ export function AdminTicketCreate() {
     "Ordering",
     "Other"
   ];
-  
-  const [searchDepartment, setSearchDepartment] = useState("");
-  const [searchSubDepartment, setSearchSubDepartment] = useState("");
-  const [filteredDepartments, setFilteredDepartments] = useState(Departments);
+
+
   const [filteredSubDepartments, setFilteredSubDepartments] = useState(admin);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiRequest.get("/auth/userdata");
+        console.log(response.data, "data");
+        setNTids(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        toast.error("Error fetching users");
+      }
+    };
+    fetchData();
+  }, []);
+  useEffect(() => {
+    if (searchNTID) {
+      const filtered =
+        ntids
+          .filter(
+            (item) => item.ntid.toLowerCase().includes(searchNTID.toLowerCase()) // Access `ntid` property for filtering
+          )
+          .map((item) => item.ntid) || []; // Map only the `ntid` value
+      setFilteredNTID(filtered);
+    } else {
+      // If no search term, reset filtered list to all `ntid` values
+      setFilteredNTID(ntids.map((item) => item.ntid) || []);
+    }
+  }, [searchNTID, ntids]);
+
+  useEffect(() => {
+    if (selectedNTID) {
+      const matchedUser = ntids.find(
+        (item) => item.ntid.toLowerCase() === selectedNTID.toLowerCase() // Match the `ntid`
+      );
+      console.log(matchedUser, "Mmu");
+
+      setSelectedNTIDUser(matchedUser?.fullname || ""); // Set `name` if found, else empty string
+    } else {
+      setSelectedNTIDUser(""); // Reset if no `selectedNTID` is chosen
+    }
+  }, [selectedNTID, ntids]);
+
+
+    const markets = [
+        { fullname: "Ali Khan", market: "ARIZONA" },
+        { fullname: "Rahim Nasir Khan", market: "BAY AREA" },
+        { fullname: "Shah Noor", market: "COLORADO" },
+        { fullname: "Farooq Sarwar", market: "DALLAS" },
+        { fullname: "Imran Shaikh", market: "DALLAS" },
+        { fullname: "Salim Thanawala", market: "DALLAS" },
+        { fullname: "Afzal Muhammad", market: "EL PASO" },
+        { fullname: "Mohammed Eleyan", market: "FLORIDA" },
+        { fullname: "Amirali Charania", market: "HOUSTON" },
+        { fullname: "Mohammad Salman Shareef", market: "HOUSTON" },
+        { fullname: "Salman Riaz", market: "HOUSTON" },
+        { fullname: "Zubair Hussain", market: "HOUSTON" },
+        { fullname: "Maaz Khan", market: "LOS ANGELES" },
+        { fullname: "Qamar Shahzad", market: "LOS ANGELES" },
+        { fullname: "Qamar Shahzad", market: "OXNARD" },
+        { fullname: "Qamar Shahzad", market: "PALMDALE" },
+        { fullname: "(blank)", market: "LOS ANGELES" },
+        { fullname: "Muhammad Shoaib Sheeraz", market: "MEMPHIS" },
+        { fullname: "Syed Amir", market: "MEMPHIS" },
+        { fullname: "Zaid Waseem", market: "MEMPHIS" },
+        { fullname: "Khaja Ameenuddin Ghori", market: "NASHVILLE" },
+        { fullname: "Uzair Uddin", market: "NORTH CAROL" },
+        { fullname: "Faizan Jiwani", market: "SACRAMENTO" },
+        { fullname: "Hassan Saleem", market: "SAN DEIGO" },
+        { fullname: "Kamaran Mohammed", market: "SAN FRANCISCO" },
+        { fullname: "Muhammad Sumairuddin", market: "SAN JOSE" },
+        { fullname: "Saad Ali", market: "SOLANO COUNTY" },
+        { fullname: "dm", market: "MEMPHIS" },
+
+    ];
+
+    useEffect(() => {
+      if (searchSubDepartment) {
+        const filtered = admin.filter((admin) =>
+          admin.toLowerCase().includes(searchSubDepartment.toLowerCase())
+        );
+        setFilteredSubDepartments(filtered);
+      } else {
+        setFilteredSubDepartments(admin || []);
+      }
+    }, [searchSubDepartment, admin]);
+
+
+    const handleSubDepartmentSelect = (department) => {
+      setSelectedSubDepartment(department);
+      setSearchSubDepartment("");
+    };
+  
+    const currentFullname =getDecodedToken().fullname;
+
+  // Filter markets based on the fullname
+  const dmMarkets = markets
+    .filter(item => item.fullname === currentFullname)
+    .map(item => item.market);
+
+  const Departments = [
+    // "NTID Mappings",
+    // "Trainings",
+    // "Accessories Order",
+    // "YUBI Key Setups",
+    // "Charge Back/Commission",
+    // "Inventory",
+    "Admin",
+    // "Maintenance ",
+    // "Housing ",
+    // "CAM NW",
+    // "HR Payroll",
+  ];
+  const [searchDepartment, setSearchDepartment] = useState("");
+  const [filteredDepartments, setFilteredDepartments] = useState(Departments);
+ 
   const [errors, setErrors] = useState({
     ntid: "",
     phone: "",
@@ -97,14 +179,20 @@ export function AdminTicketCreate() {
     market: "",
     ticketSubject: "",
     department: "",
-    // subdepartment:"",
     description: "",
+    dmuser:"",
   });
   const ntidRef = useRef(null);
   const phoneRef = useRef(null);
   const ticketSubjectRef = useRef(null);
   const descriptionRef = useRef(null);
-  const fullnameRef = useRef("");
+//   const fullnameRef = useRef("");
+
+
+  const handleNTIDClick = (ntid) => {
+    setSelectedNTID(ntid); // Update state
+    ntidRef.current = ntid; // Store in ref
+  };
 
   const handleClose = () => {
     setShow(false);
@@ -118,10 +206,10 @@ export function AdminTicketCreate() {
       description: "",
       market: "",
       fullname: "",
+      dmuser:"",
     });
     setSelectedStore("Select Store");
     setSelectedDepartment("select Department");
-    setSelectedSubDepartment("select sub department")
   };
 
   const handleShow = useCallback(() => {
@@ -183,22 +271,17 @@ export function AdminTicketCreate() {
     setSelectedDepartment(department);
     setSearchDepartment("");
   };
-  const handleSubDepartmentSelect = (department) => {
-    setSelectedSubDepartment(department);
-    setSearchSubDepartment("");
-  };
   const handleAssignToSelect = (department) => {
     console.log(department, "department selected");
     setAssignTo(department); // Set department to AssignTo state
-    // handleSubmit(); // Trigger form submission
     setSearchDepartment(""); // Clear search field (if needed)
-    setSearchSubDepartment("");
   };
   
   
 
 
   const validateForm = () => {
+    console.log("entered to valid")
     const newErrors = {
       ntid: "",
       fullname: "",
@@ -209,14 +292,19 @@ export function AdminTicketCreate() {
       departmentId: "",
       market: "",
       department: "",
+      dmuser:"",
     };
-    const ntid = ntidRef.current.value;
+    // console.log(AssignTo,"llllllllllll")
+    // console.log(newErrors,"new errors")
+    // console.log(selectedNTID,"ntid")
+    const ntid = selectedNTID;
     const phone = phoneRef.current.value;
     const ticketSubject = ticketSubjectRef.current.value;
     const description = descriptionRef.current.value;
     const market = selectedMarket;
     const departmentId = AssignTo;  // departmentId from state
-    const fullname = fullnameRef.current.value;
+    const fullname = selectedNTIDUser;
+    const dmuser=getDecodedToken().fullname;
 
     if (!ntid) newErrors.ntid = "NTID is required";
     if (!phone) newErrors.phone = "Phone number is required";
@@ -226,21 +314,31 @@ export function AdminTicketCreate() {
     if (!description) newErrors.description = "Description is required";
     if (!market) newErrors.market = "Select market";
     if (!fullname) newErrors.fullname = "No fullname";
+    if (!dmuser) newErrors.dmuser = "No dmuser";
     if (!departmentId) newErrors.departmentId = "Department not assigned";  // Ensure departmentId is selected
     if (selectedDepartment === "select Department")
       newErrors.ticketDepartment = "No ticket department";
+
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => error === "");
 };
+// console.log(getDecodedToken().fullname+"--","tttttt")
 
 
 const handleSubmit = () => {
+    console.log("entered to submit")
   if (validateForm()) {
+    console.log("entered to if cese")
     const formData = new FormData();
 
     // Log the values before appending to ensure they're correct
-    console.log(ntidRef.current.value, "NTID value");
-    formData.append("ntid", ntidRef.current.value);
+    console.log(selectedNTID, "NTID value");
+    formData.append("ntid", selectedNTID);
+    
+
+    console.log(getDecodedToken().fullname, "dm name");
+    formData.append("dmuser", "---"+getDecodedToken().fullname);
+    console.log(getDecodedToken().market,"market")
 
     console.log(phoneRef.current.value, "Phone value");
     formData.append("phone", phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10));
@@ -257,12 +355,12 @@ const handleSubmit = () => {
     console.log(selectedMarket, "Market value");
     formData.append("market", selectedMarket);
 
-    console.log(fullnameRef.current.value, "Fullname value");
-    formData.append("fullname", fullnameRef.current.value);
+    console.log(selectedNTIDUser, "Fullname value");
+    formData.append("fullname", selectedNTIDUser);
 
     console.log(selectedDepartment, "Selected Department value");
     formData.append("department", selectedDepartment);
-    
+
     console.log(selectedSubDepartment, "Selected Sub Department value");
     formData.append("subdepartment", selectedSubDepartment);
 
@@ -286,6 +384,7 @@ const handleSubmit = () => {
     for (let pair of formData.entries()) {
       console.log(pair[0] + ": " + pair[1]);
     }
+    console.log(formData,'form dataa')
 
     // Send form data via API request
     apiRequest
@@ -296,6 +395,7 @@ const handleSubmit = () => {
       })
       .then((response) => {
         toast.success("Ticket created successfully!");
+        // departmentId="";
         handleClose();
         setTimeout(() => {
           window.location.reload();
@@ -358,19 +458,10 @@ const handleSubmit = () => {
     }
   };
 
-  const fetchTicketCounts = async () => {
-    try {
-      const response = await apiRequest.get("/createTickets/countusertickets");
-      console.log("Initial ticket count response:", response);
-      setTicketsCount(response.data);
-    } catch (error) {
-      toast.error("Failed to fetch ticket counts");
-    }
-  };
+ 
 
   useEffect(() => {
     handleNTIDBlur();
-    fetchTicketCounts();
   }, [handleShow]);
 
   useEffect(() => {
@@ -391,91 +482,7 @@ const handleSubmit = () => {
     fetchStores();
   }, [selectedMarket]);
   
-  
-
-  useEffect(() => {
-    const objTotal = document.getElementById("Totalvalue");
-    const objNew = document.getElementById("Newvalue");
-    const objOpened = document.getElementById("Openedvalue");
-    const objInProgress = document.getElementById("Inprocessvalue");
-    const objCompleted = document.getElementById("Completedvalue");
-    const objreopened = document.getElementById("reOpenedvalue");
-    const totalTickets =
-      (TicketsCount.reopened || 0) +
-      (TicketsCount.new || 0) +
-      (TicketsCount.opened || 0) +
-      (TicketsCount.inprogress || 0) +
-      (TicketsCount.completed || 0);
-    if (objTotal) {
-      animateValue(objTotal, 0, totalTickets, 500);
-    }
-    if (objNew) {
-      animateValue(objNew, 0, TicketsCount.new || 0, 500);
-    }
-    if (objOpened) {
-      animateValue(objOpened, 0, TicketsCount.opened || 0, 500);
-    }
-    if (objInProgress) {
-      animateValue(objInProgress, 0, TicketsCount.inprogress || 0, 500);
-    }
-    if (objCompleted) {
-      animateValue(objCompleted, 0, TicketsCount.completed || 0, 500);
-    }
-    if (objreopened) {
-      animateValue(objreopened, 0, TicketsCount.reopened || 0, 500);
-    }
-    if (totalTickets > 0) {
-      TicketsCount.Ticket = totalTickets;
-    }
-  }, [TicketsCount]);
-
-  const handleDataSend = (statusId, ntid) => {
-    localStorage.setItem("statusData", statusId);
-    dispatch(fetchStatusTickets({ statusId, ntid }));
-    dispatch(setUserAndStatus({ statusId, ntid }));
-  };
-
-  const handleNew = () => handleDataSend("1", ntid);
-  const handleOpened = () => handleDataSend("2", ntid);
-  const handleInprogress = () => handleDataSend("3", ntid);
-  const handleCompleted = () => handleDataSend("4", ntid);
-  const handleReOpened = () => handleDataSend("5", ntid);
-
-  const handleTotalTickets = (AdminsDatantid) => () => {
-    setNtid(AdminsDatantid);
-
-    if (AdminsDatantid) {
-      navigate("/totalusertickets");
-    } else {
-      console.error("NTID is not available");
-    }
-  };
-  const filteredInsights = Object.entries(TicketsCount).filter(
-    ([key]) => key !== "Ticket"
-  );
-
-  const chartData = {
-    labels: filteredInsights.map(([key]) => key), // Extracting keys for labels
-    datasets: [
-      {
-        data: filteredInsights.map(([, value]) => value), // Correctly extracting values for data
-        backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#4BC0C0",
-          "#9966FF",
-        ],
-        hoverBackgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#4BC0C0",
-          "#9966FF",
-        ],
-      },
-    ],
-  };
+ 
   useEffect(() => {
     if (searchStore) {
       const filtered = Stores.filter((store) =>
@@ -487,29 +494,8 @@ const handleSubmit = () => {
     }
   }, [searchStore, Stores]);
 
-  useEffect(() => {
-    if (searchSubDepartment) {
-      const filtered = admin.filter((admin) =>
-        admin.toLowerCase().includes(searchSubDepartment.toLowerCase())
-      );
-      setFilteredSubDepartments(filtered);
-    } else {
-      setFilteredSubDepartments(admin || []);
-    }
-  }, [searchSubDepartment, admin]);
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "Ticket Counts by Status",
-      },
-    },
-  };
+//   const dmMarkets = markets[DMName] || []; 
+console.log(dmMarkets,"markssdh")
 
   return (
     <div>
@@ -519,31 +505,44 @@ const handleSubmit = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group
-              className="mb-1 d-flex align-items-center"
-              controlId="formBasicNTID"
-            >
-              <Form.Control
-                className="shadow-none fw-medium text-secondary fw-medium boorder-0"
-                type="text"
-                placeholder="Enter NTID"
-                value={userData?.ntid || ""}
-                isInvalid={!!errors.ntid}
-                ref={ntidRef}
-                readOnly
-              />
-            </Form.Group>
+          <Dropdown className="flex-grow-1 mb-1 mb-md-0">
+      <Dropdown.Toggle
+        className="text-start bg-white fw-medium text-secondary border shadow-none w-100 mb-1"
+        id="dropdown-basic"
+      >
+        {selectedNTID || "Select NTID"}{" "}
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu className="w-100 fw-medium text-capitalize ">
+        <input
+          type="text"
+          value={searchNTID}
+          onChange={(e) => setSearchNTID(e.target.value)}
+          placeholder="Search NTIDS..."
+          className="w-75 form-control border fw-medium text-muted fw-medium shadow-none text-center mb-2 ms-2"
+        />
+
+        {filteredNTID.map((ntid, index) => (
+          <Dropdown.Item
+            className="fw-medium text-primary fw-bolder shadow-lg h-50 overflow-auto"
+            key={index} // Use index as the key if no unique ID is available
+            onClick={() => handleNTIDClick(ntid)} // Set selected NTID and update ref on click
+          >
+            {ntid} {/* Display the NTID value */}
+          </Dropdown.Item>
+        ))}
+      </Dropdown.Menu>
+    </Dropdown>
             <Form.Group
               className="mb-1 d-flex gap-1 flex-wrap"
               controlId="formPhoneNumber"
             >
               <div className="flex-grow-1 mb-1 mb-md-0">
-                <Form.Control
-                  className="fw-medium  fw-medium text-secondary shadow-none boorder-0 text-capitalize"
+              <Form.Control
+                  className="fw-medium text-secondary shadow-none boorder-0 text-capitalize"
                   type="text"
-                  value={userData?.fullname || ""}
-                  placeholder="Full Name"
-                  ref={fullnameRef}
+                  value={selectedNTIDUser}
+                  placeholder={selectedNTIDUser || "Full Name"}
                   readOnly
                 />
               </div>
@@ -562,26 +561,32 @@ const handleSubmit = () => {
               controlId="store"
             >
               <div className="flex-grow-1  mb-1 mb-md-0">
-                <Dropdown>
-                  <Dropdown.Toggle
-                    className="text-secondary fw-medium bg-transparent fw-medium shadow-none border border-secondary text-capitalize w-100"
-                    id="market-dropdown"
-                  >
-                    {selectedMarket || "Select Market"}
-                  </Dropdown.Toggle>
+              <Dropdown>
+      <Dropdown.Toggle
+        className="text-secondary fw-medium bg-transparent shadow-none border border-secondary text-capitalize w-100"
+        id="market-dropdown"
+      >
+        {selectedMarket || "Select Market"}
+      </Dropdown.Toggle>
 
-                  <Dropdown.Menu className="w-100  fw-medium fw-medium text-capitalize">
-                    {markets.map(({ _id, market }) => (
-                      <Dropdown.Item
-                      className="fw-medium"
-                        key={_id}
-                        onClick={() => setSelectedMarket(market)}
-                      >
-                        {market}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+      <Dropdown.Menu className="w-100 fw-medium text-capitalize ">
+        {dmMarkets.length > 0 ? (
+          dmMarkets.map((market, index) => (
+            <Dropdown.Item
+              className="fw-medium text-primary shadow-lg"
+              key={index}
+              onClick={() => setSelectedMarket(market.toLowerCase())}
+            >
+              {market}
+            </Dropdown.Item>
+          ))
+        ) : (
+          <Dropdown.Item className="fw-medium" disabled>
+            No Markets Available
+          </Dropdown.Item>
+        )}
+      </Dropdown.Menu>
+    </Dropdown>
               </div>
 
               <Dropdown className="flex-grow-1" id="dropdown-store">
@@ -698,6 +703,16 @@ const handleSubmit = () => {
               </Dropdown>
         </div>
       )}
+              <div className="d-flex flex-grow-1 align-items-center col-md-6 w-100">
+                <Form.Control
+                  type="text"
+                  placeholder={getDecodedToken().fullname}
+                  isInvalid={!!errors.phone}
+                  readOnly
+                  className="shadow-none text-secondary fw-medium border w-100 mb-2"
+                />
+              </div>
+              
             </Form.Group>
             <Form.Group
               className="mb-1 d-flex align-items-center "
@@ -792,8 +807,8 @@ const handleSubmit = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <div className="mt-2">
-        <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
+          <div  className="mt-1 shadow-lg">
+        <Dropdown className="flex-grow-1  " id="dropdown-department">
                 <Dropdown.Toggle
                   className={`text-center fw-medium  fw-medium text-secondary border-0 bg-primary text-white shadow-none w-100`}
                   id="dropdown-basic"
@@ -801,7 +816,7 @@ const handleSubmit = () => {
                   {AssignTo || "Assign To"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu
-                  style={{ height: "42vh", overflow: "scroll" ,width:'20rem'}}
+                  style={{ height: "42vh", overflow: "scroll", width:'20rem' }}
                   className="col-12 col-md-12"
                 >
                   <input
@@ -859,103 +874,9 @@ const handleSubmit = () => {
               </div>
             </div>
 
-            <div className=" col-12 col-md-12 flex-grow-1 bg-white shadow-lg border-0 rounded p-1">
-              <div className=" col-md-12 d-flex justify-content-center">
-                <p className="fs-3 fw-medium font-family">Status Of Tickets</p>
-              </div>
-              <div className=" col-12 col-md-12 d-flex row g-3 p-3">
-                <Link
-                  onClick={handleTotalTickets(ntid)}
-                  to="/totalusertickets"
-                  className="col-12 col-md-2 text-decoration-none"
-                >
-                  <div className="  col-12 card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                    <h6 className="fw-medium">Total</h6>
-                    <p
-                      id="Totalvalue"
-                      className="fs-1"
-                      style={{ color: "#E10174" }}
-                    ></p>
-                  </div>
-                </Link>
-                <Link
-                  onClick={handleNew}
-                  to="/usertickets"
-                  className="col-12 col-md-2 text-decoration-none"
-                >
-                  <div className="  col-12 card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                    <h6 className="fw-medium">New</h6>
-                    <p
-                      id="Newvalue"
-                      className="fs-1"
-                      style={{ color: "#E10174" }}
-                    ></p>
-                  </div>
-                </Link>
-                <Link
-                  onClick={handleOpened}
-                  to="/usertickets"
-                  className="col-12 col-md-2 text-decoration-none"
-                >
-                  <div className=" col-12  card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                    <h6 className="fw-medium">Opened</h6>
-                    <p
-                      id="Openedvalue"
-                      className="fs-1"
-                      style={{ color: "#E10174" }}
-                    ></p>
-                  </div>
-                </Link>
-                <Link
-                  onClick={handleInprogress}
-                  to="/usertickets"
-                  className="col-12 col-md-2 text-decoration-none"
-                >
-                  <div className=" col-12  card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                    <h6 className="fw-medium">In Progress</h6>
-                    <p
-                      id="Inprocessvalue"
-                      className="fs-1"
-                      style={{ color: "#E10174" }}
-                    ></p>
-                  </div>
-                </Link>
-                <Link
-                  onClick={handleCompleted}
-                  to="/usertickets"
-                  className="col-12 col-md-2 text-decoration-none"
-                >
-                  <div className=" card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                    <h6 className="fw-medium">Completed</h6>
-                    <p
-                      id="Completedvalue"
-                      className="fs-1"
-                      style={{ color: "#E10174" }}
-                    ></p>
-                  </div>
-                </Link>
-                <Link
-                  onClick={handleReOpened}
-                  to="/usertickets"
-                  className="col-12 col-md-2 text-decoration-none"
-                >
-                  <div className=" col-12  card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
-                    <h6 className="fw-medium">Reopened</h6>
-                    <p
-                      id="reOpenedvalue"
-                      className="fs-1"
-                      style={{ color: "#E10174" }}
-                    ></p>
-                  </div>
-                </Link>
-              </div>
-            </div>
+            
           </div>
-          <div className="col-12 col-md-4">
-            <Card className="shadow-sm rounded" style={{ height: "99%" }}>
-              <Pie data={chartData} options={chartOptions} />
-            </Card>
-          </div>
+          
         </div>
       </div>
 

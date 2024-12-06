@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import prisma from '../lib/prisma.js';
 
 const register = async (req, res) => {
-  const { ntid, fullname, DoorCode, selectedRole, password } = req.body;
+  const { ntid, fullname, DoorCode, selectedRole,selectedSubRole, password } = req.body;
   console.log(req.body);
 
   // Validate input (You can replace this with a more robust validation approach)
@@ -38,6 +38,7 @@ const register = async (req, res) => {
         ntid,
         fullname,
         DoorCode,
+        subDepartment:selectedSubRole,
         departmentId: department.id, 
         password: hashedPassword,
       },

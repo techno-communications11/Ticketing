@@ -4,7 +4,7 @@ const Callback = async (req, res) => {
   try {
     console.log(req.query, "Incoming query parameters");
 
-    let { department, ticketId } = req.query;
+    let { department, ticketId,usersId } = req.query;
     console.log(department, ticketId, "Department assignment details");
 
     // Check if required fields are provided
@@ -33,7 +33,7 @@ const Callback = async (req, res) => {
       where: { ticketId: ticketId }, // Ensure this matches your schema
       data: { 
         departmentId: departmentRecord.id,  
-        openedBy: null,
+        openedBy: usersId,
         assignToTeam:null,
         statusId: status, // Ensure this matches your schema
       },

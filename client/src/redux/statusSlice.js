@@ -5,7 +5,7 @@ import { apiRequest } from '../lib/apiRequest';
 export const fetchStatusWiseTickets = createAsyncThunk(
   'statusTickets/fetchstatusWiseTickets',
   async ({ id, market, statusId }) => {
-    console.log(id, market, statusId);
+    // console.log(id, market, statusId,'kkkkk');
     
     // Set up the query parameters based on whether id or market is provided
     const params = id ? { id, statusId } : { market, statusId };

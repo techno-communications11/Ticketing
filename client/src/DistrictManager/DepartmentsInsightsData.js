@@ -23,6 +23,7 @@ function DepartmentsInsightsData() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const department = getDecodedToken().department;
+  const usersId=getDecodedToken().id;
 
   // Pagination and filters state
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,7 +82,7 @@ function DepartmentsInsightsData() {
         const response = await apiRequest.get(
           "/createTickets/departmentInsights",
           {
-            params: { department, statusId: currentStatusId, dm: currentDm, fullname },
+            params: { department, statusId: currentStatusId, dm: currentDm, fullname,usersId },
           }
         );
         setData(Array.isArray(response.data) ? response.data : response.data.tickets || []);

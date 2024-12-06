@@ -19,7 +19,7 @@ import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from "../universalComponents/FullNameFilter";
 import '../styles/TicketTable.css'
 
-function Ticket({ status,openedBy,fullname, }) {
+function GetAllDeptTickets() {
   const [tickets, setTickets] = useState([]);
   const dispatch = useDispatch();
   const [statusFilter, setStatusFilter] = useState("");
@@ -82,42 +82,7 @@ function Ticket({ status,openedBy,fullname, }) {
         const response = await apiRequest.get('/createTickets/getdepartmenttickets', {
           params: { ntid, statusId }
         });
-  
-        let fetchedTickets = response.data;
-        console.log(response.data)
-  
-        // Apply filters based on props
-        if (openedBy === null && status === '3' && fullname === null) {
-          // Filter tickets for DepartmentNew - tickets that are not yet opened
-          fetchedTickets = fetchedTickets.filter(ticket => 
-            ticket.openedBy === null &&
-            (ticket.status.id === '3' || ticket.status.id === '1') &&
-            ticket.assignToTeam === null &&
-            ticket.status.name !== 'completed'
-          );
-        }
-         else if (openedBy && status === '3' && fullname === null) {
-          // For DepartmentOpened - tickets opened by a specific user with status 3
-          fetchedTickets = fetchedTickets.filter(ticket =>
-             (ticket.status.id === '3'||ticket.status.id === '2') &&
-
-            ticket.openedBy === openedBy
-          );
-        } else if ( status === '4') {
-          // For DepartmentWiseTickets - tickets opened by a specific user with status 4
-          fetchedTickets = fetchedTickets.filter(ticket =>
-            ticket.status.id === '4'
-            &&
-            ticket.openedBy === openedBy
-          );
-        }  else if (fullname) {
-          fetchedTickets = fetchedTickets.filter(ticket =>
-            ticket.assignToTeam === fullname && openedBy!==null&&ticket.status.id!=='4'
-          );
-        }
-  
-        setTickets(fetchedTickets);
-  
+        setTickets(response.data);
       } catch (error) {
         console.error('Failed to fetch tickets:', error);
         toast.error('Failed to fetch tickets');
@@ -125,7 +90,7 @@ function Ticket({ status,openedBy,fullname, }) {
     };
   
     fetchUserTickets();
-  }, [statusId, openedBy, fullname]);
+  }, []);
   
 
   const handleTicket = (id) => {
@@ -218,7 +183,7 @@ function Ticket({ status,openedBy,fullname, }) {
                               ntidFilter={ntidFilter}
                               setntidFilter={setntidFilter}
                               setCurrentPage={setCurrentPage}
-                              setNtidFilterToggle={setCompletedAtToggle}
+                              setNtidFilterToggle={setNtidFilterToggle}
                             />
                           </div>
                         )}
@@ -292,4 +257,4 @@ function Ticket({ status,openedBy,fullname, }) {
   );
 }
 
-export default Ticket;
+export default GetAllDeptTickets;

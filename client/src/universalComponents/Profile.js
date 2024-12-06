@@ -23,6 +23,7 @@ export function Profile() {
       const response = await apiRequest.get("/profile/getprofiledata_token");
       if (response.status === 200) {
         setUserData(response.data);
+        console.log(response.data,'dattat')
       } else {
         throw new Error("Failed to fetch user data");
       }
