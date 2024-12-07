@@ -103,7 +103,7 @@ const createTicket = async (req, res) => {
                     market,
                     selectStore: store,
                     selectedDepartment: department,
-                    subdepartment: subdepartment,
+                    selectedSubdepartment: subdepartment,
                     ticketRegarding: ticketSubject,
                     description,
                     status: { connect: { id: '1' } },

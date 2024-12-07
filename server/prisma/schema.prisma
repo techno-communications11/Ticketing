@@ -31,7 +31,7 @@ model CreateTicket {
   selectStore        String
   ticketRegarding    String
   selectedDepartment String?
-  subdepartment String?
+  selectedSubdepartment String?
   description        String
   files              Json     // Change this to an array of strings
   assignedTo         String
