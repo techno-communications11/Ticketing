@@ -412,7 +412,7 @@ const Individualmarketss = () => {
                 "Phone Number": String(markets.phoneNumber || ""),
                 "Ticket Regarding": String(markets.ticketRegarding || ""),
                 "Selected Department": String(markets.selectedDepartment || ""),
-                "Selected Sub Department": String(markets.subdepartment || ""),
+                "Selected Sub Department": String(markets.selectedSubdepartment || ""),
                 Description: String(markets.description || ""),
                 "Created At": formatDate(markets.createdAt) || "",
               }).map(([key, value]) => (
