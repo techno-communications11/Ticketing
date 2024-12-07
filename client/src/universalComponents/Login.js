@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FaRegEye, FaEyeSlash } from 'react-icons/fa';
 import lottie from 'lottie-web';
-// import animationData from '../universalComponents/Animation.json';
+// import animationData from '../universalComponents/Animation.json'; // Uncomment if using animation
 import { apiRequest } from '../lib/apiRequest';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -17,12 +17,11 @@ export function Login() {
   const navigate = useNavigate();
 
   const Departments = [
-     'NTID Mappings', 'Trainings', 'Accessories Order',
-    'YUBI Key Setups',  'Charge Back/Commission',
-    'Inventory',  'Admin_Head', 'Maintenance_Head',
+    'NTID Mappings', 'Trainings', 'Accessories Order',
+    'YUBI Key Setups', 'Charge Back/Commission',
+    'Inventory', 'Maintenance', 'Admin',
     'Housing', 'CAM NW', 'HR Payroll',
   ];
-  const MA_rel = ['Maintenance', 'Admin'];
 
   useEffect(() => {
     const animContainer = document.getElementById('animation-container');
@@ -31,17 +30,18 @@ export function Login() {
       renderer: 'svg',
       loop: true,
       autoplay: true,
-      // animationData,
+      // animationData, // Uncomment if using animation
     });
 
     return () => animation.destroy();
   }, []);
 
   const validateInputs = (ntid, password) => {
-    // const ntidRegex = /^(?=.*[a-z])(?=.*\d)[a-zA-Z\d]{3,16}$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+={}[\]|\\:;'",.<>?/~`-])[A-Za-z\d!@#$%^&*()_+={}[\]|\\:;'",.<>?/~`-]{8,20}$/;
 
     let valid = true;
+    // Uncomment and modify if NTID validation is required
+    // const ntidRegex = /^(?=.*[a-z])(?=.*\d)[a-zA-Z\d]{3,16}$/;
     // if (!ntidRegex.test(ntid)) {
     //   setNtidError('NTID should be 3-16 characters long and contain letters and digits.');
     //   valid = false;
@@ -77,19 +77,16 @@ export function Login() {
       localStorage.setItem('token', token);
       const { department } = jwtDecode(token);
       localStorage.setItem('dept', department);
-      if (department === 'Employee') {
-        navigate('/home');
-      }else if(department==='District Manager'){
-        navigate('/dmtabs');
-      } else if (Departments?.includes(department)||MA_rel?.includes(department)) {
-        navigate('/departmenthome');
-      } else if (department === 'Market Manager') {
-        navigate('/markethome');
-      } else if (MA_rel?.includes(department)) {
-        navigate('/MAhome');
-      } else {
-        navigate('/superAdminHome');
-      }
+
+      const departmentRoutes = {
+        'Employee': '/home',
+        'District Manager': '/dmtabs',
+        'Market Manager': '/markethome',
+        'SuperAdmin': '/superAdminHome',
+      };
+
+      const route = departmentRoutes[department] || '/departmenthome';
+      navigate(route);
     } catch (error) {
       console.error('Login error:', error);
       setError(error.response?.data?.message || 'Something went wrong. Please try again later.');
@@ -109,7 +106,7 @@ export function Login() {
           </div>
 
           <div className='row justify-content-center align-items-center w-100 mt-5'>
-            <img className='col-12 col-md-6 col-lg-4 mb-4 d-none d-sm-block h-50 me-5' src='./logoT.png'></img>
+            <img className='col-12 col-md-6 col-lg-4 mb-4 d-none d-sm-block h-50 me-5' src='./logoT.png' alt="Logo" />
 
             <div className='col-12 mt-5 col-md-6 col-lg-4 d-flex justify-content-center align-items-center'>
               <form className='bg-white p-4 rounded box-shadow shadow-lg w-100' onSubmit={handleSubmit}>
@@ -123,6 +120,7 @@ export function Login() {
                     className='form-control border shadow-none'
                     ref={ntidRef}
                     aria-label='NTID'
+                    autoComplete="username" // Added autocomplete
                   />
                   {ntidError && <span className='text-danger'>{ntidError}</span>}
                 </div>
@@ -135,15 +133,24 @@ export function Login() {
                     className='form-control border-0 shadow-none flex-grow-1'
                     ref={passwordRef}
                     aria-label='Password'
+                    autoComplete="current-password" // Added autocomplete
                   />
-                  <span className='mx-2' onClick={() => setPasswordVisible(!passwordVisible)} style={{ cursor: 'pointer' }}>
+                  <span
+                    className='mx-2'
+                    onClick={() => setPasswordVisible(!passwordVisible)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     {passwordVisible ? <FaRegEye /> : <FaEyeSlash />}
                   </span>
                 </div>
                 {passwordError && <span className='text-danger'>{passwordError}</span>}
 
                 <div className='my-3'>
-                  <button type='submit' className='btn btn-primary btn-block w-100' disabled={isLoading}>
+                  <button
+                    type='submit'
+                    className='btn btn-primary btn-block w-100'
+                    disabled={isLoading}
+                  >
                     {isLoading ? 'Logging in...' : 'Login'}
                   </button>
                 </div>

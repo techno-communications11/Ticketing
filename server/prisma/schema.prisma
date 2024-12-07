@@ -15,11 +15,12 @@ model User {
   password      String
   createdAt     DateTime      @default(now())
   departmentId  String
-  subDepartment String?
+  subDepartment String?       // Make sure this is defined as String?
   department    Department    @relation(fields: [departmentId], references: [id])
   profilePhoto  ProfilePhoto?
   tickets       CreateTicket[] @relation("UserTickets")
 }
+
 
 model CreateTicket {
   ticketId           String      @id @map("_id")
