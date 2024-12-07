@@ -8,22 +8,21 @@ const login = async (req, res) => {
 
   try {
     const user = await prisma.user.findUnique({
-      where: { ntid: ntid },
+      where: { ntid },
       select: {
         id: true,
         password: true,
         ntid: true,
         fullname: true,
         DoorCode: true,
-        subDepartment:true,
-     
+        subDepartment: true, // Optional field
         department: {
           select: {
             id: true,
-            name: true 
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
     // const markets = await prisma.marketStructure.findUnique({
     //   where: { doorCode: user.DoorCode },
@@ -57,7 +56,6 @@ if (!isPasswordValid) {
         department: user.department.name,
         ntid: user.ntid,
         fullname: user.fullname,
-        // market:markets.market
         subDepartment:user.subDepartment,
       },
       process.env.JWT_SECRET_KEY,
