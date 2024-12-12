@@ -56,6 +56,7 @@ model Comment {
   comment       String
   createdBy     String
   createdAt     DateTime     @default(now())
+  commentedfiles Json?
   createTicket  CreateTicket @relation(fields: [ticketId], references: [ticketId])
   ticketId      String
 }

@@ -17,7 +17,6 @@ import { useDispatch } from "react-redux";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import getDecodedToken from "../universalComponents/decodeToken";
 
-
 const ShowdepartWiseTicks = () => {
   const dispatch = useDispatch();
   const { department, statusId } = useMyContext();
@@ -37,14 +36,19 @@ const ShowdepartWiseTicks = () => {
   const [createdAtToggle, setCreatedAtToggle] = useState(false);
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [fullnameToggle, setFullnameToggle] = useState(false);
-  const userData=getDecodedToken();
-  console.log(userData.department,"ooooooooooo")
+  const userData = getDecodedToken();
+  console.log(userData.department, "ooooooooooo");
+  console.log(userData.id, "oooooooooookkkk");
   const fetchTickets = async () => {
     try {
-      const response = await apiRequest.get("/createTickets/DepartmentWiseTickets", {
-        params: { department, statusId },
-      });
+      const response = await apiRequest.get(
+        "/createTickets/DepartmentWiseTickets",
+        {
+          params: { department, statusId },
+        }
+      );
       setTickets(response.data);
+      console.log(response.data, "kkkkkkkkkkkk");
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
     }
@@ -62,6 +66,7 @@ const ShowdepartWiseTicks = () => {
       setMarket(tickets[0]?.market?.toUpperCase() || "");
     }
   }, [tickets]);
+
   const handleFullnameFilterClick = () => {
     setFullnameToggle(!fullnameToggle);
     setStatusToggle(false);
@@ -106,24 +111,29 @@ const ShowdepartWiseTicks = () => {
     statusFilter,
     fullnameFilter
   );
+  console.log(filteredTickets, "filtered");
 
   const currentItems = useMemo(() => {
     let sortedTickets = [...filteredTickets].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
-  
+    console.log(sortedTickets, "stsss");
+    console.log(userData.id, "pppppppppp");
+
     // Apply filtering if the user's department is not 'SuperAdmin'
-    if (userData.department !== 'SuperAdmin') {
-      sortedTickets = sortedTickets.filter((tick) => tick.openedBy === userData.id);
+    if (userData.department !== "SuperAdmin") {
+      sortedTickets = sortedTickets.filter(
+        (ticket) => ticket.openedBy === userData.id
+      );
     }
-  
+
     // Paginate the sorted and filtered tickets
     return sortedTickets.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
   }, [filteredTickets, currentPage, itemsPerPage, userData]);
-  
+  console.log(currentItems, "ccyy");
 
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
@@ -132,7 +142,7 @@ const ShowdepartWiseTicks = () => {
   };
 
   return (
-    <Container className="mt-2">
+    <Container fluid className="mt-2">
       <div className="col-12 d-flex flex-column flex-md-row align-items-center mb-2">
         <h3
           className="col-12 col-md-5 mb-0 font-family text-capitalize"
@@ -151,29 +161,45 @@ const ShowdepartWiseTicks = () => {
           <Table bordered hover responsive>
             <thead>
               <tr>
-                {["SC.No", "NTID", "Full Name", "Status", "CreatedAt", "CompletedAt", "Duration", "Details"].map(
-                  (header) => (
-                    <th key={header} className="text-center" style={{ backgroundColor: "#E10174", color: "white" }}>
-                      {header}
-                      {header === "Status" && (
-                        <>
-                          <IoFilterSharp
-                            style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                            onClick={() => (!handleStatusFilterClick)}
-                          />
-                          {statusToggle && (
-                            <div className="dropdown-menu show">
-                              <StatusFilter
-                                setStatusToggle={setStatusToggle}
-                                statusFilter={statusFilter}
-                                setStatusFilter={setStatusFilter}
-                                setCurrentPage={setCurrentPage}
-                              />
-                            </div>
-                          )}
-                        </>
-                      )}
-                      {header === "Full Name" && (
+                {[
+                  "SC.No",
+                  "NTID / Email",
+                  "Full Name",
+                  "Status",
+                  "CreatedAt",
+                  ...(userData.department === "SuperAdmin"
+                    ? ["Now At", "CompletedBy"]
+                    : []),
+                  "CompletedAt",
+                  "Duration",
+                  "Details",
+                  ...(userData.department === "SuperAdmin" ? ["Delete"] : []),
+                ].map((header) => (
+                  <th
+                    key={header}
+                    className="text-center"
+                    style={{ backgroundColor: "#E10174", color: "white" }}
+                  >
+                    {header}
+                    {header === "Status" && (
+                      <>
+                        <IoFilterSharp
+                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          onClick={() => !handleStatusFilterClick}
+                        />
+                        {statusToggle && (
+                          <div className="dropdown-menu show">
+                            <StatusFilter
+                              setStatusToggle={setStatusToggle}
+                              statusFilter={statusFilter}
+                              setStatusFilter={setStatusFilter}
+                              setCurrentPage={setCurrentPage}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {header === "Full Name" && (
                       <>
                         <IoFilterSharp
                           style={{ cursor: "pointer", marginLeft: "0.5rem" }}
@@ -191,13 +217,12 @@ const ShowdepartWiseTicks = () => {
                         )}
                       </>
                     )}
-                    {header === "NTID" && (
+                    {header === "NTID / Email" && (
                       <>
                         <IoFilterSharp
                           style={{ cursor: "pointer", marginLeft: "0.5rem" }}
                           onClick={handleNTIDFilterClick}
                         />
-
                         {ntidFilterToggle && (
                           <div className="dropdown-menu show">
                             <NtidFilter
@@ -246,11 +271,11 @@ const ShowdepartWiseTicks = () => {
                         )}
                       </>
                     )}
-                    </th>
-                  )
-                )}
+                  </th>
+                ))}
               </tr>
             </thead>
+
             <tbody>
               {currentItems.length > 0 ? (
                 currentItems.map((ticket, index) => (

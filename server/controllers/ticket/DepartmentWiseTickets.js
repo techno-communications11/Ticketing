@@ -2,25 +2,26 @@ import prisma from "../lib/prisma.js";
 
 const DepartmentWiseTickets = async (req, res) => {
     const { department, statusId } = req.query;
-    // console.log(department, typeof(statusId));
 
     if (!department || statusId === undefined) {
         return res.status(400).json({ error: 'department and statusId are required' });
     }
 
     try {
+        // Find the department ID
         const departmentRecord = await prisma.department.findUnique({
             where: { name: department },
             select: { id: true }
         });
-        
+
         if (!departmentRecord) {
             return res.status(404).json({ error: 'Department not found' });
         }
-        
-        const departmentId = departmentRecord.id;
-        const statusCondition = statusId === "0" ? { in: ['1', '2', '3', '4', '5'] } : statusId
 
+        const departmentId = departmentRecord.id;
+        const statusCondition = statusId === "0" ? { in: ['1', '2', '3', '4', '5'] } : statusId;
+
+        // Fetch tickets along with `openedBy`
         const tickets = await prisma.createTicket.findMany({
             where: {
                 departmentId: departmentId,
@@ -43,10 +44,27 @@ const DepartmentWiseTickets = async (req, res) => {
                 assignToTeam: true,
             }
         });
-        
-        console.log("Fetched tickets:", tickets);
 
-        res.status(200).json(tickets);
+        // Fetch user names for `openedBy`
+        const ticketsWithOpeners = await Promise.all(
+            tickets.map(async (ticket) => {
+                if (ticket.openedBy) {
+                    const user = await prisma.user.findUnique({
+                        where: { id: ticket.openedBy },
+                        select: { fullname: true }
+                    });
+                    return {
+                        ...ticket,
+                        openedByFullName: user?.fullname || null,
+                    };
+                }
+                return { ...ticket, openedByFullName: null };
+            })
+        );
+
+        console.log("Fetched tickets with openers:", ticketsWithOpeners);
+
+        res.status(200).json(ticketsWithOpeners);
 
     } catch (error) {
         console.error('Error fetching tickets:', error.message);

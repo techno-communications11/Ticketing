@@ -228,7 +228,7 @@ const UserTable = () => {
           <Modal.Title>User Profile Image</Modal.Title>
         </Modal.Header>
         <Modal.Body className="d-flex justify-content-center">
-          <img src={selectedUser?.profileImageUrl || ''} alt="Profile" style={{ maxWidth: '100%', height: 'auto' }} />
+          <img src={selectedUser?.profileimage || ''} alt="Profile" style={{ maxWidth: '100%', height: 'auto' }} />
         </Modal.Body>
       </Modal>
       <PageCountStack

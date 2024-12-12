@@ -105,7 +105,7 @@ export function SuperAdminHome() {
         <div>
           <Row>
             <Col md={12} className="text-center mb-4">
-              <h4 className=" font-family">Ticket Status Overview</h4>
+              <h4 className=" font-family" style={{color:'#E10174'}}>Ticket Status Overview</h4>
             </Col>
           </Row>
 

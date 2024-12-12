@@ -7,6 +7,7 @@ function FileUploads({
   handleFileChange,
   handleFileUpload,
   handleFileUploadClick,
+  loading
 }) {
   return (
     <div className="row mt-5">
@@ -51,7 +52,7 @@ function FileUploads({
               className="btn btn-primary w-100"
               onClick={handleFileUpload}
             >
-              Upload
+              {loading?<div class="spinner-border text-muted"></div>:'Upload'}
             </button>
           </div>
         </div>

@@ -16,6 +16,7 @@ import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from '../universalComponents/FullNameFilter'
 import StatusFilter from '../universalComponents/StatusFilter';
+import getDecodedToken from '../universalComponents/decodeToken';
 
 const ShowTickets = () => {
   const dispatch = useDispatch();
@@ -42,6 +43,7 @@ const ShowTickets = () => {
     setCreatedAtToggle(false);
     setCompletedAtToggle(false);
   };
+  const department=getDecodedToken().department;
 
   const handleStatusFilterClick = () => {
     setStatusToggle(!statusToggle);
@@ -116,6 +118,7 @@ const ShowTickets = () => {
 
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const toggleDropdown = () => { setDropdownVisible(!dropdownVisible); };
+  console.log(currentItems,"kkkkkkkkkkkkkkkkkkkkllllllll")
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -138,7 +141,7 @@ const ShowTickets = () => {
  
 
   return (
-    <Container className="mt-2">
+    <Container fluid className="mt-2">
     <Row className="mb-1 font-family text-capitalize align-items-center" style={{ color: '#E10174' }}>
     <Col xs={12} md={6} className='d-flex gap-0'>
         <Col xs={11} md={9}>
@@ -175,13 +178,16 @@ const ShowTickets = () => {
           <tr>
                 {[
                   "SC.No",
-                  "NTID",
+                  "NTID / Email",
                   "Full Name",
                   "Status",
                   "CreatedAt",
+                  department === "SuperAdmin"&&"Now At" ,
+                  department === "SuperAdmin"&&"completedBy", 
                   "CompletedAt",
                   "Duration",
                   "Details",
+                  department === "SuperAdmin"&&"Delete" 
                 ].map((header) => (
                   <th
                     key={header}
@@ -225,7 +231,7 @@ const ShowTickets = () => {
                         )}
                       </>
                     )}
-                    {header === "NTID" && (
+                    {header === "NTID / Email" && (
                       <>
                         <IoFilterSharp
                           style={{ cursor: "pointer", marginLeft: "0.5rem" }}

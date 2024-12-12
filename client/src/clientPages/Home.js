@@ -34,6 +34,7 @@ export function Home() {
   const [searchStore, setSearchStore] = useState("");
   const [filteredStores, setFilteredStores] = useState(userData?.stores || []);
     const [selectedSubDepartment,setSelectedSubDepartment]=useState("");
+    const [loading,setLoading]=useState(false);
 
 
     const admin = [
@@ -178,6 +179,52 @@ const handleStoreSelect = (store) => {
     setSearchDepartment('');
   };
 
+  const handleNTIDBlur = async () => {
+    try {
+      const response = await apiRequest.get("/profile/getprofiledata_ntid");
+      if (response.status === 200) {
+        setUserData(response.data);
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ntid: "User not found or error fetching data",
+        }));
+      }
+    } catch (error) {
+      if (error.response) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ntid: error.response.data.message || "Invalid NTID entered",
+        }));
+      } else if (error.request) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ntid: "No response from server. Please try again later.",
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ntid: "Error occurred. Please try again.",
+        }));
+      }
+    }
+  };
+
+  const fetchTicketCounts = async () => {
+    try {
+      const response = await apiRequest.get("/createTickets/countusertickets");
+      console.log("Initial ticket count response:", response);
+      setTicketsCount(response.data);
+    } catch (error) {
+      toast.error("Failed to fetch ticket counts");
+    }
+  };
+
+  useEffect(() => {
+    handleNTIDBlur();
+    fetchTicketCounts();
+  }, [handleShow]);
+
   const validateForm = () => {
     const newErrors = {
       ntid: "",
@@ -235,7 +282,7 @@ const handleStoreSelect = (store) => {
           formData.append("fileSystemFile", file); // Appending each file individually
         });
       }
-  
+      setLoading(true);
       // console.log(formData, 'Form Data:', formData);
   
       // Send the form data using the API request
@@ -248,9 +295,8 @@ const handleStoreSelect = (store) => {
         .then((response) => {
           toast.success("Ticket created successfully!");
           handleClose();
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+          fetchTicketCounts();
+          setLoading(false);
         })
         .catch((error) => {
           if (error.response) {
@@ -277,51 +323,7 @@ const handleStoreSelect = (store) => {
   };
   
 
-  const handleNTIDBlur = async () => {
-    try {
-      const response = await apiRequest.get("/profile/getprofiledata_ntid");
-      if (response.status === 200) {
-        setUserData(response.data);
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          ntid: "User not found or error fetching data",
-        }));
-      }
-    } catch (error) {
-      if (error.response) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          ntid: error.response.data.message || "Invalid NTID entered",
-        }));
-      } else if (error.request) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          ntid: "No response from server. Please try again later.",
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          ntid: "Error occurred. Please try again.",
-        }));
-      }
-    }
-  };
-
-  const fetchTicketCounts = async () => {
-    try {
-      const response = await apiRequest.get("/createTickets/countusertickets");
-      console.log("Initial ticket count response:", response);
-      setTicketsCount(response.data);
-    } catch (error) {
-      toast.error("Failed to fetch ticket counts");
-    }
-  };
-
-  useEffect(() => {
-    handleNTIDBlur();
-    fetchTicketCounts();
-  }, [handleShow]);
+  
 
   useEffect(() => {
     const objTotal = document.getElementById("Totalvalue");
@@ -689,8 +691,8 @@ const handleStoreSelect = (store) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={handleSubmit}>
-            Submit
+          <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+           {loading?<div class="spinner-border text-muted"></div>: "Submit"}
           </Button>
         </Modal.Footer>
       </Modal>

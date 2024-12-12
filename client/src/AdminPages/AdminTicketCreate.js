@@ -34,8 +34,8 @@ export function AdminTicketCreate() {
   const [filteredStores, setFilteredStores] = useState(userData?.stores || []);
   const [Stores, setStores] = useState([]);
   const [selectedMarket, setSelectedMarket] = useState("");
-  const [AssignTo, setAssignTo] = useState("");  // Default to empty string if no department is selected
- const [selectedSubDepartment,setSelectedSubDepartment]=useState("");
+  const [AssignTo, setAssignTo] = useState(""); // Default to empty string if no department is selected
+  const [selectedSubDepartment, setSelectedSubDepartment] = useState("");
 
   const markets = [
     { _id: "1", market: "arizona" },
@@ -81,13 +81,14 @@ export function AdminTicketCreate() {
     "Phone Line",
     "GPS Tracker",
     "Ordering",
-    "Other"
+    "Other",
   ];
-  
+
   const [searchDepartment, setSearchDepartment] = useState("");
   const [searchSubDepartment, setSearchSubDepartment] = useState("");
   const [filteredDepartments, setFilteredDepartments] = useState(Departments);
   const [filteredSubDepartments, setFilteredSubDepartments] = useState(admin);
+  const [loading, setLoading] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [errors, setErrors] = useState({
@@ -121,7 +122,7 @@ export function AdminTicketCreate() {
     });
     setSelectedStore("Select Store");
     setSelectedDepartment("select Department");
-    setSelectedSubDepartment("select sub department")
+    setSelectedSubDepartment("select sub department");
   };
 
   const handleShow = useCallback(() => {
@@ -194,9 +195,6 @@ export function AdminTicketCreate() {
     setSearchDepartment(""); // Clear search field (if needed)
     setSearchSubDepartment("");
   };
-  
-  
-
 
   const validateForm = () => {
     const newErrors = {
@@ -215,7 +213,7 @@ export function AdminTicketCreate() {
     const ticketSubject = ticketSubjectRef.current.value;
     const description = descriptionRef.current.value;
     const market = selectedMarket;
-    const departmentId = AssignTo;  // departmentId from state
+    const departmentId = AssignTo; // departmentId from state
     const fullname = fullnameRef.current.value;
 
     if (!ntid) newErrors.ntid = "NTID is required";
@@ -226,106 +224,112 @@ export function AdminTicketCreate() {
     if (!description) newErrors.description = "Description is required";
     if (!market) newErrors.market = "Select market";
     if (!fullname) newErrors.fullname = "No fullname";
-    if (!departmentId) newErrors.departmentId = "Department not assigned";  // Ensure departmentId is selected
+    if (!departmentId) newErrors.departmentId = "Department not assigned"; // Ensure departmentId is selected
     if (selectedDepartment === "select Department")
       newErrors.ticketDepartment = "No ticket department";
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => error === "");
-};
+  };
 
+  const handleSubmit = () => {
+    if (validateForm()) {
+      const formData = new FormData();
 
-const handleSubmit = () => {
-  if (validateForm()) {
-    const formData = new FormData();
+      // Log the values before appending to ensure they're correct
+      console.log(ntidRef.current.value, "NTID value");
+      formData.append("ntid", ntidRef.current.value);
 
-    // Log the values before appending to ensure they're correct
-    console.log(ntidRef.current.value, "NTID value");
-    formData.append("ntid", ntidRef.current.value);
+      console.log(phoneRef.current.value, "Phone value");
+      formData.append(
+        "phone",
+        phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10)
+      );
 
-    console.log(phoneRef.current.value, "Phone value");
-    formData.append("phone", phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10));
+      console.log(selectedStore, "Store value");
+      formData.append("store", selectedStore);
 
-    console.log(selectedStore, "Store value");
-    formData.append("store", selectedStore);
+      console.log(ticketSubjectRef.current.value, "Ticket Subject value");
+      formData.append("ticketSubject", ticketSubjectRef.current.value);
 
-    console.log(ticketSubjectRef.current.value, "Ticket Subject value");
-    formData.append("ticketSubject", ticketSubjectRef.current.value);
+      console.log(descriptionRef.current.value, "Description value");
+      formData.append("description", descriptionRef.current.value);
 
-    console.log(descriptionRef.current.value, "Description value");
-    formData.append("description", descriptionRef.current.value);
+      console.log(selectedMarket, "Market value");
+      formData.append("market", selectedMarket);
 
-    console.log(selectedMarket, "Market value");
-    formData.append("market", selectedMarket);
+      console.log(fullnameRef.current.value, "Fullname value");
+      formData.append("fullname", fullnameRef.current.value);
 
-    console.log(fullnameRef.current.value, "Fullname value");
-    formData.append("fullname", fullnameRef.current.value);
+      console.log(selectedDepartment, "Selected Department value");
+      formData.append("department", selectedDepartment);
 
-    console.log(selectedDepartment, "Selected Department value");
-    formData.append("department", selectedDepartment);
-    
-    console.log(selectedSubDepartment, "Selected Sub Department value");
-    formData.append("subdepartment", selectedSubDepartment);
+      console.log(selectedSubDepartment, "Selected Sub Department value");
+      formData.append("subdepartment", selectedSubDepartment);
 
-    console.log(AssignTo, "AssignTo value before submitting");
-    formData.append('departmentId', AssignTo);
+      console.log(AssignTo, "AssignTo value before submitting");
+      formData.append("departmentId", AssignTo);
 
-    // Append files if any
-    if (cameraFileName && cameraFileName.length > 0) {
-      cameraFileName.forEach((file) => {
-        formData.append("cameraFile", file);
-      });
+      // Append files if any
+      if (cameraFileName && cameraFileName.length > 0) {
+        cameraFileName.forEach((file) => {
+          formData.append("cameraFile", file);
+        });
+      }
+
+      if (fileSystemFileName && fileSystemFileName.length > 0) {
+        fileSystemFileName.forEach((file) => {
+          formData.append("fileSystemFile", file);
+        });
+      }
+
+      // Log the formData content
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
+      setLoading(true);
+      // Send form data via API request
+      apiRequest
+        .post("/createTickets/uploadTicket", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          toast.success("Ticket created successfully!");
+          handleClose();
+          setLoading(false); // Set loading state to false once the action completes.
+
+          // Optional: You can trigger a state change or useEffect to update the UI instead of reloading.
+          setTimeout(() => {
+            // Assuming you have a state to trigger UI updates:
+            fetchTicketCounts();
+            // setTickets(newTickets); or setSomeState(response);
+          }, 2000);
+        })
+
+        .catch((error) => {
+          if (error.response) {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              ntid: error.response.data.message,
+            }));
+            toast.error(error.response.data.message);
+          } else if (error.request) {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              ntid: "No response from server. Please try again later.",
+            }));
+            toast.error("No response from server. Please try again later.");
+          } else {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              ntid: "Error occurred. Please try again.",
+            }));
+            toast.error("Error occurred. Please try again.");
+          }
+        });
     }
-
-    if (fileSystemFileName && fileSystemFileName.length > 0) {
-      fileSystemFileName.forEach((file) => {
-        formData.append("fileSystemFile", file);
-      });
-    }
-
-    // Log the formData content
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
-
-    // Send form data via API request
-    apiRequest
-      .post("/createTickets/uploadTicket", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        toast.success("Ticket created successfully!");
-        handleClose();
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-      })
-      .catch((error) => {
-        if (error.response) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            ntid: error.response.data.message,
-          }));
-          toast.error(error.response.data.message);
-        } else if (error.request) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            ntid: "No response from server. Please try again later.",
-          }));
-          toast.error("No response from server. Please try again later.");
-        } else {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            ntid: "Error occurred. Please try again.",
-          }));
-          toast.error("Error occurred. Please try again.");
-        }
-      });
-  }
-};
-
-
+  };
 
   const handleNTIDBlur = async () => {
     try {
@@ -379,19 +383,17 @@ const handleSubmit = () => {
         console.log(selectedMarket, "sel");
 
         const response = await apiRequest.get(`/createTickets/fetchstores`, {
-            params: { selectedMarket },
-          });
-          const storeNames = response.data.map((store) => store.storeName);
-          console.log("Fetched stores:", storeNames);
-          setStores(storeNames)
+          params: { selectedMarket },
+        });
+        const storeNames = response.data.map((store) => store.storeName);
+        console.log("Fetched stores:", storeNames);
+        setStores(storeNames);
       } catch (error) {
         console.log("Failed to fetch  Stores");
       }
     };
     fetchStores();
   }, [selectedMarket]);
-  
-  
 
   useEffect(() => {
     const objTotal = document.getElementById("Totalvalue");
@@ -573,7 +575,7 @@ const handleSubmit = () => {
                   <Dropdown.Menu className="w-100  fw-medium fw-medium text-capitalize">
                     {markets.map(({ _id, market }) => (
                       <Dropdown.Item
-                      className="fw-medium"
+                        className="fw-medium"
                         key={_id}
                         onClick={() => setSelectedMarket(market)}
                       >
@@ -585,44 +587,48 @@ const handleSubmit = () => {
               </div>
 
               <Dropdown className="flex-grow-1" id="dropdown-store">
-      <Dropdown.Toggle
-        className="text-start bg-white fw-medium fw-medium text-secondary border shadow-none w-100"
-        id="dropdown-basic"
-      >
-        {selectedStore || "Select a Store"} {/* Placeholder if no store is selected */}
-      </Dropdown.Toggle>
+                <Dropdown.Toggle
+                  className="text-start bg-white fw-medium fw-medium text-secondary border shadow-none w-100"
+                  id="dropdown-basic"
+                >
+                  {selectedStore || "Select a Store"}{" "}
+                  {/* Placeholder if no store is selected */}
+                </Dropdown.Toggle>
 
-      <Dropdown.Menu
-        style={{ height: "42vh", overflowY: "auto" }}
-        className="col-12 col-md-12"
-      >
-        {/* Search Input */}
-        <input
-          type="text"
-          value={searchStore}
-          onChange={(e) => setSearchStore(e.target.value)}
-          placeholder="Search Stores..."
-          className="w-75 form-control border  fw-medium text-muted fw-medium shadow-none text-center mb-2 ms-2"
-        />
+                <Dropdown.Menu
+                  style={{ height: "42vh", overflowY: "auto" }}
+                  className="col-12 col-md-12"
+                >
+                  {/* Search Input */}
+                  <input
+                    type="text"
+                    value={searchStore}
+                    onChange={(e) => setSearchStore(e.target.value)}
+                    placeholder="Search Stores..."
+                    className="w-75 form-control border  fw-medium text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                  />
 
-        {/* Store Items */}
-        {filteredStores?.length > 0 ? (
-          filteredStores.sort().map((store, index) => (
-            <Dropdown.Item
-              key={index}
-              onClick={() => handleStoreSelect(store)}
-              className="shadow-lg  fw-medium text-primary text-start"
-            >
-              {store}
-            </Dropdown.Item>
-          ))
-        ) : (
-          <Dropdown.Item disabled className="text-muted text-start fw-medium">
-            No stores found
-          </Dropdown.Item>
-        )}
-      </Dropdown.Menu>
-    </Dropdown>
+                  {/* Store Items */}
+                  {filteredStores?.length > 0 ? (
+                    filteredStores.sort().map((store, index) => (
+                      <Dropdown.Item
+                        key={index}
+                        onClick={() => handleStoreSelect(store)}
+                        className="shadow-lg  fw-medium text-primary text-start"
+                      >
+                        {store}
+                      </Dropdown.Item>
+                    ))
+                  ) : (
+                    <Dropdown.Item
+                      disabled
+                      className="text-muted text-start fw-medium"
+                    >
+                      No stores found
+                    </Dropdown.Item>
+                  )}
+                </Dropdown.Menu>
+              </Dropdown>
             </Form.Group>
 
             <Form.Group controlId="ticketDepartment">
@@ -661,43 +667,51 @@ const handleSubmit = () => {
                 </Dropdown.Menu>
               </Dropdown>
               {selectedDepartment === "Admin" && (
-        <div>
-          <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
-                <Dropdown.Toggle
-                  className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
-                  id="dropdown-basic"
-                >
-                  {selectedSubDepartment || "Select Sub Department"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu
-                  style={{ height: "42vh", overflow: "scroll" }}
-                  className="col-12 col-md-12"
-                >
-                  <input
-                    onChange={(e) => setSearchSubDepartment(e.target.value)}
-                    placeholder="Search Sub Departments..."
-                    className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
-                  />
-                  {filteredSubDepartments?.length > 0 ? (
-                    filteredSubDepartments.map((department, index) => (
-                      <Dropdown.Item
-                        key={index}
-                        onClick={() => handleSubDepartmentSelect(department)}
-                        className="shadow-lg fw-medium  fw-medium text-primary text-start"
-                        isInvalid={!!errors.department}
-                      >
-                        {department}
-                      </Dropdown.Item>
-                    ))
-                  ) : (
-                    <Dropdown.Item disabled className="text-muted text-start">
-                      No departments found
-                    </Dropdown.Item>
-                  )}
-                </Dropdown.Menu>
-              </Dropdown>
-        </div>
-      )}
+                <div>
+                  <Dropdown
+                    className="flex-grow-1 mb-1"
+                    id="dropdown-department"
+                  >
+                    <Dropdown.Toggle
+                      className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
+                      id="dropdown-basic"
+                    >
+                      {selectedSubDepartment || "Select Sub Department"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu
+                      style={{ height: "42vh", overflow: "scroll" }}
+                      className="col-12 col-md-12"
+                    >
+                      <input
+                        onChange={(e) => setSearchSubDepartment(e.target.value)}
+                        placeholder="Search Sub Departments..."
+                        className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                      />
+                      {filteredSubDepartments?.length > 0 ? (
+                        filteredSubDepartments.map((department, index) => (
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() =>
+                              handleSubDepartmentSelect(department)
+                            }
+                            className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                            isInvalid={!!errors.department}
+                          >
+                            {department}
+                          </Dropdown.Item>
+                        ))
+                      ) : (
+                        <Dropdown.Item
+                          disabled
+                          className="text-muted text-start"
+                        >
+                          No departments found
+                        </Dropdown.Item>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              )}
             </Form.Group>
             <Form.Group
               className="mb-1 d-flex align-items-center "
@@ -793,43 +807,48 @@ const handleSubmit = () => {
         </Modal.Body>
         <Modal.Footer>
           <div className="mt-2">
-        <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
-                <Dropdown.Toggle
-                  className={`text-center fw-medium  fw-medium text-secondary border-0 bg-primary text-white shadow-none w-100`}
-                  id="dropdown-basic"
-                >
-                  {AssignTo || "Assign To"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu
-                  style={{ height: "42vh", overflow: "scroll" ,width:'20rem'}}
-                  className="col-12 col-md-12"
-                >
-                  <input
-                    onChange={(e) => setSearchDepartment(e.target.value)}
-                    placeholder="Search Departments..."
-                    className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
-                  />
-                  {filteredDepartments?.length > 0 ? (
-                    filteredDepartments.map((department, index) => (
-                      <Dropdown.Item
-                        key={index}
-                        onClick={() => handleAssignToSelect(department)}
-                        className="shadow-lg fw-medium  fw-medium text-primary text-start"
-                        isInvalid={!!errors.department}
-                      >
-                        {department}
-                      </Dropdown.Item>
-                    ))
-                  ) : (
-                    <Dropdown.Item disabled className="text-muted text-start">
-                      No departments found
+            <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
+              <Dropdown.Toggle
+                className={`text-center fw-medium  fw-medium text-secondary border-0 bg-primary text-white shadow-none w-100`}
+                id="dropdown-basic"
+              >
+                {AssignTo || "Assign To"}
+              </Dropdown.Toggle>
+              <Dropdown.Menu
+                style={{ height: "42vh", overflow: "scroll", width: "20rem" }}
+                className="col-12 col-md-12"
+              >
+                <input
+                  onChange={(e) => setSearchDepartment(e.target.value)}
+                  placeholder="Search Departments..."
+                  className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                />
+                {filteredDepartments?.length > 0 ? (
+                  filteredDepartments.map((department, index) => (
+                    <Dropdown.Item
+                      key={index}
+                      onClick={() => handleAssignToSelect(department)}
+                      className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                      isInvalid={!!errors.department}
+                    >
+                      {department}
                     </Dropdown.Item>
-                  )}
-                </Dropdown.Menu>
-              </Dropdown>
-              </div>
-              <Button onClick={handleSubmit}>Submit</Button>
-          
+                  ))
+                ) : (
+                  <Dropdown.Item disabled className="text-muted text-start">
+                    No departments found
+                  </Dropdown.Item>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+          <Button onClick={handleSubmit}>
+            {loading ? (
+              <div class="spinner-border text-warning " disabled={loading}></div>
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </Modal.Footer>
       </Modal>
       <div className="container">
@@ -853,7 +872,10 @@ const handleSubmit = () => {
                 />
               </div>
               <div className="d-flex justify-content-center">
-                <button className="btn btn-primary w-auto fw-medium" onClick={handleShow}>
+                <button
+                  className="btn btn-primary w-auto fw-medium"
+                  onClick={handleShow}
+                >
                   Open A Ticket
                 </button>
               </div>

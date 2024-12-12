@@ -68,7 +68,7 @@ export function Profile() {
       });
       toast.success("Profile photo added successfully!");
       setTimeout(() => {
-        window.location.reload();
+        fetchProfile();
       }, [2000]);
     } catch (error) {
       console.error("Error uploading file:", error);

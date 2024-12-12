@@ -18,12 +18,7 @@ const GetDepartmentTicketsCounts = async (req, res) => {
       where: { name: department },
       select: { id: true },
     });
-    // console.log(departmentId,'deprttttttttttttttt')
-    const username = await prisma.user.findUnique({
-      where: { id: usersId },
-      select: { fullname: true },
-    });
-    // console.log(username, "usernmaeeeeeeeeee");
+   
 
     if (!departmentId.length) {
       return res.status(404).json("Department not found");
@@ -36,9 +31,7 @@ const GetDepartmentTicketsCounts = async (req, res) => {
           {
             openedBy: usersId, // Match tickets opened by the user
           },
-          {
-            assignToTeam: username.fullname, // Match tickets assigned to the user
-          },
+          
         ],
       },
       select: {

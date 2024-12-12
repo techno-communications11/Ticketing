@@ -116,7 +116,7 @@ export function Login() {
                   <input
                     id='ntid'
                     type='text'
-                    placeholder='Enter NTID'
+                    placeholder='Enter NTID / Email'
                     className='form-control border shadow-none'
                     ref={ntidRef}
                     aria-label='NTID'

@@ -18,7 +18,16 @@ const s3 = new S3Client({
 const imageUpload = multer({
     storage: multer.memoryStorage(),
     fileFilter: (req, file, cb) => {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        const allowedTypes = [
+            'image/jpeg', 'image/png', 'image/gif', 'image/webp', // Image types
+            'application/pdf', // PDF
+            'text/plain', // Text files
+            'application/msword', // Word document
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // Word document (.docx)
+            'application/vnd.ms-excel', // Excel spreadsheet
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // Excel spreadsheet (.xlsx)
+            'text/csv'
+        ];
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
@@ -27,25 +36,27 @@ const imageUpload = multer({
     },
 });
 
-
-
 // Function to upload image to S3 with resizing
 export const uploadToS3 = async (file) => {
     const fileKey = `profilePhotos/${Date.now()}-${file.originalname}`; // Store only the relative path
 
     try {
-        // Resize the image before uploading to S3
-        const resizedBuffer = await sharp(file.buffer)
-            .resize(500, 500, { 
-                fit: sharp.fit.cover,
-                position: sharp.strategy.entropy,
-            })
-            .toBuffer();
+        let fileBuffer = file.buffer;
+
+        // Resize the image before uploading to S3 if it's an image
+        if (['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.mimetype)) {
+            fileBuffer = await sharp(file.buffer)
+                .resize(500, 500, { 
+                    fit: sharp.fit.cover,
+                    position: sharp.strategy.entropy,
+                })
+                .toBuffer();
+        }
 
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: fileKey, // Use the relative file path
-            Body: resizedBuffer, 
+            Body: fileBuffer,  // Use fileBuffer here
             ContentType: file.mimetype,
         };
 
@@ -58,6 +69,5 @@ export const uploadToS3 = async (file) => {
         throw new Error('Failed to upload image to S3: ' + err.message);
     }
 };
-    
 
 export default imageUpload;

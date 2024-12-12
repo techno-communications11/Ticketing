@@ -9,6 +9,17 @@ import { fetchStatusWiseTickets } from "../redux/statusSlice";
 import { useLocation } from "react-router-dom";
 import "../styles/TicketTable.css";
 import { useNavigate } from "react-router-dom";
+import { FaTicketAlt } from "react-icons/fa";
+import { MdInsights } from "react-icons/md";
+import { MdStorefront } from "react-icons/md";
+import { FaUsers } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
+import { TbEyeCheck } from "react-icons/tb";
+import { MdAssignmentTurnedIn } from "react-icons/md";
+import { MdOutlineDoneAll } from "react-icons/md";
+import { GoIssueReopened } from "react-icons/go";
+import { RiTeamLine } from "react-icons/ri";
+import { VscGitPullRequestNewChanges } from "react-icons/vsc";
 
 export function NavbarClient() {
   const dispatch = useDispatch();
@@ -167,7 +178,7 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                        Viewed
+                      <TbEyeCheck  className=" text-primary fs-5"/>  Viewed
                       </Nav.Link>
                     )}
                     {department !== "District Manager" && (
@@ -180,7 +191,7 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                        Viewed
+                      <TbEyeCheck  className=" text-primary fs-5"/>  Viewed
                       </Nav.Link>
                     )}
                     {!isDepartments && (
@@ -197,7 +208,7 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                        Assigned
+                       <MdAssignmentTurnedIn className="text-warning fs-5 "/> Assigned
                       </Nav.Link>
                     )}
 
@@ -210,7 +221,7 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                      create Ticket
+                     <FaTicketAlt className="text-danger fs-5"/> create Ticket
                     </Nav.Link>}
 
                     <Nav.Link
@@ -229,7 +240,7 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                      Completed
+                    <MdOutlineDoneAll className="text-success fs-5"/>  Completed
                     </Nav.Link>
 
                     {!isDepartments && (
@@ -246,7 +257,7 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                        ReopenQuest
+                      <VscGitPullRequestNewChanges className="fs-5 fw-bolder text-danger"/>  ReopenQuest
                       </Nav.Link>
                     )}
 
@@ -262,7 +273,7 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                        reopened
+                      <GoIssueReopened className="text-primary fs-5 fw-bolder"/>  reopened
                       </Nav.Link>
                     )}
                     {isDepartments && department !== "District Manager" && (
@@ -275,7 +286,7 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                        TeamTickets
+                       <RiTeamLine className="fs-5 text-warning  fw-bolder"/> TeamTickets
                       </Nav.Link>
                     )}
                   </div>
@@ -296,7 +307,7 @@ export function NavbarClient() {
                         : "text-dark"
                     }`}
                   >
-                    Insights
+                   <MdInsights className="text-primary fs-3"/> Insights
                   </Nav.Link>
                 )}
                 {department === "SuperAdmin" && (
@@ -310,7 +321,7 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                      create Ticket
+                    <FaTicketAlt className="text-danger fs-4"/>  create Ticket
                     </Nav.Link>
 
                     <Nav.Link
@@ -322,7 +333,7 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                      StoreEnroll
+                    <MdStorefront className=" text-warning fs-4"/>  StoreEnroll
                     </Nav.Link>
                     <Nav.Link
                       as={Link}
@@ -333,7 +344,7 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                      UserEnroll
+                    <FaUser className=" text-success fs-6 fw-bolder"/>  UserEnroll
                     </Nav.Link>
                     <Nav.Link
                       as={Link}
@@ -344,7 +355,7 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                      Users
+                     <FaUsers className="text-success fs-5"/> Users
                     </Nav.Link>
                   </Nav>
                 )}

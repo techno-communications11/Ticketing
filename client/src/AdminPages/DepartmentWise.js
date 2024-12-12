@@ -103,7 +103,7 @@ const DepartmentWise = () => {
   };
 
   return (
-    <Container>
+    <Container >
       <Row>
         {loading ? (
           <div className="loader"></div>

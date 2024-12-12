@@ -15,6 +15,7 @@ import NtidFilter from "../universalComponents/NtidFilter";
 import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from "../universalComponents/FullNameFilter";
+import getDecodedToken from "../universalComponents/decodeToken";
 
 function TotalUserTickets() {
   const dispatch = useDispatch();
@@ -74,7 +75,7 @@ function TotalUserTickets() {
     setCreatedAtToggle(false);
   };
 
-  useEffect(() => {
+  
     const fetchUserTickets = async () => {
       setLoading(true);
       const params = new URLSearchParams(); // Create a new URLSearchParams object
@@ -113,7 +114,7 @@ function TotalUserTickets() {
         setLoading(false);
       }
     };
-
+  useEffect(() => {
     // Only call fetchUserTickets if adminntid is not null
     fetchUserTickets();
   }, [statusId, adminntid]);
@@ -126,7 +127,7 @@ function TotalUserTickets() {
     statusFilter || "",
     fullnameFilter || ""
   );
-
+const department=getDecodedToken().department;
  
     
 
@@ -156,19 +157,22 @@ function TotalUserTickets() {
       </h2>
 
       {authenticated &&  (
-        <div className="table-responsive container" style={{ zIndex: 1 }}>
+        <div className="table-responsive " style={{ zIndex: 1 }}>
           <table className="table table-bordered table-hover">
             <thead>
               <tr>
                 {[
                   "SC.No",
-                  "NTID",
+                  "NTID / Email",
                   "Full Name",
                   "Status",
                   "CreatedAt",
+                  "Now At",
+                  "CompletedBy",
                   "CompletedAt",
                   "Duration",
                   "Details",
+                  department === "SuperAdmin"&&"Delete" 
                 ].map((header) => (
                   <th
                     key={header}
@@ -274,6 +278,7 @@ function TotalUserTickets() {
             <tbody>
               {currentItems.length > 0 ?currentItems.map((ticket, index) => (
                 <TicketBody
+                fetchUserTickets={fetchUserTickets} 
                   key={ticket.id}
                   ticket={ticket}
                   index={index}

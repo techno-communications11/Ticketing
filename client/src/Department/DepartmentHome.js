@@ -15,18 +15,22 @@ function DepartmentHome() {
   const navigate = useNavigate();
   const { setStatusId, setDepartment } = useMyContext();
   const usersId = getDecodedToken().id;
-  // console.log(usersId, "deep");
+  console.log(usersId, "deep");
 
   useEffect(() => {
     const getStatusOfDepartment = async () => {
-      // console.log(department,"ppppppppp")
       setLoading(true);
       try {
         const response = await apiRequest.get(
           `/createTickets/getDepartmentStats/${department}/${usersId}`
         );
-
+        console.log(response,'lllllllllllllllllll')
+  
         if (response.status === 200) {
+          // Filter the data based on openedBy
+          // const filteredData = response.data.filter((ticket) => ticket.openedBy === usersId);
+  
+          // Map the filtered data into key-value pairs
           setCounts(
             Object.entries(response.data).map(([key, value]) => ({
               key,
@@ -40,12 +44,12 @@ function DepartmentHome() {
         setLoading(false);
       }
     };
-    // console.log(counts, "counntsss");
-
+  
     if (department) {
       getStatusOfDepartment();
     }
-  }, [department]);
+  }, [department, usersId]);
+  
 
   // Filter out the "total" entry from the counts array
   const filteredCounts = counts.filter((count) => count.key !== "Total");

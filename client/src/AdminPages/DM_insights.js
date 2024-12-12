@@ -88,7 +88,7 @@ function DM_insights() {
 
   return (
     <div className="container-fluid">
-      <h3 className="text-center">DM's Tickets Insights</h3>
+      <h3 className="text-center" style={{color:'#E10174'}}>DM's Tickets Insights</h3>
       <button
         onClick={downloadExcel}
         className="btn btn-outline-success fw-medium"
