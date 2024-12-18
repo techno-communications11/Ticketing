@@ -129,7 +129,7 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
         <Table striped bordered hover>
           <thead className="sticky-thead">
             <tr>
-              {["SC.No", "NTID", "Full Name", "Status", "CreatedAt", "CompletedAt", "Duration", "Details"].map((header) => (
+              {["SC.No", "Email", "Full Name", "Status", "CreatedAt", "CompletedAt", "Duration", "Details"].map((header) => (
                 <th key={header} className="text-center" style={{ backgroundColor: "#E10174", color: "white" }}>
                   {header}
                   {header === "Status" && (

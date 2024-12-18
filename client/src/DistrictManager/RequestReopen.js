@@ -69,6 +69,7 @@ function RequestReopen() {
   // Fetch tickets
   useEffect(() => {
     const ntid = getDecodedToken()?.ntid;
+    const department=getDecodedToken().department
     const fetchTickets = async () => {
       try {
         const response = await apiRequest.get(
@@ -77,8 +78,9 @@ function RequestReopen() {
             params: { ntid },
           }
         );
+          
         setTickets(response.data);
-        console.log(response.data, "req,re");
+        // console.log(response.data, "req,re");
       } catch (error) {
         console.error("Error fetching tickets:", error);
       }
@@ -95,10 +97,10 @@ function RequestReopen() {
     dispatch(fetchIndividualTickets(id));
   };
   // Toggle Handlers
-  const handleToggle = (toggleSetter, ...otherToggles) => {
-    toggleSetter((prev) => !prev);
-    otherToggles.forEach((toggle) => toggle(false));
-  };
+  // const handleToggle = (toggleSetter, ...otherToggles) => {
+  //   toggleSetter((prev) => !prev);
+  //   otherToggles.forEach((toggle) => toggle(false));
+  // };
 
   const filteredTickets = FilterLogic(
     tickets,
@@ -121,7 +123,7 @@ function RequestReopen() {
         <tr>
                 {[
                   "SC.No",
-                  "NTID",
+                  "Email",
                   "Full Name",
                   "Status",
                   "CreatedAt",

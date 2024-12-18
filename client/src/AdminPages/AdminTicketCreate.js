@@ -163,8 +163,6 @@ export function AdminTicketCreate() {
       selectedFiles.length +
       (cameraFileName?.length || 0) +
       (fileSystemFileName?.length || 0);
-
-    // Only proceed if the total selected files are 5 or fewer
     if (totalFiles <= 5) {
       setFileSystemFileName((prev) => [...(prev || []), ...selectedFiles]);
     } else {
@@ -191,181 +189,152 @@ export function AdminTicketCreate() {
   const handleAssignToSelect = (department) => {
     console.log(department, "department selected");
     setAssignTo(department); // Set department to AssignTo state
-    // handleSubmit(); // Trigger form submission
     setSearchDepartment(""); // Clear search field (if needed)
     setSearchSubDepartment("");
   };
 
   const validateForm = () => {
-    const newErrors = {
-      ntid: "",
-      fullname: "",
-      phone: "",
-      store: "",
-      ticketSubject: "",
-      description: "",
-      departmentId: "",
-      market: "",
-      department: "",
-    };
-    const ntid = ntidRef.current.value;
-    const phone = phoneRef.current.value;
-    const ticketSubject = ticketSubjectRef.current.value;
-    const description = descriptionRef.current.value;
-    const market = selectedMarket;
-    const departmentId = AssignTo; // departmentId from state
-    const fullname = fullnameRef.current.value;
-
-    if (!ntid) newErrors.ntid = "NTID is required";
-    if (!phone) newErrors.phone = "Phone number is required";
-    if (selectedStore === "Select Store")
-      newErrors.store = "Store selection is required";
-    if (!ticketSubject) newErrors.ticketSubject = "Ticket subject is required";
-    if (!description) newErrors.description = "Description is required";
-    if (!market) newErrors.market = "Select market";
-    if (!fullname) newErrors.fullname = "No fullname";
-    if (!departmentId) newErrors.departmentId = "Department not assigned"; // Ensure departmentId is selected
-    if (selectedDepartment === "select Department")
-      newErrors.ticketDepartment = "No ticket department";
+    const newErrors = {};
+  
+    // Collect all the fields to validate
+    const fields = [
+      { name: 'ntid', value: ntidRef.current.value, errorMessage: "NTID is required" },
+      { name: 'phone', value: phoneRef.current.value, errorMessage: "Phone number is required" },
+      { name: 'store', value: selectedStore, errorMessage: "Store selection is required", invalidValue: "Select Store" },
+      { name: 'ticketSubject', value: ticketSubjectRef.current.value, errorMessage: "Ticket subject is required" },
+      { name: 'description', value: descriptionRef.current.value, errorMessage: "Description is required" },
+      { name: 'market', value: selectedMarket, errorMessage: "Select market" },
+      { name: 'fullname', value: fullnameRef.current.value, errorMessage: "No fullname" },
+      { name: 'departmentId', value: AssignTo, errorMessage: "Department not assigned" },
+      { name: 'ticketDepartment', value: selectedDepartment, errorMessage: "No ticket department", invalidValue: "select Department" },
+    ];
+  
+    // Loop through each field and check its validity
+    fields.forEach(({ name, value, errorMessage, invalidValue }) => {
+      if (!value || (invalidValue && value === invalidValue)) {
+        newErrors[name] = errorMessage;
+      }
+    });
+  
+    // Set the error state only once
     setErrors(newErrors);
-    return Object.values(newErrors).every((error) => error === "");
+  
+    // Return true if no errors are present, false otherwise
+    return Object.keys(newErrors).length === 0;
   };
+  
 
   const handleSubmit = () => {
-    if (validateForm()) {
-      const formData = new FormData();
-
-      // Log the values before appending to ensure they're correct
-      console.log(ntidRef.current.value, "NTID value");
-      formData.append("ntid", ntidRef.current.value);
-
-      console.log(phoneRef.current.value, "Phone value");
-      formData.append(
-        "phone",
-        phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10)
-      );
-
-      console.log(selectedStore, "Store value");
-      formData.append("store", selectedStore);
-
-      console.log(ticketSubjectRef.current.value, "Ticket Subject value");
-      formData.append("ticketSubject", ticketSubjectRef.current.value);
-
-      console.log(descriptionRef.current.value, "Description value");
-      formData.append("description", descriptionRef.current.value);
-
-      console.log(selectedMarket, "Market value");
-      formData.append("market", selectedMarket);
-
-      console.log(fullnameRef.current.value, "Fullname value");
-      formData.append("fullname", fullnameRef.current.value);
-
-      console.log(selectedDepartment, "Selected Department value");
-      formData.append("department", selectedDepartment);
-
-      console.log(selectedSubDepartment, "Selected Sub Department value");
-      formData.append("subdepartment", selectedSubDepartment);
-
-      console.log(AssignTo, "AssignTo value before submitting");
-      formData.append("departmentId", AssignTo);
-
-      // Append files if any
-      if (cameraFileName && cameraFileName.length > 0) {
-        cameraFileName.forEach((file) => {
-          formData.append("cameraFile", file);
+    if (!validateForm()) return;
+  
+    const formData = new FormData();
+  
+    // Define all the fields to be appended
+    const fields = [
+      { name: 'ntid', value: ntidRef.current.value },
+      { name: 'phone', value: phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10) },
+      { name: 'store', value: selectedStore },
+      { name: 'ticketSubject', value: ticketSubjectRef.current.value },
+      { name: 'description', value: descriptionRef.current.value },
+      { name: 'market', value: selectedMarket },
+      { name: 'fullname', value: fullnameRef.current.value },
+      { name: 'department', value: selectedDepartment },
+      { name: 'subdepartment', value: selectedSubDepartment },
+      { name: 'departmentId', value: AssignTo },
+    ];
+  
+    // Loop through the fields array to append values to formData
+    fields.forEach(({ name, value }) => {
+      console.log(value, `${name} value`);
+      formData.append(name, value);
+    });
+  
+    // Append files if available
+    const appendFiles = (fileArray, fieldName) => {
+      if (fileArray?.length > 0) {
+        fileArray.forEach((file) => {
+          console.log(file, `${fieldName} value`);
+          formData.append(fieldName, file);
         });
       }
-
-      if (fileSystemFileName && fileSystemFileName.length > 0) {
-        fileSystemFileName.forEach((file) => {
-          formData.append("fileSystemFile", file);
-        });
-      }
-
-      // Log the formData content
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-      setLoading(true);
-      // Send form data via API request
-      apiRequest
-        .post("/createTickets/uploadTicket", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          toast.success("Ticket created successfully!");
-          handleClose();
-          setLoading(false); // Set loading state to false once the action completes.
-
-          // Optional: You can trigger a state change or useEffect to update the UI instead of reloading.
-          setTimeout(() => {
-            // Assuming you have a state to trigger UI updates:
-            fetchTicketCounts();
-            // setTickets(newTickets); or setSomeState(response);
-          }, 2000);
-        })
-
-        .catch((error) => {
-          if (error.response) {
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              ntid: error.response.data.message,
-            }));
-            toast.error(error.response.data.message);
-          } else if (error.request) {
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              ntid: "No response from server. Please try again later.",
-            }));
-            toast.error("No response from server. Please try again later.");
-          } else {
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              ntid: "Error occurred. Please try again.",
-            }));
-            toast.error("Error occurred. Please try again.");
-          }
-        });
+    };
+  
+    appendFiles(cameraFileName, 'cameraFile');
+    appendFiles(fileSystemFileName, 'fileSystemFile');
+  
+    // Log all formData entries
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
     }
+  
+    setLoading(true);
+  
+    // API request
+    apiRequest
+      .post("/createTickets/uploadTicket", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((response) => {
+        toast.success("Ticket created successfully!");
+        handleClose();
+        setLoading(false);
+  
+        // Optional: Refresh UI state
+        setTimeout(() => {
+          fetchTicketCounts();
+        }, 2000);
+      })
+      .catch((error) => {
+        let errorMessage = "Error occurred. Please try again.";
+        
+        if (error.response) {
+          errorMessage = error.response.data.message || errorMessage;
+        } else if (error.request) {
+          errorMessage = "No response from server. Please try again later.";
+        }
+  
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ntid: errorMessage,
+        }));
+        toast.error(errorMessage);
+      });
   };
+  
 
   const handleNTIDBlur = async () => {
     try {
       const response = await apiRequest.get("/profile/getprofiledata_ntid");
+  
       if (response.status === 200) {
         setUserData(response.data);
       } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          ntid: "User not found or error fetching data",
-        }));
+        throw new Error("User not found or error fetching data");
       }
     } catch (error) {
+      let errorMessage = "Error occurred. Please try again.";
+  
+      // Determine the error message based on the error type
       if (error.response) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          ntid: error.response.data.message || "Invalid NTID entered",
-        }));
+        errorMessage = error.response.data.message || "Invalid NTID entered";
       } else if (error.request) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          ntid: "No response from server. Please try again later.",
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          ntid: "Error occurred. Please try again.",
-        }));
+        errorMessage = "No response from server. Please try again later.";
       }
+  
+      // Set the error in the state only once
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        ntid: errorMessage,
+      }));
     }
   };
+  
 
   const fetchTicketCounts = async () => {
     try {
-      const response = await apiRequest.get("/createTickets/countusertickets");
-      console.log("Initial ticket count response:", response);
+      const response = await apiRequest.get("/createTickets/countusertickets",{
+        params: { ntid },
+      });
       setTicketsCount(response.data);
     } catch (error) {
       toast.error("Failed to fetch ticket counts");
@@ -380,13 +349,11 @@ export function AdminTicketCreate() {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        console.log(selectedMarket, "sel");
 
         const response = await apiRequest.get(`/createTickets/fetchstores`, {
           params: { selectedMarket },
         });
         const storeNames = response.data.map((store) => store.storeName);
-        console.log("Fetched stores:", storeNames);
         setStores(storeNames);
       } catch (error) {
         console.log("Failed to fetch  Stores");
@@ -498,7 +465,7 @@ export function AdminTicketCreate() {
     } else {
       setFilteredSubDepartments(admin || []);
     }
-  }, [searchSubDepartment, admin]);
+  }, [searchSubDepartment]);
 
   const chartOptions = {
     responsive: true,
@@ -526,7 +493,7 @@ export function AdminTicketCreate() {
               controlId="formBasicNTID"
             >
               <Form.Control
-                className="shadow-none fw-medium text-secondary fw-medium boorder-0"
+                className="shadow-none  text-secondary fw-medium border"
                 type="text"
                 placeholder="Enter NTID"
                 value={userData?.ntid || ""}
@@ -541,7 +508,7 @@ export function AdminTicketCreate() {
             >
               <div className="flex-grow-1 mb-1 mb-md-0">
                 <Form.Control
-                  className="fw-medium  fw-medium text-secondary shadow-none boorder-0 text-capitalize"
+                  className="fw-medium  text-secondary shadow-none border text-capitalize"
                   type="text"
                   value={userData?.fullname || ""}
                   placeholder="Full Name"
@@ -555,7 +522,7 @@ export function AdminTicketCreate() {
                   placeholder="Enter Phone Number"
                   isInvalid={!!errors.phone}
                   ref={phoneRef}
-                  className="shadow-none fw-medium text-secondary fw-medium border"
+                  className="shadow-none text-secondary fw-medium border"
                 />
               </div>
             </Form.Group>
@@ -566,16 +533,16 @@ export function AdminTicketCreate() {
               <div className="flex-grow-1  mb-1 mb-md-0">
                 <Dropdown>
                   <Dropdown.Toggle
-                    className="text-secondary fw-medium bg-transparent fw-medium shadow-none border border-secondary text-capitalize w-100"
+                    className="text-secondary bg-white text-start fw-medium shadow-none border text-capitalize w-100"
                     id="market-dropdown"
                   >
                     {selectedMarket || "Select Market"}
                   </Dropdown.Toggle>
 
-                  <Dropdown.Menu className="w-100  fw-medium fw-medium text-capitalize">
+                  <Dropdown.Menu className="w-100 text-capitalize ">
                     {markets.map(({ _id, market }) => (
                       <Dropdown.Item
-                        className="fw-medium"
+                        className="fw-medium  shadow-lg text-primary"
                         key={_id}
                         onClick={() => setSelectedMarket(market)}
                       >
@@ -588,7 +555,7 @@ export function AdminTicketCreate() {
 
               <Dropdown className="flex-grow-1" id="dropdown-store">
                 <Dropdown.Toggle
-                  className="text-start bg-white fw-medium fw-medium text-secondary border shadow-none w-100"
+                  className="text-start bg-white fw-medium  text-secondary border shadow-none w-100"
                   id="dropdown-basic"
                 >
                   {selectedStore || "Select a Store"}{" "}
@@ -605,7 +572,7 @@ export function AdminTicketCreate() {
                     value={searchStore}
                     onChange={(e) => setSearchStore(e.target.value)}
                     placeholder="Search Stores..."
-                    className="w-75 form-control border  fw-medium text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                    className="w-75 form-control border  fw-medium text-muted  shadow-none text-center mb-2 ms-2"
                   />
 
                   {/* Store Items */}
@@ -634,7 +601,7 @@ export function AdminTicketCreate() {
             <Form.Group controlId="ticketDepartment">
               <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
                 <Dropdown.Toggle
-                  className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
+                  className={`text-start fw-medium bg-white  text-muted border shadow-none w-100`}
                   id="dropdown-basic"
                 >
                   {selectedDepartment || "Select a Department"}
@@ -646,15 +613,15 @@ export function AdminTicketCreate() {
                   <input
                     onChange={(e) => setSearchDepartment(e.target.value)}
                     placeholder="Search Departments..."
-                    className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                    className="w-75 form-control border fw-medium text-muted  shadow-none text-center mb-2 ms-2"
                   />
                   {filteredDepartments?.length > 0 ? (
                     filteredDepartments.map((department, index) => (
                       <Dropdown.Item
                         key={index}
                         onClick={() => handleDepartmentSelect(department)}
-                        className="shadow-lg fw-medium  fw-medium text-primary text-start"
-                        isInvalid={!!errors.department}
+                        className="shadow-lg fw-medium text-primary text-start"
+                        // isinvalid={!!errors.department}
                       >
                         {department}
                       </Dropdown.Item>
@@ -673,7 +640,7 @@ export function AdminTicketCreate() {
                     id="dropdown-department"
                   >
                     <Dropdown.Toggle
-                      className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
+                      className={`text-start fw-medium bg-white  text-secondary border shadow-none w-100`}
                       id="dropdown-basic"
                     >
                       {selectedSubDepartment || "Select Sub Department"}
@@ -685,7 +652,7 @@ export function AdminTicketCreate() {
                       <input
                         onChange={(e) => setSearchSubDepartment(e.target.value)}
                         placeholder="Search Sub Departments..."
-                        className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                        className="w-75 form-control border  text-muted fw-medium shadow-none text-center mb-2 ms-2"
                       />
                       {filteredSubDepartments?.length > 0 ? (
                         filteredSubDepartments.map((department, index) => (
@@ -694,7 +661,7 @@ export function AdminTicketCreate() {
                             onClick={() =>
                               handleSubDepartmentSelect(department)
                             }
-                            className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                            className="shadow-lg fw-medium  text-primary text-start"
                             isInvalid={!!errors.department}
                           >
                             {department}
@@ -719,7 +686,7 @@ export function AdminTicketCreate() {
             >
               <Form.Control
                 type="text"
-                className="shadow-none fw-medium fw-medium text-secondary boorder-0"
+                className="shadow-none fw-medium  text-secondary border"
                 placeholder="Ticket regarding"
                 isInvalid={!!errors.ticketSubject}
                 ref={ticketSubjectRef}
@@ -727,7 +694,7 @@ export function AdminTicketCreate() {
             </Form.Group>
             <Form.Group className="mb-1" controlId="formDescription">
               <Form.Control
-                className="shadow-none fw-medium text-secondary  fw-medium boorder-0"
+                className="shadow-none fw-medium text-secondary  border"
                 as="textarea"
                 placeholder="Enter description"
                 rows={3}
@@ -752,14 +719,14 @@ export function AdminTicketCreate() {
                             </p>
                           )}
                           {fileSystemFileName?.length > 0 && (
-                            <p className="fw-medium fw-medium text-secondary mt-2">
+                            <p className="fw-medium  text-secondary mt-2">
                               {fileSystemFileName?.length} file(s) selected
                             </p>
                           )}
                         </div>
                       ) : popButtons ? (
                         <div className="rounded ">
-                          <label className="btn border-secondary  fw-medium btn-outline-secondary fw-medium mt-3 me-2">
+                          <label className="btn border-secondary fw-medium btn-outline-secondary mt-3 me-2">
                             Camera
                             <input
                               type="file"
@@ -775,7 +742,7 @@ export function AdminTicketCreate() {
                               } // Disable if total files >= 5
                             />
                           </label>
-                          <label className="btn border-secondary btn-outline-secondary fw-medium mt-3 fw-medium">
+                          <label className="btn border-secondary btn-outline-secondary fw-medium mt-3">
                             Browse
                             <input
                               type="file"
@@ -809,7 +776,7 @@ export function AdminTicketCreate() {
           <div className="mt-2">
             <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
               <Dropdown.Toggle
-                className={`text-center fw-medium  fw-medium text-secondary border-0 bg-primary text-white shadow-none w-100`}
+                className={`text-center fw-medium   text-secondary border-0 bg-primary text-white shadow-none w-100`}
                 id="dropdown-basic"
               >
                 {AssignTo || "Assign To"}
@@ -821,14 +788,14 @@ export function AdminTicketCreate() {
                 <input
                   onChange={(e) => setSearchDepartment(e.target.value)}
                   placeholder="Search Departments..."
-                  className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                  className="w-75 form-control border  text-muted fw-medium shadow-none text-center mb-2 ms-2"
                 />
                 {filteredDepartments?.length > 0 ? (
                   filteredDepartments.map((department, index) => (
                     <Dropdown.Item
                       key={index}
                       onClick={() => handleAssignToSelect(department)}
-                      className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                      className="shadow-lg fw-medium  text-primary text-start"
                       isInvalid={!!errors.department}
                     >
                       {department}
@@ -852,28 +819,29 @@ export function AdminTicketCreate() {
         </Modal.Footer>
       </Modal>
       <div className="container">
-        <p
-          className="font-family home-text pt-3 fw-medium fs-3 text-center"
+        <h4
+          className="font-family  pt-3  text-center"
           style={{ color: "#E10174" }}
         >
           Ticketing Portal
-        </p>
+        </h4>
 
         <div className="row mt-1">
           <div className="col-12 col-md-8 d-flex flex-column">
-            <div className=" col-md-12 flex-grow-1 bg-white shadow-lg border-0 rounded p-2 text-center mb-2">
-              <div className="d-flex justify-content-center align-items-center mb-3">
+            <div className=" col-md-12 flex-grow-1 shadow-lg rounded p-2 mb-2">
+              <div className="d-flex justify-content-center align-items-center">
                 <img
                   loading="lazy"
-                  src="./ticket.png"
+                  src="./ticket.webp"
                   alt="Ticket Icon"
                   className="img img-fluid rounded-circle"
-                  style={{ maxWidth: "150px", height: "auto" }}
+                  width= "200"
+                   height="200"
                 />
               </div>
               <div className="d-flex justify-content-center">
                 <button
-                  className="btn btn-primary w-auto fw-medium"
+                  className="btn btn-primary"
                   onClick={handleShow}
                 >
                   Open A Ticket
@@ -881,9 +849,9 @@ export function AdminTicketCreate() {
               </div>
             </div>
 
-            <div className=" col-12 col-md-12 flex-grow-1 bg-white shadow-lg border-0 rounded p-1">
+            <div className=" col-12 col-md-12 flex-grow-1 bg-white shadow-lg  rounded p-1">
               <div className=" col-md-12 d-flex justify-content-center">
-                <p className="fs-3 fw-medium font-family">Status Of Tickets</p>
+                <h3 className="font-family">Status Of Tickets</h3>
               </div>
               <div className=" col-12 col-md-12 d-flex row g-3 p-3">
                 <Link
@@ -891,7 +859,7 @@ export function AdminTicketCreate() {
                   to="/totalusertickets"
                   className="col-12 col-md-2 text-decoration-none"
                 >
-                  <div className="  col-12 card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                  <div className="  col-12 card h-100 rounded text-center p-2">
                     <h6 className="fw-medium">Total</h6>
                     <p
                       id="Totalvalue"
@@ -905,7 +873,7 @@ export function AdminTicketCreate() {
                   to="/usertickets"
                   className="col-12 col-md-2 text-decoration-none"
                 >
-                  <div className="  col-12 card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                  <div className="  col-12 card h-100 rounded text-center p-2">
                     <h6 className="fw-medium">New</h6>
                     <p
                       id="Newvalue"
@@ -919,7 +887,7 @@ export function AdminTicketCreate() {
                   to="/usertickets"
                   className="col-12 col-md-2 text-decoration-none"
                 >
-                  <div className=" col-12  card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                  <div className=" col-12  card h-100 rounded  text-center p-2">
                     <h6 className="fw-medium">Opened</h6>
                     <p
                       id="Openedvalue"
@@ -933,7 +901,7 @@ export function AdminTicketCreate() {
                   to="/usertickets"
                   className="col-12 col-md-2 text-decoration-none"
                 >
-                  <div className=" col-12  card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                  <div className=" col-12  card h-100 rounded text-center p-2">
                     <h6 className="fw-medium">In Progress</h6>
                     <p
                       id="Inprocessvalue"
@@ -947,7 +915,7 @@ export function AdminTicketCreate() {
                   to="/usertickets"
                   className="col-12 col-md-2 text-decoration-none"
                 >
-                  <div className=" card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                  <div className=" card h-100 rounded  text-center p-2">
                     <h6 className="fw-medium">Completed</h6>
                     <p
                       id="Completedvalue"
@@ -961,7 +929,7 @@ export function AdminTicketCreate() {
                   to="/usertickets"
                   className="col-12 col-md-2 text-decoration-none"
                 >
-                  <div className=" col-12  card h-100 rounded bg-body border text-dark fw-medium text-center p-2">
+                  <div className=" col-12  card h-100 rounded  text-center p-2">
                     <h6 className="fw-medium">Reopened</h6>
                     <p
                       id="reOpenedvalue"

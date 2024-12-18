@@ -118,7 +118,6 @@ const ShowTickets = () => {
 
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const toggleDropdown = () => { setDropdownVisible(!dropdownVisible); };
-  console.log(currentItems,"kkkkkkkkkkkkkkkkkkkkllllllll")
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -178,7 +177,7 @@ const ShowTickets = () => {
           <tr>
                 {[
                   "SC.No",
-                  "NTID / Email",
+                  " Email",
                   "Full Name",
                   "Status",
                   "CreatedAt",

@@ -23,7 +23,7 @@ export const searchUser = async (req, res) => {
         ]
       }
     });
-    console.log(input, results)
+    // console.log(input, results)
     res.json(results);
   } catch (error) {
     console.error("Error during user search:", error);

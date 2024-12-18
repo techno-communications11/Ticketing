@@ -2,17 +2,18 @@ import prisma from "../lib/prisma.js";
 
 const UserTicketCount = async (req, res) => {
     try {
-        const userId = req.user.id;
-        console.log(userId,"user id  got from  client")
+        // const userId = req.user.id;
+        const { ntid } = req.query;
+        console.log(ntid,"user ntid  got from  client")
 
-        if (!userId) {
+        if (!ntid) {
             return res.status(400).json({ message: 'userId parameter is required' });
         }
 
         // Fetching the tickets for the user
         const tickets = await prisma.createTicket.findMany({
             where: {
-                userId: userId 
+                ntid
             },
             select: {
                 status: {
@@ -24,7 +25,7 @@ const UserTicketCount = async (req, res) => {
             }
         });
 
-        // console.log(tickets, "Fetched tickets");
+        console.log(tickets, "Fetched tickets");
 
         // Counting statuses
         const statusCountMap = tickets.reduce((acc, ticket) => {
@@ -33,7 +34,7 @@ const UserTicketCount = async (req, res) => {
             return acc;
         }, {});
 
-        // console.log(statusCountMap, "Count ");
+        console.log(statusCountMap, "Count ");
 
         // Send the response back to the client
         res.status(200).json(statusCountMap);

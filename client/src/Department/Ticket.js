@@ -76,6 +76,7 @@ function Ticket({ status,openedBy,fullname, }) {
 
   useEffect(() => {
     const ntid = getDecodedToken()?.ntid;
+    // const usersId = getDecodedToken()?.id;
   
     const fetchUserTickets = async () => {
       try {
@@ -84,22 +85,23 @@ function Ticket({ status,openedBy,fullname, }) {
         });
   
         let fetchedTickets = response.data;
-        console.log(response.data)
+        // console.log(response.data)
   
         // Apply filters based on props
         if (openedBy === null && status === '3' && fullname === null) {
           // Filter tickets for DepartmentNew - tickets that are not yet opened
           fetchedTickets = fetchedTickets.filter(ticket => 
             ticket.openedBy === null &&
-            (ticket.status.id === '3' || ticket.status.id === '1') &&
-            ticket.assignToTeam === null &&
-            ticket.status.name !== 'completed'
+            (ticket.status.id === '3' || ticket.status.id === '1' || ticket.status.id==='5') &&
+            ticket.assignToTeam === null 
+            // &&
+            // ticket.status.name !== 'completed'
           );
         }
          else if (openedBy && status === '3' && fullname === null) {
           // For DepartmentOpened - tickets opened by a specific user with status 3
           fetchedTickets = fetchedTickets.filter(ticket =>
-             (ticket.status.id === '3'||ticket.status.id === '2') &&
+             (ticket.status.id !== '4') &&
 
             ticket.openedBy === openedBy
           );
@@ -112,7 +114,7 @@ function Ticket({ status,openedBy,fullname, }) {
           );
         }  else if (fullname) {
           fetchedTickets = fetchedTickets.filter(ticket =>
-            ticket.assignToTeam === fullname && openedBy!==null&&ticket.status.id!=='4'
+            ticket.assignToTeam === fullname && ticket.status.id!=='4'&&ticket.openedBy===null
           );
         }
   
@@ -155,7 +157,7 @@ function Ticket({ status,openedBy,fullname, }) {
             <tr>
                 {[
                   "SC.No",
-                  "NTID",
+                  "Email",
                   "Full Name",
                   "Status",
                   "CreatedAt",

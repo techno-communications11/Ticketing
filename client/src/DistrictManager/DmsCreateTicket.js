@@ -495,7 +495,7 @@ const handleSubmit = () => {
   }, [searchStore, Stores]);
 
 //   const dmMarkets = markets[DMName] || []; 
-console.log(dmMarkets,"markssdh")
+// console.log(dmMarkets,"markssdh")
 
   return (
     <div>
@@ -861,7 +861,7 @@ console.log(dmMarkets,"markssdh")
               <div className="d-flex justify-content-center align-items-center mb-3">
                 <img
                   loading="lazy"
-                  src="./ticket.png"
+                  src="./ticket.webp"
                   alt="Ticket Icon"
                   className="img img-fluid rounded-circle"
                   style={{ maxWidth: "150px", height: "auto" }}

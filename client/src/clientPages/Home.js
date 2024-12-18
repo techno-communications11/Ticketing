@@ -25,36 +25,34 @@ export function Home() {
   const [cameraFileName, setCameraFileName] = useState([]);
   const [fileSystemFileName, setFileSystemFileName] = useState([]);
   const [selectedStore, setSelectedStore] = useState("Select Store");
-  const [selectedDepartment, setSelectedDepartment] =
-    useState("Select Department");
+  const [selectedDepartment, setSelectedDepartment] =useState("Select Department");
   const [userData, setUserData] = useState("");
   const [TicketsCount, setTicketsCount] = useState(0);
   const { ntid } = getDecodedToken();
   const { setNtid } = useMyContext();
   const [searchStore, setSearchStore] = useState("");
   const [filteredStores, setFilteredStores] = useState(userData?.stores || []);
-    const [selectedSubDepartment,setSelectedSubDepartment]=useState("");
-    const [loading,setLoading]=useState(false);
+  const [selectedSubDepartment, setSelectedSubDepartment] = useState("");
+  const [loading, setLoading] = useState(false);
 
-
-    const admin = [
-      "Internet",
-      "Power",
-      "Gas",
-      "Water & Sewer",
-      "Alarm",
-      "Dumpster",
-      "Alarm Permit",
-      "Camera Setup",
-      "Shopper Trak",
-      "Store Email ID",
-      "Phone Line",
-      "GPS Tracker",
-      "Ordering",
-      "Other"
-    ];
+  const admin = [
+    "Internet",
+    "Power",
+    "Gas",
+    "Water & Sewer",
+    "Alarm",
+    "Dumpster",
+    "Alarm Permit",
+    "Camera Setup",
+    "Shopper Trak",
+    "Store Email ID",
+    "Phone Line",
+    "GPS Tracker",
+    "Ordering",
+    "Other",
+  ];
   const [filteredSubDepartments, setFilteredSubDepartments] = useState(admin);
- const [searchSubDepartment, setSearchSubDepartment] = useState("");
+  const [searchSubDepartment, setSearchSubDepartment] = useState("");
 
   const Departments = [
     // "NTID Mappings",
@@ -70,10 +68,7 @@ export function Home() {
     // "HR Payroll",
   ];
 
-
- 
-
-  const [searchDepartment, setSearchDepartment] = useState('');
+  const [searchDepartment, setSearchDepartment] = useState("");
   const [filteredDepartments, setFilteredDepartments] = useState(Departments);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -130,53 +125,56 @@ export function Home() {
 
   useEffect(() => {
     if (searchDepartment) {
-        const filtered = Departments.filter(department =>
-            department.toLowerCase().includes(searchDepartment.toLowerCase())
-        );
-        setFilteredDepartments(filtered);
+      const filtered = Departments.filter((department) =>
+        department.toLowerCase().includes(searchDepartment.toLowerCase())
+      );
+      setFilteredDepartments(filtered);
     } else {
-        setFilteredDepartments(Departments);
+      setFilteredDepartments(Departments);
     }
-}, [searchDepartment]);
+  }, [searchDepartment]);
 
-const handleCameraChange = (e) => {
-  const selectedFiles = Array.from(e.target.files);
-  const totalFiles = selectedFiles.length + (cameraFileName?.length || 0) + (fileSystemFileName?.length || 0);
+  const handleCameraChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    const totalFiles =
+      selectedFiles.length +
+      (cameraFileName?.length || 0) +
+      (fileSystemFileName?.length || 0);
 
-  // Only proceed if the total selected files are 5 or fewer
-  if (totalFiles <= 5) {
-    setCameraFileName((prev) => [...(prev || []), ...selectedFiles]);
-  } else {
-    alert("You can select up to 5 files in total.");
-  }
-};
+    // Only proceed if the total selected files are 5 or fewer
+    if (totalFiles <= 5) {
+      setCameraFileName((prev) => [...(prev || []), ...selectedFiles]);
+    } else {
+      alert("You can select up to 5 files in total.");
+    }
+  };
 
-const handleFileSystemChange = (e) => {
-  const selectedFiles = Array.from(e.target.files);
-  const totalFiles = selectedFiles.length + (cameraFileName?.length || 0) + (fileSystemFileName?.length || 0);
+  const handleFileSystemChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    const totalFiles =
+      selectedFiles.length +
+      (cameraFileName?.length || 0) +
+      (fileSystemFileName?.length || 0);
 
-  // Only proceed if the total selected files are 5 or fewer
-  if (totalFiles <= 5) {
-    setFileSystemFileName((prev) => [...(prev || []), ...selectedFiles]);
-  } else {
-    alert("You can select up to 5 files in total.");
-  }
-};
+    // Only proceed if the total selected files are 5 or fewer
+    if (totalFiles <= 5) {
+      setFileSystemFileName((prev) => [...(prev || []), ...selectedFiles]);
+    } else {
+      alert("You can select up to 5 files in total.");
+    }
+  };
 
-// Safely get the total selected files count with optional chaining
-const filesSelected = (cameraFileName?.length || 0) + (fileSystemFileName?.length || 0);
+  // Safely get the total selected files count with optional chaining
+  const filesSelected =
+    (cameraFileName?.length || 0) + (fileSystemFileName?.length || 0);
 
-
-
-// const filesSelected = cameraFileName?.length + fileSystemFileName?.length;
-
-const handleStoreSelect = (store) => {
+  const handleStoreSelect = (store) => {
     setSelectedStore(store);
     setSearchStore("");
   };
   const handleDepartmentSelect = (department) => {
     setSelectedDepartment(department);
-    setSearchDepartment('');
+    setSearchDepartment("");
   };
 
   const handleNTIDBlur = async () => {
@@ -212,8 +210,11 @@ const handleStoreSelect = (store) => {
 
   const fetchTicketCounts = async () => {
     try {
-      const response = await apiRequest.get("/createTickets/countusertickets");
-      console.log("Initial ticket count response:", response);
+      console.log(ntid,"ntid.......")
+      const response = await apiRequest.get("/createTickets/countusertickets", {
+        params: { ntid },
+      });
+      // console.log("Initial ticket count response:", response);
       setTicketsCount(response.data);
     } catch (error) {
       toast.error("Failed to fetch ticket counts");
@@ -234,7 +235,7 @@ const handleStoreSelect = (store) => {
       ticketSubject: "",
       description: "",
       market: "",
-      department:""
+      department: "",
     };
     const ntid = ntidRef.current.value;
     const phone = phoneRef.current.value;
@@ -260,22 +261,25 @@ const handleStoreSelect = (store) => {
     if (validateForm()) {
       const formData = new FormData();
       formData.append("ntid", ntidRef.current.value);
-      formData.append("phone", phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10));
+      formData.append(
+        "phone",
+        phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10)
+      );
       formData.append("store", selectedStore);
       formData.append("ticketSubject", ticketSubjectRef.current.value);
       formData.append("description", descriptionRef.current.value);
       formData.append("market", marketRef.current.value.toLowerCase());
-      formData.append("fullname", fullnameRef.current.value);  // Correct this line
+      formData.append("fullname", fullnameRef.current.value); // Correct this line
       formData.append("department", selectedDepartment);
       formData.append("subdepartment", selectedSubDepartment);
-  
+
       // Loop through cameraFileName array and append each file
       if (cameraFileName && cameraFileName.length > 0) {
         cameraFileName.forEach((file) => {
           formData.append("cameraFile", file); // Appending each file individually
         });
       }
-  
+
       // Loop through fileSystemFileName array and append each file
       if (fileSystemFileName && fileSystemFileName.length > 0) {
         fileSystemFileName.forEach((file) => {
@@ -284,7 +288,7 @@ const handleStoreSelect = (store) => {
       }
       setLoading(true);
       // console.log(formData, 'Form Data:', formData);
-  
+
       // Send the form data using the API request
       apiRequest
         .post("/createTickets/uploadTicket", formData, {
@@ -321,9 +325,6 @@ const handleStoreSelect = (store) => {
         });
     }
   };
-  
-
-  
 
   useEffect(() => {
     const objTotal = document.getElementById("Totalvalue");
@@ -379,7 +380,7 @@ const handleStoreSelect = (store) => {
   };
 
   const handleTotalTickets = (AdminsDatantid) => () => {
-    console.log(AdminsDatantid, "ooooooooo");
+    // console.log(AdminsDatantid, "ooooooooo");
     setNtid(AdminsDatantid);
 
     if (AdminsDatantid) {
@@ -425,7 +426,7 @@ const handleStoreSelect = (store) => {
       setFilteredStores(userData?.stores || []);
     }
   }, [searchStore, userData]);
-  console.log(userData.stores, "ppppppppp");
+  // console.log(userData.stores, "ppppppppp");
 
   const chartOptions = {
     responsive: true,
@@ -438,7 +439,12 @@ const handleStoreSelect = (store) => {
         text: "Ticket Counts by Status",
       },
     },
+    animation: {
+      duration: 500, // Animation duration in milliseconds (default is 1000ms)
+      easing: "easeOutQuad", // Easing function for a smoother and faster animation
+    },
   };
+  
 
   return (
     <div>
@@ -538,58 +544,28 @@ const handleStoreSelect = (store) => {
             </Form.Group>
 
             <Form.Group controlId="ticketDepartment">
-            <Dropdown className='flex-grow-1 mb-1' id="dropdown-department">
-            <Dropdown.Toggle className={`text-start bg-white fw-medium text-secondary border shadow-none w-100`} id="dropdown-basic">
-                {selectedDepartment || "Select a Department"}
-            </Dropdown.Toggle>
-            <Dropdown.Menu style={{ height: "42vh", overflow: 'scroll' }} className='col-12 col-md-12'>
-                <input
-                    onChange={(e) => setSearchDepartment(e.target.value)}
-                    placeholder="Search Departments..."
-                    className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
-                />
-                {filteredDepartments?.length > 0 ? (
-                    filteredDepartments.map((department, index) => (
-                        <Dropdown.Item
-                            key={index}
-                            onClick={() => handleDepartmentSelect(department)}
-                            className='shadow-lg fw-medium text-primary text-start'
-                            isInvalid={!!errors.department}
-                        >
-                            {department}
-                        </Dropdown.Item>
-                    ))
-                ) : (
-                    <Dropdown.Item disabled className='text-muted text-start'>
-                        No departments found
-                    </Dropdown.Item>
-                )}
-            </Dropdown.Menu>
-        </Dropdown>
-        {selectedDepartment === "Admin" && (
-        <div>
-          <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
+              <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
                 <Dropdown.Toggle
-                  className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
+                  className={`text-start bg-white fw-medium text-secondary border shadow-none w-100`}
                   id="dropdown-basic"
                 >
-                  {selectedSubDepartment || "Select Sub Department"}
+                  {selectedDepartment || "Select a Department"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu
                   style={{ height: "42vh", overflow: "scroll" }}
                   className="col-12 col-md-12"
                 >
                   <input
-                    onChange={(e) => setSearchSubDepartment(e.target.value)}
-                    placeholder="Search Sub Departments..."
-                    className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                    onChange={(e) => setSearchDepartment(e.target.value)}
+                    placeholder="Search Departments..."
+                    className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
                   />
-                  {filteredSubDepartments?.length > 0 ? (
-                    filteredSubDepartments.map((department, index) => (
+                  {filteredDepartments?.length > 0 ? (
+                    filteredDepartments.map((department, index) => (
                       <Dropdown.Item
                         key={index}
-                        onClick={() => handleSubDepartmentSelect(department)}
-                        className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                        onClick={() => handleDepartmentSelect(department)}
+                        className="shadow-lg fw-medium text-primary text-start"
                         isInvalid={!!errors.department}
                       >
                         {department}
@@ -602,12 +578,54 @@ const handleStoreSelect = (store) => {
                   )}
                 </Dropdown.Menu>
               </Dropdown>
-        </div>
-      )}
-
-       
+              {selectedDepartment === "Admin" && (
+                <div>
+                  <Dropdown
+                    className="flex-grow-1 mb-1"
+                    id="dropdown-department"
+                  >
+                    <Dropdown.Toggle
+                      className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
+                      id="dropdown-basic"
+                    >
+                      {selectedSubDepartment || "Select Sub Department"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu
+                      style={{ height: "42vh", overflow: "scroll" }}
+                      className="col-12 col-md-12"
+                    >
+                      <input
+                        onChange={(e) => setSearchSubDepartment(e.target.value)}
+                        placeholder="Search Sub Departments..."
+                        className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                      />
+                      {filteredSubDepartments?.length > 0 ? (
+                        filteredSubDepartments.map((department, index) => (
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() =>
+                              handleSubDepartmentSelect(department)
+                            }
+                            className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                            isInvalid={!!errors.department}
+                          >
+                            {department}
+                          </Dropdown.Item>
+                        ))
+                      ) : (
+                        <Dropdown.Item
+                          disabled
+                          className="text-muted text-start"
+                        >
+                          No departments found
+                        </Dropdown.Item>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              )}
             </Form.Group>
-           
+
             <Form.Group
               className="mb-1 d-flex align-items-center "
               controlId="formTicketSubject"
@@ -631,68 +649,78 @@ const handleStoreSelect = (store) => {
               />
             </Form.Group>
             <Form.Group className="mb-1" controlId="fileUpload">
-            <div>
-            <div>
-            <div>
-      <div
-        className="border text-center"
-        onClick={() => setPopButtons(true)} // Open the file input options
-        style={{ height: "80px", cursor: "pointer" }}
-      >
-        {filesSelected > 0 ? (
-          <div className="mt-4">
-            {cameraFileName?.length > 0 && (
-              <p className="fw-medium text-secondary mt-2">
-                {cameraFileName?.length} camera file(s) selected
-              </p>
-            )}
-            {fileSystemFileName?.length > 0 && (
-              <p className="fw-medium text-secondary mt-2">
-                {fileSystemFileName?.length} file(s) selected
-              </p>
-            )}
-          </div>
-        ) : popButtons ? (
-          <div className="rounded ">
-            <label className="btn border-secondary btn-outline-secondary fw-medium mt-3 me-2">
-              Camera
-              <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                multiple
-                style={{ display: "none" }}
-                onChange={handleCameraChange}
-                disabled={cameraFileName?.length + fileSystemFileName?.length >= 5} // Disable if total files >= 5
-              />
-            </label>
-            <label className="btn border-secondary btn-outline-secondary fw-medium mt-3">
-              Browse
-              <input
-                type="file"
-                multiple
-                style={{ display: "none" }}
-                onChange={handleFileSystemChange}
-                disabled={cameraFileName?.length + fileSystemFileName?.length >= 5} // Disable if total files >= 5
-              />
-            </label>
-          </div>
-        ) : (
-          <div className="mt-1">
-            <MdOutlineCloudUpload className="fs-1 text-secondary" />
-            <p className="fw-medium text-secondary">Upload files</p>
-          </div>
-        )}
-      </div>
-    </div>
-    </div>
-    </div>
-    </Form.Group>
+              <div>
+                <div>
+                  <div>
+                    <div
+                      className="border text-center"
+                      onClick={() => setPopButtons(true)} // Open the file input options
+                      style={{ height: "80px", cursor: "pointer" }}
+                    >
+                      {filesSelected > 0 ? (
+                        <div className="mt-4">
+                          {cameraFileName?.length > 0 && (
+                            <p className="fw-medium text-secondary mt-2">
+                              {cameraFileName?.length} camera file(s) selected
+                            </p>
+                          )}
+                          {fileSystemFileName?.length > 0 && (
+                            <p className="fw-medium text-secondary mt-2">
+                              {fileSystemFileName?.length} file(s) selected
+                            </p>
+                          )}
+                        </div>
+                      ) : popButtons ? (
+                        <div className="rounded ">
+                          <label className="btn border-secondary btn-outline-secondary fw-medium mt-3 me-2">
+                            Camera
+                            <input
+                              type="file"
+                              accept="image/*"
+                              capture="environment"
+                              multiple
+                              style={{ display: "none" }}
+                              onChange={handleCameraChange}
+                              disabled={
+                                cameraFileName?.length +
+                                  fileSystemFileName?.length >=
+                                5
+                              } // Disable if total files >= 5
+                            />
+                          </label>
+                          <label className="btn border-secondary btn-outline-secondary fw-medium mt-3">
+                            Browse
+                            <input
+                              type="file"
+                              multiple
+                              style={{ display: "none" }}
+                              onChange={handleFileSystemChange}
+                              disabled={
+                                cameraFileName?.length +
+                                  fileSystemFileName?.length >=
+                                5
+                              } // Disable if total files >= 5
+                            />
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="mt-1">
+                          <MdOutlineCloudUpload className="fs-1 text-secondary" />
+                          <p className="fw-medium text-secondary">
+                            Upload files
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={handleSubmit} disabled={loading}>
-           {loading?<div class="spinner-border text-muted"></div>: "Submit"}
+            {loading ? <div class="spinner-border text-muted"></div> : "Submit"}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -710,12 +738,14 @@ const handleStoreSelect = (store) => {
               <div className="d-flex justify-content-center align-items-center mb-3">
                 <img
                   loading="lazy"
-                  src="./ticket.png"
+                  srcSet="./ticket.webp"
                   alt="Ticket Icon"
-                  className="img img-fluid rounded-circle"
-                  style={{ maxWidth: "150px", height: "auto" }}
+                  className="img-fluid rounded-circle"
+                  width="200"
+                  height="200" // Set a reasonable aspect ratio for image dimensions
                 />
               </div>
+
               <div className="d-flex justify-content-center">
                 <button className="btn btn-primary w-auto" onClick={handleShow}>
                   Open A Ticket

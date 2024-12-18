@@ -35,6 +35,8 @@ import ShowdepartWiseTicks from './AdminPages/ShowdepartWiseTicks';
 import { AdminTicketCreate } from './AdminPages/AdminTicketCreate';
 import {DmsCreateTicket} from './DistrictManager/DmsCreateTicket';
 import GetAllDeptTickets from './Department/GetAllDeptTickets';
+import TicketsNowAt from './AdminPages/TicketsNowAt';
+import TicketNowAtData from './AdminPages/TicketNowAtData';
 
 
 const getToken = () => localStorage.getItem('token');
@@ -204,6 +206,15 @@ const AppContent = () => {
           }
         />
         <Route
+          path="/ticketnowatdata"
+          element={
+            <ProtectedRoute allowedDepartments={superAdminDepartments}>
+              <TicketNowAtData />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
           path="/opened"
           element={
             <ProtectedRoute allowedDepartments={[...superAdminDepartments,...marketManagerDepartments]}>
@@ -222,7 +233,7 @@ const AppContent = () => {
           <Route
           path="/request-reopen"
           element={
-            <ProtectedRoute allowedDepartments={districtManagerDepartments}>
+            <ProtectedRoute allowedDepartments={[...districtManagerDepartments,...departmentDepartments]}>
               <RequestReopen/>
             </ProtectedRoute>
           }

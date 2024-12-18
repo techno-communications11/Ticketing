@@ -89,7 +89,7 @@ const EmployeesInsights = ({ dm }) => {
                   cursor: "pointer",
                 }}
               >
-                NTID
+                Email
                 <MdFilterList
                   className="ms-2"
                   onClick={() => setIsFilterVisible(!isFilterVisible)}

@@ -149,12 +149,12 @@ const department=getDecodedToken().department;
 
   return (
     <div className="container-fluid mt-1">
-      <h2
+      <h1
         className="my-2 d-flex justify-content-center"
-        style={{ color: "#E10174" }}
+        style={{ color: "#E10174",fontSize:'2rem' }}
       >
         Total User Tickets
-      </h2>
+      </h1>
 
       {authenticated &&  (
         <div className="table-responsive " style={{ zIndex: 1 }}>
@@ -163,12 +163,13 @@ const department=getDecodedToken().department;
               <tr>
                 {[
                   "SC.No",
-                  "NTID / Email",
+                  "Email",
                   "Full Name",
                   "Status",
                   "CreatedAt",
-                  "Now At",
-                  "CompletedBy",
+                  ...(department === "SuperAdmin"
+                    ? ["Now At", "CompletedBy"]
+                    : []),
                   "CompletedAt",
                   "Duration",
                   "Details",

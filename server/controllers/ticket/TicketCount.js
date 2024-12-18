@@ -39,7 +39,7 @@ const TicketCount = async (req, res) => {
       };
     });
 
-    // console.log(formattedCounts);
+    console.log(formattedCounts);
 
     // Send the response to the client
     res.status(200).json(formattedCounts);

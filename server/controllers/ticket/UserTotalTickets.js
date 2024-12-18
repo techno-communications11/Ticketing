@@ -43,14 +43,14 @@ const getUserTickets = async (req, res) => {
             where: { id: ticket.openedBy },
             select: { fullname: true }
           });
-          // console.log(NcUser,"ggggggggggggggggggggggggg")
+          console.log(NcUser,"ggggggggggggggggggggggggg")
           return {
             ...ticket,
             openedByFullName: NcUser?.fullname || null,
           };
         }
         
-        return { ...ticket, openedByFullName: null };
+        return { ...ticket, openedByFullName: "-" };
       })
     );
     console.log(ticketsWithOpeners,'lllllllllllll')

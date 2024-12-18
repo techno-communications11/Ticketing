@@ -3,7 +3,7 @@ import { Container, Navbar, Nav, NavbarBrand } from "react-bootstrap";
 import { FaUserAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { fetchStatusWiseTickets } from "../redux/statusSlice";
 import { useLocation } from "react-router-dom";
@@ -20,22 +20,26 @@ import { MdOutlineDoneAll } from "react-icons/md";
 import { GoIssueReopened } from "react-icons/go";
 import { RiTeamLine } from "react-icons/ri";
 import { VscGitPullRequestNewChanges } from "react-icons/vsc";
+// import getDecodedToken from "./decodeToken";reopen
 
 export function NavbarClient() {
   const dispatch = useDispatch();
   const [deptcount, setTickets] = useState([]);
   const [ticketCount, setTicketCount] = useState(0);
   const token = localStorage.getItem("token");
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const { department, id: userId, ntid } = token ? jwtDecode(token) : {};
-
   const { pathname } = useLocation();
-  // console.log(pathname, "goy po");
 
   const handleLogout = async () => {
-    localStorage.clear();
-    navigate("/login");
+    // Add a fade-out effect or some UI indication before logout
+    document.body.classList.add("fade-out"); // Add a CSS class for transition
+    setTimeout(() => {
+      localStorage.clear();
+      navigate("/login");
+    }, 500); // Adjust timeout to match the CSS transition duration
   };
+  
 
   const isDepartments = [
     "NTID Mappings",
@@ -78,16 +82,18 @@ export function NavbarClient() {
         const response = await apiRequest.get(
           "/createTickets/getdepartmenttickets",
           {
-            params: { ntid, statusId: "3" },
+            params: { ntid },
           }
         );
         const fetchedTickets = response.data.filter(
           (ticket) =>
-            ticket.openedBy === null &&
-            ticket.assignToTeam === null &&
-            ticket.status.name !== "completed"
+            ticket.openedBy === null &&ticket.completedAt===null&&
+            ticket.assignToTeam === null 
+            // ticket.status.id === "5"||ticket.status.id==='3'||ticket.status.id==='1'
         );
         setTickets(fetchedTickets);
+        console.log(response.data,'dddd')
+        console.log(fetchedTickets,'nnnnnnnn')
       } catch (error) {
         console.error("Failed to fetch tickets:", error);
       }
@@ -110,7 +116,7 @@ export function NavbarClient() {
     <Navbar expand="lg" className="shadow-sm">
       <Container fluid>
         <NavbarBrand as={Link} to={homeRoute} className="d-flex mb-2">
-          <img src="../logo.png" height={40} alt="Logo" />
+          <img srcSet="../logo.webp" loading="lazy" height={35} alt="Logo" />
           <Nav className="me-auto" navbarScroll>
             <Navbar.Brand
               as={Link}
@@ -178,7 +184,7 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                      <TbEyeCheck  className=" text-primary fs-5"/>  Viewed
+                        <TbEyeCheck className=" text-primary fs-5" /> Viewed
                       </Nav.Link>
                     )}
                     {department !== "District Manager" && (
@@ -191,7 +197,7 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                      <TbEyeCheck  className=" text-primary fs-5"/>  Viewed
+                        <TbEyeCheck className=" text-primary fs-5" /> Viewed
                       </Nav.Link>
                     )}
                     {!isDepartments && (
@@ -208,21 +214,25 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                       <MdAssignmentTurnedIn className="text-warning fs-5 "/> Assigned
+                        <MdAssignmentTurnedIn className="text-warning fs-5 " />{" "}
+                        Assigned
                       </Nav.Link>
                     )}
 
-                   {department==='District Manager' && <Nav.Link
-                      as={Link}
-                      to={'/dmcreateticket'}
-                      className={`fw-medium position-relative ${
-                        pathname === "/dmcreateticket" 
-                          ? "text-danger fw-bolder"
-                          : "text-dark"
-                      }`}
-                    >
-                     <FaTicketAlt className="text-danger fs-5"/> create Ticket
-                    </Nav.Link>}
+                    {department === "District Manager" && (
+                      <Nav.Link
+                        as={Link}
+                        to={"/dmcreateticket"}
+                        className={`fw-medium position-relative ${
+                          pathname === "/dmcreateticket"
+                            ? "text-danger fw-bolder"
+                            : "text-dark"
+                        }`}
+                      >
+                        <FaTicketAlt className="text-danger fs-5" /> create
+                        Ticket
+                      </Nav.Link>
+                    )}
 
                     <Nav.Link
                       as={Link}
@@ -240,7 +250,8 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                    <MdOutlineDoneAll className="text-success fs-5"/>  Completed
+                      <MdOutlineDoneAll className="text-success fs-5" />{" "}
+                      Completed
                     </Nav.Link>
 
                     {!isDepartments && (
@@ -257,7 +268,8 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                      <VscGitPullRequestNewChanges className="fs-5 fw-bolder text-danger"/>  ReopenQuest
+                        <VscGitPullRequestNewChanges className="fs-5 fw-bolder text-danger" />{" "}
+                        ReopenQuest
                       </Nav.Link>
                     )}
 
@@ -273,7 +285,8 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                      <GoIssueReopened className="text-primary fs-5 fw-bolder"/>  reopened
+                        <GoIssueReopened className="text-primary fs-5 fw-bolder" />{" "}
+                        reopened
                       </Nav.Link>
                     )}
                     {isDepartments && department !== "District Manager" && (
@@ -286,7 +299,8 @@ export function NavbarClient() {
                             : "text-dark"
                         }`}
                       >
-                       <RiTeamLine className="fs-5 text-warning  fw-bolder"/> TeamTickets
+                        <RiTeamLine className="fs-5 text-warning  fw-bolder" />{" "}
+                        TeamTickets
                       </Nav.Link>
                     )}
                   </div>
@@ -307,7 +321,7 @@ export function NavbarClient() {
                         : "text-dark"
                     }`}
                   >
-                   <MdInsights className="text-primary fs-3"/> Insights
+                    <MdInsights className="text-primary fs-3" /> Insights
                   </Nav.Link>
                 )}
                 {department === "SuperAdmin" && (
@@ -321,7 +335,7 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                    <FaTicketAlt className="text-danger fs-4"/>  create Ticket
+                      <FaTicketAlt className="text-danger fs-4" /> create Ticket
                     </Nav.Link>
 
                     <Nav.Link
@@ -333,7 +347,8 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                    <MdStorefront className=" text-warning fs-4"/>  StoreEnroll
+                      <MdStorefront className=" text-warning fs-4" />{" "}
+                      StoreEnroll
                     </Nav.Link>
                     <Nav.Link
                       as={Link}
@@ -344,7 +359,8 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                    <FaUser className=" text-success fs-6 fw-bolder"/>  UserEnroll
+                      <FaUser className=" text-success fs-6 fw-bolder" />{" "}
+                      UserEnroll
                     </Nav.Link>
                     <Nav.Link
                       as={Link}
@@ -355,7 +371,7 @@ export function NavbarClient() {
                           : "text-dark"
                       }`}
                     >
-                     <FaUsers className="text-success fs-5"/> Users
+                      <FaUsers className="text-success fs-5" /> Users
                     </Nav.Link>
                   </Nav>
                 )}

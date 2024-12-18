@@ -34,6 +34,8 @@ import DepartmentWiseTickets from '../controllers/ticket/DepartmentWiseTickets.j
 import getTicketFiles from '../controllers/ticket/getTicketFiles.js';
 import fetchStores from '../controllers/ticket/fetchStores.js';
 import deleteTicket from '../controllers/ticket/deleteTicket.js'
+import TicketsNowAt from '../controllers/ticket/ticketsNowAt.js';
+import getTicketNowatData from '../controllers/ticket/getTicketNowatData.js';
 
  const createTicketsRouter = express.Router();
  createTicketsRouter.post('/uploadTicket',authenticateJWT,CreateTicket)
@@ -70,6 +72,8 @@ import deleteTicket from '../controllers/ticket/deleteTicket.js'
  createTicketsRouter.get('/DepartmentWiseTickets',authenticateJWT,DepartmentWiseTickets)
  createTicketsRouter.get('/getticketfiles/:ticketId', authenticateJWT, getTicketFiles);
  createTicketsRouter.get('/deleteticket/:ticketId', authenticateJWT, deleteTicket);
+ createTicketsRouter.get('/ticketsnowat', authenticateJWT, TicketsNowAt);
+ createTicketsRouter.get('/ticketnowatdata', authenticateJWT, getTicketNowatData);
 
 
 

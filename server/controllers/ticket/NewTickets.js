@@ -3,7 +3,7 @@ import prisma from "../lib/prisma.js";
 const NewTicket = async (req, res) => {
     const userId = req.user.id;
     const status = req.query.status;
-    // console.log(userId,status,"usid")
+    console.log(userId,status,"usid")
 
     if (!userId) {
         return res.status(400).json('Invalid user ID');

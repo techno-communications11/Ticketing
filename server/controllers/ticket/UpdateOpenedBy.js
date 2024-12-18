@@ -30,7 +30,7 @@ const updateOpenedBy = async (req, res) => {
       },
     });
 
-    // console.log("Ticket updated:", updatedTicket);
+    console.log("Ticket updated:", updatedTicket);
 
     res.status(200).json({ message: "Ticket opened successfully", ticket: updatedTicket });
   } catch (error) {

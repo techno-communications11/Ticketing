@@ -19,7 +19,7 @@ const marketWiseStatus = async (req, res) => {
       }
     });
 
-    // console.log(statusCounts, 'sstx');  // Fixed typo in console.log
+    console.log(statusCounts, 'sstx');  // Fixed typo in console.log
     
     // Correcting the status count logic
     const statusCountMap = statusCounts.reduce((acc, ticket) => {
@@ -32,7 +32,7 @@ const marketWiseStatus = async (req, res) => {
       ...statusCountMap,
       market: market  
     };
-    // console.log(newObj,'data')
+    console.log(newObj,'data')
 
     res.status(200).json(newObj);
   } catch (error) {

@@ -64,7 +64,7 @@ const RegisterCode = async (req, res) => {
       }))).filter(Boolean);
       
 
-      console.log('Data to insert:', usersToInsert);
+      // console.log('Data to insert:', usersToInsert);
 
       // Check for existing records
       const existingRecords = await prisma.user.findMany({

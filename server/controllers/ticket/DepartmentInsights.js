@@ -2,7 +2,7 @@ import prisma from "../lib/prisma.js";
 
 const DepartmentInsights = async (req, res) => {
   const { department, statusId, dm, fullname,usersId } = req.query;
-  console.log(department, statusId, dm, fullname, usersId,"rbjfgrjfgbjghesg");
+  // console.log(department, statusId, dm, fullname, usersId,"rbjfgrjfgbjghesg");
 
   try {
     // Get the department ID for the specified department name

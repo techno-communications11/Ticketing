@@ -140,7 +140,7 @@ const UserTable = () => {
               <Table striped bordered hover responsive className='table  align-middle text-center'>
                 <thead>
                   <tr>
-                  {['SC.No', 'NTID', 'Full Name', 'Market', 'DmName', 'Edit', 'View Profile'].map((header) => (
+                  {['SC.No', 'Email', 'Full Name', 'Market', 'DmName', 'Edit', 'View Profile'].map((header) => (
                   <th key={header} className='text-center' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
                 ))}
                   </tr>
@@ -175,7 +175,7 @@ const UserTable = () => {
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formNtid">
-              <Form.Label>NTID</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
                 type="text"
                 name="ntid"

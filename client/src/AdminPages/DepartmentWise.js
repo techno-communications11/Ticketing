@@ -170,7 +170,7 @@ const DepartmentWise = () => {
                         "Total",
                         "New",
                         "Opened",
-                        "In Progress",
+                        "InProgress",
                         "Completed",
                         "Reopened",
                       ].map((status, index) => (

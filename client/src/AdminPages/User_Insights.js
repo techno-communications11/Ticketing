@@ -110,7 +110,7 @@ function UserInsights() {
           <tr className="tablerow">
             <th>SINo</th>
             <th>
-              NTID
+              Email
               <>
                 <IoFilterSharp
                   style={{ cursor: "pointer", marginLeft: "0.5rem" }}

@@ -11,6 +11,8 @@ const MyProvider = ({ children }) => {
         adminntid: "",
         statusId: "",
         fullname: "",
+        datafullname:"",
+        datastatusId:"",
     });
 
     const setDepartment = (department) => setState((prev) => ({ ...prev, department }));
@@ -18,9 +20,12 @@ const MyProvider = ({ children }) => {
     const setDm = (dm) => setState((prev) => ({ ...prev, dm }));
     const setNtid = (adminntid) => setState((prev) => ({ ...prev, adminntid }));
     const setFullName = (fullname) => setState((prev) => ({ ...prev, fullname }));
+    const setDataStatusId = (datastatusId) => setState((prev) => ({ ...prev, datastatusId }));
+    const setDataFullName = (datafullname) => setState((prev) => ({ ...prev, datafullname }));
+    console.log(state,'ppppppppppp')
 
     return (
-        <MyContext.Provider value={{ ...state, setDepartment, setDm, setNtid, setStatusId, setFullName }}>
+        <MyContext.Provider value={{ ...state, setDepartment,setDataStatusId,setDataFullName, setDm, setNtid, setStatusId, setFullName }}>
             {children}
         </MyContext.Provider>
     );

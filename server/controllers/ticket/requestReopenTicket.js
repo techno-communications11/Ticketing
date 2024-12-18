@@ -9,7 +9,7 @@ const requestReopenTicket = async (req, res) => {
       where: { ticketId: ticketId },
       data: { requestreopen: true } 
     });
-//  console.log(updatedTicket)
+ console.log(updatedTicket)
     // Send back the updated ticket
     return res.status(200).json(updatedTicket);
   } catch (error) {

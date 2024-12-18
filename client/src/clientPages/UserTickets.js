@@ -146,7 +146,7 @@ const UserTickets = () => {
               <tr>
                 {[
                   "SC.No",
-                  "NTID",
+                  "Email",
                   "Full Name",
                   "Status",
                   "CreatedAt",

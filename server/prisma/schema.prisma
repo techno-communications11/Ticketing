@@ -57,7 +57,7 @@ model Comment {
   createdBy     String
   createdAt     DateTime     @default(now())
   commentedfiles Json?
-  createTicket  CreateTicket @relation(fields: [ticketId], references: [ticketId])
+  createTicket  CreateTicket @relation(fields: [ticketId], references: [ticketId],onDelete: Cascade)
   ticketId      String
 }
 

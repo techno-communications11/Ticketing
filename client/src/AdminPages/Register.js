@@ -182,7 +182,7 @@ export function Register() {
                 <input
                   type="text"
                   id="ntid"
-                  placeholder="NTID or Email"
+                  placeholder="Enter Email"
                   className={`form-control my-1 ${
                     !isNtidValid ? "input-error" : ""
                   }`}

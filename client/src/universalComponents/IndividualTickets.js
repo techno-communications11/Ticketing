@@ -13,7 +13,6 @@ import Comment from "./Comment";
 import getDecodedToken from "./decodeToken";
 import formatDate from "./FormatDate";
 import { Carousel } from "react-bootstrap";
-import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 
 const Individualmarketss = () => {
@@ -27,14 +26,9 @@ const Individualmarketss = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [getcomment, setGetComment] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  // const [zoom, setZoom] = useState(false);
-
-  // const toggleZoom = () => setZoom(!zoom);
-  // const [hasUpdated, setHasUpdated] = useState(false);
+ 
   const [commentLoading,setCommentLoading]=useState(false);
-  console.log(markets,'mmts')
-  // const [userCommnetCount,setuserCommentCount]=useState(0);
-  // const usersId=getDecodedToken().id;
+ 
   const [users, setUsers] = useState([]);
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -69,16 +63,7 @@ const Individualmarketss = () => {
     // "HR Payroll",
   ];
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const container = document.getElementById("imageContainer");
-  //     if (container) {
-  //       container.scrollLeft += 100; // Adjust this value to control the scroll speed
-  //     }
-  //   }, 3000); // Scroll every 3 seconds
-
-  //   return () => clearInterval(interval); // Clean up on component unmount
-  // }, []);
+ 
 
   const { ntid: userNtid, department, fullname, subDepartment,  } = getDecodedToken() || {};
   const usersId=getDecodedToken().id;
@@ -160,7 +145,6 @@ const Individualmarketss = () => {
     fetchFiles();
   }, [markets.ticketId]);
 
-  // console.log('setUploadedFileUrl',uploadedFileUrl)
   const updateOpenedBy = async () => {
     console.log("update opened by")
     try {
@@ -180,12 +164,11 @@ const Individualmarketss = () => {
     }
   };
   
-  // const xid='67507d4385001812fe9ca5a0'
 
  
   useEffect(() => {
     const updateInitialStatus = async () => {
-      if (markets.userId !== usersId && department !== "SuperAdmin") {
+      if (markets.userId !== usersId && markets.ntid!==userNtid && department !== "SuperAdmin") {
         await updateTicketStatus("2");
       }
     };
@@ -198,12 +181,10 @@ const Individualmarketss = () => {
   
 
   const updateTicketStatus = async (statusId) => {
-    // console.log(`Status ID: ${statusId}, Ticket ID: ${markets.ticketId}, User ID: ${usersId}`);
     try {
       const response = await apiRequest.put(
         `/createTickets/updateprogress/?statusId=${statusId}&ticketId=${markets.ticketId}&usersId=${usersId}`
       );
-      // console.log("Status update response:", response.data);
       if (response.status === 200) {
         if (statusId === "4") {
           toast.success("Ticket marked as completed!", {
@@ -211,28 +192,41 @@ const Individualmarketss = () => {
             autoClose: 2000,
           });
           setTimeout(()=>{
-            dispatch(setId(storedId));
-            dispatch(fetchIndividualTickets(storedId));
+            if(department==='District Manager'){
+              navigate('/completed')
+             }else {
+              navigate('/departmentcompleted')
+             }
           },[2000])
 
           
         } else if (statusId === "2"|| statusId==="5"|| statusId==="3") {
           if(statusId=="5"){
             toast.success("reopened successfully")
+            setTimeout(()=>{
+              if(department==='District Manager'){
+               navigate('/reopened')
+              }
+              else {
+                navigate('/superAdminHome')
+              }
+             },[2000])
           }
-          setTimeout(()=>{
-            dispatch(setId(storedId));
-            dispatch(fetchIndividualTickets(storedId));
-          },[2000])
+          if(statusId=="3"){
+            // toast.success("reopened successfully")
+            setTimeout(()=>{
+              if(department==='District Manager'){
+               navigate('/inprogress')
+              }
+             },[2000])
+          }
+          
         }
        
       }
     } catch (error) {
       console.error(`Error updating status to ${statusId}:`, error);
-      // toast.error("Failed to update ticket status", {
-      //   position: "top-right",
-      //   autoClose: 2000,
-      // });
+     
     }
   };
 
@@ -285,10 +279,6 @@ const Individualmarketss = () => {
       if (response.status === 200) {
         setComment("");
         setSelectedFiles([]);
-        // toast.success("comment submitted!", {
-        //   position: "top-right",
-        //   autoClose: 2000,
-        // });
         fetchComments();
       }
     } catch (error) {
@@ -299,27 +289,22 @@ const Individualmarketss = () => {
   };
   
 
-  // const x=fetchData();
-  // console.log(x,"yyu")
+ 
 
   const onhandleDepartment = (e) => {
     const selectedDept = e.target.value || selectedDepartment;
-    // console.log(selectedDept,"selec")
     setSelectedDepartment(selectedDept);
     assignToDepartment(selectedDept);
   };
 
   const assignToDepartment = async (selectedDept) => {
-    // console.log('assign trigged',markets.ticketId,selectedDept);
     try {
       const response = await apiRequest.put(
         `/createTickets/assigntodepartment/?department=${selectedDept}&ticketId=${markets.ticketId}`
       );
   
       if (response.status === 200) {
-        console.log("Assigned to department:", selectedDept);
         toast.success(`Assigned to ${selectedDept}`);
-        // Make sure status is updated to 3 after department assignment
         await updateTicketStatus("3");
         setTimeout(()=>{
           dispatch(setId(storedId));
@@ -336,7 +321,6 @@ const Individualmarketss = () => {
   
 
   const onhandleAllot = async (user) => {
-    // console.log('alot trigged',markets.ticketId,user);
     try {
       const response = await apiRequest.put("/createTickets/alloted", {
         user,
@@ -346,7 +330,7 @@ const Individualmarketss = () => {
         toast.success(`assigned to ${user}`);
         await updateTicketStatus("3");
         setTimeout(()=>{
-          navigate('/departmenthome')
+          navigate('/departmentnew')
         },[3000])
         
       }
@@ -452,8 +436,7 @@ const Individualmarketss = () => {
         toast.success(`assigned to ${"District Manager"}`);
         await updateTicketStatus("2");
         setTimeout(()=>{
-          dispatch(setId(storedId));
-          dispatch(fetchIndividualTickets(storedId));
+          navigate('/openedTickets')
         },[2000])
       }
     } catch (error) {
@@ -487,7 +470,7 @@ const Individualmarketss = () => {
           <div className="col-md-8">
             <div className="row">
               {Object.entries({
-                NTID: String(markets.ntid || ""),
+                Email: String(markets.ntid || ""),
                 "Full Name": String(markets.fullname || ""),
                 Market: String(markets.market || ""),
                 "Selected Store": String(markets.selectStore || ""),

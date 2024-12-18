@@ -7,6 +7,7 @@ import MarketWise from './MarketWise';
 import DepartmentWise from './DepartmentWise';
 import DM_insights from './DM_insights';
 import User_Insights from './User_Insights';
+import TicketsNowAt from './TicketsNowAt';
 
 function Market_Department(props) {
   const { children, value, index, ...other } = props;
@@ -48,10 +49,11 @@ export default function BasicTabs() {
     <Box sx={{ width: '100%' }} className="container fw-medium">
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
         <Tabs value={value} onChange={handleChange}   aria-label="basic tabs example" >
-          <Tab className='fw-bold' label="MarketWise_Insights" {...a11yProps(0)} />
-          <Tab className='fw-bold' label="DepartmentWise_Insights" {...a11yProps(1)} />
+          <Tab className='fw-bold' label="Market_Wise_Insights" {...a11yProps(0)} />
+          <Tab className='fw-bold' label="Department_Wise_Insights" {...a11yProps(1)} />
           <Tab className='fw-bold' label="DM_Insights" {...a11yProps(2)} />
-          <Tab className='fw-bold' label="Users_Insights" {...a11yProps(3)} />
+          <Tab className='fw-bold' label="Tickets_Created_By" {...a11yProps(3)} />
+          <Tab className='fw-bold' label="Tickets_NOW_At" {...a11yProps(4)} />
         </Tabs>
       </Box>
       <Market_Department value={value} index={0}>
@@ -65,6 +67,9 @@ export default function BasicTabs() {
       </Market_Department>
       <Market_Department value={value} index={3}>
         <User_Insights/>
+      </Market_Department>
+      <Market_Department value={value} index={4}>
+        <TicketsNowAt/>
       </Market_Department>
     </Box>
   );

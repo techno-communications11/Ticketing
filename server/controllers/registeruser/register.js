@@ -10,7 +10,7 @@ const register = async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  // console.log(ntid, fullname, DoorCode, selectedRole, selectMarketValue, password);
+  console.log(ntid, fullname, DoorCode, selectedRole, selectMarketValue, password);
 
   try {
     const existingUser = await prisma.user.findUnique({
@@ -44,7 +44,7 @@ const register = async (req, res) => {
       },
     });
     
-    // console.log(newUser);
+    console.log(newUser);
 
     res.status(201).json({ message: "User registered successfully", user: newUser });
 

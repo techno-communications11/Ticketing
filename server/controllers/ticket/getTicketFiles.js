@@ -63,7 +63,7 @@ const getTicketFiles = async (req, res) => {
 
             const command = new GetObjectCommand(getObjectParams);
             const url = await getSignedUrl(client, command, { expiresIn: 3600 });
-            // console.log(url,'rrrrrrrrrrr') // 3600 seconds = 1 hour
+            console.log(url,'rrrrrrrrrrr') // 3600 seconds = 1 hour
             return url; // Return the signed URL
         }));
 

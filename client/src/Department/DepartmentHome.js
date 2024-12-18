@@ -24,7 +24,7 @@ function DepartmentHome() {
         const response = await apiRequest.get(
           `/createTickets/getDepartmentStats/${department}/${usersId}`
         );
-        console.log(response,'lllllllllllllllllll')
+        // console.log(response,'lllllllllllllllllll')
   
         if (response.status === 200) {
           // Filter the data based on openedBy
@@ -117,16 +117,15 @@ function DepartmentHome() {
       <h2 className="mt-4 text-center" style={{ color: "#E10174" }}>
         {department} Department statusData
       </h2>
-      <Row className="d-flex justify-content-center mt-5">
+      <Row className="d-flex  justify-content-center mt-5">
         <Col md={8} className="d-flex flex-wrap justify-content-center gap-3 ">
           {counts.map((count, index) => (
             <Card
               key={index}
-              className="w-25 h-25"
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer",width:'20rem',height:'10rem' }}
               onClick={() => handleClick(count.key)}
             >
-              <Card.Body className="text-center">
+              <Card.Body className="text-center  mt-3">
                 <h3 style={{ color: "#E10174" }}>{count.value}</h3>
                 <h4>{count.key}</h4>
               </Card.Body>

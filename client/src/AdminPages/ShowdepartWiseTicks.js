@@ -163,7 +163,7 @@ const ShowdepartWiseTicks = () => {
               <tr>
                 {[
                   "SC.No",
-                  "NTID / Email",
+                  "Email",
                   "Full Name",
                   "Status",
                   "CreatedAt",

@@ -20,12 +20,12 @@ const getTicketsByDM = async (fullname) => {
 // Express route handler
 const fetchUserTicketsStats = async (req, res) => {
   const { fullname } = req.query; // Get DM's full name from the query params
-  // console.log(fullname, 'assignedTo');
+  console.log(fullname, 'assignedTo');
 
   try {
     // Step 1: Get tickets assigned to users under the DM
     const tickets = await getTicketsByDM(fullname);
-    // console.log(tickets, 'tickets');
+    console.log(tickets, 'tickets');
 
     // Step 2: Organize data to count tickets by status per user
     const result = tickets.reduce((acc, ticket) => {
@@ -74,7 +74,7 @@ const fetchUserTicketsStats = async (req, res) => {
     // Convert the object back into an array
     const resultArray = Object.values(result);
 
-    // console.log(resultArray, 'result');
+    console.log(resultArray, 'result');
     res.json(resultArray);
   } catch (error) {
     console.error(error);

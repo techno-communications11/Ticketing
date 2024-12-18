@@ -144,13 +144,16 @@ const ShowTickets = () => {
               <tr>
                 {[
                   "SC.No",
-                  "NTID",
+                  "Email  ",
                   "Full Name",
                   "Status",
+                  "Now At",
+                  "Completed By",
                   "CreatedAt",
                   "CompletedAt",
                   "Duration",
                   "Details",
+                  "Delete"
                 ].map((header) => (
                   <th
                     key={header}
