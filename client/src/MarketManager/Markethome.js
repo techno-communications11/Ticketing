@@ -167,7 +167,7 @@ function TotalUserTickets() {
             <tr>
                 {[
                   "SC.No",
-                  "Email",
+                  "Email ?NTID",
                   "Full Name",
                   "Status",
                   "CreatedAt",

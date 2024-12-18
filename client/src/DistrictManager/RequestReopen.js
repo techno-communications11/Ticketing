@@ -123,7 +123,7 @@ function RequestReopen() {
         <tr>
                 {[
                   "SC.No",
-                  "Email",
+                  "Email / NTID",
                   "Full Name",
                   "Status",
                   "CreatedAt",

@@ -157,7 +157,7 @@ function Ticket({ status,openedBy,fullname, }) {
             <tr>
                 {[
                   "SC.No",
-                  "Email",
+                  "Email / NTID",
                   "Full Name",
                   "Status",
                   "CreatedAt",

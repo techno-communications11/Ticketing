@@ -144,7 +144,7 @@ const ShowTickets = () => {
               <tr>
                 {[
                   "SC.No",
-                  "Email  ",
+                  "Email / NTId  ",
                   "Full Name",
                   "Status",
                   "Now At",

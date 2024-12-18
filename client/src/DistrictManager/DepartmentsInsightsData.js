@@ -124,7 +124,7 @@ function DepartmentsInsightsData() {
           <tr>
             {[
               "SC.No",
-              "Email",
+              "Email / NTID",
               "Full Name",
               "Status",
               "CreatedAt",
