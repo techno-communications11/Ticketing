@@ -2,7 +2,7 @@ import prisma from '../lib/prisma.js';
 
 const registerMarket = async (req, res) => {
   const { bdiId, dmName, storeName, market, doorCode, storeAddress } = req.body;
-  console.log(req.body,"nbbbn ")
+  // console.log(req.body,"nbbbn ")
 
   // Predefined markets
   const markets = [

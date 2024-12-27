@@ -126,7 +126,7 @@ const TicketStatus = async (req, res) => {
 
     const emailBody = `
       <h1 style="font-family: Arial, sans-serif; color: #333;">TECHNO-COMMUNICATIONS LLC</h1>
-      <img src="https://ticketing.techno-communications.com/logo.webp" alt="Logo" style="width:150px;height:auto;">
+      <img src="https://ticketing.techno-communications.com/logoT.webp" alt="Logo" style="width:150px;height:auto;">
       <p>Dear User,</p>
       <p>Your ticket with ID <strong>${ticketId}</strong> has been updated to the status: <strong>${updatedTicket.status?.name || "Unknown"}</strong>.</p>
       <p>Currently handled by: <strong>${openedByName}</strong></p>

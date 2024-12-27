@@ -49,7 +49,7 @@ export function NavbarClient() {
     "HR Payroll",
     "Maintenance",
     "Admin",
-    "Software"
+    "Software India"
   ]?.includes(department);
 
   useEffect(() => {

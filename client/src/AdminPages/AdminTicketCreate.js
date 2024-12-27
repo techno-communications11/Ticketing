@@ -62,7 +62,7 @@ export function AdminTicketCreate() {
     // "Charge Back/Commission",
     // "Inventory",
     "Admin",
-    "Software"
+    "Software India"
     // "Maintenance ",
     // "Housing ",
     // "CAM NW",

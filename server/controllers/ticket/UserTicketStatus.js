@@ -31,7 +31,7 @@ const UserTicketStatus = async (req, res) => {
                 requestreopen:true,
             },
         });
-        console.log(tickets,"kkkkkkkkkkkkkkkkk");
+        // console.log(tickets,"kkkkkkkkkkkkkkkkk");
         res.status(200).json(tickets);
     } catch (error) {
         console.error('Error fetching tickets:', error); // Log the error for debugging

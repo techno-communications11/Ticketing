@@ -50,7 +50,7 @@ const marketManagerDepartments = ['Market Manager'];
 const departmentDepartments = [
   'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',  'Charge Back/Commission',
    'Inventory',  'Housing',
-  'CAM NW', 'HR Payroll','Maintenance','Admin',"Software"
+  'CAM NW', 'HR Payroll','Maintenance','Admin',"Software India"
 ];
 
 const ProtectedRoute = ({ children, allowedDepartments }) => {

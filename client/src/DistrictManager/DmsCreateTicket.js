@@ -92,7 +92,7 @@ export function DmsCreateTicket() {
       const matchedUser = ntids.find(
         (item) => item.ntid.toLowerCase() === selectedNTID.toLowerCase() // Match the `ntid`
       );
-      console.log(matchedUser, "Mmu");
+      // console.log(matchedUser, "Mmu");
 
       setSelectedNTIDUser(matchedUser?.fullname || ""); // Set `name` if found, else empty string
     } else {
@@ -129,7 +129,7 @@ export function DmsCreateTicket() {
         { fullname: "Kamaran Mohammed", market: "SAN FRANCISCO" },
         { fullname: "Muhammad Sumairuddin", market: "SAN JOSE" },
         { fullname: "Saad Ali", market: "SOLANO COUNTY" },
-        { fullname: "dm", market: "MEMPHIS" },
+        // { fullname: "Tharun", market: "MEMPHIS" },
 
     ];
 
@@ -165,7 +165,7 @@ export function DmsCreateTicket() {
     // "Charge Back/Commission",
     // "Inventory",
     "Admin",
-    "Software"
+    "Software India"
     // "Maintenance ",
     // "Housing ",
     // "CAM NW",
