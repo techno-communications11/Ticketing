@@ -5,7 +5,6 @@ const updateOpenedBy = async (req, res) => {
   // const userId = req.user.id;
 
   try {
-    // console.log(`Checking ticket ${ticketId} before updating openedBy`);
 
     // First, check if the ticket has statusId '3'
     const ticket = await prisma.createTicket.findUnique({
@@ -17,12 +16,6 @@ const updateOpenedBy = async (req, res) => {
       return res.status(404).json({ message: "Ticket not found" });
     }
 
-    // Check if statusId is '3'
-    // if (ticket.statusId !== '3') {
-    //   return res.status(400).json({ message: "Action not allowed for this ticket" });
-    // }
-
-    // Proceed with the update if statusId is '3'
     const updatedTicket = await prisma.createTicket.update({
       where: { ticketId },
       data: {

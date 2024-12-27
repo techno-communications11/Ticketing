@@ -48,10 +48,10 @@ const EmployeesInsights = ({ dm }) => {
     navigate("/usertickets");
   };
 
-  const handleStatusClick = (AdminsDatantid, statusId) => () =>{
-    console.log(AdminsDatantid,'ntidzz',statusId,"sttausIdzzz")
-    handleDataSend( AdminsDatantid,statusId);
-}
+//   const handleStatusClick = (AdminsDatantid, statusId) => () =>{
+//     console.log(AdminsDatantid,'ntidzz',statusId,"sttausIdzzz")
+//     handleDataSend( AdminsDatantid,statusId);
+// }
   const handleTotalTickets = (AdminsDatantid) => () => {
     console.log(AdminsDatantid, "AdminsDatantid");
     setNtid(AdminsDatantid);

@@ -2,7 +2,7 @@ import React, { useRef, useState, useCallback } from "react";
 import { FaRegEye, FaEyeSlash } from "react-icons/fa";
 import { apiRequest } from "../lib/apiRequest";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 export function Login() {
   const ntidRef = useRef(null);
@@ -73,20 +73,22 @@ export function Login() {
   };
 
   return (
-    <div className="container-fluid d-flex flex-column align-items-center justify-content-center mt-5">
+    <div className="container-fluid d-flex flex-column align-items-center justify-content-center mt-5 max-vh-100 ">
       {isLoading ? (
-        <div className="loader d-flex align-items-center justify-content-center"></div>
+        <div className="loader d-flex align-items-center justify-content-center">
+          
+        </div>
       ) : (
         <>
           <div className="my-2 text-center mt-5">
             <p
               style={{
                 color: "#E10174",
-                fontFamily: "Arial, sans-serif", // System font, no external request
+                fontFamily: "Arial, sans-serif", 
                 fontWeight: "500",
-                fontSize: "1.5rem", // Adjusted for faster rendering
-                display: "inline-block", // Helps with layout performance
-                lineHeight: "1.2", // Ensures the text doesn't take excessive vertical space
+                fontSize: "1.5rem", 
+                display: "inline-block",
+                lineHeight: "1.2",
               }}
             >
               TECHNO COMMUNICATIONS LLC
@@ -96,8 +98,8 @@ export function Login() {
           <div className="row justify-content-center align-items-center mt-5">
             <img
               loading="lazy"
-              width="8000"
-              height="3014"
+              width="800"
+              height="300"
               className="col-12 col-md-6 col-lg-4 mb-4 d-none d-sm-block h-50 me-5"
               srcSet="./logoT.webp"
               alt="Logo"
@@ -105,14 +107,14 @@ export function Login() {
 
             <div className="col-12 mt-5 col-md-6 col-lg-4 d-flex justify-content-center align-items-center">
               <form
-                className=" p-4 rounded  shadow-lg w-100 col-12"
+                className="p-4 rounded shadow-lg w-100 col-12 bg-white"
                 onSubmit={handleSubmit}
               >
-                <h1 className="font-weight-bold d-flex justify-content-center fs-4">
+                <h1 className="font-weight-bold d-flex justify-content-center fs-4 mb-4">
                   Login
                 </h1>
 
-                <div className="my-3">
+                <div className="form-group mb-3">
                   <input
                     id="ntid"
                     type="text"
@@ -120,25 +122,23 @@ export function Login() {
                     className="form-control border shadow-none"
                     ref={ntidRef}
                     aria-label="NTID"
-                    // autoComplete="username"
                   />
                   {errors.ntid && (
-                    <span className="text-danger">{errors.ntid}</span>
+                    <span className="text-danger small">{errors.ntid}</span>
                   )}
                 </div>
 
-                <div className="my-3 rounded bg-white border d-flex align-items-center">
+                <div className="form-group mb-3 position-relative">
                   <input
                     id="password"
                     type={passwordVisible ? "text" : "password"}
                     placeholder="Enter password"
-                    className="form-control border-0 shadow-none"
+                    className="form-control border shadow-none"
                     ref={passwordRef}
                     aria-label="Password"
-                    // autoComplete="current-password"
                   />
                   <span
-                    className="mx-2"
+                    className="position-absolute top-50 end-0 translate-middle-y me-3"
                     onClick={() => setPasswordVisible(!passwordVisible)}
                     style={{ cursor: "pointer" }}
                   >
@@ -146,20 +146,22 @@ export function Login() {
                   </span>
                 </div>
                 {errors.password && (
-                  <span className="text-danger">{errors.password}</span>
+                  <span className="text-danger small">{errors.password}</span>
                 )}
 
-                <div className="my-3">
+                <div className="mb-3">
                   <button
                     type="submit"
-                    className="btn btn-primary w-100"
+                    className="btn btn-primary w-100 py-2"
                     disabled={isLoading}
                   >
                     {isLoading ? "Logging in..." : "Login"}
                   </button>
                 </div>
                 {errors.general && (
-                  <p className="text-danger">{errors.general}</p>
+                  <p className="text-danger small text-center">
+                    {errors.general}
+                  </p>
                 )}
               </form>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Container, Col, Row, Card, Spinner } from 'react-bootstrap';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -14,8 +14,8 @@ export function SuperAdminHome() {
   const [ticketCounts, setTicketCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const {setStatusId,setNtid}=useMyContext();
-  const navigate=useNavigate();
+  const { setStatusId, setNtid } = useMyContext();
+  const navigate = useNavigate();
 
   const fetchStatusTickets = useCallback(async () => {
     try {
@@ -48,64 +48,69 @@ export function SuperAdminHome() {
   }, [ticketCounts]);
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
-  const filteredInsights = Object.entries(ticketCounts)
-    .filter(([key]) => key !== "total");
 
-  const chartData = {
-    labels: filteredInsights.map(([key]) => key),  // The status labels (excluding "Total")
-    datasets: [
-      {
-        data: filteredInsights.map(([, value]) => value),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF','#5b66FF'], 
-        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF','#5b66FF'],
-      },
-    ],
-  };
+  const filteredInsights = useMemo(() => {
+    return Object.entries(ticketCounts)
+      .filter(([key]) => key !== "total");
+  }, [ticketCounts]);
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
+  const chartData = useMemo(() => {
+    return {
+      labels: filteredInsights.map(([key]) => key),
+      datasets: [
+        {
+          data: filteredInsights.map(([, value]) => value),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#5b66FF'],
+          hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#5b66FF'],
+        },
+      ],
+    };
+  }, [filteredInsights]);
+
+  const chartOptions = useMemo(() => {
+    return {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Ticket Counts by Status',
+        },
       },
-      title: {
-        display: true,
-        text: 'Ticket Counts by Status',
-      },
-    },
-  };
-  const handleSperAdminStats = async (statusId) => {
-    // Mapping status names to IDs
+    };
+  }, []);
+
+  const handleSperAdminStats = useCallback((statusId) => {
     const statusMap = {
-        Total: '0',
-        New: '1',
-        Opened: '2',
-        Inprogress: '3',
-        Completed: '4',
-        Reopened: '5'
+      Total: '0',
+      New: '1',
+      Opened: '2',
+      Inprogress: '3',
+      Completed: '4',
+      Reopened: '5'
     };
 
-    // Get the corresponding status ID, defaulting to '0' if not found
     statusId = statusMap[statusId] || '0';
-    if(statusId){
-      localStorage.setItem('statusId',statusId)
-      setStatusId(statusId)
-      setNtid(null)
-      navigate('/totalusertickets')
+    if (statusId) {
+      localStorage.setItem('statusId', statusId);
+      setStatusId(statusId);
+      setNtid(null);
+      navigate('/totalusertickets');
     }
-};
-
+  }, [setStatusId, setNtid, navigate]);
 
   return (
     <Container className="mt-4">
       {loading ? (
-        <div className="loader">
+        <div className="loader d-flex align-items-center justify-content-center max-vh-100">
         </div>
       ) : (
         <div>
           <Row>
             <Col md={12} className="text-center mb-4">
-              <h4 className=" font-family" style={{color:'#E10174'}}>Ticket Status Overview</h4>
+              <h4 className="font-family" style={{ color: '#E10174' }}>Ticket Status Overview</h4>
             </Col>
           </Row>
 
@@ -113,8 +118,8 @@ export function SuperAdminHome() {
             <Col xs={12} md={6} lg={6} className="mb-4">
               <Row className="justify-content-center">
                 {Object.entries(ticketCounts).map(([key, value]) => (
-                  <Col xs={12} sm={6} md={6} lg={4} key={key} className="mb-3 ">
-                    <Card className="shadow-sm text-center p-3 h-100 rounded " style={{cursor:'pointer',fontWeight:'800'}} onClick={()=>handleSperAdminStats(key.charAt(0).toUpperCase() + key.slice(1))}>
+                  <Col xs={12} sm={6} md={6} lg={4} key={key} className="mb-3">
+                    <Card className="shadow-sm text-center p-3 h-100 rounded" style={{ cursor: 'pointer', fontWeight: '800' }} onClick={() => handleSperAdminStats(key.charAt(0).toUpperCase() + key.slice(1))}>
                       <h5 className="font-family">{key.charAt(0).toUpperCase() + key.slice(1)}</h5>
                       <p id={`${key}Tickets`} style={{ color: '#E10174', fontSize: '40px', fontWeight: 'bold' }}>
                         {safeNumber(value)}
@@ -126,12 +131,11 @@ export function SuperAdminHome() {
             </Col>
 
             <Col xs={12} md={6} lg={6} className="mb-4">
-              <Card className="shadow-sm p-4 rounded " style={{height:'68vh'}}>
+              <Card className="shadow-sm p-4 rounded" style={{ height: '68vh' }}>
                 <Pie data={chartData} options={chartOptions} />
               </Card>
             </Col>
           </Row>
-
         </div>
       )}
 

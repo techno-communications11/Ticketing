@@ -62,6 +62,7 @@ export function AdminTicketCreate() {
     // "Charge Back/Commission",
     // "Inventory",
     "Admin",
+    "Software"
     // "Maintenance ",
     // "Housing ",
     // "CAM NW",
@@ -282,7 +283,7 @@ export function AdminTicketCreate() {
         // Optional: Refresh UI state
         setTimeout(() => {
           fetchTicketCounts();
-        }, 2000);
+        }, 1500);
       })
       .catch((error) => {
         let errorMessage = "Error occurred. Please try again.";
@@ -811,7 +812,7 @@ export function AdminTicketCreate() {
           </div>
           <Button onClick={handleSubmit}>
             {loading ? (
-              <div class="spinner-border text-warning " disabled={loading}></div>
+              <div class="spinner-border text-dark " disabled={loading}></div>
             ) : (
               "Submit"
             )}

@@ -30,6 +30,9 @@ const TicketDetails = async (req, res) => {
         status: {
           select: { name: true },
         },
+        user: {
+          select: { fullname: true }, // Fetch the user who created the ticket
+        },
       },
     });
 
@@ -37,19 +40,14 @@ const TicketDetails = async (req, res) => {
       return res.status(404).json({ error: 'Ticket not found' });
     }
 
-    // Fetch the user who created the ticket (if `userId` exists)
-    const userDetails = details.userId
-      ? await prisma.user.findUnique({
-          where: { id: details.userId },
-          select: { fullname: true },
-        })
-      : null;
-
     // Add the user name to the ticket details
     const ticketWithUserDetails = {
       ...details,
-      OpenedByFullName: userDetails?.fullname || null,
+      OpenedByFullName: details.user?.fullname || null,
     };
+
+    // Remove the redundant user field from the response
+    delete ticketWithUserDetails.user;
 
     res.status(200).json(ticketWithUserDetails);
   } catch (error) {

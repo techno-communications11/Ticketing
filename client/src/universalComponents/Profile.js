@@ -18,12 +18,13 @@ export function Profile() {
   const passwordConformRef = useRef(null);
   const [error, setError] = useState("");
   const [photoUpdated, setPhotoUpdated] = useState(false);
+
+  // Fetch user data
   const fetchUserData = async () => {
     try {
       const response = await apiRequest.get("/profile/getprofiledata_token");
       if (response.status === 200) {
         setUserData(response.data);
-        console.log(response.data,'dattat')
       } else {
         throw new Error("Failed to fetch user data");
       }
@@ -32,6 +33,8 @@ export function Profile() {
       setError(err.message);
     }
   };
+
+  // Fetch profile photo
   const fetchProfile = async () => {
     try {
       const response = await apiRequest.get("/profile/getprofilephoto", {
@@ -58,7 +61,6 @@ export function Profile() {
     const formData = new FormData();
     formData.append("profilePhoto", file);
 
-  console.log("Uploading file:", file);
     try {
       await apiRequest.post("/profile/profilephoto", formData, {
         headers: {
@@ -69,7 +71,7 @@ export function Profile() {
       toast.success("Profile photo added successfully!");
       setTimeout(() => {
         fetchProfile();
-      }, [2000]);
+      }, 2000);
     } catch (error) {
       console.error("Error uploading file:", error);
       toast.error("Error adding profile photo");
@@ -82,7 +84,7 @@ export function Profile() {
     }
   };
 
-  const handleEdit = async () => {
+  const handleEdit = () => {
     setImmediateEdit(true);
     setPopButtons(false);
     setUploadedFileUrl(null);
@@ -90,8 +92,7 @@ export function Profile() {
 
   const resetPasswordHandler = () => setToggle(true);
   const handlePasswordToggle = () => setPasswordVisibleNew((prev) => !prev);
-  const handlePasswordConfirmToggle = () =>
-    setPasswordConfirmVisible((prev) => !prev);
+  const handlePasswordConfirmToggle = () => setPasswordConfirmVisible((prev) => !prev);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -101,7 +102,7 @@ export function Profile() {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
     setError("");
 
-    if (password.length === 0) {
+    if (!password || !confirmPassword) {
       setError("Password fields are empty");
     } else if (!passwordRegex.test(password)) {
       setError("Use a strong password");
@@ -124,20 +125,19 @@ export function Profile() {
       }
     }
   };
-  console.log(uploadedFileUrl, "uploadedfileurl");
 
   return (
-    <div className="container  mt-sm-5 mt-md-1">
-      <div className=" d-md-flex flex-row justify-content-center align-items-start">
-        <div className="d-none d-md-flex  align-items-center m-auto">
-          <img src="./userdata.png" height={300} />
+    <div className="container mt-sm-5 mt-md-1">
+      <div className="d-md-flex flex-row justify-content-center align-items-start">
+        <div className="d-none d-md-flex align-items-center m-auto">
+          <img src="./userdata.png" height={300} alt="User Data" />
         </div>
 
         <div className="col-md-6">
           <div className="d-flex flex-column justify-content-center align-items-center">
             {uploadedFileUrl == null ? (
               <div
-                className="d-flex flex-column justify-content-center align-items-center  rounded-circle"
+                className="d-flex flex-column justify-content-center align-items-center rounded-circle"
                 onClick={() => setPopButtons(true)}
                 style={{ cursor: "pointer", width: "10vw", height: "19vh" }}
               >
@@ -147,8 +147,8 @@ export function Profile() {
                       Camera
                       <input
                         type="file"
-                        accept="image/*" // Accept any image type for compatibility
-                        capture="environment" // Use the back camera if supported
+                        accept="image/*"
+                        capture="environment"
                         style={{ display: "none" }}
                         onChange={handleFileInputChange}
                       />
@@ -179,7 +179,7 @@ export function Profile() {
                   className="img-thumbnail rounded-circle"
                   style={{ width: "100px", height: "100px" }}
                 />
-                <div className="ms-3 mt-2 fs-6 ">
+                <div className="ms-3 mt-2 fs-6">
                   <span
                     style={{ cursor: "pointer" }}
                     className="btn btn-outline-primary fs-6"
@@ -193,7 +193,7 @@ export function Profile() {
           </div>
 
           {userData && (
-            <div className=" p-1">
+            <div className="p-1">
               <div>
                 {Object.entries(userData).map(([key, value]) => (
                   <p key={key} className="d-flex justify-content-between">
@@ -207,7 +207,7 @@ export function Profile() {
 
               {toggle === false ? (
                 <button
-                  className="btn btn-primary  w-100"
+                  className="btn btn-primary w-100"
                   onClick={resetPasswordHandler}
                 >
                   Reset Password

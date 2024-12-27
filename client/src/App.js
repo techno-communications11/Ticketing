@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Login } from './universalComponents/Login';
+import {Login}  from './universalComponents/Login';
 import { Profile } from './universalComponents/Profile';
 import { Home } from './clientPages/Home';
 import { NavbarClient } from './universalComponents/NavbarClient';
@@ -35,7 +35,6 @@ import ShowdepartWiseTicks from './AdminPages/ShowdepartWiseTicks';
 import { AdminTicketCreate } from './AdminPages/AdminTicketCreate';
 import {DmsCreateTicket} from './DistrictManager/DmsCreateTicket';
 import GetAllDeptTickets from './Department/GetAllDeptTickets';
-import TicketsNowAt from './AdminPages/TicketsNowAt';
 import TicketNowAtData from './AdminPages/TicketNowAtData';
 
 
@@ -51,7 +50,7 @@ const marketManagerDepartments = ['Market Manager'];
 const departmentDepartments = [
   'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',  'Charge Back/Commission',
    'Inventory',  'Housing',
-  'CAM NW', 'HR Payroll','Maintenance','Admin'
+  'CAM NW', 'HR Payroll','Maintenance','Admin',"Software"
 ];
 
 const ProtectedRoute = ({ children, allowedDepartments }) => {

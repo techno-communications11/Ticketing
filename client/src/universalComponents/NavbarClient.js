@@ -20,8 +20,6 @@ import { MdOutlineDoneAll } from "react-icons/md";
 import { GoIssueReopened } from "react-icons/go";
 import { RiTeamLine } from "react-icons/ri";
 import { VscGitPullRequestNewChanges } from "react-icons/vsc";
-// import getDecodedToken from "./decodeToken";reopen
-
 export function NavbarClient() {
   const dispatch = useDispatch();
   const [deptcount, setTickets] = useState([]);
@@ -39,8 +37,6 @@ export function NavbarClient() {
       navigate("/login");
     }, 500); // Adjust timeout to match the CSS transition duration
   };
-  
-
   const isDepartments = [
     "NTID Mappings",
     "Trainings",
@@ -53,6 +49,7 @@ export function NavbarClient() {
     "HR Payroll",
     "Maintenance",
     "Admin",
+    "Software"
   ]?.includes(department);
 
   useEffect(() => {

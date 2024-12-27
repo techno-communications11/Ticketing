@@ -31,6 +31,7 @@ export function Register() {
     "SuperAdmin",
     "District Manager",
     "Employee",
+    "Software"
   ];
   const subUserroles = ["Manager", "User"];
 

@@ -20,21 +20,21 @@ const getTicketsByDM = async (fullname) => {
 // Express route handler
 const fetchUserTicketsStats = async (req, res) => {
   const { fullname } = req.query; // Get DM's full name from the query params
-  console.log(fullname, 'assignedTo');
 
   try {
     // Step 1: Get tickets assigned to users under the DM
     const tickets = await getTicketsByDM(fullname);
-    console.log(tickets, 'tickets');
 
-    // Step 2: Organize data to count tickets by status per user
-    const result = tickets.reduce((acc, ticket) => {
+    // Step 2: Organize data to count tickets by status per user using a Map for better performance
+    const result = new Map();
+
+    tickets.forEach((ticket) => {
       const ntid = ticket.ntid;
       const statusName = ticket.status.name.toLowerCase(); // Ensure it's lowercase for consistency
 
-      // Check if user already exists in the accumulator
-      if (!acc[ntid]) {
-        acc[ntid] = {
+      // Check if user already exists in the Map
+      if (!result.has(ntid)) {
+        result.set(ntid, {
           ntid: ntid,
           totalTickets: 0,
           openedTickets: 0,
@@ -42,39 +42,38 @@ const fetchUserTicketsStats = async (req, res) => {
           completedTickets: 0,
           reopenedTickets: 0,
           newTickets: 0,
-        };
+        });
       }
 
-      // Update ticket counts
-      acc[ntid].totalTickets += 1;
+      // Get the user's ticket count object
+      const userTickets = result.get(ntid);
 
+      // Update ticket counts
+      userTickets.totalTickets += 1;
       switch (statusName) {
         case 'opened':
-          acc[ntid].openedTickets += 1;
+          userTickets.openedTickets += 1;
           break;
         case 'inprogress':
-          acc[ntid].inprogressTickets += 1;
+          userTickets.inprogressTickets += 1;
           break;
         case 'completed':
-          acc[ntid].completedTickets += 1;
+          userTickets.completedTickets += 1;
           break;
         case 'reopened':
-          acc[ntid].reopenedTickets += 1;
+          userTickets.reopenedTickets += 1;
           break;
         case 'new':
-          acc[ntid].newTickets += 1;
+          userTickets.newTickets += 1;
           break;
         default:
           break;
       }
+    });
 
-      return acc;
-    }, {});
+    // Convert the Map back into an array
+    const resultArray = Array.from(result.values());
 
-    // Convert the object back into an array
-    const resultArray = Object.values(result);
-
-    console.log(resultArray, 'result');
     res.json(resultArray);
   } catch (error) {
     console.error(error);

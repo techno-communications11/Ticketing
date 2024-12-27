@@ -1,9 +1,6 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
+import prisma from "../lib/prisma.js";
 const TicketCount = async (req, res) => {
-  console.log("Ticket counting")
+  // console.log("Ticket counting");
   try {
     // Fetch ticket counts grouped by statusId
     const counts = await prisma.createTicket.groupBy({
@@ -12,32 +9,22 @@ const TicketCount = async (req, res) => {
         statusId: true,
       },
     });
-    console.log(counts);
 
-    // Fetch all statuses (so we can map them)
+    // Fetch all statuses
     const statuses = await prisma.status.findMany({
       select: {
         id: true,
         name: true,
       },
     });
-    console.log(statuses);
 
-    // Map statusId to status name
-    const statusMap = {};
-    statuses.forEach((status) => {
-      statusMap[status.id] = status.name;
-    });
+   
 
     // Create a formatted response with status names and counts
-    const formattedCounts = statuses.map((status) => {
-      const foundCount = counts.find((count) => count.statusId === status.id);
-      const countValue = foundCount ? foundCount._count.statusId : 0; // Handle missing status
-      return {
-        status: status.name,
-        count: countValue,
-      };
-    });
+    const formattedCounts = statuses.map(status => ({
+      status: status.name,
+      count: counts.find(count => count.statusId === status.id)?._count.statusId || 0,
+    }));
 
     console.log(formattedCounts);
 

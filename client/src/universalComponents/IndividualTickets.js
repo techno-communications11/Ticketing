@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, Dropdown, Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
@@ -13,6 +13,8 @@ import Comment from "./Comment";
 import getDecodedToken from "./decodeToken";
 import formatDate from "./FormatDate";
 import { Carousel } from "react-bootstrap";
+import debounce from "lodash/debounce";
+
 import "react-medium-image-zoom/dist/styles.css";
 
 const Individualmarketss = () => {
@@ -26,9 +28,9 @@ const Individualmarketss = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [getcomment, setGetComment] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
- 
-  const [commentLoading,setCommentLoading]=useState(false);
- 
+
+  const [commentLoading, setCommentLoading] = useState(false);
+
   const [users, setUsers] = useState([]);
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -57,54 +59,71 @@ const Individualmarketss = () => {
     // "Charge Back/Commission",
     // "Inventory",
     "Admin",
+    "Software"
     // "Maintenance",
     // "Housing",
     // "CAM NW",
     // "HR Payroll",
   ];
 
- 
-
-  const { ntid: userNtid, department, fullname, subDepartment,  } = getDecodedToken() || {};
-  const usersId=getDecodedToken().id;
-
+  const {
+    ntid: userNtid,
+    department,
+    fullname,
+    subDepartment,
+  } = getDecodedToken() || {};
+  const usersId = getDecodedToken().id;
 
   const fetchData = async () => {
     try {
-      const response = await apiRequest.get("/auth/GetUsers");
-      const fetchedUsers = response.data.teamMembers || [];
-      const filterdata = fetchedUsers.filter(
-        (name) => name.fullname !== fullname
+      const { data } = await apiRequest.get("/auth/GetUsers");
+      const teamMembers = data?.teamMembers || [];
+      const filteredUsers = teamMembers.filter(
+        (member) => member.fullname !== fullname
       );
-      setUsers(filterdata);
-      if (filterdata.length > 0) {
-      } else {
-        console.log("No users found in your team");
+
+      setUsers(filteredUsers);
+
+      if (filteredUsers.length === 0) {
+        console.warn("No users found in your team");
       }
     } catch (error) {
-      console.error("Error fetching users:", error.response || error.message);
+      console.error(
+        "Error fetching users:",
+        error.response?.data || error.message
+      );
     }
   };
 
   const storedId = localStorage.getItem("selectedId");
-  const fetchComments = async () => {
-    try {
-      const response = await apiRequest.get(
-        `/createTickets/getcomment/?ticketId=${storedId}`
-      );
-      setGetComment(response.data);
-      console.log(response.data,"commentes are fetched")
-      console.log(response.data, "datatatta");
-    } catch (err) {
-      console.log("Error fetching comments.", err);
-    }
-  };
+
+  const fetchComments = useCallback(
+    debounce(async () => {
+      try {
+        if (!storedId) {
+          console.warn("No ticket ID found in local storage.");
+          return;
+        }
+
+        const { data } = await apiRequest.get(
+          `/createTickets/getcomment/?ticketId=${storedId}`
+        );
+        setGetComment(data);
+
+        console.log("Comments fetched:", data);
+      } catch (error) {
+        console.error(
+          "Error fetching comments:",
+          error.response?.data || error.message
+        );
+      }
+    }, 300), // Delay in milliseconds
+    [storedId]
+  );
 
   useEffect(() => {
-    if (storedId) {
-      fetchComments();
-    }
-  }, [markets.ticketId]);
+    fetchComments();
+  }, [markets.ticketId, fetchComments]);
 
   useEffect(() => {
     const storedId = localStorage.getItem("selectedId");
@@ -116,37 +135,42 @@ const Individualmarketss = () => {
   }, [selectedId, dispatch]);
 
   useEffect(() => {
+    // Guard clause: Check for ticketId early
     if (!markets?.ticketId) {
-      console.warn("No ticketId available in markets");
-      setUploadedFileUrl(null);
+      console.warn("No ticketId available in markets.");
+      setUploadedFileUrl(null); // Clear the state if ticketId is not available
       return;
     }
 
+    // Fetch files associated with the ticketId
     const fetchFiles = async () => {
       try {
-        const apiUrl = `/createTickets/getticketfiles/${markets.ticketId}`; // Ensure markets.ticketId is correct
-        const response = await apiRequest.get(apiUrl);
+        const apiUrl = `/createTickets/getticketfiles/${markets.ticketId}`;
+        const { data } = await apiRequest.get(apiUrl);
 
-        // Destructure signedUrls directly from the response data
-        const { signedUrls } = response.data;
+        // Safely extract signedUrls from the response
+        const signedUrls = data?.signedUrls || [];
 
-        if (signedUrls && signedUrls.length > 0) {
+        if (signedUrls.length > 0) {
           setUploadedFileUrl(signedUrls); // Store the signed URLs in state
         } else {
-          console.warn("No files found for the specified ticketId");
+          console.warn("No files found for the specified ticketId.");
           setUploadedFileUrl([]); // Clear the state if no files are found
         }
       } catch (error) {
-        console.error("Error fetching files:", error);
+        console.error(
+          "Error fetching files:",
+          error.response?.data || error.message
+        );
         setUploadedFileUrl([]); // Reset the state on error
       }
     };
 
     fetchFiles();
-  }, [markets.ticketId]);
+  }, [markets?.ticketId]);
 
   const updateOpenedBy = async () => {
-    console.log("update opened by")
+    console.log("update opened by");
     try {
       const endpoint = departments?.includes(department)
         ? "/createTickets/update_opened_by"
@@ -163,12 +187,14 @@ const Individualmarketss = () => {
       console.error("Error updating opened by:", err);
     }
   };
-  
 
- 
   useEffect(() => {
     const updateInitialStatus = async () => {
-      if (markets.userId !== usersId && markets.ntid!==userNtid && department !== "SuperAdmin") {
+      if (
+        markets.userId !== usersId &&
+        markets.ntid !== userNtid &&
+        department !== "SuperAdmin"
+      ) {
         await updateTicketStatus("2");
       }
     };
@@ -176,60 +202,61 @@ const Individualmarketss = () => {
     updateOpenedBy();
     fetchData();
   }, [markets, userNtid, department]);
-  
-  
-  
 
   const updateTicketStatus = async (statusId) => {
     try {
       const response = await apiRequest.put(
         `/createTickets/updateprogress/?statusId=${statusId}&ticketId=${markets.ticketId}&usersId=${usersId}`
       );
-      if (response.status === 200) {
-        if (statusId === "4") {
-          toast.success("Ticket marked as completed!", {
-            position: "top-right",
-            autoClose: 2000,
-          });
-          setTimeout(()=>{
-            if(department==='District Manager'){
-              navigate('/completed')
-             }else {
-              navigate('/departmentcompleted')
-             }
-          },[2000])
 
-          
-        } else if (statusId === "2"|| statusId==="5"|| statusId==="3") {
-          if(statusId=="5"){
-            toast.success("reopened successfully")
-            setTimeout(()=>{
-              if(department==='District Manager'){
-               navigate('/reopened')
-              }
-              else {
-                navigate('/superAdminHome')
-              }
-             },[2000])
-          }
-          if(statusId=="3"){
-            // toast.success("reopened successfully")
-            setTimeout(()=>{
-              if(department==='District Manager'){
-               navigate('/inprogress')
-              }
-             },[2000])
-          }
-          
-        }
-       
+      if (response.status === 200) {
+        handleToastAndNavigation(statusId);
       }
     } catch (error) {
       console.error(`Error updating status to ${statusId}:`, error);
-     
     }
   };
 
+  const handleToastAndNavigation = (statusId) => {
+    const isDistrictManager = department === "District Manager";
+
+    switch (statusId) {
+      case "4":
+        toast.success("Ticket marked as completed!", {
+          position: "top-right",
+          autoClose: 1500,
+        });
+        setTimeout(() => {
+          navigate(isDistrictManager ? "/completed" : "/departmentcompleted");
+        }, 1500);
+        break;
+
+      case "5":
+        toast.success("Ticket reopened successfully", {
+          position: "top-right",
+          autoClose: 1500,
+        });
+        setTimeout(() => {
+          navigate(isDistrictManager ? "/reopened" : "/superAdminHome");
+        }, 1500);
+        break;
+
+      case "3":
+        setTimeout(() => {
+          if (isDistrictManager) {
+            navigate("/inprogress");
+          }
+        }, 1500);
+        break;
+
+      case "2":
+        // Add logic here if needed for statusId === "2"
+        break;
+
+      default:
+        console.warn(`Unhandled statusId: ${statusId}`);
+    }
+  };
 
   const handleConfirmAction = async (action, text) => {
     const result = await Swal.fire({
@@ -260,26 +287,35 @@ const Individualmarketss = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setCommentLoading(true);
+
     try {
       const formData = new FormData();
+      // Append required fields
       formData.append("ticketId", markets.ticketId);
-      formData.append("comment", comment);
+      formData.append("comment", comment.trim()); // Trim to avoid unnecessary spaces
       formData.append("createdBy", fullname);
-  
-      selectedFiles.forEach((file, index) => {
-        formData.append(`commentedfiles`, file);
-      });
-  
-      const response = await apiRequest.put("/createTickets/postcomment", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-  
+
+      // Append files only if there are selected files
+      if (selectedFiles.length > 0) {
+        selectedFiles.forEach((file) => {
+          formData.append("commentedfiles", file);
+        });
+      }
+
+      const response = await apiRequest.put(
+        "/createTickets/postcomment",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
       if (response.status === 200) {
-        setComment("");
-        setSelectedFiles([]);
-        fetchComments();
+        // Reset fields after successful submission
+        resetCommentForm();
+        fetchComments(); // Refresh comments
       }
     } catch (error) {
       console.error("Error submitting comment:", error);
@@ -287,9 +323,11 @@ const Individualmarketss = () => {
       setCommentLoading(false);
     }
   };
-  
 
- 
+  const resetCommentForm = () => {
+    setComment(""); // Clear comment input
+    setSelectedFiles([]); // Clear uploaded files
+  };
 
   const onhandleDepartment = (e) => {
     const selectedDept = e.target.value || selectedDepartment;
@@ -298,18 +336,26 @@ const Individualmarketss = () => {
   };
 
   const assignToDepartment = async (selectedDept) => {
+    if (!selectedDept || !markets.ticketId) {
+      toast.error("Invalid department or ticket ID");
+      return;
+    }
+
     try {
       const response = await apiRequest.put(
         `/createTickets/assigntodepartment/?department=${selectedDept}&ticketId=${markets.ticketId}`
       );
-  
+
       if (response.status === 200) {
         toast.success(`Assigned to ${selectedDept}`);
+
+        // Update ticket status and fetch updated tickets
         await updateTicketStatus("3");
-        setTimeout(()=>{
+
+        setTimeout(() => {
           dispatch(setId(storedId));
           dispatch(fetchIndividualTickets(storedId));
-        },[2000])
+        }, 1500); // Removed unnecessary array brackets
       }
     } catch (error) {
       console.error("Error assigning department:", error);
@@ -318,29 +364,38 @@ const Individualmarketss = () => {
       setSelectedDepartment("");
     }
   };
-  
 
   const onhandleAllot = async (user) => {
+    if (!user || !markets.ticketId) {
+      toast.error("Invalid user or ticket ID");
+      return;
+    }
+
     try {
       const response = await apiRequest.put("/createTickets/alloted", {
         user,
         ticketId: markets.ticketId,
       });
+
       if (response.status === 200) {
-        toast.success(`assigned to ${user}`);
+        toast.success(`Assigned to ${user}`);
+
+        // Update ticket status
         await updateTicketStatus("3");
-        setTimeout(()=>{
-          navigate('/departmentnew')
-        },[3000])
-        
+
+        // Navigate after a slight delay
+        setTimeout(() => {
+          navigate("/departmentnew");
+        }, 1500);
       }
     } catch (error) {
-      toast.error(`error assigning to ${user}`);
+      console.error(`Error assigning to ${user}:`, error);
+      toast.error(`Error assigning to ${user}`);
     } finally {
+      // Reset selected department regardless of success or failure
       setSelectedDepartment("");
     }
   };
-
 
   let count = 0;
   getcomment.map((comment) => {
@@ -358,29 +413,34 @@ const Individualmarketss = () => {
       },
       reopen: {
         actionText: "request to reopen",
-        confirmationText: "Are you sure you want to request reopening this ticket?",
+        confirmationText:
+          "Are you sure you want to request reopening this ticket?",
         endpoint: "/createTickets/request-reopen",
       },
     };
-  
+
     const config = actionsConfig[action];
     if (!config) return;
-  
-    const { isConfirmed } = await Swal.fire({
-      title: `Confirm ${config.actionText.charAt(0).toUpperCase() + config.actionText.slice(1)}`,
-      text: config.confirmationText,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#E10174",
-      cancelButtonColor: "#d33",
-      confirmButtonText: `Yes, ${config.actionText} it!`,
-      cancelButtonText: "Cancel",
-    });
-  
-    if (isConfirmed) {
-      try {
-        const response = await apiRequest.put(config.endpoint, { ticketId: markets.ticketId });
-  
+
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `Confirm ${
+          config.actionText.charAt(0).toUpperCase() + config.actionText.slice(1)
+        }`,
+        text: config.confirmationText,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#E10174",
+        cancelButtonColor: "#d33",
+        confirmButtonText: `Yes, ${config.actionText} it!`,
+        cancelButtonText: "Cancel",
+      });
+
+      if (isConfirmed) {
+        const response = await apiRequest.put(config.endpoint, {
+          ticketId: markets.ticketId,
+        });
+
         if (response.status === 200) {
           await Swal.fire({
             icon: "success",
@@ -388,70 +448,84 @@ const Individualmarketss = () => {
             text: `The ticket has been ${config.actionText}d successfully.`,
             confirmButtonColor: "#E10174",
           });
-  
-          if (department === "District Manager" && action === "settle") {
-            navigate("/completed");
-            setTimeout(()=>{
-              dispatch(setId(storedId));
-              dispatch(fetchIndividualTickets(storedId));
-            },[2000])
 
-          } else if (department === "Employee" && action === "reopen") {
-            navigate("/home");
-             setTimeout(()=>{
-            dispatch(setId(storedId));
-            dispatch(fetchIndividualTickets(storedId));
-          },[2000])
-          } else {
-            setTimeout(()=>{
-              dispatch(setId(storedId));
-              dispatch(fetchIndividualTickets(storedId));
-            },[2000])
-          }
+          handlePostActionNavigation(action);
         }
-      } catch (error) {
-        console.error(`Error requesting ${config.actionText}:`, error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: `There was an error ${config.actionText}ing the ticket. Please try again.`,
-          confirmButtonColor: "#E10174",
-        });
       }
+    } catch (error) {
+      console.error(`Error processing ${config.actionText}:`, error);
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: `There was an error ${config.actionText}ing the ticket. Please try again.`,
+        confirmButtonColor: "#E10174",
+      });
     }
   };
-  
-  
-  
+
+  const handlePostActionNavigation = (action) => {
+    const navigateTo = getNavigationPath(action);
+
+    if (navigateTo) {
+      setTimeout(() => {
+        dispatch(setId(storedId));
+        dispatch(fetchIndividualTickets(storedId));
+        navigate(navigateTo);
+      }, 1500);
+    }
+  };
+
+  const getNavigationPath = (action) => {
+    if (department === "District Manager" && action === "settle") {
+      return "/completed";
+    } else if (department === "Employee" && action === "reopen") {
+      return "/home";
+    }
+    return "/"; // Default path
+  };
+
   const handleConfirmSettled = () => handleTicketAction("settle");
   const handleRequestReopen = () => handleTicketAction("reopen");
 
   const handleCallbackAction = async () => {
-    console.log('callback trigged',markets.ticketId,usersId);
+    const department = "District Manager";
+    console.log("Callback triggered", markets.ticketId, usersId);
+
     try {
-      const response = await apiRequest.put(
-        `/createTickets/callback/?department=${"District Manager"}&ticketId=${markets.ticketId}&usersId=${usersId}`
-      );
+      // Construct API request URL with necessary parameters
+      const apiUrl = `/createTickets/callback/?department=${department}&ticketId=${markets.ticketId}&usersId=${usersId}`;
+
+      // Make the API call to assign the ticket
+      const response = await apiRequest.put(apiUrl);
+
       if (response.status === 200) {
-        toast.success(`assigned to ${"District Manager"}`);
+        // Display success toast message
+        toast.success(`Assigned to ${department}`);
+
+        // Update the ticket status
         await updateTicketStatus("2");
-        setTimeout(()=>{
-          navigate('/openedTickets')
-        },[2000])
+
+        // Navigate to the opened tickets page after a delay
+        setTimeout(() => {
+          navigate("/openedTickets");
+        }, 1500);
       }
     } catch (error) {
-      toast.error(`error assigning to ${"District Manager"}`);
+      // Handle error and show a failure toast message
+      console.error(`Error assigning to ${department}:`, error);
+      toast.error(`Error assigning to ${department}`);
     } finally {
+      // Clear the selected department field
       setSelectedDepartment("");
     }
   };
+
   let counts = getcomment.reduce((acc, comment) => {
     if (comment.createdBy === markets.fullname) {
       acc++;
     }
     return acc;
   }, 0);
- 
 
   return (
     <div className="container mt-2">
@@ -477,7 +551,9 @@ const Individualmarketss = () => {
                 "Phone Number": String(markets.phoneNumber || ""),
                 "Ticket Regarding": String(markets.ticketRegarding || ""),
                 "Selected Department": String(markets.selectedDepartment || ""),
-                "Selected Sub Department": String(markets.selectedSubdepartment || ""),
+                "Selected Sub Department": String(
+                  markets.selectedSubdepartment || ""
+                ),
                 Description: String(markets.description || ""),
                 "Created At": formatDate(markets.createdAt) || "",
               }).map(([key, value]) => (
@@ -494,44 +570,65 @@ const Individualmarketss = () => {
                   </p>
                 </div>
               ))}
-          <div className="mt-2 mb-2 col-md-12">
-  <h5 className="text-start fw-medium text-secondary">Comments:</h5>
-  {getcomment.length > 0 ? (
-    getcomment
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .map((comment, index) => (
-        <div key={index} className="comment-item mb-3" style={{ lineHeight: "1" }}>
-          <small className="ms-2 fs-6 text-muted fw-medium">
-            <HiArrowSmRight /> {comment.comment}
-          </small>
-          <br />
-          <small className="ms-2 text-muted" style={{ lineHeight: "1" }}>
-            Commented By: <span className="fw-medium"> {comment.createdBy}</span> | {formatDate(comment.createdAt)}
-            <div>
-              {comment.commentedfiles && comment.commentedfiles.map((item, fileIndex) => {
-                const fileName = item.split('/').pop(); // Extract file name from URL
-                const shortName = fileName.length > 20 ? fileName.substring(0, 17) + '...' : fileName; // Shorten the name if it's too long
-                
-                return (
-                  <a key={fileIndex} href={item} download={fileName}>
-                    <span>{shortName}</span>
-                    <img src={item} alt={`file-${fileIndex}`} style={{ maxWidth: '20px', marginLeft: '10px' }} />
-                  </a>
-                );
-              })}
-            </div>
-          </small>
-        </div>
-      ))
-  ) : (
-    <p>No comments available for this ticket.</p>
-  )}
-</div>
+              <div className="mt-2 mb-2 col-12">
+                <h5 className="fw-medium text-secondary">Comments:</h5>
+                {getcomment.length > 0 ? (
+                  getcomment
+                    .sort(
+                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
+                    .map((comment, index) => (
+                      <div
+                        key={index}
+                        className="comment-item mb-3"
+                        style={{ lineHeight: "1" }}
+                      >
+                        <small className="ms-2 fs-6 text-muted fw-medium">
+                          <HiArrowSmRight /> {comment.comment}
+                        </small>
+                        <br />
+                        <small
+                          className="ms-2 text-muted"
+                          style={{ lineHeight: "1" }}
+                        >
+                          Commented By:{" "}
+                          <span className="fw-medium">{comment.createdBy}</span>{" "}
+                          | {formatDate(comment.createdAt)}
+                          <div>
+                            {comment.commentedfiles &&
+                              comment.commentedfiles.map((item, fileIndex) => {
+                                const fileName = item.split("/").pop(); // Extract file name from URL
+                                const shortName =
+                                  fileName.length > 20
+                                    ? fileName.substring(0, 17) + "..."
+                                    : fileName; // Shorten the name if it's too long
 
-
-
-
-
+                                return (
+                                  <a
+                                    key={fileIndex}
+                                    href={item}
+                                    download={fileName}
+                                  >
+                                    <span>{shortName}</span>
+                                    <img
+                                      src={item}
+                                      alt={`file-${fileIndex}`}
+                                      style={{
+                                        maxWidth: "20px",
+                                        marginLeft: "10px",
+                                      }}
+                                    />
+                                  </a>
+                                );
+                              })}
+                          </div>
+                        </small>
+                      </div>
+                    ))
+                ) : (
+                  <p>No comments available for this ticket.</p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -566,7 +663,7 @@ const Individualmarketss = () => {
           </div>
 
           <div className="row mb-2">
-            <div className="col-md-7 d-flex align-items-center">
+            <div className="col-7 d-flex align-items-center">
               {department !== "Employee" &&
                 department !== "SuperAdmin" &&
                 markets.userId !== usersId &&
@@ -584,7 +681,7 @@ const Individualmarketss = () => {
                 department === "District Manager") &&
                 markets.status?.name === "completed" && (
                   <Comment
-                   commentLoading={commentLoading}
+                    commentLoading={commentLoading}
                     comment={comment}
                     handleCommentChange={handleCommentChange}
                     handleSubmit={handleSubmit}
@@ -594,7 +691,7 @@ const Individualmarketss = () => {
                 )}
             </div>
 
-            <div className="col-md-5 d-flex justify-content-end align-items-center mt-4 text-sm-start ">
+            <div className="col-5 d-flex justify-content-end align-items-center mt-4">
               {departments?.includes(department) &&
                 markets.status?.name !== "completed" && (
                   <Dropdown className="mx-2">
@@ -608,7 +705,7 @@ const Individualmarketss = () => {
                         <Dropdown.Item
                           key={index}
                           onClick={() => onhandleAllot(user.fullname)}
-                          className="shadow-lg text-primary text-capitalize"
+                          className="text-primary text-capitalize shadow-lg"
                         >
                           {user.fullname}
                         </Dropdown.Item>
@@ -645,7 +742,7 @@ const Individualmarketss = () => {
                                     target: { value: dept },
                                   })
                                 }
-                                className="shadow-lg text-primary"
+                                className="text-primary"
                               >
                                 {dept}
                               </Dropdown.Item>
@@ -654,7 +751,7 @@ const Individualmarketss = () => {
                         </Dropdown>
                       )}
 
-{markets.status?.name !== "completed" &&
+                    {markets.status?.name !== "completed" &&
                       markets.departmentId === "19" && (
                         <button
                           className="btn btn-success"
@@ -665,6 +762,7 @@ const Individualmarketss = () => {
                           Close
                         </button>
                       )}
+
                     {markets.status?.name !== "completed" &&
                       departments.includes(department) && (
                         <button
@@ -683,9 +781,8 @@ const Individualmarketss = () => {
                 department === "Employee" &&
                 markets.status?.name === "completed" && (
                   <Button
-                    variant="primary fw-medium w-auto ms-auto me-3 "
-                    onClick={() => handleRequestReopen()}
-                    key={comment.id}
+                    variant="primary fw-medium w-auto ms-auto me-3"
+                    onClick={handleRequestReopen}
                   >
                     Request Reopen
                   </Button>
@@ -696,13 +793,15 @@ const Individualmarketss = () => {
                 department === "SuperAdmin") &&
                 markets.status?.name === "completed" && (
                   <Button
-                    variant="primary fw-medium w-auto me-2 "
+                    variant="primary fw-medium w-auto me-2"
                     onClick={() => handleConfirmAction("5", "reopened")}
                   >
                     Reopen
                   </Button>
                 )}
-              {(department === "District Manager"||subDepartment==='Manager') &&
+
+              {(department === "District Manager" ||
+                subDepartment === "Manager") &&
                 markets.status?.name === "completed" &&
                 !markets.isSettled && (
                   <Button
@@ -712,10 +811,12 @@ const Individualmarketss = () => {
                     Settle
                   </Button>
                 )}
+
               {(department === "District Manager" ||
                 department === "Market Manager") &&
                 markets.departmentId !== "19" &&
-                markets.status?.name !== "completed" && markets.userId!==usersId && (
+                markets.status?.name !== "completed" &&
+                markets.userId !== usersId && (
                   <Button
                     variant="success fw-medium w-auto"
                     onClick={handleCallbackAction}
@@ -730,52 +831,53 @@ const Individualmarketss = () => {
         <div className="alert alert-info mt-3">No tickets available.</div>
       )}
 
-<Modal
-      show={showModal}
-      onHide={() => setShowModal(false)}
-      centered
-      size="xl"
-    
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Ticket Image</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
-          <Carousel>
-            {uploadedFileUrl.map((url, index) => (
-              <Carousel.Item key={index}>
-                <div
-                  onWheel={handleWheel}
-                  onMouseMove={handleMouseMove}
-                  style={{
-                    width: "100%",
-                    height: "600px",
-                    overflow: "hidden",
-                    position: "relative",
-                    cursor: zoom > 1 ? "grab" : "default",
-                  }}
-                >
-                  <img
-                    src={url}
-                    alt={`Ticket File ${index + 1}`}
-                    className="d-block w-100 img-fluid"
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        centered
+        size="xl"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Ticket Image</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
+            <Carousel>
+              {uploadedFileUrl.map((url, index) => (
+                <Carousel.Item key={index}>
+                  <div
+                    onWheel={handleWheel}
+                    onMouseMove={handleMouseMove}
                     style={{
-                      height: "600px",
-                      objectFit: "cover",
-                      transform: `scale(${zoom}) translate(${offset.x}%, ${offset.y}%)`,
-                      transition: "transform 0.1s",
+                      width: "100%",
+                      height: "auto", // Adjust height based on image aspect ratio
+                      overflow: "hidden",
+                      position: "relative",
+                      cursor: zoom > 1 ? "grab" : "default",
                     }}
-                  />
-                </div>
-              </Carousel.Item>
-            ))}
-          </Carousel>
-        ) : (
-          <div className="text-center">No Images Available</div>
-        )}
-      </Modal.Body>
-    </Modal>
+                  >
+                    <img
+                      src={url}
+                      alt={`Ticket File ${index + 1}`}
+                      className="d-block w-100 img-fluid"
+                      style={{
+                        width: "100%", // Ensure the image fills the width
+                        height: "auto", // Let the height adjust based on the width
+                        objectFit: "contain", // Maintain aspect ratio of the image
+                        transform: `scale(${zoom}) translate(${offset.x}%, ${offset.y}%)`,
+                        transition: "transform 0.1s",
+                      }}
+                    />
+                  </div>
+                </Carousel.Item>
+              ))}
+            </Carousel>
+          ) : (
+            <div className="text-center">No Images Available</div>
+          )}
+        </Modal.Body>
+      </Modal>
+
       {department === "Employee" &&
         markets.status?.name === "completed" &&
         markets.isSettled !== true && (

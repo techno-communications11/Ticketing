@@ -37,7 +37,8 @@ export function DmsCreateTicket() {
   const [searchNTID, setSearchNTID] = useState(""); // State for search input
   const [filteredNTID, setFilteredNTID] = useState([]); // State for filtered NTIDs
   const [ntids, setNTids] = useState([]);
-  console.log(AssignTo,'sss')
+  const [loading,setLoading]=useState(false);
+  // console.log(AssignTo,'sss')
   const admin = [
     "Internet",
     "Power",
@@ -164,6 +165,7 @@ export function DmsCreateTicket() {
     // "Charge Back/Commission",
     // "Inventory",
     "Admin",
+    "Software"
     // "Maintenance ",
     // "Housing ",
     // "CAM NW",
@@ -385,6 +387,7 @@ const handleSubmit = () => {
       console.log(pair[0] + ": " + pair[1]);
     }
     console.log(formData,'form dataa')
+    setLoading(true)
 
     // Send form data via API request
     apiRequest
@@ -400,6 +403,7 @@ const handleSubmit = () => {
         setTimeout(() => {
           window.location.reload();
         }, 2000);
+        setLoading(false);
       })
       .catch((error) => {
         if (error.response) {
@@ -843,7 +847,7 @@ const handleSubmit = () => {
                 </Dropdown.Menu>
               </Dropdown>
               </div>
-              <Button onClick={handleSubmit}>Submit</Button>
+              <Button onClick={handleSubmit} disabled={loading}>{loading?<div class="spinner-border"></div>:"Submit"}</Button>
           
         </Modal.Footer>
       </Modal>
