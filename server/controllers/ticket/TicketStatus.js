@@ -31,7 +31,7 @@ const TicketStatus = async (req, res) => {
         userId: true,
         status: { select: { id: true, name: true } },
         assignedTo: true,
-        department: { select: { name: true } },
+        department: { select: { id: true } },
       },
     });
 
@@ -48,7 +48,7 @@ const TicketStatus = async (req, res) => {
       });
     }
 
-    const departmentId = ticket.assignedTo ? "19" : "11";
+    const departmentId = ticket.assignedTo ? "19" :ticket.department.id;
 
     const updateData = {
       statusId: requestedStatus,

@@ -141,7 +141,7 @@ const UserTickets = () => {
         </div>
       ) : (
         <div className="table-responsive">
-          <Table bordered>
+          <Table bordered className="table-sm">
             <thead>
               <tr>
                 {[

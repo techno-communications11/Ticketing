@@ -276,14 +276,15 @@ export function AdminTicketCreate() {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) => {
-        toast.success("Ticket created successfully!");
+        
         handleClose();
         setLoading(false);
   
         // Optional: Refresh UI state
         setTimeout(() => {
+          toast.success("Ticket created successfully!");
           fetchTicketCounts();
-        }, 1500);
+        }, 1000);
       })
       .catch((error) => {
         let errorMessage = "Error occurred. Please try again.";
@@ -582,9 +583,9 @@ export function AdminTicketCreate() {
                       <Dropdown.Item
                         key={index}
                         onClick={() => handleStoreSelect(store)}
-                        className="shadow-lg  fw-medium text-primary text-start"
+                        className="shadow-lg  fw-medium text-primary text-start text-capitalize"
                       >
-                        {store}
+                        {store.toLowerCase()}
                       </Dropdown.Item>
                     ))
                   ) : (
@@ -852,7 +853,7 @@ export function AdminTicketCreate() {
 
             <div className=" col-12 col-md-12 flex-grow-1 bg-white shadow-lg  rounded p-1">
               <div className=" col-md-12 d-flex justify-content-center">
-                <h3 className="font-family">Status Of Tickets</h3>
+                <h5 className="font-family">Status Of Tickets</h5>
               </div>
               <div className=" col-12 col-md-12 d-flex row g-3 p-3">
                 <Link

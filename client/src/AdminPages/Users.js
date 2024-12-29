@@ -134,10 +134,10 @@ const UserTable = () => {
           ) : (
             <div>
               <div className="d-flex justify-content-between align-items-center ">
-                <h2 className="font-family mb-0" style={{ color: '#E10174' }}>Users Information</h2>
+                <h4 className="font-family mb-0" style={{ color: '#E10174' }}>Users Information</h4>
                 <h4 className="mb-0" style={{ color: '#E10174' }}>users: {users.length}</h4>
               </div>
-              <Table striped bordered hover responsive className='table  align-middle text-center'>
+              <Table striped bordered hover responsive className='table  align-middle text-center table-sm'>
                 <thead>
                   <tr>
                   {['SC.No', 'Email / NTID', 'Full Name', 'Market', 'DmName', 'Edit', 'View Profile'].map((header) => (

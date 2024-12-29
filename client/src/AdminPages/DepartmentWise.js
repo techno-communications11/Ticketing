@@ -135,7 +135,7 @@ const DepartmentWise = () => {
                   striped
                   bordered
                   hover
-                  className="table align-middle text-center"
+                  className="table align-middle text-center table-sm"
                 >
                   <thead>
                     <tr>

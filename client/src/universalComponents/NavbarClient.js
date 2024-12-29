@@ -372,7 +372,7 @@ export function NavbarClient() {
                     </Nav.Link>
                   </Nav>
                 )}
-                <button className="btn btn-danger me-3" onClick={handleLogout}>
+                <button className="btn btn-danger" onClick={handleLogout}>
                   Logout
                 </button>
                 <Nav.Link as={Link} to="/profile" className="me-5">

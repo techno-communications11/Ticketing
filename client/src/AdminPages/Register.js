@@ -179,7 +179,7 @@ export function Register() {
                 onSubmit={handleSubmit}
                 className="col-12 col-md-4 shadow-lg p-3 rounded"
               >
-                <h4 className="text-center font-family mb-2">Register User</h4>
+                <h5 className="text-center font-family mb-2">Register User</h5>
                 <input
                   type="text"
                   id="ntid"

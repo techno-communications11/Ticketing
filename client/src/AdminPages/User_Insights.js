@@ -105,7 +105,7 @@ function UserInsights() {
         <MdDownload /> Download as Excel File
       </button>
 
-      <table className="table table-bordered table-striped">
+      <table className="table table-bordered table-striped table-sm">
         <thead className="table-light">
           <tr className="tablerow">
             <th>SINo</th>

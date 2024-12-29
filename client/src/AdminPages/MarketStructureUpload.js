@@ -163,7 +163,7 @@ export function MarketStructureUpload() {
                     className="shadow-lg rounded p-4"
                   >
                     <div className="text-center mb-4">
-                      <h4 className="font-family">Register Store</h4>
+                      <h5 className="font-family">Register Store</h5>
                     </div>
                     <Form.Group className="mb-2">
                       <Form.Control

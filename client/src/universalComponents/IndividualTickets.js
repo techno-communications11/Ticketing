@@ -59,7 +59,7 @@ const Individualmarketss = () => {
     // "Charge Back/Commission",
     // "Inventory",
     "Admin",
-    "Software India"
+    "Software India",
     // "Maintenance",
     // "Housing",
     // "CAM NW",
@@ -664,31 +664,33 @@ const Individualmarketss = () => {
 
           <div className="row mb-2">
             <div className="col-7 d-flex align-items-center">
-              {department !== "Employee" &&
-                department !== "SuperAdmin" &&
-                markets.userId !== usersId &&
-                markets.status?.name !== "completed" && (
-                  <Comment
-                    commentLoading={commentLoading}
-                    comment={comment}
-                    selectedFiles={selectedFiles}
-                    setSelectedFiles={setSelectedFiles}
-                    handleCommentChange={handleCommentChange}
-                    handleSubmit={handleSubmit}
-                  />
-                )}
-              {(department === "Employee" ||
-                department === "District Manager") &&
-                markets.status?.name === "completed" && (
-                  <Comment
-                    commentLoading={commentLoading}
-                    comment={comment}
-                    handleCommentChange={handleCommentChange}
-                    handleSubmit={handleSubmit}
-                    selectedFiles={selectedFiles}
-                    setSelectedFiles={setSelectedFiles}
-                  />
-                )}
+              {(() => {
+                const canComment =
+                  (department !== "Employee" &&
+                    department !== "SuperAdmin" &&
+                    markets.userId !== usersId &&
+                    markets.status?.name !== "completed") ||
+                  ((department === "Employee" ||
+                    department === "District Manager") &&
+                    markets.status?.name === "completed") ||
+                  (department === "SuperAdmin" &&
+                    markets.status?.name === "reopened" &&
+                    markets.userId === usersId);
+
+                if (canComment) {
+                  return (
+                    <Comment
+                      commentLoading={commentLoading}
+                      comment={comment}
+                      selectedFiles={selectedFiles}
+                      setSelectedFiles={setSelectedFiles}
+                      handleCommentChange={handleCommentChange}
+                      handleSubmit={handleSubmit}
+                    />
+                  );
+                }
+                return null;
+              })()}
             </div>
 
             <div className="col-5 d-flex justify-content-end align-items-center mt-4">
@@ -751,29 +753,26 @@ const Individualmarketss = () => {
                         </Dropdown>
                       )}
 
-                    {markets.status?.name !== "completed" &&
-                      markets.departmentId === "19" && (
-                        <button
-                          className="btn btn-success"
-                          onClick={() =>
-                            handleConfirmAction("4", "mark as completed")
-                          }
-                        >
-                          Close
-                        </button>
-                      )}
+                    {(() => {
+                      const isEligibleForClose =
+                        markets.status?.name !== "completed" &&
+                        (markets.departmentId === "19" ||
+                          departments.includes(department));
 
-                    {markets.status?.name !== "completed" &&
-                      departments.includes(department) && (
-                        <button
-                          className="btn btn-success"
-                          onClick={() =>
-                            handleConfirmAction("4", "mark as completed")
-                          }
-                        >
-                          Close
-                        </button>
-                      )}
+                      if (isEligibleForClose) {
+                        return (
+                          <button
+                            className="btn btn-success"
+                            onClick={() =>
+                              handleConfirmAction("4", "mark as completed")
+                            }
+                          >
+                            Close
+                          </button>
+                        );
+                      }
+                      return null;
+                    })()}
                   </>
                 )}
 

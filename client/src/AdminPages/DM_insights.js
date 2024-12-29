@@ -96,8 +96,8 @@ function DM_insights() {
         <MdDownload /> Download as Excel File
       </button>
       {filteredInsights ? (
-        <div className="table-responsive">
-          <table className="table table-bordered table-striped">
+        <div className="table-responsive table-sm">
+          <table className="table table-bordered table-striped table-sm">
             <thead className="thead-dark">
               <tr className="tablerow">
                 <th style={{ backgroundColor: "#E10174" }}>SINO</th>

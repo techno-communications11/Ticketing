@@ -149,16 +149,16 @@ const department=getDecodedToken().department;
 
   return (
     <div className="container-fluid mt-1">
-      <h1
+      <h4
         className="my-2 d-flex justify-content-center"
-        style={{ color: "#E10174",fontSize:'2rem' }}
+        style={{ color: "#E10174",fontSize:'1.5rem' }}
       >
         Total User Tickets
-      </h1>
+      </h4>
 
       {authenticated &&  (
         <div className="table-responsive " style={{ zIndex: 1 }}>
-          <table className="table table-bordered table-hover">
+          <table className="table table-bordered table-hover table-sm">
             <thead>
               <tr>
                 {[

@@ -79,7 +79,7 @@ function TicketsNowAt() {
     <div className="container mt-4">
       <h2 className="text-center mb-4" style={{color:'#E10174'}}>Tickets Now_At</h2>
       {Object.keys(groupedTickets).length > 0 ? (
-        <table  className="table table-bordered table-striped table-responsive">
+        <table  className="table table-bordered table-striped table-responsive table-sm">
           <thead className="thead-dark">
             <tr>
             <th className="text-center" style={{backgroundColor:'#E10174' ,color:'white'}}>SCNO</th>

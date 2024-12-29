@@ -123,7 +123,7 @@ const ShowTickets = () => {
   }, [filteredTickets, currentPage, itemsPerPage]);
 
   return (
-    <Container className="mt-2">
+    <Container fluid className="mt-2">
       <div className="col-12 d-flex flex-column flex-md-row align-items-center mb-2">
         <h3
           className="col-12 col-md-5 mb-0 font-family text-capitalize"
