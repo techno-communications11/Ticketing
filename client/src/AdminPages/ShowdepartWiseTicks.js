@@ -37,8 +37,8 @@ const ShowdepartWiseTicks = () => {
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [fullnameToggle, setFullnameToggle] = useState(false);
   const userData = getDecodedToken();
-  console.log(userData.department, "ooooooooooo");
-  console.log(userData.id, "oooooooooookkkk");
+  // console.log(userData.department, "ooooooooooo");
+  // console.log(userData.id, "oooooooooookkkk");
   const fetchTickets = async () => {
     try {
       const response = await apiRequest.get(
@@ -48,7 +48,7 @@ const ShowdepartWiseTicks = () => {
         }
       );
       setTickets(response.data);
-      console.log(response.data, "kkkkkkkkkkkk");
+      // console.log(response.data, "kkkkkkkkkkkk");
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
     }

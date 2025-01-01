@@ -23,6 +23,7 @@ const getUserTickets = async (req, res) => {
         completedAt: true,
         openedBy: true,
         ticketId: true,
+        isSettled:true,
         status: {
           select: {
             name: true,
@@ -43,7 +44,7 @@ const getUserTickets = async (req, res) => {
             where: { id: ticket.openedBy },
             select: { fullname: true }
           });
-          console.log(NcUser,"ggggggggggggggggggggggggg")
+          // console.log(NcUser,"ggggggggggggggggggggggggg")
           return {
             ...ticket,
             openedByFullName: NcUser?.fullname || null,

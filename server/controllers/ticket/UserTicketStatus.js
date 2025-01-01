@@ -29,6 +29,7 @@ const UserTicketStatus = async (req, res) => {
                 createdAt: true,
                 completedAt:true,
                 requestreopen:true,
+                isSettled:true
             },
         });
         // console.log(tickets,"kkkkkkkkkkkkkkkkk");

@@ -18,16 +18,6 @@ const createTicket = async (req, res) => {
         const { ntid, fullname, phone, market, store, department, subdepartment, departmentId, ticketSubject, description } = req.body;
 
         try {
-            // Fetch department manager details
-            const dmData = await prisma.marketStructure.findMany({
-                where: { storeName: store },
-                select: { dmName: true }
-            });
-
-            if (!dmData || dmData.length === 0) {
-                return res.status(404).send('Department Manager not found for the selected store.');
-            }
-
             // Validate phone number
             const phoneNumber = parseInt(phone, 10);
             if (isNaN(phoneNumber)) {
@@ -39,36 +29,36 @@ const createTicket = async (req, res) => {
                 return res.status(400).send('Missing required form fields.');
             }
 
-            // Handle file uploads
-            const cameraFileUrls = req.files['cameraFile']
-                ? await Promise.all(req.files['cameraFile'].map(file => uploadToS3(file)))
-                : [];
+            // Fetch department manager details and department ID (parallel tasks)
+            const [dmData, deprId] = await Promise.all([
+                prisma.marketStructure.findMany({
+                    where: { storeName: store },
+                    select: { dmName: true }
+                }),
+                departmentId && departmentId.trim() !== "" ? prisma.department.findUnique({
+                    where: { name: departmentId.trim() },
+                }) : null
+            ]);
 
-            const fileSystemFileUrls = req.files['fileSystemFile']
-                ? await Promise.all(req.files['fileSystemFile'].map(file => uploadToS3(file)))
-                : [];
+            if (!dmData || dmData.length === 0) {
+                return res.status(404).send('Department Manager not found for the selected store.');
+            }
+
+            // Handle file uploads in parallel
+            const [cameraFileUrls, fileSystemFileUrls] = await Promise.all([
+                req.files['cameraFile'] ? Promise.all(req.files['cameraFile'].map(file => uploadToS3(file))) : [],
+                req.files['fileSystemFile'] ? Promise.all(req.files['fileSystemFile'].map(file => uploadToS3(file))) : []
+            ]);
 
             // Generate ticket ID
             const currentDate = new Date();
-            const TicketId = `${ntid.slice(0,3)}${currentDate.getUTCFullYear()}${("0" + (currentDate.getUTCMonth() + 1)).slice(-2)}${("0" + currentDate.getUTCDate()).slice(-2)}${("0" + currentDate.getUTCHours()).slice(-2)}${("0" + currentDate.getUTCMinutes()).slice(-2)}${("0" + currentDate.getUTCSeconds()).slice(-2)}`;
-            
-            // Handle departmentId and assignedTo
-            let departmentConnect;
-            let assignedToValue = "";
-            
-            if (!departmentId || typeof departmentId !== "string" || departmentId.trim() === "") {
-                // Use department manager when no departmentId is provided
-                assignedToValue = dmData[0].dmName || "";
-                departmentConnect = { connect: { id: "19" } };
-            } else {
-                const deprId = await prisma.department.findUnique({
-                    where: { name: departmentId.trim() },
-                });
-                
-                departmentConnect = deprId ? { connect: { id: deprId.id } } : { connect: { id: "19" } };
-            }
+            const TicketId = `${ntid.slice(0, 3)}${currentDate.getUTCFullYear()}${("0" + (currentDate.getUTCMonth() + 1)).slice(-2)}${("0" + currentDate.getUTCDate()).slice(-2)}${("0" + currentDate.getUTCHours()).slice(-2)}${("0" + currentDate.getUTCMinutes()).slice(-2)}${("0" + currentDate.getUTCSeconds()).slice(-2)}`;
 
-            // Fetch email recipients
+            // Handle departmentId and assignedTo
+            let departmentConnect = deprId ? { connect: { id: deprId.id } } : { connect: { id: "19" } };
+            const assignedToValue = deprId ? "" : dmData[0].dmName;
+
+            // Fetch email recipients (parallel task)
             let emailRecipients = [];
             if (departmentConnect.connect.id === "19") {
                 const dmEmails = await prisma.user.findFirst({
@@ -123,11 +113,12 @@ const createTicket = async (req, res) => {
                 <p>Department Choosed By the User: <strong>${newTicket.selectedDepartment || "Unknown"}</strong></p>
                 <p>Sub-department: <strong>${newTicket.selectedSubdepartment || "Unknown"}</strong></p>
                 <p>Ticket Subject: <strong>${newTicket.ticketRegarding || "Unknown"}</strong></p>
-                <p> Ticket Description: <strong>${newTicket.description || "Unknown"}</strong></p>
+                <p>Ticket Description: <strong>${newTicket.description || "Unknown"}</strong></p>
                 <p>Thank you!</p>
                 <a href="https://ticketing.techno-communications.com/" style="padding:10px 20px;background-color:#007BFF;color:white;border-radius:5px;text-decoration:none;">Open Ticket</a>
             `;
 
+            // Send email asynchronously (parallel task)
             if (emailRecipients.length > 0) {
                 try {
                     await resend.emails.send({

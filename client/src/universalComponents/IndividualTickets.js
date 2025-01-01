@@ -32,25 +32,7 @@ const Individualmarketss = () => {
   const [commentLoading, setCommentLoading] = useState(false);
 
   const [users, setUsers] = useState([]);
-  const [zoom, setZoom] = useState(1);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
 
-  const handleWheel = (event) => {
-    const zoomDelta = event.deltaY > 0 ? -0.1 : 0.1;
-    setZoom((prevZoom) => Math.min(Math.max(prevZoom + zoomDelta, 1), 5)); // Limit zoom between 1x and 5x
-  };
-
-  const handleMouseMove = (event) => {
-    if (zoom > 1) {
-      const { clientX, clientY, target } = event;
-      const { left, top, width, height } = target.getBoundingClientRect();
-
-      const offsetX = ((clientX - left) / width - 0.5) * 100;
-      const offsetY = ((clientY - top) / height - 0.5) * 100;
-
-      setOffset({ x: offsetX, y: offsetY });
-    }
-  };
   const departments = [
     // "NTID Mappings",
     // "Trainings",
@@ -73,6 +55,7 @@ const Individualmarketss = () => {
     subDepartment,
   } = getDecodedToken() || {};
   const usersId = getDecodedToken().id;
+  const fname = getDecodedToken().fullname;
 
   const fetchData = async () => {
     try {
@@ -193,12 +176,19 @@ const Individualmarketss = () => {
       if (
         markets.userId !== usersId &&
         markets.ntid !== userNtid &&
-        department !== "SuperAdmin"
+        department !== "SuperAdmin" &&
+        !markets.openedBy // Only proceed if openedBy is null
       ) {
         await updateTicketStatus("2");
       }
     };
-    updateInitialStatus();
+
+    // Call functions based on conditions
+    if (!markets.openedBy) {
+      updateInitialStatus();
+    }
+
+    // Other dependent calls
     updateOpenedBy();
     fetchData();
   }, [markets, userNtid, department]);
@@ -232,13 +222,41 @@ const Individualmarketss = () => {
         break;
 
       case "5":
+        const TOAST_DURATION = 1500; // Constant for toast duration
+
         toast.success("Ticket reopened successfully", {
           position: "top-right",
-          autoClose: 1500,
+          autoClose: TOAST_DURATION,
         });
+
+        // Helper function to determine navigation path
+        const getNavigationPath = () => {
+          if (isDistrictManager) {
+            return "/reopened";
+          }
+          if (departments?.includes(department)) {
+            return "/departmentnew";
+          }
+          if (department === "SuperAdmin") {
+            return "/superAdminHome";
+          }
+          return "/defaultFallback"; // Fallback path
+        };
+
+        const navigationPath = getNavigationPath();
+
+        // Debugging log (optional)
+        const isDebugMode = true;
+        if (isDebugMode) {
+          console.log(
+            `Department: ${department}, Navigation Path: ${navigationPath}`
+          );
+        }
+
+        // Navigate after delay
         setTimeout(() => {
-          navigate(isDistrictManager ? "/reopened" : "/superAdminHome");
-        }, 1500);
+          navigate(navigationPath);
+        }, TOAST_DURATION);
         break;
 
       case "3":
@@ -399,7 +417,7 @@ const Individualmarketss = () => {
 
   let count = 0;
   getcomment.map((comment) => {
-    if (comment.createdBy === markets.fullname) {
+    if (comment.createdBy === fname && markets.status.name === "complete") {
       count++;
     }
   });
@@ -476,13 +494,24 @@ const Individualmarketss = () => {
   };
 
   const getNavigationPath = (action) => {
-    if (department === "District Manager" && action === "settle") {
-      return "/completed";
-    } else if (department === "Employee" && action === "reopen") {
+    if (action === "settle") {
+      switch (department) {
+        case "District Manager":
+          return "/completed";
+        case "SuperAdmin":
+          return "/SuperAdminHome";
+        case "Admin":
+          return "/departmentcompleted";
+        default:
+          return "/"; // Default path if department doesn't match
+      }
+    } else if (action === "reopen" && department === "Employee") {
       return "/home";
     }
+    
     return "/"; // Default path
   };
+  
 
   const handleConfirmSettled = () => handleTicketAction("settle");
   const handleRequestReopen = () => handleTicketAction("reopen");
@@ -521,11 +550,15 @@ const Individualmarketss = () => {
   };
 
   let counts = getcomment.reduce((acc, comment) => {
-    if (comment.createdBy === markets.fullname) {
+    if (comment.createdBy === fname) {
       acc++;
     }
     return acc;
   }, 0);
+
+  const handleImageClick = (url) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div className="container mt-2">
@@ -608,6 +641,7 @@ const Individualmarketss = () => {
                                     key={fileIndex}
                                     href={item}
                                     download={fileName}
+                                    target="_blank"
                                   >
                                     <span>{shortName}</span>
                                     <img
@@ -637,18 +671,19 @@ const Individualmarketss = () => {
               {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
                 <Carousel>
                   {uploadedFileUrl.map((url, index) => (
-                    <Carousel.Item key={index}>
-                      <img
-                        src={url}
-                        alt={`Ticket File ${index + 1}`}
-                        className="d-block w-100 img-fluid"
-                        style={{
-                          height: "250px",
-                          objectFit: "cover", // Ensure image fills the container without distortion
-                        }}
-                        onClick={() => setShowModal(true)} // Open modal on image click
-                      />
-                    </Carousel.Item>
+                   <Carousel.Item key={index}>
+                   <img
+                     src={url}
+                     alt={`Ticket File ${index + 1}`}
+                     className="d-block w-100"
+                     style={{
+                       maxHeight: "250px", // Limit the maximum height
+                       objectFit: "cover", // Preserve original dimensions and aspect ratio
+                     }}
+                     onClick={() => handleImageClick(url)} // Open modal on image click
+                   />
+                 </Carousel.Item>
+                 
                   ))}
                 </Carousel>
               ) : (
@@ -666,16 +701,9 @@ const Individualmarketss = () => {
             <div className="col-7 d-flex align-items-center">
               {(() => {
                 const canComment =
-                  (department !== "Employee" &&
-                    department !== "SuperAdmin" &&
-                    markets.userId !== usersId &&
-                    markets.status?.name !== "completed") ||
-                  ((department === "Employee" ||
-                    department === "District Manager") &&
+                  (department === "Employee" &&
                     markets.status?.name === "completed") ||
-                  (department === "SuperAdmin" &&
-                    markets.status?.name === "reopened" &&
-                    markets.userId === usersId);
+                  department !== "Employee";
 
                 if (canComment) {
                   return (
@@ -778,7 +806,8 @@ const Individualmarketss = () => {
 
               {counts >= 1 &&
                 department === "Employee" &&
-                markets.status?.name === "completed" && (
+                markets.status?.name === "completed" &&
+                !markets.requestreopen && (
                   <Button
                     variant="primary fw-medium w-auto ms-auto me-3"
                     onClick={handleRequestReopen}
@@ -787,10 +816,10 @@ const Individualmarketss = () => {
                   </Button>
                 )}
 
-              {(department === "District Manager" ||
-                department === "Market Manager" ||
-                department === "SuperAdmin") &&
-                markets.status?.name === "completed" && (
+              {counts >= 1 &&
+                department !== "Employee" &&
+                markets.status?.name === "completed" &&
+                subDepartment !== "User" && (
                   <Button
                     variant="primary fw-medium w-auto me-2"
                     onClick={() => handleConfirmAction("5", "reopened")}
@@ -799,10 +828,9 @@ const Individualmarketss = () => {
                   </Button>
                 )}
 
-              {(department === "District Manager" ||
-                subDepartment === "Manager") &&
+              {department !== "Employee" &&
                 markets.status?.name === "completed" &&
-                !markets.isSettled && (
+                subDepartment !== "User" && !markets.isSettled && (
                   <Button
                     variant="success fw-medium w-auto"
                     onClick={handleConfirmSettled}
@@ -829,62 +857,14 @@ const Individualmarketss = () => {
       ) : (
         <div className="alert alert-info mt-3">No tickets available.</div>
       )}
+     
 
-      <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        centered
-        size="xl"
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Ticket Image</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
-            <Carousel>
-              {uploadedFileUrl.map((url, index) => (
-                <Carousel.Item key={index}>
-                  <div
-                    onWheel={handleWheel}
-                    onMouseMove={handleMouseMove}
-                    style={{
-                      width: "100%",
-                      height: "auto", // Adjust height based on image aspect ratio
-                      overflow: "hidden",
-                      position: "relative",
-                      cursor: zoom > 1 ? "grab" : "default",
-                    }}
-                  >
-                    <img
-                      src={url}
-                      alt={`Ticket File ${index + 1}`}
-                      className="d-block w-100 img-fluid"
-                      style={{
-                        width: "100%", // Ensure the image fills the width
-                        height: "auto", // Let the height adjust based on the width
-                        objectFit: "contain", // Maintain aspect ratio of the image
-                        transform: `scale(${zoom}) translate(${offset.x}%, ${offset.y}%)`,
-                        transition: "transform 0.1s",
-                      }}
-                    />
-                  </div>
-                </Carousel.Item>
-              ))}
-            </Carousel>
-          ) : (
-            <div className="text-center">No Images Available</div>
-          )}
-        </Modal.Body>
-      </Modal>
-
-      {department === "Employee" &&
-        markets.status?.name === "completed" &&
-        markets.isSettled !== true && (
-          <span className="text-danger fw-medium">
-            * Enter comment describing the purpose of reopening the ticket
-            before requesting reopen
-          </span>
-        )}
+      {subDepartment !== "User" && markets.status?.name === "completed" && (
+        <span className="text-danger fw-medium">
+          * Enter comment describing the purpose of reopening the ticket before
+          requesting reopen
+        </span>
+      )}
       <ToastContainer />
     </div>
   );

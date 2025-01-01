@@ -210,7 +210,6 @@ export function Home() {
 
   const fetchTicketCounts = async () => {
     try {
-      console.log(ntid,"ntid.......")
       const response = await apiRequest.get("/createTickets/countusertickets", {
         params: { ntid },
       });
@@ -237,58 +236,58 @@ export function Home() {
       market: "",
       department: "",
     };
+  
     const ntid = ntidRef.current.value;
     const phone = phoneRef.current.value;
     const ticketSubject = ticketSubjectRef.current.value;
     const description = descriptionRef.current.value;
     const market = marketRef.current.value;
-    const fullname = fullnameRef.current.valueOf;
+    const fullname = fullnameRef.current.value;
+  
     if (!ntid) newErrors.ntid = "NTID is required";
     if (!phone) newErrors.phone = "Phone number is required";
-    if (selectedStore === "Select Store")
-      newErrors.store = "Store selection is required";
+    if (selectedStore === "Select Store") newErrors.store = "Store selection is required";
     if (!ticketSubject) newErrors.ticketSubject = "Ticket subject is required";
     if (!description) newErrors.description = "Description is required";
-    if (!market) newErrors.market = "select market";
-    if (!fullname) newErrors.fullname = "no fullname";
-    if (selectedDepartment === "select Department")
-      newErrors.ticketDepartment = "no ticketDepartment";
+    if (!market) newErrors.market = "Select market";
+    if (!fullname) newErrors.fullname = "Full name is required";
+    if (selectedDepartment === "Select Department") newErrors.ticketDepartment = "Department is required";
+  
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => error === "");
   };
-
+  
+  const appendFilesToFormData = (formData) => {
+    // Append files from both arrays
+    [cameraFileName, fileSystemFileName].forEach((fileArray, index) => {
+      fileArray?.forEach((file) => {
+        formData.append(index === 0 ? "cameraFile" : "fileSystemFile", file);
+      });
+    });
+  };
+  
   const handleSubmit = () => {
     if (validateForm()) {
       const formData = new FormData();
-      formData.append("ntid", ntidRef.current.value);
-      formData.append(
-        "phone",
-        phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10)
-      );
+      const ntid = ntidRef.current.value;
+      const phone = phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10); // Clean phone number
+  
+      // Append form fields
+      formData.append("ntid", ntid);
+      formData.append("phone", phone);
       formData.append("store", selectedStore);
       formData.append("ticketSubject", ticketSubjectRef.current.value);
       formData.append("description", descriptionRef.current.value);
       formData.append("market", marketRef.current.value.toLowerCase());
-      formData.append("fullname", fullnameRef.current.value); // Correct this line
+      formData.append("fullname", fullnameRef.current.value);
       formData.append("department", selectedDepartment);
       formData.append("subdepartment", selectedSubDepartment);
-
-      // Loop through cameraFileName array and append each file
-      if (cameraFileName && cameraFileName.length > 0) {
-        cameraFileName.forEach((file) => {
-          formData.append("cameraFile", file); // Appending each file individually
-        });
-      }
-
-      // Loop through fileSystemFileName array and append each file
-      if (fileSystemFileName && fileSystemFileName.length > 0) {
-        fileSystemFileName.forEach((file) => {
-          formData.append("fileSystemFile", file); // Appending each file individually
-        });
-      }
+  
+      // Append files (camera and system files)
+      appendFilesToFormData(formData);
+  
       setLoading(true);
-      // console.log(formData, 'Form Data:', formData);
-
+  
       // Send the form data using the API request
       apiRequest
         .post("/createTickets/uploadTicket", formData, {
@@ -303,28 +302,17 @@ export function Home() {
           setLoading(false);
         })
         .catch((error) => {
-          if (error.response) {
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              ntid: error.response.data.message,
-            }));
-            toast.error(error.response.data.message);
-          } else if (error.request) {
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              ntid: "No response from server. Please try again later.",
-            }));
-            toast.error("No response from server. Please try again later.");
-          } else {
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              ntid: "Error occurred. Please try again.",
-            }));
-            toast.error("Error occurred. Please try again.");
-          }
+          const errorMsg = error.response?.data?.message || "Error occurred. Please try again.";
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            ntid: errorMsg,
+          }));
+          toast.error(errorMsg);
+          setLoading(false);
         });
     }
   };
+  
 
   useEffect(() => {
     const objTotal = document.getElementById("Totalvalue");
@@ -448,282 +436,282 @@ export function Home() {
 
   return (
     <div>
-      <Modal show={show} onHide={handleClose} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Enter Ticket Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group
-              className="mb-1 d-flex align-items-center"
-              controlId="formBasicNTID"
-            >
-              <Form.Control
-                className="shadow-none text-secondary fw-medium boorder-0"
-                type="text"
-                placeholder="Enter NTID"
-                value={userData?.ntid || ""}
-                isInvalid={!!errors.ntid}
-                ref={ntidRef}
-                readOnly
-              />
-            </Form.Group>
-            <Form.Group
-              className="mb-1 d-flex gap-1 flex-wrap"
-              controlId="formPhoneNumber"
-            >
-              <div className="flex-grow-1 mb-1 mb-md-0">
+        <Modal show={show} onHide={handleClose} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>Enter Ticket Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group
+                className="mb-1 d-flex align-items-center"
+                controlId="formBasicNTID"
+              >
                 <Form.Control
-                  className="fw-medium text-secondary shadow-none boorder-0 text-capitalize"
+                  className="shadow-none text-secondary fw-medium boorder-0"
                   type="text"
-                  value={userData?.fullname || ""}
-                  placeholder="Full Name"
-                  ref={fullnameRef}
+                  placeholder="Enter NTID"
+                  value={userData?.ntid || ""}
+                  isInvalid={!!errors.ntid}
+                  ref={ntidRef}
                   readOnly
                 />
-              </div>
-              <div className="d-flex flex-grow-1 align-items-center">
-                <Form.Control
-                  type="text"
-                  placeholder="Enter Phone Number"
-                  isInvalid={!!errors.phone}
-                  ref={phoneRef}
-                  className="shadow-none text-secondary fw-medium border"
-                />
-              </div>
-            </Form.Group>
-            <Form.Group
-              className="mb-1 d-flex gap-1 flex-wrap"
-              controlId="store"
-            >
-              <div className="flex-grow-1 mb-1 mb-md-0 ">
-                <Form.Control
-                  ref={marketRef}
-                  className="text-secondary fw-medium shadow-none boorder-0 text-capitalize"
-                  type="text"
-                  placeholder="market"
-                  value={userData.market?.market || ""}
-                  readOnly
-                />
-              </div>
-              <Dropdown className="flex-grow-1" id="dropdown-store">
-                <Dropdown.Toggle
-                  className={`text-start bg-white fw-medium text-secondary border shadow-none w-100`}
-                  id="dropdown-basic"
-                >
-                  {selectedStore || "Select a Store"}{" "}
-                  {/* Placeholder if no store is selected */}
-                </Dropdown.Toggle>
-                <Dropdown.Menu
-                  style={{ height: "42vh", overflow: "scroll" }}
-                  className="col-12 col-md-12"
-                >
-                  <input
-                    onChange={(e) => setSearchStore(e.target.value)}
-                    placeholder="Search Stores..."
-                    className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
+              </Form.Group>
+              <Form.Group
+                className="mb-1 d-flex gap-1 flex-wrap"
+                controlId="formPhoneNumber"
+              >
+                <div className="flex-grow-1 mb-1 mb-md-0">
+                  <Form.Control
+                    className="fw-medium text-secondary shadow-none boorder-0 text-capitalize"
+                    type="text"
+                    value={userData?.fullname || ""}
+                    placeholder="Full Name"
+                    ref={fullnameRef}
+                    readOnly
                   />
-                  {filteredStores?.length > 0 ? (
-                    filteredStores.sort().map((store, index) => (
-                      <Dropdown.Item
-                        key={index}
-                        onClick={() => handleStoreSelect(store)}
-                        className="shadow-lg fw-medium text-primary text-start"
-                        isInvalid={!!errors.store}
-                      >
-                        {store}
-                      </Dropdown.Item>
-                    ))
-                  ) : (
-                    <Dropdown.Item disabled className="text-muted text-start">
-                      No stores found
-                    </Dropdown.Item>
-                  )}
-                </Dropdown.Menu>
-              </Dropdown>
-            </Form.Group>
-
-            <Form.Group controlId="ticketDepartment">
-              <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
-                <Dropdown.Toggle
-                  className={`text-start bg-white fw-medium text-secondary border shadow-none w-100`}
-                  id="dropdown-basic"
-                >
-                  {selectedDepartment || "Select a Department"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu
-                  style={{ height: "42vh", overflow: "scroll" }}
-                  className="col-12 col-md-12"
-                >
-                  <input
-                    onChange={(e) => setSearchDepartment(e.target.value)}
-                    placeholder="Search Departments..."
-                    className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
-                  />
-                  {filteredDepartments?.length > 0 ? (
-                    filteredDepartments.map((department, index) => (
-                      <Dropdown.Item
-                        key={index}
-                        onClick={() => handleDepartmentSelect(department)}
-                        className="shadow-lg fw-medium text-primary text-start"
-                        isInvalid={!!errors.department}
-                      >
-                        {department}
-                      </Dropdown.Item>
-                    ))
-                  ) : (
-                    <Dropdown.Item disabled className="text-muted text-start">
-                      No departments found
-                    </Dropdown.Item>
-                  )}
-                </Dropdown.Menu>
-              </Dropdown>
-              {selectedDepartment === "Admin" && (
-                <div>
-                  <Dropdown
-                    className="flex-grow-1 mb-1"
-                    id="dropdown-department"
-                  >
-                    <Dropdown.Toggle
-                      className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
-                      id="dropdown-basic"
-                    >
-                      {selectedSubDepartment || "Select Sub Department"}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu
-                      style={{ height: "42vh", overflow: "scroll" }}
-                      className="col-12 col-md-12"
-                    >
-                      <input
-                        onChange={(e) => setSearchSubDepartment(e.target.value)}
-                        placeholder="Search Sub Departments..."
-                        className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
-                      />
-                      {filteredSubDepartments?.length > 0 ? (
-                        filteredSubDepartments.map((department, index) => (
-                          <Dropdown.Item
-                            key={index}
-                            onClick={() =>
-                              handleSubDepartmentSelect(department)
-                            }
-                            className="shadow-lg fw-medium  fw-medium text-primary text-start"
-                            isInvalid={!!errors.department}
-                          >
-                            {department}
-                          </Dropdown.Item>
-                        ))
-                      ) : (
-                        <Dropdown.Item
-                          disabled
-                          className="text-muted text-start"
-                        >
-                          No departments found
-                        </Dropdown.Item>
-                      )}
-                    </Dropdown.Menu>
-                  </Dropdown>
                 </div>
-              )}
-            </Form.Group>
+                <div className="d-flex flex-grow-1 align-items-center">
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Phone Number"
+                    isInvalid={!!errors.phone}
+                    ref={phoneRef}
+                    className="shadow-none text-secondary fw-medium border"
+                  />
+                </div>
+              </Form.Group>
+              <Form.Group
+                className="mb-1 d-flex gap-1 flex-wrap"
+                controlId="store"
+              >
+                <div className="flex-grow-1 mb-1 mb-md-0 ">
+                  <Form.Control
+                    ref={marketRef}
+                    className="text-secondary fw-medium shadow-none boorder-0 text-capitalize"
+                    type="text"
+                    placeholder="market"
+                    value={userData.market?.market || ""}
+                    readOnly
+                  />
+                </div>
+                <Dropdown className="flex-grow-1" id="dropdown-store">
+                  <Dropdown.Toggle
+                    className={`text-start bg-white fw-medium text-secondary border shadow-none w-100`}
+                    id="dropdown-basic"
+                  >
+                    {selectedStore || "Select a Store"}{" "}
+                    {/* Placeholder if no store is selected */}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu
+                    style={{ height: "42vh", overflow: "scroll" }}
+                    className="col-12 col-md-12"
+                  >
+                    <input
+                      onChange={(e) => setSearchStore(e.target.value)}
+                      placeholder="Search Stores..."
+                      className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                    />
+                    {filteredStores?.length > 0 ? (
+                      filteredStores.sort().map((store, index) => (
+                        <Dropdown.Item
+                          key={index}
+                          onClick={() => handleStoreSelect(store)}
+                          className="shadow-lg fw-medium text-primary text-start"
+                          isInvalid={!!errors.store}
+                        >
+                          {store}
+                        </Dropdown.Item>
+                      ))
+                    ) : (
+                      <Dropdown.Item disabled className="text-muted text-start">
+                        No stores found
+                      </Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Form.Group>
 
-            <Form.Group
-              className="mb-1 d-flex align-items-center "
-              controlId="formTicketSubject"
-            >
-              <Form.Control
-                type="text"
-                className="shadow-none fw-medium text-secondary boorder-0"
-                placeholder="Ticket regarding"
-                isInvalid={!!errors.ticketSubject}
-                ref={ticketSubjectRef}
-              />
-            </Form.Group>
-            <Form.Group className="mb-1" controlId="formDescription">
-              <Form.Control
-                className="shadow-none text-secondary  fw-medium boorder-0"
-                as="textarea"
-                placeholder="Enter description"
-                rows={3}
-                isInvalid={!!errors.description}
-                ref={descriptionRef}
-              />
-            </Form.Group>
-            <Form.Group className="mb-1" controlId="fileUpload">
-              <div>
+              <Form.Group controlId="ticketDepartment">
+                <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
+                  <Dropdown.Toggle
+                    className={`text-start bg-white fw-medium text-secondary border shadow-none w-100`}
+                    id="dropdown-basic"
+                  >
+                    {selectedDepartment || "Select a Department"}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu
+                    style={{ height: "42vh", overflow: "scroll" }}
+                    className="col-12 col-md-12"
+                  >
+                    <input
+                      onChange={(e) => setSearchDepartment(e.target.value)}
+                      placeholder="Search Departments..."
+                      className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                    />
+                    {filteredDepartments?.length > 0 ? (
+                      filteredDepartments.map((department, index) => (
+                        <Dropdown.Item
+                          key={index}
+                          onClick={() => handleDepartmentSelect(department)}
+                          className="shadow-lg fw-medium text-primary text-start"
+                          isInvalid={!!errors.department}
+                        >
+                          {department}
+                        </Dropdown.Item>
+                      ))
+                    ) : (
+                      <Dropdown.Item disabled className="text-muted text-start">
+                        No departments found
+                      </Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
+                {selectedDepartment === "Admin" && (
+                  <div>
+                    <Dropdown
+                      className="flex-grow-1 mb-1"
+                      id="dropdown-department"
+                    >
+                      <Dropdown.Toggle
+                        className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
+                        id="dropdown-basic"
+                      >
+                        {selectedSubDepartment || "Select Sub Department"}
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu
+                        style={{ height: "42vh", overflow: "scroll" }}
+                        className="col-12 col-md-12"
+                      >
+                        <input
+                          onChange={(e) => setSearchSubDepartment(e.target.value)}
+                          placeholder="Search Sub Departments..."
+                          className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                        />
+                        {filteredSubDepartments?.length > 0 ? (
+                          filteredSubDepartments.map((department, index) => (
+                            <Dropdown.Item
+                              key={index}
+                              onClick={() =>
+                                handleSubDepartmentSelect(department)
+                              }
+                              className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                              isInvalid={!!errors.department}
+                            >
+                              {department}
+                            </Dropdown.Item>
+                          ))
+                        ) : (
+                          <Dropdown.Item
+                            disabled
+                            className="text-muted text-start"
+                          >
+                            No departments found
+                          </Dropdown.Item>
+                        )}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </div>
+                )}
+              </Form.Group>
+
+              <Form.Group
+                className="mb-1 d-flex align-items-center "
+                controlId="formTicketSubject"
+              >
+                <Form.Control
+                  type="text"
+                  className="shadow-none fw-medium text-secondary boorder-0"
+                  placeholder="Ticket regarding"
+                  isInvalid={!!errors.ticketSubject}
+                  ref={ticketSubjectRef}
+                />
+              </Form.Group>
+              <Form.Group className="mb-1" controlId="formDescription">
+                <Form.Control
+                  className="shadow-none text-secondary  fw-medium boorder-0"
+                  as="textarea"
+                  placeholder="Enter description"
+                  rows={3}
+                  isInvalid={!!errors.description}
+                  ref={descriptionRef}
+                />
+              </Form.Group>
+              <Form.Group className="mb-1" controlId="fileUpload">
                 <div>
                   <div>
-                    <div
-                      className="border text-center"
-                      onClick={() => setPopButtons(true)} // Open the file input options
-                      style={{ height: "80px", cursor: "pointer" }}
-                    >
-                      {filesSelected > 0 ? (
-                        <div className="mt-4">
-                          {cameraFileName?.length > 0 && (
-                            <p className="fw-medium text-secondary mt-2">
-                              {cameraFileName?.length} camera file(s) selected
+                    <div>
+                      <div
+                        className="border text-center"
+                        onClick={() => setPopButtons(true)} // Open the file input options
+                        style={{ height: "80px", cursor: "pointer" }}
+                      >
+                        {filesSelected > 0 ? (
+                          <div className="mt-4">
+                            {cameraFileName?.length > 0 && (
+                              <p className="fw-medium text-secondary mt-2">
+                                {cameraFileName?.length} camera file(s) selected
+                              </p>
+                            )}
+                            {fileSystemFileName?.length > 0 && (
+                              <p className="fw-medium text-secondary mt-2">
+                                {fileSystemFileName?.length} file(s) selected
+                              </p>
+                            )}
+                          </div>
+                        ) : popButtons ? (
+                          <div className="rounded ">
+                            <label className="btn border-secondary btn-outline-secondary fw-medium mt-3 me-2">
+                              Camera
+                              <input
+                                type="file"
+                                accept="image/*"
+                                capture="environment"
+                                multiple
+                                style={{ display: "none" }}
+                                onChange={handleCameraChange}
+                                disabled={
+                                  cameraFileName?.length +
+                                    fileSystemFileName?.length >=
+                                  5
+                                } // Disable if total files >= 5
+                              />
+                            </label>
+                            <label className="btn border-secondary btn-outline-secondary fw-medium mt-3">
+                              Browse
+                              <input
+                                type="file"
+                                multiple
+                                style={{ display: "none" }}
+                                onChange={handleFileSystemChange}
+                                disabled={
+                                  cameraFileName?.length +
+                                    fileSystemFileName?.length >=
+                                  5
+                                } // Disable if total files >= 5
+                              />
+                            </label>
+                          </div>
+                        ) : (
+                          <div className="mt-1">
+                            <MdOutlineCloudUpload className="fs-1 text-secondary" />
+                            <p className="fw-medium text-secondary">
+                              Upload files
                             </p>
-                          )}
-                          {fileSystemFileName?.length > 0 && (
-                            <p className="fw-medium text-secondary mt-2">
-                              {fileSystemFileName?.length} file(s) selected
-                            </p>
-                          )}
-                        </div>
-                      ) : popButtons ? (
-                        <div className="rounded ">
-                          <label className="btn border-secondary btn-outline-secondary fw-medium mt-3 me-2">
-                            Camera
-                            <input
-                              type="file"
-                              accept="image/*"
-                              capture="environment"
-                              multiple
-                              style={{ display: "none" }}
-                              onChange={handleCameraChange}
-                              disabled={
-                                cameraFileName?.length +
-                                  fileSystemFileName?.length >=
-                                5
-                              } // Disable if total files >= 5
-                            />
-                          </label>
-                          <label className="btn border-secondary btn-outline-secondary fw-medium mt-3">
-                            Browse
-                            <input
-                              type="file"
-                              multiple
-                              style={{ display: "none" }}
-                              onChange={handleFileSystemChange}
-                              disabled={
-                                cameraFileName?.length +
-                                  fileSystemFileName?.length >=
-                                5
-                              } // Disable if total files >= 5
-                            />
-                          </label>
-                        </div>
-                      ) : (
-                        <div className="mt-1">
-                          <MdOutlineCloudUpload className="fs-1 text-secondary" />
-                          <p className="fw-medium text-secondary">
-                            Upload files
-                          </p>
-                        </div>
-                      )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleSubmit} disabled={loading}>
-            {loading ? <div class="spinner-border text-muted"></div> : "Submit"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={handleSubmit} disabled={loading}>
+              {loading ? <div class="spinner-border text-muted"></div> : "Submit"}
+            </Button>
+          </Modal.Footer>
+        </Modal>
       <div className="container">
         <p
           className="font-family home-text pt-3 fw-medium fs-3 text-center"

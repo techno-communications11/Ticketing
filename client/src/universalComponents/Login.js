@@ -1,8 +1,8 @@
-import React, { useRef, useState, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { FaRegEye, FaEyeSlash } from "react-icons/fa";
 import { apiRequest } from "../lib/apiRequest";
 import { useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export function Login() {
   const ntidRef = useRef(null);
@@ -75,18 +75,16 @@ export function Login() {
   return (
     <div className="container-fluid d-flex flex-column align-items-center justify-content-center mt-5 max-vh-100 ">
       {isLoading ? (
-        <div className="loader d-flex align-items-center justify-content-center">
-          
-        </div>
+        <div className="loader d-flex align-items-center justify-content-center" />
       ) : (
         <>
           <div className="my-2 text-center mt-5">
             <p
               style={{
                 color: "#E10174",
-                fontFamily: "Arial, sans-serif", 
+                fontFamily: "Arial, sans-serif",
                 fontWeight: "500",
-                fontSize: "1.5rem", 
+                fontSize: "1.5rem",
                 display: "inline-block",
                 lineHeight: "1.2",
               }}

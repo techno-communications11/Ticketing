@@ -1,25 +1,29 @@
 import prisma from "../lib/prisma.js";
 
 const updateOpenedBy = async (req, res) => {
-  const { ticketId,usersId } = req.body; 
-  // const userId = req.user.id;
+  const { ticketId, usersId } = req.body;
 
   try {
-
-    // First, check if the ticket has statusId '3'
+    // Fetch the ticket to check the current status
     const ticket = await prisma.createTicket.findUnique({
       where: { ticketId },
-      select: { statusId: true }  // Only fetch the statusId field
+      select: { openedBy: true, statusId: true }, // Fetch `openedBy` and `statusId`
     });
 
     if (!ticket) {
       return res.status(404).json({ message: "Ticket not found" });
     }
 
+    // Check if `openedBy` is not null
+    if (ticket.openedBy) {
+      return res.status(400).json({ message: "Ticket is already opened" });
+    }
+
+    // Proceed to update if `openedBy` is null
     const updatedTicket = await prisma.createTicket.update({
       where: { ticketId },
       data: {
-        openedBy: usersId,  // Update the openedBy field with the user's ID
+        openedBy: usersId, // Update the `openedBy` field with the user's ID
       },
     });
 

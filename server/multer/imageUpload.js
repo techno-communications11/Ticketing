@@ -46,8 +46,8 @@ export const uploadToS3 = async (file) => {
         // Resize the image before uploading to S3 if it's an image
         if (['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.mimetype)) {
             fileBuffer = await sharp(file.buffer)
-                .resize(500, 500, { 
-                    fit: sharp.fit.cover,
+                .resize(1000,1000, { 
+                    fit: sharp.fit.contain,
                     position: sharp.strategy.entropy,
                 })
                 .toBuffer();

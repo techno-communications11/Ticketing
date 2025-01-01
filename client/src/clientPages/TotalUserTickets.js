@@ -32,7 +32,6 @@ function TotalUserTickets() {
   let { adminntid, statusId } = useMyContext();
   // var ntid = adminntid;
 
-  // statusId = statusId === "" ? statusId='0' : localStorage.getItem("statusId");
   const [statusToggle, setStatusToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
   const [createdAtToggle, setCreatedAtToggle] = useState(false);
@@ -105,6 +104,7 @@ function TotalUserTickets() {
         const response = await apiRequest.get(url);
         if (response.status === 200) {
           setTickets(response.data);
+          // console.log(response.data,"llllllllll")
           setAuthenticated(true);
         }
       } catch (error) {
@@ -128,10 +128,6 @@ function TotalUserTickets() {
     fullnameFilter || ""
   );
 const department=getDecodedToken().department;
- 
-    
-
-    
 
   const currentItems = filteredTickets
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))

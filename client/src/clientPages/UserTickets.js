@@ -205,7 +205,8 @@ const UserTickets = () => {
             <tbody>
               {finalTickets.length > 0 ? (
                 finalTickets.map((ticket, index) => (
-                  <tr key={ticket.ticketId}>
+                 <tr key={ticket.ticketId} className={ticket.isSettled ? 'bg-secondary bg-opacity-50 text-white' : ''}>
+
                     <td
                       className="fw-medium text-center"
                       style={getStatusColor(ticket)}
@@ -233,7 +234,7 @@ const UserTickets = () => {
                           ticket.status?.name
                         )}`}
                       >
-                        {getStatusText(ticket.status?.name)}
+                        {ticket.isSettled ? "Settled": getStatusText(ticket.status?.name)}
                       </span>
                     </td>
                     <td

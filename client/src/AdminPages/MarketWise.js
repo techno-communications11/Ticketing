@@ -172,7 +172,7 @@ function MarketWise() {
                 <tbody>
                   {currentItems.map(([market, counts], index) => (
                     <tr key={market}>
-                      <th>{index + 1}</th>
+                      <th className="fw-medium">{index + 1}</th>
                       <td>
                         <Link
                           to="/marketDetailedTicket"
@@ -184,16 +184,11 @@ function MarketWise() {
                       </td>
                       {["total", "new", "opened", "inprogress", "completed", "reopened"].map((status, idx) => (
                         <td key={idx}>
-                          <Link
-                            to="/opened"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleStatusClick(market, idx.toString());
-                            }}
+                          <span
                             className="text-decoration-none text-dark fw-medium"
                           >
                             {safeNumber(counts[status])}
-                          </Link>
+                          </span>
                         </td>
                       ))}
                     </tr>

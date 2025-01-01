@@ -42,8 +42,10 @@ const DepartmentWiseTickets = async (req, res) => {
                 completedAt: true,
                 openedBy: true,
                 assignToTeam: true,
+                isSettled:true, 
             }
         });
+        console.log(tickets,"oooooooo")
 
         // Fetch user names for `openedBy`
         const ticketsWithOpeners = await Promise.all(

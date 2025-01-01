@@ -38,6 +38,7 @@ const GetDepartmentWisetickets = async (req, res) => {
                 completedAt: true,
                 openedBy: true,
                 assignToTeam:true,
+                isSettled:true,
             }
         });
         console.log(tickets)

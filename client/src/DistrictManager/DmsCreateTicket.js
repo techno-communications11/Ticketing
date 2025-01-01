@@ -13,8 +13,6 @@ import { ToastContainer } from "react-toastify";
 import getDecodedToken from "../universalComponents/decodeToken";
 import Button from "react-bootstrap/esm/Button";
 
-
-
 export function DmsCreateTicket() {
   const [show, setShow] = useState(false);
   const [popButtons, setPopButtons] = useState(false);
@@ -23,21 +21,21 @@ export function DmsCreateTicket() {
   const [selectedStore, setSelectedStore] = useState("Select Store");
   const [selectedDepartment, setSelectedDepartment] =
     useState("Select Department");
-    const [searchSubDepartment, setSearchSubDepartment] = useState("");
-    const [selectedSubDepartment,setSelectedSubDepartment]=useState("");
+  const [searchSubDepartment, setSearchSubDepartment] = useState("");
+  const [selectedSubDepartment, setSelectedSubDepartment] = useState("");
   const [userData, setUserData] = useState("");
-  
+
   const [searchStore, setSearchStore] = useState("");
   const [filteredStores, setFilteredStores] = useState(userData?.stores || []);
   const [Stores, setStores] = useState([]);
   const [selectedMarket, setSelectedMarket] = useState("");
-  const [AssignTo, setAssignTo] = useState("");  // Default to empty string if no department is selected
+  const [AssignTo, setAssignTo] = useState(""); // Default to empty string if no department is selected
   const [selectedNTIDUser, setSelectedNTIDUser] = useState("");
   const [selectedNTID, setSelectedNTID] = useState(""); // State for the selected NTID
   const [searchNTID, setSearchNTID] = useState(""); // State for search input
   const [filteredNTID, setFilteredNTID] = useState([]); // State for filtered NTIDs
   const [ntids, setNTids] = useState([]);
-  const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
   // console.log(AssignTo,'sss')
   const admin = [
     "Internet",
@@ -53,9 +51,8 @@ export function DmsCreateTicket() {
     "Phone Line",
     "GPS Tracker",
     "Ordering",
-    "Other"
+    "Other",
   ];
-
 
   const [filteredSubDepartments, setFilteredSubDepartments] = useState(admin);
 
@@ -100,62 +97,61 @@ export function DmsCreateTicket() {
     }
   }, [selectedNTID, ntids]);
 
+  const markets = [
+    { fullname: "Ali Khan", market: "ARIZONA" },
+    { fullname: "Rahim Nasir Khan", market: "BAY AREA" },
+    { fullname: "Shah Noor", market: "COLORADO" },
+    { fullname: "Farooq Sarwar", market: "DALLAS" },
+    { fullname: "Imran Shaikh", market: "DALLAS" },
+    { fullname: "Salim Thanawala", market: "DALLAS" },
+    { fullname: "Afzal Muhammad", market: "EL PASO" },
+    { fullname: "Mohammed Eleyan", market: "FLORIDA" },
+    { fullname: "Amirali Charania", market: "HOUSTON" },
+    { fullname: "Mohammad Salman Shareef", market: "HOUSTON" },
+    { fullname: "Salman Riaz", market: "HOUSTON" },
+    { fullname: "Zubair Hussain", market: "HOUSTON" },
+    { fullname: "Maaz Khan", market: "LOS ANGELES" },
+    { fullname: "Qamar Shahzad", market: "LOS ANGELES" },
+    { fullname: "Qamar Shahzad", market: "OXNARD" },
+    { fullname: "Qamar Shahzad", market: "PALMDALE" },
+    { fullname: "(blank)", market: "LOS ANGELES" },
+    { fullname: "Muhammad Shoaib Sheeraz", market: "MEMPHIS" },
+    { fullname: "Syed Amir", market: "MEMPHIS" },
+    { fullname: "Zaid Waseem", market: "MEMPHIS" },
+    { fullname: "Khaja Ameenuddin Ghori", market: "NASHVILLE" },
+    { fullname: "Uzair Uddin", market: "NORTH CAROL" },
+    { fullname: "Faizan Jiwani", market: "SACRAMENTO" },
+    { fullname: "Hassan Saleem", market: "SAN DEIGO" },
+    { fullname: "Kamaran Mohammed", market: "SAN FRANCISCO" },
+    { fullname: "Muhammad Sumairuddin", market: "SAN JOSE" },
+    { fullname: "Saad Ali", market: "SOLANO COUNTY" },
+    { fullname: "dm", market: "MEMPHIS" },
+  ];
 
-    const markets = [
-        { fullname: "Ali Khan", market: "ARIZONA" },
-        { fullname: "Rahim Nasir Khan", market: "BAY AREA" },
-        { fullname: "Shah Noor", market: "COLORADO" },
-        { fullname: "Farooq Sarwar", market: "DALLAS" },
-        { fullname: "Imran Shaikh", market: "DALLAS" },
-        { fullname: "Salim Thanawala", market: "DALLAS" },
-        { fullname: "Afzal Muhammad", market: "EL PASO" },
-        { fullname: "Mohammed Eleyan", market: "FLORIDA" },
-        { fullname: "Amirali Charania", market: "HOUSTON" },
-        { fullname: "Mohammad Salman Shareef", market: "HOUSTON" },
-        { fullname: "Salman Riaz", market: "HOUSTON" },
-        { fullname: "Zubair Hussain", market: "HOUSTON" },
-        { fullname: "Maaz Khan", market: "LOS ANGELES" },
-        { fullname: "Qamar Shahzad", market: "LOS ANGELES" },
-        { fullname: "Qamar Shahzad", market: "OXNARD" },
-        { fullname: "Qamar Shahzad", market: "PALMDALE" },
-        { fullname: "(blank)", market: "LOS ANGELES" },
-        { fullname: "Muhammad Shoaib Sheeraz", market: "MEMPHIS" },
-        { fullname: "Syed Amir", market: "MEMPHIS" },
-        { fullname: "Zaid Waseem", market: "MEMPHIS" },
-        { fullname: "Khaja Ameenuddin Ghori", market: "NASHVILLE" },
-        { fullname: "Uzair Uddin", market: "NORTH CAROL" },
-        { fullname: "Faizan Jiwani", market: "SACRAMENTO" },
-        { fullname: "Hassan Saleem", market: "SAN DEIGO" },
-        { fullname: "Kamaran Mohammed", market: "SAN FRANCISCO" },
-        { fullname: "Muhammad Sumairuddin", market: "SAN JOSE" },
-        { fullname: "Saad Ali", market: "SOLANO COUNTY" },
-        // { fullname: "Tharun", market: "MEMPHIS" },
+  useEffect(() => {
+    if (searchSubDepartment) {
+      const filtered = admin.filter((admin) =>
+        admin.toLowerCase().includes(searchSubDepartment.toLowerCase())
+      );
+      setFilteredSubDepartments(filtered);
+    } else {
+      setFilteredSubDepartments(admin || []);
+    }
+  }, [searchSubDepartment, admin]);
 
-    ];
+  const handleSubDepartmentSelect = (department) => {
+    setSelectedSubDepartment(department);
+    setSearchSubDepartment("");
+  };
 
-    useEffect(() => {
-      if (searchSubDepartment) {
-        const filtered = admin.filter((admin) =>
-          admin.toLowerCase().includes(searchSubDepartment.toLowerCase())
-        );
-        setFilteredSubDepartments(filtered);
-      } else {
-        setFilteredSubDepartments(admin || []);
-      }
-    }, [searchSubDepartment, admin]);
-
-
-    const handleSubDepartmentSelect = (department) => {
-      setSelectedSubDepartment(department);
-      setSearchSubDepartment("");
-    };
-  
-    const currentFullname =getDecodedToken().fullname;
+  const currentFullname = getDecodedToken().fullname;
+  console.log(currentFullname,'cfn')
 
   // Filter markets based on the fullname
   const dmMarkets = markets
-    .filter(item => item.fullname === currentFullname)
-    .map(item => item.market);
+    .filter((item) => item.fullname === currentFullname)
+    .map((item) => item.market);
+    console.log(dmMarkets,"dmk")
 
   const Departments = [
     // "NTID Mappings",
@@ -165,7 +161,7 @@ export function DmsCreateTicket() {
     // "Charge Back/Commission",
     // "Inventory",
     "Admin",
-    "Software India"
+    "Software India",
     // "Maintenance ",
     // "Housing ",
     // "CAM NW",
@@ -173,7 +169,7 @@ export function DmsCreateTicket() {
   ];
   const [searchDepartment, setSearchDepartment] = useState("");
   const [filteredDepartments, setFilteredDepartments] = useState(Departments);
- 
+
   const [errors, setErrors] = useState({
     ntid: "",
     phone: "",
@@ -182,14 +178,13 @@ export function DmsCreateTicket() {
     ticketSubject: "",
     department: "",
     description: "",
-    dmuser:"",
+    dmuser: "",
   });
   const ntidRef = useRef(null);
   const phoneRef = useRef(null);
   const ticketSubjectRef = useRef(null);
   const descriptionRef = useRef(null);
-//   const fullnameRef = useRef("");
-
+  //   const fullnameRef = useRef("");
 
   const handleNTIDClick = (ntid) => {
     setSelectedNTID(ntid); // Update state
@@ -208,7 +203,7 @@ export function DmsCreateTicket() {
       description: "",
       market: "",
       fullname: "",
-      dmuser:"",
+      dmuser: "",
     });
     setSelectedStore("Select Store");
     setSelectedDepartment("select Department");
@@ -278,12 +273,9 @@ export function DmsCreateTicket() {
     setAssignTo(department); // Set department to AssignTo state
     setSearchDepartment(""); // Clear search field (if needed)
   };
-  
-  
-
 
   const validateForm = () => {
-    console.log("entered to valid")
+    console.log("entered to valid");
     const newErrors = {
       ntid: "",
       fullname: "",
@@ -294,7 +286,7 @@ export function DmsCreateTicket() {
       departmentId: "",
       market: "",
       department: "",
-      dmuser:"",
+      dmuser: "",
     };
     // console.log(AssignTo,"llllllllllll")
     // console.log(newErrors,"new errors")
@@ -304,9 +296,9 @@ export function DmsCreateTicket() {
     const ticketSubject = ticketSubjectRef.current.value;
     const description = descriptionRef.current.value;
     const market = selectedMarket;
-    const departmentId = AssignTo;  // departmentId from state
+    const departmentId = AssignTo; // departmentId from state
     const fullname = selectedNTIDUser;
-    const dmuser=getDecodedToken().fullname;
+    const dmuser = getDecodedToken().fullname;
 
     if (!ntid) newErrors.ntid = "NTID is required";
     if (!phone) newErrors.phone = "Phone number is required";
@@ -317,119 +309,118 @@ export function DmsCreateTicket() {
     if (!market) newErrors.market = "Select market";
     if (!fullname) newErrors.fullname = "No fullname";
     if (!dmuser) newErrors.dmuser = "No dmuser";
-    if (!departmentId) newErrors.departmentId = "Department not assigned";  // Ensure departmentId is selected
+    if (!departmentId) newErrors.departmentId = "Department not assigned"; // Ensure departmentId is selected
     if (selectedDepartment === "select Department")
       newErrors.ticketDepartment = "No ticket department";
 
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => error === "");
-};
-// console.log(getDecodedToken().fullname+"--","tttttt")
+  };
+  // console.log(getDecodedToken().fullname+"--","tttttt")
 
+  const handleSubmit = () => {
+    console.log("entered to submit");
+    if (validateForm()) {
+      console.log("entered to if cese");
+      const formData = new FormData();
 
-const handleSubmit = () => {
-    console.log("entered to submit")
-  if (validateForm()) {
-    console.log("entered to if cese")
-    const formData = new FormData();
+      // Log the values before appending to ensure they're correct
+      console.log(selectedNTID, "NTID value");
+      formData.append("ntid", selectedNTID);
 
-    // Log the values before appending to ensure they're correct
-    console.log(selectedNTID, "NTID value");
-    formData.append("ntid", selectedNTID);
-    
+      console.log(getDecodedToken().fullname, "dm name");
+      formData.append("dmuser", "---" + getDecodedToken().fullname);
+      console.log(getDecodedToken().market, "market");
 
-    console.log(getDecodedToken().fullname, "dm name");
-    formData.append("dmuser", "---"+getDecodedToken().fullname);
-    console.log(getDecodedToken().market,"market")
+      console.log(phoneRef.current.value, "Phone value");
+      formData.append(
+        "phone",
+        phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10)
+      );
 
-    console.log(phoneRef.current.value, "Phone value");
-    formData.append("phone", phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10));
+      console.log(selectedStore, "Store value");
+      formData.append("store", selectedStore);
 
-    console.log(selectedStore, "Store value");
-    formData.append("store", selectedStore);
+      console.log(ticketSubjectRef.current.value, "Ticket Subject value");
+      formData.append("ticketSubject", ticketSubjectRef.current.value);
 
-    console.log(ticketSubjectRef.current.value, "Ticket Subject value");
-    formData.append("ticketSubject", ticketSubjectRef.current.value);
+      console.log(descriptionRef.current.value, "Description value");
+      formData.append("description", descriptionRef.current.value);
 
-    console.log(descriptionRef.current.value, "Description value");
-    formData.append("description", descriptionRef.current.value);
+      console.log(selectedMarket, "Market value");
+      formData.append("market", selectedMarket);
 
-    console.log(selectedMarket, "Market value");
-    formData.append("market", selectedMarket);
+      console.log(selectedNTIDUser, "Fullname value");
+      formData.append("fullname", selectedNTIDUser);
 
-    console.log(selectedNTIDUser, "Fullname value");
-    formData.append("fullname", selectedNTIDUser);
+      console.log(selectedDepartment, "Selected Department value");
+      formData.append("department", selectedDepartment);
 
-    console.log(selectedDepartment, "Selected Department value");
-    formData.append("department", selectedDepartment);
+      console.log(selectedSubDepartment, "Selected Sub Department value");
+      formData.append("subdepartment", selectedSubDepartment);
 
-    console.log(selectedSubDepartment, "Selected Sub Department value");
-    formData.append("subdepartment", selectedSubDepartment);
+      console.log(AssignTo, "AssignTo value before submitting");
+      formData.append("departmentId", AssignTo);
 
-    console.log(AssignTo, "AssignTo value before submitting");
-    formData.append('departmentId', AssignTo);
+      // Append files if any
+      if (cameraFileName && cameraFileName.length > 0) {
+        cameraFileName.forEach((file) => {
+          formData.append("cameraFile", file);
+        });
+      }
 
-    // Append files if any
-    if (cameraFileName && cameraFileName.length > 0) {
-      cameraFileName.forEach((file) => {
-        formData.append("cameraFile", file);
-      });
+      if (fileSystemFileName && fileSystemFileName.length > 0) {
+        fileSystemFileName.forEach((file) => {
+          formData.append("fileSystemFile", file);
+        });
+      }
+
+      // Log the formData content
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
+      console.log(formData, "form dataa");
+      setLoading(true);
+
+      // Send form data via API request
+      apiRequest
+        .post("/createTickets/uploadTicket", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          toast.success("Ticket created successfully!");
+          // departmentId="";
+          handleClose();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+          setLoading(false);
+        })
+        .catch((error) => {
+          if (error.response) {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              ntid: error.response.data.message,
+            }));
+            toast.error(error.response.data.message);
+          } else if (error.request) {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              ntid: "No response from server. Please try again later.",
+            }));
+            toast.error("No response from server. Please try again later.");
+          } else {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              ntid: "Error occurred. Please try again.",
+            }));
+            toast.error("Error occurred. Please try again.");
+          }
+        });
     }
-
-    if (fileSystemFileName && fileSystemFileName.length > 0) {
-      fileSystemFileName.forEach((file) => {
-        formData.append("fileSystemFile", file);
-      });
-    }
-
-    // Log the formData content
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
-    console.log(formData,'form dataa')
-    setLoading(true)
-
-    // Send form data via API request
-    apiRequest
-      .post("/createTickets/uploadTicket", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        toast.success("Ticket created successfully!");
-        // departmentId="";
-        handleClose();
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
-        setLoading(false);
-      })
-      .catch((error) => {
-        if (error.response) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            ntid: error.response.data.message,
-          }));
-          toast.error(error.response.data.message);
-        } else if (error.request) {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            ntid: "No response from server. Please try again later.",
-          }));
-          toast.error("No response from server. Please try again later.");
-        } else {
-          setErrors((prevErrors) => ({
-            ...prevErrors,
-            ntid: "Error occurred. Please try again.",
-          }));
-          toast.error("Error occurred. Please try again.");
-        }
-      });
-  }
-};
-
-
+  };
 
   const handleNTIDBlur = async () => {
     try {
@@ -462,8 +453,6 @@ const handleSubmit = () => {
     }
   };
 
- 
-
   useEffect(() => {
     handleNTIDBlur();
   }, [handleShow]);
@@ -474,19 +463,18 @@ const handleSubmit = () => {
         console.log(selectedMarket, "sel");
 
         const response = await apiRequest.get(`/createTickets/fetchstores`, {
-            params: { selectedMarket },
-          });
-          const storeNames = response.data.map((store) => store.storeName);
-          console.log("Fetched stores:", storeNames);
-          setStores(storeNames)
+          params: { selectedMarket },
+        });
+        const storeNames = response.data.map((store) => store.storeName);
+        console.log("Fetched stores:", storeNames);
+        setStores(storeNames);
       } catch (error) {
         console.log("Failed to fetch  Stores");
       }
     };
     fetchStores();
   }, [selectedMarket]);
-  
- 
+
   useEffect(() => {
     if (searchStore) {
       const filtered = Stores.filter((store) =>
@@ -498,8 +486,8 @@ const handleSubmit = () => {
     }
   }, [searchStore, Stores]);
 
-//   const dmMarkets = markets[DMName] || []; 
-// console.log(dmMarkets,"markssdh")
+  //   const dmMarkets = markets[DMName] || [];
+  // console.log(dmMarkets,"markssdh")
 
   return (
     <div>
@@ -509,40 +497,40 @@ const handleSubmit = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-          <Dropdown className="flex-grow-1 mb-1 mb-md-0">
-      <Dropdown.Toggle
-        className="text-start bg-white fw-medium text-secondary border shadow-none w-100 mb-1"
-        id="dropdown-basic"
-      >
-        {selectedNTID || "Select NTID"}{" "}
-      </Dropdown.Toggle>
+            <Dropdown className="flex-grow-1 mb-1 mb-md-0">
+              <Dropdown.Toggle
+                className="text-start bg-white fw-medium text-secondary border shadow-none w-100 mb-1"
+                id="dropdown-basic"
+              >
+                {selectedNTID || "Select NTID"}{" "}
+              </Dropdown.Toggle>
 
-      <Dropdown.Menu className="w-100 fw-medium text-capitalize ">
-        <input
-          type="text"
-          value={searchNTID}
-          onChange={(e) => setSearchNTID(e.target.value)}
-          placeholder="Search NTIDS..."
-          className="w-75 form-control border fw-medium text-muted fw-medium shadow-none text-center mb-2 ms-2"
-        />
+              <Dropdown.Menu className="w-100 fw-medium text-capitalize ">
+                <input
+                  type="text"
+                  value={searchNTID}
+                  onChange={(e) => setSearchNTID(e.target.value)}
+                  placeholder="Search NTIDS..."
+                  className="w-75 form-control border fw-medium text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                />
 
-        {filteredNTID.map((ntid, index) => (
-          <Dropdown.Item
-            className="fw-medium text-primary fw-bolder shadow-lg h-50 overflow-auto"
-            key={index} // Use index as the key if no unique ID is available
-            onClick={() => handleNTIDClick(ntid)} // Set selected NTID and update ref on click
-          >
-            {ntid} {/* Display the NTID value */}
-          </Dropdown.Item>
-        ))}
-      </Dropdown.Menu>
-    </Dropdown>
+                {filteredNTID.map((ntid, index) => (
+                  <Dropdown.Item
+                    className="fw-medium text-primary fw-bolder shadow-lg h-50 overflow-auto"
+                    key={index} // Use index as the key if no unique ID is available
+                    onClick={() => handleNTIDClick(ntid)} // Set selected NTID and update ref on click
+                  >
+                    {ntid} {/* Display the NTID value */}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
             <Form.Group
               className="mb-1 d-flex gap-1 flex-wrap"
               controlId="formPhoneNumber"
             >
               <div className="flex-grow-1 mb-1 mb-md-0">
-              <Form.Control
+                <Form.Control
                   className="fw-medium text-secondary shadow-none boorder-0 text-capitalize"
                   type="text"
                   value={selectedNTIDUser}
@@ -565,73 +553,79 @@ const handleSubmit = () => {
               controlId="store"
             >
               <div className="flex-grow-1  mb-1 mb-md-0">
-              <Dropdown>
-      <Dropdown.Toggle
-        className="text-secondary fw-medium bg-transparent shadow-none border border-secondary text-capitalize w-100"
-        id="market-dropdown"
-      >
-        {selectedMarket || "Select Market"}
-      </Dropdown.Toggle>
+                <Dropdown>
+                  <Dropdown.Toggle
+                    className="text-secondary fw-medium bg-transparent shadow-none border border-secondary text-capitalize w-100"
+                    id="market-dropdown"
+                  >
+                    {selectedMarket || "Select Market"}
+                  </Dropdown.Toggle>
 
-      <Dropdown.Menu className="w-100 fw-medium text-capitalize ">
-        {dmMarkets.length > 0 ? (
-          dmMarkets.map((market, index) => (
-            <Dropdown.Item
-              className="fw-medium text-primary shadow-lg"
-              key={index}
-              onClick={() => setSelectedMarket(market.toLowerCase())}
-            >
-              {market}
-            </Dropdown.Item>
-          ))
-        ) : (
-          <Dropdown.Item className="fw-medium" disabled>
-            No Markets Available
-          </Dropdown.Item>
-        )}
-      </Dropdown.Menu>
-    </Dropdown>
+                  <Dropdown.Menu className="w-100 fw-medium text-capitalize ">
+                    {dmMarkets.length > 0 ? (
+                      dmMarkets.map((market, index) => (
+                        <Dropdown.Item
+                          className="fw-medium text-primary shadow-lg"
+                          key={index}
+                          onClick={() =>
+                            setSelectedMarket(market.toLowerCase())
+                          }
+                        >
+                          {market}
+                        </Dropdown.Item>
+                      ))
+                    ) : (
+                      <Dropdown.Item className="fw-medium" disabled>
+                        No Markets Available
+                      </Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
               </div>
 
               <Dropdown className="flex-grow-1" id="dropdown-store">
-      <Dropdown.Toggle
-        className="text-start bg-white fw-medium fw-medium text-secondary border shadow-none w-100"
-        id="dropdown-basic"
-      >
-        {selectedStore || "Select a Store"} {/* Placeholder if no store is selected */}
-      </Dropdown.Toggle>
+                <Dropdown.Toggle
+                  className="text-start bg-white fw-medium fw-medium text-secondary border shadow-none w-100"
+                  id="dropdown-basic"
+                >
+                  {selectedStore || "Select a Store"}{" "}
+                  {/* Placeholder if no store is selected */}
+                </Dropdown.Toggle>
 
-      <Dropdown.Menu
-        style={{ height: "42vh", overflowY: "auto" }}
-        className="col-12 col-md-12"
-      >
-        {/* Search Input */}
-        <input
-          type="text"
-          value={searchStore}
-          onChange={(e) => setSearchStore(e.target.value)}
-          placeholder="Search Stores..."
-          className="w-75 form-control border  fw-medium text-muted fw-medium shadow-none text-center mb-2 ms-2"
-        />
+                <Dropdown.Menu
+                  style={{ height: "42vh", overflowY: "auto" }}
+                  className="col-12 col-md-12"
+                >
+                  {/* Search Input */}
+                  <input
+                    type="text"
+                    value={searchStore}
+                    onChange={(e) => setSearchStore(e.target.value)}
+                    placeholder="Search Stores..."
+                    className="w-75 form-control border  fw-medium text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                  />
 
-        {/* Store Items */}
-        {filteredStores?.length > 0 ? (
-          filteredStores.sort().map((store, index) => (
-            <Dropdown.Item
-              key={index}
-              onClick={() => handleStoreSelect(store)}
-              className="shadow-lg  fw-medium text-primary text-start"
-            >
-              {store}
-            </Dropdown.Item>
-          ))
-        ) : (
-          <Dropdown.Item disabled className="text-muted text-start fw-medium">
-            No stores found
-          </Dropdown.Item>
-        )}
-      </Dropdown.Menu>
-    </Dropdown>
+                  {/* Store Items */}
+                  {filteredStores?.length > 0 ? (
+                    filteredStores.sort().map((store, index) => (
+                      <Dropdown.Item
+                        key={index}
+                        onClick={() => handleStoreSelect(store)}
+                        className="shadow-lg  fw-medium text-primary text-start"
+                      >
+                        {store}
+                      </Dropdown.Item>
+                    ))
+                  ) : (
+                    <Dropdown.Item
+                      disabled
+                      className="text-muted text-start fw-medium"
+                    >
+                      No stores found
+                    </Dropdown.Item>
+                  )}
+                </Dropdown.Menu>
+              </Dropdown>
             </Form.Group>
 
             <Form.Group controlId="ticketDepartment">
@@ -670,43 +664,51 @@ const handleSubmit = () => {
                 </Dropdown.Menu>
               </Dropdown>
               {selectedDepartment === "Admin" && (
-        <div>
-          <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
-                <Dropdown.Toggle
-                  className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
-                  id="dropdown-basic"
-                >
-                  {selectedSubDepartment || "Select Sub Department"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu
-                  style={{ height: "42vh", overflow: "scroll" }}
-                  className="col-12 col-md-12"
-                >
-                  <input
-                    onChange={(e) => setSearchSubDepartment(e.target.value)}
-                    placeholder="Search Sub Departments..."
-                    className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
-                  />
-                  {filteredSubDepartments?.length > 0 ? (
-                    filteredSubDepartments.map((department, index) => (
-                      <Dropdown.Item
-                        key={index}
-                        onClick={() => handleSubDepartmentSelect(department)}
-                        className="shadow-lg fw-medium  fw-medium text-primary text-start"
-                        isInvalid={!!errors.department}
-                      >
-                        {department}
-                      </Dropdown.Item>
-                    ))
-                  ) : (
-                    <Dropdown.Item disabled className="text-muted text-start">
-                      No departments found
-                    </Dropdown.Item>
-                  )}
-                </Dropdown.Menu>
-              </Dropdown>
-        </div>
-      )}
+                <div>
+                  <Dropdown
+                    className="flex-grow-1 mb-1"
+                    id="dropdown-department"
+                  >
+                    <Dropdown.Toggle
+                      className={`text-start fw-medium bg-white fw-medium text-secondary border shadow-none w-100`}
+                      id="dropdown-basic"
+                    >
+                      {selectedSubDepartment || "Select Sub Department"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu
+                      style={{ height: "42vh", overflow: "scroll" }}
+                      className="col-12 col-md-12"
+                    >
+                      <input
+                        onChange={(e) => setSearchSubDepartment(e.target.value)}
+                        placeholder="Search Sub Departments..."
+                        className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                      />
+                      {filteredSubDepartments?.length > 0 ? (
+                        filteredSubDepartments.map((department, index) => (
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() =>
+                              handleSubDepartmentSelect(department)
+                            }
+                            className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                            isInvalid={!!errors.department}
+                          >
+                            {department}
+                          </Dropdown.Item>
+                        ))
+                      ) : (
+                        <Dropdown.Item
+                          disabled
+                          className="text-muted text-start"
+                        >
+                          No departments found
+                        </Dropdown.Item>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              )}
               <div className="d-flex flex-grow-1 align-items-center col-md-6 w-100">
                 <Form.Control
                   type="text"
@@ -716,7 +718,6 @@ const handleSubmit = () => {
                   className="shadow-none text-secondary fw-medium border w-100 mb-2"
                 />
               </div>
-              
             </Form.Group>
             <Form.Group
               className="mb-1 d-flex align-items-center "
@@ -811,44 +812,45 @@ const handleSubmit = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <div  className="mt-1 shadow-lg">
-        <Dropdown className="flex-grow-1  " id="dropdown-department">
-                <Dropdown.Toggle
-                  className={`text-center fw-medium  fw-medium text-secondary border-0 bg-primary text-white shadow-none w-100`}
-                  id="dropdown-basic"
-                >
-                  {AssignTo || "Assign To"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu
-                  style={{ height: "42vh", overflow: "scroll", width:'20rem' }}
-                  className="col-12 col-md-12"
-                >
-                  <input
-                    onChange={(e) => setSearchDepartment(e.target.value)}
-                    placeholder="Search Departments..."
-                    className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
-                  />
-                  {filteredDepartments?.length > 0 ? (
-                    filteredDepartments.map((department, index) => (
-                      <Dropdown.Item
-                        key={index}
-                        onClick={() => handleAssignToSelect(department)}
-                        className="shadow-lg fw-medium  fw-medium text-primary text-start"
-                        isInvalid={!!errors.department}
-                      >
-                        {department}
-                      </Dropdown.Item>
-                    ))
-                  ) : (
-                    <Dropdown.Item disabled className="text-muted text-start">
-                      No departments found
+          <div className="mt-1 shadow-lg">
+            <Dropdown className="flex-grow-1  " id="dropdown-department">
+              <Dropdown.Toggle
+                className={`text-center fw-medium  fw-medium text-secondary border-0 bg-primary text-white shadow-none w-100`}
+                id="dropdown-basic"
+              >
+                {AssignTo || "Assign To"}
+              </Dropdown.Toggle>
+              <Dropdown.Menu
+                style={{ height: "42vh", overflow: "scroll", width: "20rem" }}
+                className="col-12 col-md-12"
+              >
+                <input
+                  onChange={(e) => setSearchDepartment(e.target.value)}
+                  placeholder="Search Departments..."
+                  className="w-75 form-control border fw-mediumer text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                />
+                {filteredDepartments?.length > 0 ? (
+                  filteredDepartments.map((department, index) => (
+                    <Dropdown.Item
+                      key={index}
+                      onClick={() => handleAssignToSelect(department)}
+                      className="shadow-lg fw-medium  fw-medium text-primary text-start"
+                      isInvalid={!!errors.department}
+                    >
+                      {department}
                     </Dropdown.Item>
-                  )}
-                </Dropdown.Menu>
-              </Dropdown>
-              </div>
-              <Button onClick={handleSubmit} disabled={loading}>{loading?<div class="spinner-border"></div>:"Submit"}</Button>
-          
+                  ))
+                ) : (
+                  <Dropdown.Item disabled className="text-muted text-start">
+                    No departments found
+                  </Dropdown.Item>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+          <Button onClick={handleSubmit} disabled={loading}>
+            {loading ? <div class="spinner-border"></div> : "Submit"}
+          </Button>
         </Modal.Footer>
       </Modal>
       <div className="container">
@@ -872,15 +874,15 @@ const handleSubmit = () => {
                 />
               </div>
               <div className="d-flex justify-content-center">
-                <button className="btn btn-primary w-auto fw-medium" onClick={handleShow}>
+                <button
+                  className="btn btn-primary w-auto fw-medium"
+                  onClick={handleShow}
+                >
                   Open A Ticket
                 </button>
               </div>
             </div>
-
-            
           </div>
-          
         </div>
       </div>
 
