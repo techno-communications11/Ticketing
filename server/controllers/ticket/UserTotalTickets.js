@@ -1,4 +1,4 @@
-import prisma from '../lib/prisma.js';
+import prisma from "../lib/prisma.js";
 
 const getUserTickets = async (req, res) => {
   try {
@@ -6,11 +6,10 @@ const getUserTickets = async (req, res) => {
 
     // Build filter condition
     const filter = {
-      ...(ntid ? { ntid: ntid } : {}),
-      ...(statusId === '0' 
-        ? { statusId: { in: ['1', '2', '3', '4', '5'] } } 
-        : { statusId: statusId }
-      )
+      ...(ntid ? { ntid } : {}),
+      ...(statusId === "0"
+        ? { statusId: { in: ["1", "2", "3", "4", "5"] } }
+        : { statusId }),
     };
 
     // Fetch tickets based on the filter
@@ -23,43 +22,53 @@ const getUserTickets = async (req, res) => {
         completedAt: true,
         openedBy: true,
         ticketId: true,
-        isSettled:true,
+        isSettled: true,
         status: {
           select: {
             name: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     if (tickets.length === 0) {
-      return res.status(404).json({ message: 'No tickets found for the provided parameters' });
+      return res
+        .status(404)
+        .json({ message: "No tickets found for the provided parameters." });
     }
 
-    // Fetch full names for users who opened tickets
-    const ticketsWithOpeners = await Promise.all(
-      tickets.map(async (ticket) => {
-        if (ticket.openedBy) {
-          const NcUser = await prisma.user.findUnique({
-            where: { id: ticket.openedBy },
-            select: { fullname: true }
-          });
-          // console.log(NcUser,"ggggggggggggggggggggggggg")
-          return {
-            ...ticket,
-            openedByFullName: NcUser?.fullname || null,
-          };
-        }
-        
-        return { ...ticket, openedByFullName: "-" };
-      })
-    );
-    console.log(ticketsWithOpeners,'lllllllllllll')
+    // Extract unique `openedBy` IDs for batch querying
+    const openedByIds = [
+      ...new Set(tickets.map((ticket) => ticket.openedBy).filter(Boolean)),
+    ];
 
-    res.status(200).json(ticketsWithOpeners);
+    // Fetch user full names in bulk
+    const usersMap = await prisma.user
+      .findMany({
+        where: { id: { in: openedByIds } },
+        select: { id: true, fullname: true },
+      })
+      .then((users) =>
+        users.reduce((map, user) => {
+          map[user.id] = user.fullname;
+          return map;
+        }, {})
+      );
+
+    // Map tickets with the `openedByFullName` field
+    const ticketsWithOpeners = tickets.map((ticket) => ({
+      ...ticket,
+      openedByFullName: ticket.openedBy ? usersMap[ticket.openedBy] || "-" : "-",
+    }));
+
+    res.status(200).json({
+      message: "Tickets retrieved successfully.",
+      total: ticketsWithOpeners.length,
+      data: ticketsWithOpeners,
+    });
   } catch (error) {
-    console.error('Error fetching tickets:', error);
-    res.status(500).json({ message: 'Failed to retrieve tickets' });
+    console.error("Error fetching tickets:", error);
+    res.status(500).json({ message: "Failed to retrieve tickets." });
   }
 };
 

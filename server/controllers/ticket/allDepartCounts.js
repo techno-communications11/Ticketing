@@ -1,68 +1,83 @@
-import prisma from "../lib/prisma.js"; // Ensure this path is correct
+import prisma from "../lib/prisma.js";
 
 const allDepartCounts = async (req, res) => {
-    try {
-        // Fetch all tickets with department and status details
-        const tickets = await prisma.createTicket.findMany({
-            include: {
-                department: {
-                    select: {
-                        name: true, // Include the department name
-                    },
-                },
-                status: {
-                    select: {
-                        name: true, // Include the status name
-                    },
-                },
-            },
-        });
-        console.log(tickets, "tics");
+  try {
+    console.log("Fetching ticket counts by department and status");
 
-        // Initialize counts object
-        const counts = {};
+    // Aggregate ticket counts by department and status directly in the database
+    const counts = await prisma.createTicket.groupBy({
+      by: ['departmentId', 'statusId'], // Group by department and status
+      _count: {
+        ticketId: true, // Count the number of tickets
+      }
+    });
 
-        // Count tickets by department and status
-        tickets.forEach(ticket => {
-            const departmentName = ticket.department?.name; // Use optional chaining
-            const statusName = ticket.status?.name; // Use optional chaining
+    // Fetch department and status names in separate queries
+    const departmentNames = await prisma.department.findMany({
+      select: {
+        id: true,
+        name: true,
+      }
+    });
 
-            // Check if department name is defined
-            if (!departmentName) {
-                console.warn('Ticket has no department name', ticket);
-                return; // Skip this ticket if department name is missing
-            }
+    const statusNames = await prisma.status.findMany({
+      select: {
+        id: true,
+        name: true,
+      }
+    });
 
-            // Initialize department entry if it doesn't exist
-            if (!counts[departmentName]) {
-                counts[departmentName] = {
-                    total: 0,
-                    new: 0,
-                    opened: 0,
-                    inProgress: 0,
-                    completed: 0,
-                    reopened: 0,
-                };
-            }
+    // Map department and status IDs to names
+    const departmentMap = departmentNames.reduce((acc, dept) => {
+      acc[dept.id] = dept.name;
+      return acc;
+    }, {});
 
-            // Increment counts
-            counts[departmentName].total += 1; // Count total tickets
+    const statusMap = statusNames.reduce((acc, status) => {
+      acc[status.id] = status.name;
+      return acc;
+    }, {});
 
-            // Correct the property name for "In Progress" count
-            if (statusName === 'new') counts[departmentName].new += 1;
-            else if (statusName === 'opened') counts[departmentName].opened += 1;
-            else if (statusName === 'inprogress') counts[departmentName].inProgress += 1; // Changed to `inProgress`
-            else if (statusName === 'completed') counts[departmentName].completed += 1;
-            else if (statusName === 'reopened') counts[departmentName].reopened += 1;
-        });
+    // Format counts into the desired structure
+    const result = {};
 
-        console.log(counts); // Log the final counts
-        // Return counts as a response
-        res.json(counts);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to fetch ticket counts' });
-    }
+    counts.forEach(item => {
+      const departmentName = departmentMap[item.departmentId];
+      const statusName = statusMap[item.statusId];
+
+      // Skip if no department or status name
+      if (!departmentName || !statusName) return;
+
+      // Initialize department entry if it doesn't exist
+      if (!result[departmentName]) {
+        result[departmentName] = {
+          total: 0,
+          new: 0,
+          opened: 0,
+          inProgress: 0,
+          completed: 0,
+          reopened: 0,
+        };
+      }
+
+      // Increment the counts for the corresponding status
+      result[departmentName].total += item._count.ticketId;
+      if (statusName === 'new') result[departmentName].new += item._count.ticketId;
+      else if (statusName === 'opened') result[departmentName].opened += item._count.ticketId;
+      else if (statusName === 'inprogress') result[departmentName].inProgress += item._count.ticketId;
+      else if (statusName === 'completed') result[departmentName].completed += item._count.ticketId;
+      else if (statusName === 'reopened') result[departmentName].reopened += item._count.ticketId;
+    });
+
+    console.log("Ticket Counts by Department and Status:", result);
+
+    // Return the counts as a response
+    res.json(result);
+
+  } catch (error) {
+    console.error("Error fetching ticket counts:", error);
+    res.status(500).json({ error: 'Failed to fetch ticket counts' });
+  }
 };
 
 export default allDepartCounts;

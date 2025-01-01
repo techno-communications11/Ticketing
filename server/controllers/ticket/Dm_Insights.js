@@ -15,59 +15,66 @@ const DM_Insights = async (req, res) => {
         // Initialize an object to store counts per DM (assignedTo)
         const dmInsights = {};
 
-        // Fetch tickets assigned to each DM and calculate the counts
-        for (const dmName of dmNames) {
-            const ticketsData = await prisma.createTicket.findMany({
-                where: { assignedTo: dmName },
-                select: {
-                    status: { select: { name: true } },
-                    requestreopen: true
-                }
-            });
-            console.log(ticketsData,"td")
+        // Fetch tickets for all DMs at once
+        const ticketsData = await prisma.createTicket.findMany({
+            where: { assignedTo: { in: dmNames } },
+            select: {
+                assignedTo: true,
+                status: { select: { name: true } },
+                requestreopen: true
+            }
+        });
+
+        // Process tickets data and calculate the counts per DM
+        ticketsData.forEach(ticket => {
+            const dmName = ticket.assignedTo;
 
             // Initialize the DM entry if not already present
-            dmInsights[dmName] = {
-                totalTickets: 0,
-                inProgress: 0,
-                new: 0,
-                opened: 0,
-                reopened: 0,
-                completed: 0,
-                requestreopen: 0
-            };
+            if (!dmInsights[dmName]) {
+                dmInsights[dmName] = {
+                    totalTickets: 0,
+                    inProgress: 0,
+                    new: 0,
+                    opened: 0,
+                    reopened: 0,
+                    completed: 0,
+                    requestreopen: 0
+                };
+            }
 
-            // Process each ticket for the current DM
-            ticketsData.forEach(ticket => {
-                const statusName = ticket.status.name;
+            const statusName = ticket.status.name;
 
-                // Increment counts based on status
-                if (statusName === 'inprogress') {
+            // Increment counts based on status
+            switch (statusName) {
+                case 'inprogress':
                     dmInsights[dmName].inProgress++;
-                } else if (statusName === 'reopened') {
+                    break;
+                case 'reopened':
                     dmInsights[dmName].reopened++;
-                } else if (statusName === 'completed') {
+                    break;
+                case 'completed':
                     dmInsights[dmName].completed++;
-                } else if (statusName === 'opened') {
+                    break;
+                case 'opened':
                     dmInsights[dmName].opened++;
-                } else if (statusName === 'new') {
+                    break;
+                case 'new':
                     dmInsights[dmName].new++;
-                }
+                    break;
+            }
 
-                // Increment the total tickets count for statuses only
-                if (statusName !== 'requestreopen') {
-                    dmInsights[dmName].totalTickets++;
-                }
+            // Increment the total tickets count for statuses only
+            if (statusName !== 'requestreopen') {
+                dmInsights[dmName].totalTickets++;
+            }
 
-                // Increment request reopen count independently
-                if (ticket.requestreopen) {
-                    dmInsights[dmName].requestreopen++;
-                }
-            });
-        }
+            // Increment request reopen count independently
+            if (ticket.requestreopen) {
+                dmInsights[dmName].requestreopen++;
+            }
+        });
 
         // Send the response with the DM insights data
-        console.log(dmInsights, 'dmInsights');
         res.status(200).json(dmInsights);
 
     } catch (error) {

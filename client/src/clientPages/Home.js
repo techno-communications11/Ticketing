@@ -216,7 +216,7 @@ export function Home() {
       // console.log("Initial ticket count response:", response);
       setTicketsCount(response.data);
     } catch (error) {
-      toast.error("Failed to fetch ticket counts");
+      // toast.error("Failed to fetch ticket counts");
     }
   };
 

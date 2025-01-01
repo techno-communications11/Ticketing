@@ -10,11 +10,21 @@ const deleteTicket = async (req, res) => {
   }
 
   try {
+    // Check if the ticket exists before attempting to delete
+    const ticket = await prisma.createTicket.findUnique({
+      where: { ticketId: ticketId },
+    });
+
+    if (!ticket) {
+      return res.status(404).send('Ticket not found');
+    }
+
     // Correct Prisma query to delete the ticket by ticketId
     const deletedTicket = await prisma.createTicket.delete({
-      where: { ticketId: ticketId }  // Assuming 'id' is the primary key for the ticket model
+      where: { ticketId: ticketId },  // Assuming 'ticketId' is the correct field name
     });
-    console.log(deletedTicket,"kkkkkk")
+
+    console.log(deletedTicket, "Ticket deleted");
 
     // Respond with success message and deleted ticket data
     return res.status(200).json({ message: 'Ticket deleted successfully', ticket: deletedTicket });

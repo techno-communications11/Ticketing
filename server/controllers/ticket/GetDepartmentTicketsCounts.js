@@ -3,63 +3,61 @@ import prisma from "../lib/prisma.js";
 const GetDepartmentTicketsCounts = async (req, res) => {
   const { department, usersId } = req.params;
 
-  console.log(department,"department")
-  // const userid = req.user.id;
-  console.log(usersId,"iddddddddddddddddddddddddddddddd")
+  console.log(department, "department");
+  console.log(usersId, "userId");
 
+  // Preliminary checks for missing parameters
   if (!department) {
-    return res.status(400).json("Invalid department or missing department");
+    return res.status(400).json("Invalid or missing department");
   }
+
   if (!usersId) {
-    return res.status(400).json("Invalid userId or missing userId");
+    return res.status(400).json("Invalid or missing userId");
   }
+
   try {
-    const departmentId = await prisma.department.findMany({
+    // Fetch the department ID based on the department name
+    const departmentData = await prisma.department.findUnique({
       where: { name: department },
       select: { id: true },
     });
-   
 
-    if (!departmentId.length) {
+    if (!departmentData) {
       return res.status(404).json("Department not found");
     }
 
+    // Fetch tickets for the given department and user
     const tickets = await prisma.createTicket.findMany({
       where: {
-        departmentId: departmentId[0].id, // Assuming departmentId[0].id is defined correctly
+        departmentId: departmentData.id, // Department ID
         OR: [
-          {
-            openedBy: usersId, // Match tickets opened by the user
-          },
-          
+          { openedBy: usersId }, // Tickets opened by the user
         ],
       },
       select: {
         status: {
           select: {
-            name: true, // Select the name field from the status relation
+            name: true, // Status name
           },
         },
       },
     });
 
-    const counts = {};
-
-    tickets.forEach((ticket) => {
+    // Initialize the count object and process the tickets
+    const counts = tickets.reduce((acc, ticket) => {
       const statusName = ticket.status.name;
-      counts[statusName] = (counts[statusName] || 0) + 1;
-    });
+      acc[statusName] = (acc[statusName] || 0) + 1;
+      return acc;
+    }, {});
 
-    counts.Total =
-      (counts.completed || 0) +
-      (counts.inprogress || 0) +
-      (counts.opened || 0) +
-      (counts.reopened || 0);
+    // Calculate total ticket count
+    counts.Total = Object.values(counts).reduce((sum, count) => sum + count, 0);
 
-    console.log(counts, "ccser");
+    console.log(counts, "ticket counts by status");
     return res.status(200).json(counts);
+
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching department tickets:", error.message);
     return res.status(500).json("Failed to retrieve department tickets");
   }
 };

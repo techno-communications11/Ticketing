@@ -1,4 +1,9 @@
 function FilterLogic(tickets, ntidFilter, createdAt, completedAt, statusFilter, fullnameFilter) {
+  if (!Array.isArray(tickets)) {
+    console.error('Invalid tickets input:', tickets);
+    return []; // Return an empty array if `tickets` is not valid
+  }
+
   return tickets.filter(ticket => {
     const matchesNTID = ntidFilter ? ticket.ntid.includes(ntidFilter) : true;
     const matchesName = fullnameFilter 

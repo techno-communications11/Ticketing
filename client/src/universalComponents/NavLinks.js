@@ -5,9 +5,19 @@ import { GoIssueReopened } from "react-icons/go";
 import { Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { VscGitPullRequestNewChanges } from "react-icons/vsc";
+import { FaTicket } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 const NavLinks = ({ department, pathname, isDepartments }) => (
     <>
+
+{ department==='District Manager'&&<Nav.Link
+        as={Link}
+        to={department === "District Manager" ? "/dmcreateticket" : "/"}
+        className={`fw-medium position-relative ${pathname === "/dmcreateticket" ? "text-danger fw-bolder" : "text-dark"}`}
+      >
+        <FaTicket className="text-danger fs-5" /> Create Ticket
+      </Nav.Link>}
+
       <Nav.Link
         as={Link}
         to={department === "District Manager" ? "/openedTickets" : isDepartments ? "/departmentopened" : "/"}

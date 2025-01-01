@@ -1,4 +1,5 @@
 import prisma from "../lib/prisma.js";
+
 const alloted = async (req, res) => {
   const { user, ticketId } = req.body;
 
@@ -35,11 +36,10 @@ const alloted = async (req, res) => {
 
     // Send the success response
     res.status(200).json({ message: "Ticket updated successfully", ticket: updatedTicket });
-  } catch (error) {
-    // Log the error
-    console.error("Error updating ticket:", error);
 
-    // Send a response with the error details
+  } catch (error) {
+    // Log the error and send a response with the error details
+    console.error("Error updating ticket:", error);
     res.status(500).json({ message: "Failed to update the ticket", error: error.message });
   }
 };

@@ -2,14 +2,15 @@ import prisma from '../lib/prisma.js';
 
 const Callback = async (req, res) => {
   try {
-    console.log(req.query, "Incoming query parameters");
+    const { department, ticketId, usersId } = req.query;
 
-    let { department, ticketId,usersId } = req.query;
-    console.log(department, ticketId, "Department assignment details");
+    // Log incoming query parameters
+    console.log("Incoming query parameters:", req.query);
+    console.log("Department assignment details:", department, ticketId);
 
     // Check if required fields are provided
     if (!department || !ticketId) {
-      return res.status(400).send('All required fields (department, ticketId) must be provided');
+      return res.status(400).json({ message: 'All required fields (department, ticketId) must be provided' });
     }
 
     const status = '2'; // Assuming status ID '2' represents the desired status
@@ -23,22 +24,21 @@ const Callback = async (req, res) => {
     // Check if the department exists
     if (!departmentRecord) {
       console.error(`Department not found: ${department}`);
-      return res.status(404).send('Department not found');
+      return res.status(404).json({ message: 'Department not found' });
     }
 
-    console.log('Department Record:', departmentRecord); // Log department record
+    console.log('Department Record:', departmentRecord);
 
     // Update the ticket using the correct model name and field
     const updatedTicket = await prisma.createTicket.update({
-      where: { ticketId: ticketId }, // Ensure this matches your schema
+      where: { ticketId },
       data: { 
         departmentId: departmentRecord.id,  
         openedBy: usersId,
-        assignToTeam:null,
-        statusId: status, // Ensure this matches your schema
+        assignToTeam: null,
+        statusId: status,
       },
     });
-    console.log(updatedTicket)
 
     console.log(`Ticket ${ticketId} successfully updated and assigned to ${department}`);
     res.status(200).json(updatedTicket);

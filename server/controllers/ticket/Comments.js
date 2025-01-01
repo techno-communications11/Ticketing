@@ -11,6 +11,7 @@ const comments = async (req, res) => {
       return res.status(400).send('Error uploading files.');
     }
 
+    // Check for missing files or form data
     if (!req.files || !req.body) {
       return res.status(400).send('No files or form data uploaded.');
     }
@@ -18,38 +19,50 @@ const comments = async (req, res) => {
     const { ticketId, comment, createdBy } = req.body;
     const files = req.files;
 
+    // Validate required form fields
     if (!ticketId || !comment || !createdBy) {
-      return res.status(400).send("Missing form fields.");
+      return res.status(400).send("Missing required fields: ticketId, comment, or createdBy.");
     }
 
     try {
+      // Initialize file system file URLs array
       let fileSystemFileUrls = [];
+      
+      // Upload files to S3 if they exist
       if (files['commentedfiles']) {
-        fileSystemFileUrls = await Promise.all(files['commentedfiles'].map(file => uploadToS3(file)));
+        fileSystemFileUrls = await Promise.all(files['commentedfiles'].map(async (file) => {
+          try {
+            return await uploadToS3(file); // upload each file to S3
+          } catch (uploadError) {
+            console.error("File upload error: ", uploadError);
+            return null; // You can choose to handle this differently
+          }
+        }));
       }
 
-      // Create new comment
+      // Filter out any failed file uploads
+      fileSystemFileUrls = fileSystemFileUrls.filter(url => url);
+
+      // Create new comment object
       const newComment = {
         comment,
         createdBy,
         createdAt: new Date(),
+        commentedfiles: fileSystemFileUrls.length > 0 ? fileSystemFileUrls : undefined, // Include files only if there are valid URLs
       };
-
-      if (fileSystemFileUrls.length > 0) {
-        newComment.commentedfiles = fileSystemFileUrls; // Store file URLs if present
-      }
 
       // Update ticket with the new comment
       const updatedTicket = await prisma.createTicket.update({
-        where: { ticketId: ticketId },
+        where: { ticketId },
         data: {
           comments: {
-            create: newComment, // Add the comment
+            create: newComment,
           },
         },
         include: { comments: true }, // Include comments in the response
       });
 
+      // Respond with success
       res.json({
         message: "Comment created successfully",
         updatedTicket,

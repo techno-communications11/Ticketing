@@ -13,46 +13,45 @@ const getTicketFiles = async (req, res) => {
 
     try {
         const { ticketId } = req.params;
-        console.log(ticketId, "ticketId in API");
 
+        // Validate ticketId is provided
         if (!ticketId) {
             return res.status(400).json({ error: 'Ticket ID is required' });
         }
 
-        // Fetch the ticket with associated files from the database
+        // Fetch the ticket from the database
         const ticket = await prisma.createTicket.findFirst({
             where: { ticketId: ticketId },
         });
 
-        console.log('Fetched ticket:', ticket); // Log the ticket to check its contents
-
+        // Check if the ticket exists
         if (!ticket) {
             return res.status(404).json({ error: 'Ticket not found for this ID' });
         }
 
+        // Check if the ticket has files associated with it
         const filesfetched = [];
 
-        // Iterate through the files and push them into filesfetched array
-        for (let key in ticket.files) {
-            if (ticket.files.hasOwnProperty(key)) {
-                let value = ticket.files[key]; // Assign 'value' here
-                console.log('Key:', key);
-                console.log('Value:', value);
+        if (ticket.files) {
+            // Iterate through the files and push them into filesfetched array
+            for (let key in ticket.files) {
+                if (ticket.files.hasOwnProperty(key)) {
+                    let value = ticket.files[key]; // Assign 'value' here
 
-                if (Array.isArray(value)) {
-                    if (value.length > 0) {
+                    // If value is an array, add each file to the filesfetched array
+                    if (Array.isArray(value) && value.length > 0) {
                         value.forEach((file, index) => {
                             filesfetched.push(file); // Add the file to the array
-                            console.log(`File ${index + 1}: ${file}`);
                         });
-                    } else {
-                        console.log('No files in this array');
                     }
                 }
             }
         }
 
-        console.log('Files fetched:', filesfetched);
+        // If no files found, return a message
+        if (filesfetched.length === 0) {
+            return res.status(404).json({ error: 'No files found for this ticket' });
+        }
 
         // Generate signed URLs for each file in the filesfetched array
         const signedUrls = await Promise.all(filesfetched.map(async (filePath) => {
@@ -62,14 +61,16 @@ const getTicketFiles = async (req, res) => {
             };
 
             const command = new GetObjectCommand(getObjectParams);
-            const url = await getSignedUrl(client, command, { expiresIn: 3600 });
-            console.log(url,'rrrrrrrrrrr') // 3600 seconds = 1 hour
-            return url; // Return the signed URL
+            try {
+                const url = await getSignedUrl(client, command, { expiresIn: 3600 }); // 3600 seconds = 1 hour
+                return url; // Return the signed URL
+            } catch (error) {
+                console.error('Error generating signed URL for file:', filePath, error);
+                throw new Error('Failed to generate signed URL for some files');
+            }
         }));
 
         // Return the signed URLs as a response
-        console.log(signedUrls,"ssssssssss")
-
         return res.status(200).json({ signedUrls });
 
     } catch (error) {

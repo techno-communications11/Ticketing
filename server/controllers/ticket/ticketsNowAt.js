@@ -2,7 +2,7 @@ import prisma from "../lib/prisma.js";
 
 const TicketsNowAt = async (req, res) => {
   try {
-    // Fetch tickets with basic ticket information, including the openedById
+    // Fetch tickets with basic ticket information
     const tickets = await prisma.createTicket.findMany({
       select: {
         ticketId: true, 
@@ -17,33 +17,37 @@ const TicketsNowAt = async (req, res) => {
       },
     });
 
-    // Fetch the full name of the users who opened the tickets using openedBy
-    const ticketsWithUser = await Promise.all(
-      tickets.map(async (ticket) => {
-        if (ticket.openedBy) { // Only attempt to fetch user if openedBy is not null
-          const openedByUser = await prisma.user.findUnique({
-            where: { id: ticket.openedBy }, // Use openedBy to fetch the user
-            select: { fullname: true },
-          });
-
-          return {
-            ...ticket,
-            openedBy: openedByUser ? openedByUser.fullname : "Not Opened", // Add the fullname to the ticket
-          };
-        } else {
-          return {
-            ...ticket,
-            openedBy: "Not Opened", // If openedBy is null, set to "Unknown"
-          };
-        }
-      })
-    );
-
-    console.log(ticketsWithUser, 'Tickets with User');
-
-    if (ticketsWithUser.length === 0) {
+    // If no tickets are found, return early
+    if (tickets.length === 0) {
       return res.status(404).json({ message: "No tickets found." });
     }
+
+    // Fetch all users associated with the openedBy field in a single query
+    const openedByUsers = await prisma.user.findMany({
+      where: {
+        id: {
+          in: tickets.map(ticket => ticket.openedBy).filter(id => id), // Only fetch users that have an openedBy ID
+        },
+      },
+      select: {
+        id: true,
+        fullname: true,
+      },
+    });
+
+    // Create a map of user IDs to full names
+    const userMap = openedByUsers.reduce((acc, user) => {
+      acc[user.id] = user.fullname;
+      return acc;
+    }, {});
+
+    // Map over the tickets and add the fullname of the user who opened the ticket
+    const ticketsWithUser = tickets.map(ticket => ({
+      ...ticket,
+      openedBy: ticket.openedBy ? userMap[ticket.openedBy] || "Unknown User" : "Not Opened",
+    }));
+
+    console.log(ticketsWithUser, 'Tickets with User');
 
     return res.status(200).json(ticketsWithUser);
   } catch (error) {

@@ -40,10 +40,10 @@ const TicketDetails = async (req, res) => {
       return res.status(404).json({ error: 'Ticket not found' });
     }
 
-    // Add the user name to the ticket details
+    // Add the user name to the ticket details with a fallback if no user is found
     const ticketWithUserDetails = {
       ...details,
-      OpenedByFullName: details.user?.fullname || null,
+      OpenedByFullName: details.user?.fullname || "Unknown User", // Default if no user is found
     };
 
     // Remove the redundant user field from the response

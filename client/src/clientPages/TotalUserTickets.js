@@ -81,7 +81,7 @@ function TotalUserTickets() {
       let url = `/createTickets/usertickets`; // Base URL
 
       try {
-        console.log(adminntid,"assdsss")
+        // console.log(adminntid,"assdsss")
         if (adminntid) {
           params.append("ntid", adminntid); // Append ntid if it has a value
         }
@@ -103,7 +103,7 @@ function TotalUserTickets() {
 
         const response = await apiRequest.get(url);
         if (response.status === 200) {
-          setTickets(response.data);
+          setTickets(response.data.data);
           // console.log(response.data,"llllllllll")
           setAuthenticated(true);
         }
@@ -139,6 +139,8 @@ const department=getDecodedToken().department;
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
+
+  console.log(tickets,"uuuuuuuuuui")
 
   // Render loading spinner
   if (loading) return <div className="loader"></div>;

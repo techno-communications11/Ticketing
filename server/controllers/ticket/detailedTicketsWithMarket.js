@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const detailedTicketsWithMarket = async (req, res) => {
-  const { market } = req.query; 
+  const { market } = req.query;
   if (!market) {
     return res.status(400).json({ error: 'Market parameter is required' });
   }
@@ -25,22 +25,28 @@ const detailedTicketsWithMarket = async (req, res) => {
       },
     });
 
-    // Fetch the user details for each ticket if userId exists
-    const enrichedDetails = await Promise.all(
-      details.map(async (ticket) => {
-        if (ticket.openedBy) {
-          const userDetails = await prisma.user.findUnique({
-            where: { id: ticket.openedBy },
-            select: { fullname: true },
-          });
-          return {
-            ...ticket,
-            openedByFullName: userDetails?.fullname || null,
-          };
-        }
-        return { ...ticket, openedByFullName: null };
-      })
-    );
+    // Collect user IDs for all tickets with openedBy field populated
+    const openedByUserIds = details
+      .filter(ticket => ticket.openedBy)
+      .map(ticket => ticket.openedBy);
+
+    // Fetch all users once for performance optimization
+    const users = await prisma.user.findMany({
+      where: { id: { in: openedByUserIds } },
+      select: { id: true, fullname: true }
+    });
+
+    // Create a lookup map for users by their IDs
+    const userMap = users.reduce((map, user) => {
+      map[user.id] = user.fullname;
+      return map;
+    }, {});
+
+    // Enrich ticket details with openedByFullName
+    const enrichedDetails = details.map(ticket => ({
+      ...ticket,
+      openedByFullName: userMap[ticket.openedBy] || null
+    }));
 
     res.status(200).json(enrichedDetails);
   } catch (error) {

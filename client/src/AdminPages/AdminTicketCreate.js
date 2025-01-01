@@ -339,7 +339,7 @@ export function AdminTicketCreate() {
       });
       setTicketsCount(response.data);
     } catch (error) {
-      toast.error("Failed to fetch ticket counts");
+      // toast.error("Failed to fetch ticket counts");
     }
   };
 

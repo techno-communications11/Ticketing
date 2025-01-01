@@ -2,25 +2,23 @@ import prisma from "../lib/prisma.js";
 
 const User_Insights = async (req, res) => {
   try {
-    // Fetch all users and their ticket stats by joining with createTicket model
+    // Fetch all users and their ticket stats
     const usersWithStats = await prisma.user.findMany({
       select: {
-        ntid: true,   // NTID of the user
-        fullname: true // Full name of the user
-      }
-    });
-
-    // Fetch ticket data for all users
-    const ticketStats = await prisma.createTicket.findMany({
-      select: {
-        ntid: true,   // NTID stored in the createTicket table
-        status: { select: { name: true } },  // Status of the ticket
-        requestreopen: true  // Request reopen flag
+        ntid: true,    // NTID of the user
+        fullname: true, // Full name of the user
+        tickets: {  // Fetch tickets associated with each user
+          select: {
+            status: { select: { name: true } }, // Status of the ticket
+            requestreopen: true  // Request reopen flag
+          }
+        }
       }
     });
 
     // Map users to their respective ticket stats
     const usersWithTicketStats = usersWithStats.map(user => {
+      // Initialize the ticket stats object
       const ticketStatsForUser = {
         totalTickets: 0,
         new: 0,
@@ -31,24 +29,30 @@ const User_Insights = async (req, res) => {
         requestreopenCount: 0
       };
 
-      // Filter and calculate stats for this user's tickets
-      const userTickets = ticketStats.filter(ticket => ticket.ntid === user.ntid);
-
-      userTickets.forEach(ticket => {
+      // Loop through the user's tickets to calculate stats
+      user.tickets.forEach(ticket => {
         ticketStatsForUser.totalTickets++;
         const statusName = ticket.status.name;
 
         // Count tickets based on their status
-        if (statusName === 'inprogress') {
-          ticketStatsForUser.inprogress++;
-        } else if (statusName === 'reopened') {
-          ticketStatsForUser.reopened++;
-        } else if (statusName === 'completed') {
-          ticketStatsForUser.completed++;
-        } else if (statusName === 'new') {
-          ticketStatsForUser.new++;
-        } else if (statusName === 'opened') {
-          ticketStatsForUser.opened++;
+        switch (statusName) {
+          case 'inprogress':
+            ticketStatsForUser.inprogress++;
+            break;
+          case 'reopened':
+            ticketStatsForUser.reopened++;
+            break;
+          case 'completed':
+            ticketStatsForUser.completed++;
+            break;
+          case 'new':
+            ticketStatsForUser.new++;
+            break;
+          case 'opened':
+            ticketStatsForUser.opened++;
+            break;
+          default:
+            break;
         }
 
         // Count request reopen tickets
@@ -64,7 +68,8 @@ const User_Insights = async (req, res) => {
         ticketStats: ticketStatsForUser
       };
     });
-    console.log(usersWithTicketStats)
+
+    console.log(usersWithTicketStats); // For debugging
 
     // Send the response
     res.status(200).json(usersWithTicketStats);

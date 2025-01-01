@@ -1,8 +1,12 @@
-import prisma from './lib/prisma.js';
+import prisma from "./lib/prisma.js";
 
 // Function to get tickets based on the assigned DM's name
 const getTicketsByDM = async (fullname) => {
-  return await prisma.createTicket.findMany({
+  if (!fullname) {
+    throw new Error("DM's fullname is required.");
+  }
+
+  return prisma.createTicket.findMany({
     where: {
       assignedTo: fullname, // Filter tickets by assignedTo field
     },
@@ -21,63 +25,63 @@ const getTicketsByDM = async (fullname) => {
 const fetchUserTicketsStats = async (req, res) => {
   const { fullname } = req.query; // Get DM's full name from the query params
 
+  if (!fullname) {
+    return res.status(400).json({ message: "DM's fullname is required." });
+  }
+
   try {
     // Step 1: Get tickets assigned to users under the DM
     const tickets = await getTicketsByDM(fullname);
 
-    // Step 2: Organize data to count tickets by status per user using a Map for better performance
-    const result = new Map();
-
-    tickets.forEach((ticket) => {
+    // Step 2: Organize data to count tickets by status per user using `reduce`
+    const result = tickets.reduce((acc, ticket) => {
       const ntid = ticket.ntid;
-      const statusName = ticket.status.name.toLowerCase(); // Ensure it's lowercase for consistency
+      const statusName = ticket.status.name.toLowerCase(); // Normalize status name
 
-      // Check if user already exists in the Map
-      if (!result.has(ntid)) {
-        result.set(ntid, {
-          ntid: ntid,
+      if (!acc[ntid]) {
+        acc[ntid] = {
+          ntid,
           totalTickets: 0,
           openedTickets: 0,
           inprogressTickets: 0,
           completedTickets: 0,
           reopenedTickets: 0,
           newTickets: 0,
-        });
+        };
       }
 
-      // Get the user's ticket count object
-      const userTickets = result.get(ntid);
+      acc[ntid].totalTickets += 1;
 
-      // Update ticket counts
-      userTickets.totalTickets += 1;
       switch (statusName) {
-        case 'opened':
-          userTickets.openedTickets += 1;
+        case "opened":
+          acc[ntid].openedTickets += 1;
           break;
-        case 'inprogress':
-          userTickets.inprogressTickets += 1;
+        case "inprogress":
+          acc[ntid].inprogressTickets += 1;
           break;
-        case 'completed':
-          userTickets.completedTickets += 1;
+        case "completed":
+          acc[ntid].completedTickets += 1;
           break;
-        case 'reopened':
-          userTickets.reopenedTickets += 1;
+        case "reopened":
+          acc[ntid].reopenedTickets += 1;
           break;
-        case 'new':
-          userTickets.newTickets += 1;
+        case "new":
+          acc[ntid].newTickets += 1;
           break;
         default:
           break;
       }
-    });
 
-    // Convert the Map back into an array
-    const resultArray = Array.from(result.values());
+      return acc;
+    }, {});
 
-    res.json(resultArray);
+    // Convert result object to an array
+    const resultArray = Object.values(result);
+
+    res.status(200).json(resultArray);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error fetching tickets' });
+    console.error("Error fetching tickets:", error.message);
+    res.status(500).json({ message: "Error fetching tickets. Please try again." });
   }
 };
 

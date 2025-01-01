@@ -4,12 +4,14 @@ const adminMarket = async (req, res) => {
   try {
     console.log("Incoming request for market structures");
 
+    // Fetch distinct market names directly from the database
     const marketStructures = await prisma.marketStructure.findMany({
-      include: {
-        market: { 
-          select: { market: true }, // Fetch the market name
-        },
-      },
+      distinct: ['marketId'], // Fetch distinct marketIds to avoid duplicates
+      select: {
+        market: {
+          select: { market: true } // Fetch the market name
+        }
+      }
     });
 
     console.log("Market Structures Retrieved:", marketStructures);
@@ -20,8 +22,8 @@ const adminMarket = async (req, res) => {
       return res.status(404).json({ message: "No market data found" });
     }
 
-    // Extract market names and remove duplicates
-    const markets = [...new Set(marketStructures.map(structure => structure.market?.market))];
+    // Extract market names
+    const markets = marketStructures.map(structure => structure.market?.market);
 
     console.log("Formatted Markets Data:", markets);
 
