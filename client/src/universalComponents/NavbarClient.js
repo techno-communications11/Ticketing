@@ -101,7 +101,7 @@ export function NavbarClient() {
     ? "/departmenthome"
     : department === "Market Manager"
     ? "/markethome"
-    : "/superAdminHome";
+    : department==="Internal"?"admincreateticket":"/superAdminHome";
 
   return (
     <Navbar expand="lg" className="shadow-sm">

@@ -57,6 +57,7 @@ export function Login() {
         "District Manager": "/dmtabs",
         "Market Manager": "/markethome",
         SuperAdmin: "/superAdminHome",
+        Internal:"/admincreateticket"
       };
 
       navigate(departmentRoutes[department] || "/departmenthome");

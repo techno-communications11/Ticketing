@@ -31,7 +31,8 @@ export function Register() {
     "SuperAdmin",
     "District Manager",
     "Employee",
-    "Software India"
+    "Software India",
+    "Internal"
   ];
   const subUserroles = ["Manager", "User"];
 

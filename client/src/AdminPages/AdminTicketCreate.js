@@ -36,6 +36,7 @@ export function AdminTicketCreate() {
   const [selectedMarket, setSelectedMarket] = useState("");
   const [AssignTo, setAssignTo] = useState(""); // Default to empty string if no department is selected
   const [selectedSubDepartment, setSelectedSubDepartment] = useState("");
+  const department = getDecodedToken().department;
 
   const markets = [
     { _id: "1", market: "arizona" },
@@ -52,6 +53,7 @@ export function AdminTicketCreate() {
     { _id: "12", market: "san diego" },
     { _id: "13", market: "san francisco" },
     { _id: "14", market: "bay area" },
+    { _id: "15", market: "India" },
   ];
 
   const Departments = [
@@ -62,7 +64,7 @@ export function AdminTicketCreate() {
     // "Charge Back/Commission",
     // "Inventory",
     "Admin",
-    "Software India"
+    "Software India",
     // "Maintenance ",
     // "Housing ",
     // "CAM NW",
@@ -196,60 +198,96 @@ export function AdminTicketCreate() {
 
   const validateForm = () => {
     const newErrors = {};
-  
+
     // Collect all the fields to validate
     const fields = [
-      { name: 'ntid', value: ntidRef.current.value, errorMessage: "NTID is required" },
-      { name: 'phone', value: phoneRef.current.value, errorMessage: "Phone number is required" },
-      { name: 'store', value: selectedStore, errorMessage: "Store selection is required", invalidValue: "Select Store" },
-      { name: 'ticketSubject', value: ticketSubjectRef.current.value, errorMessage: "Ticket subject is required" },
-      { name: 'description', value: descriptionRef.current.value, errorMessage: "Description is required" },
-      { name: 'market', value: selectedMarket, errorMessage: "Select market" },
-      { name: 'fullname', value: fullnameRef.current.value, errorMessage: "No fullname" },
-      { name: 'departmentId', value: AssignTo, errorMessage: "Department not assigned" },
-      { name: 'ticketDepartment', value: selectedDepartment, errorMessage: "No ticket department", invalidValue: "select Department" },
+      {
+        name: "ntid",
+        value: ntidRef.current.value,
+        errorMessage: "NTID is required",
+      },
+      {
+        name: "phone",
+        value: phoneRef.current.value,
+        errorMessage: "Phone number is required",
+      },
+      {
+        name: "store",
+        value: selectedStore,
+        errorMessage: "Store selection is required",
+        invalidValue: "Select Store",
+      },
+      {
+        name: "ticketSubject",
+        value: ticketSubjectRef.current.value,
+        errorMessage: "Ticket subject is required",
+      },
+      {
+        name: "description",
+        value: descriptionRef.current.value,
+        errorMessage: "Description is required",
+      },
+      { name: "market", value: selectedMarket, errorMessage: "Select market" },
+      {
+        name: "fullname",
+        value: fullnameRef.current.value,
+        errorMessage: "No fullname",
+      },
+      {
+        name: "departmentId",
+        value: AssignTo,
+        errorMessage: "Department not assigned",
+      },
+      {
+        name: "ticketDepartment",
+        value: selectedDepartment,
+        errorMessage: "No ticket department",
+        invalidValue: "select Department",
+      },
     ];
-  
+
     // Loop through each field and check its validity
     fields.forEach(({ name, value, errorMessage, invalidValue }) => {
       if (!value || (invalidValue && value === invalidValue)) {
         newErrors[name] = errorMessage;
       }
     });
-  
+
     // Set the error state only once
     setErrors(newErrors);
-  
+
     // Return true if no errors are present, false otherwise
     return Object.keys(newErrors).length === 0;
   };
-  
 
   const handleSubmit = () => {
     if (!validateForm()) return;
-  
+
     const formData = new FormData();
-  
+
     // Define all the fields to be appended
     const fields = [
-      { name: 'ntid', value: ntidRef.current.value },
-      { name: 'phone', value: phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10) },
-      { name: 'store', value: selectedStore },
-      { name: 'ticketSubject', value: ticketSubjectRef.current.value },
-      { name: 'description', value: descriptionRef.current.value },
-      { name: 'market', value: selectedMarket },
-      { name: 'fullname', value: fullnameRef.current.value },
-      { name: 'department', value: selectedDepartment },
-      { name: 'subdepartment', value: selectedSubDepartment },
-      { name: 'departmentId', value: AssignTo },
+      { name: "ntid", value: ntidRef.current.value },
+      {
+        name: "phone",
+        value: phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10),
+      },
+      { name: "store", value: selectedStore },
+      { name: "ticketSubject", value: ticketSubjectRef.current.value },
+      { name: "description", value: descriptionRef.current.value },
+      { name: "market", value: selectedMarket },
+      { name: "fullname", value: fullnameRef.current.value },
+      { name: "department", value: selectedDepartment },
+      { name: "subdepartment", value: selectedSubDepartment },
+      { name: "departmentId", value: AssignTo },
     ];
-  
+
     // Loop through the fields array to append values to formData
     fields.forEach(({ name, value }) => {
       console.log(value, `${name} value`);
       formData.append(name, value);
     });
-  
+
     // Append files if available
     const appendFiles = (fileArray, fieldName) => {
       if (fileArray?.length > 0) {
@@ -259,27 +297,26 @@ export function AdminTicketCreate() {
         });
       }
     };
-  
-    appendFiles(cameraFileName, 'cameraFile');
-    appendFiles(fileSystemFileName, 'fileSystemFile');
-  
+
+    appendFiles(cameraFileName, "cameraFile");
+    appendFiles(fileSystemFileName, "fileSystemFile");
+
     // Log all formData entries
     for (let [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
-  
+
     setLoading(true);
-  
+
     // API request
     apiRequest
       .post("/createTickets/uploadTicket", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) => {
-        
         handleClose();
         setLoading(false);
-  
+
         // Optional: Refresh UI state
         setTimeout(() => {
           toast.success("Ticket created successfully!");
@@ -288,13 +325,13 @@ export function AdminTicketCreate() {
       })
       .catch((error) => {
         let errorMessage = "Error occurred. Please try again.";
-        
+
         if (error.response) {
           errorMessage = error.response.data.message || errorMessage;
         } else if (error.request) {
           errorMessage = "No response from server. Please try again later.";
         }
-  
+
         setErrors((prevErrors) => ({
           ...prevErrors,
           ntid: errorMessage,
@@ -302,12 +339,11 @@ export function AdminTicketCreate() {
         toast.error(errorMessage);
       });
   };
-  
 
   const handleNTIDBlur = async () => {
     try {
       const response = await apiRequest.get("/profile/getprofiledata_ntid");
-  
+
       if (response.status === 200) {
         setUserData(response.data);
       } else {
@@ -315,14 +351,14 @@ export function AdminTicketCreate() {
       }
     } catch (error) {
       let errorMessage = "Error occurred. Please try again.";
-  
+
       // Determine the error message based on the error type
       if (error.response) {
         errorMessage = error.response.data.message || "Invalid NTID entered";
       } else if (error.request) {
         errorMessage = "No response from server. Please try again later.";
       }
-  
+
       // Set the error in the state only once
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -330,11 +366,10 @@ export function AdminTicketCreate() {
       }));
     }
   };
-  
 
   const fetchTicketCounts = async () => {
     try {
-      const response = await apiRequest.get("/createTickets/countusertickets",{
+      const response = await apiRequest.get("/createTickets/countusertickets", {
         params: { ntid },
       });
       setTicketsCount(response.data);
@@ -351,7 +386,6 @@ export function AdminTicketCreate() {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-
         const response = await apiRequest.get(`/createTickets/fetchstores`, {
           params: { selectedMarket },
         });
@@ -603,38 +637,49 @@ export function AdminTicketCreate() {
             <Form.Group controlId="ticketDepartment">
               <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
                 <Dropdown.Toggle
-                  className={`text-start fw-medium bg-white  text-muted border shadow-none w-100`}
+                  className="text-start fw-medium bg-white text-muted border shadow-none w-100"
                   id="dropdown-basic"
                 >
                   {selectedDepartment || "Select a Department"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu
-                  style={{ height: "42vh", overflow: "scroll" }}
-                  className="col-12 col-md-12"
+                  style={{ maxHeight: "42vh", overflowY: "auto" }}
+                  className="col-12 col-md-12 dropdown-menu-responsive"
                 >
                   <input
                     onChange={(e) => setSearchDepartment(e.target.value)}
                     placeholder="Search Departments..."
-                    className="w-75 form-control border fw-medium text-muted  shadow-none text-center mb-2 ms-2"
+                    className="w-75 form-control border fw-medium text-muted shadow-none text-center mb-2 ms-2"
+                    aria-label="Search Departments"
                   />
-                  {filteredDepartments?.length > 0 ? (
+                  {department === "Internal" ? (
+                    <Dropdown.Item
+                      onClick={() => handleDepartmentSelect("Software India")}
+                      className="shadow-lg fw-medium text-primary text-start dropdown-item-hover"
+                    >
+                      Software India
+                    </Dropdown.Item>
+                  ) : filteredDepartments?.length > 0 ? (
                     filteredDepartments.map((department, index) => (
                       <Dropdown.Item
                         key={index}
                         onClick={() => handleDepartmentSelect(department)}
-                        className="shadow-lg fw-medium text-primary text-start"
-                        // isinvalid={!!errors.department}
+                        className="shadow-lg fw-medium text-primary text-start dropdown-item-hover"
                       >
                         {department}
                       </Dropdown.Item>
                     ))
                   ) : (
-                    <Dropdown.Item disabled className="text-muted text-start">
+                    <Dropdown.Item
+                      disabled
+                      className="text-muted text-start bg-light"
+                    >
                       No departments found
                     </Dropdown.Item>
                   )}
                 </Dropdown.Menu>
               </Dropdown>
+
               {selectedDepartment === "Admin" && (
                 <div>
                   <Dropdown
@@ -776,40 +821,49 @@ export function AdminTicketCreate() {
         </Modal.Body>
         <Modal.Footer>
           <div className="mt-2">
-            <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
-              <Dropdown.Toggle
-                className={`text-center fw-medium   text-secondary border-0 bg-primary text-white shadow-none w-100`}
-                id="dropdown-basic"
-              >
-                {AssignTo || "Assign To"}
-              </Dropdown.Toggle>
-              <Dropdown.Menu
-                style={{ height: "42vh", overflow: "scroll", width: "20rem" }}
-                className="col-12 col-md-12"
-              >
-                <input
-                  onChange={(e) => setSearchDepartment(e.target.value)}
-                  placeholder="Search Departments..."
-                  className="w-75 form-control border  text-muted fw-medium shadow-none text-center mb-2 ms-2"
-                />
-                {filteredDepartments?.length > 0 ? (
-                  filteredDepartments.map((department, index) => (
-                    <Dropdown.Item
-                      key={index}
-                      onClick={() => handleAssignToSelect(department)}
-                      className="shadow-lg fw-medium  text-primary text-start"
-                      isInvalid={!!errors.department}
-                    >
-                      {department}
-                    </Dropdown.Item>
-                  ))
-                ) : (
-                  <Dropdown.Item disabled className="text-muted text-start">
-                    No departments found
-                  </Dropdown.Item>
-                )}
-              </Dropdown.Menu>
-            </Dropdown>
+          <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
+  <Dropdown.Toggle
+    className="text-center fw-medium text-secondary border-0 bg-primary text-white shadow-none w-100"
+    id="dropdown-basic"
+  >
+    {AssignTo || "Assign To"}
+  </Dropdown.Toggle>
+  <Dropdown.Menu
+    style={{ height: "42vh", overflow: "scroll", width: "20rem" }}
+    className="col-12 col-md-12"
+  >
+    <input
+      onChange={(e) => setSearchDepartment(e.target.value)}
+      placeholder="Search Departments..."
+      className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
+      aria-label="Search Departments"
+    />
+    {department==="Internal" ? (
+      <Dropdown.Item
+        onClick={() => handleAssignToSelect("Software India")}
+        className="shadow-lg fw-medium text-primary text-start"
+      >
+        Software India
+      </Dropdown.Item>
+    ) : filteredDepartments?.length > 0 ? (
+      filteredDepartments.map((department, index) => (
+        <Dropdown.Item
+          key={index}
+          onClick={() => handleAssignToSelect(department)}
+          className="shadow-lg fw-medium text-primary text-start"
+          isInvalid={!!errors.department}
+        >
+          {department}
+        </Dropdown.Item>
+      ))
+    ) : (
+      <Dropdown.Item disabled className="text-muted text-start">
+        No departments found
+      </Dropdown.Item>
+    )}
+  </Dropdown.Menu>
+</Dropdown>
+
           </div>
           <Button onClick={handleSubmit}>
             {loading ? (
@@ -837,15 +891,12 @@ export function AdminTicketCreate() {
                   src="./ticket.webp"
                   alt="Ticket Icon"
                   className="img img-fluid rounded-circle"
-                  width= "200"
-                   height="200"
+                  width="200"
+                  height="200"
                 />
               </div>
               <div className="d-flex justify-content-center">
-                <button
-                  className="btn btn-primary"
-                  onClick={handleShow}
-                >
+                <button className="btn btn-primary" onClick={handleShow}>
                   Open A Ticket
                 </button>
               </div>

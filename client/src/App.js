@@ -52,6 +52,7 @@ const departmentDepartments = [
    'Inventory',  'Housing',
   'CAM NW', 'HR Payroll','Maintenance','Admin',"Software India"
 ];
+const internalDepartment=['Internal'];
 
 const ProtectedRoute = ({ children, allowedDepartments }) => {
   const token = getToken();
@@ -85,7 +86,7 @@ const AppContent = () => {
          <Route
           path="/admincreateticket"
           element={
-            <ProtectedRoute allowedDepartments={superAdminDepartments}>
+            <ProtectedRoute allowedDepartments={[...superAdminDepartments,...internalDepartment]}>
               <AdminTicketCreate />
             </ProtectedRoute>
           }
@@ -191,7 +192,7 @@ const AppContent = () => {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute allowedDepartments={[...departmentDepartments,...superAdminDepartments, ...districtManagerDepartments,...marketManagerDepartments]}>
+            <ProtectedRoute allowedDepartments={[...departmentDepartments,...superAdminDepartments, ...districtManagerDepartments,...marketManagerDepartments,...internalDepartment]}>
               <Profile />
             </ProtectedRoute>
           }
@@ -224,7 +225,7 @@ const AppContent = () => {
         <Route
           path="/totalusertickets"
           element={
-            <ProtectedRoute allowedDepartments={[...districtManagerDepartments,...superAdminDepartments]}>
+            <ProtectedRoute allowedDepartments={[...districtManagerDepartments,...superAdminDepartments,...internalDepartment]}>
               <TotalUserTickets />
             </ProtectedRoute>
           }
@@ -256,7 +257,7 @@ const AppContent = () => {
         <Route
           path="/details"
           element={
-            <ProtectedRoute allowedDepartments={[...superAdminDepartments, ...departmentDepartments, ...marketManagerDepartments, ...districtManagerDepartments]}>
+            <ProtectedRoute allowedDepartments={[...superAdminDepartments, ...departmentDepartments, ...marketManagerDepartments, ...districtManagerDepartments,...internalDepartment]}>
               <IndividualTickets />
             </ProtectedRoute>
           }
@@ -272,7 +273,7 @@ const AppContent = () => {
         <Route
           path="/marketDetailedTicket"
           element={
-            <ProtectedRoute allowedDepartments={[...superAdminDepartments, ...districtManagerDepartments]}>
+            <ProtectedRoute allowedDepartments={[...superAdminDepartments,...districtManagerDepartments]}>
               <MarketDetailed />
             </ProtectedRoute>
           }
@@ -289,7 +290,7 @@ const AppContent = () => {
         <Route
           path="/usertickets"
           element={
-            <ProtectedRoute allowedDepartments={[...districtManagerDepartments,...superAdminDepartments]}>
+            <ProtectedRoute allowedDepartments={[...districtManagerDepartments,...superAdminDepartments,...internalDepartment]}>
               <UserTickets />
             </ProtectedRoute>
           }
