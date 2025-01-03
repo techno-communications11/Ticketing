@@ -6,11 +6,12 @@ import { Table, Row, Col, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import getMarkets from "../universalComponents/GetMarkets";
 import { setMarket } from "../redux/marketSlice";
-import { fetchStatusWiseTickets, setMarketAndStatus } from "../redux/statusSlice";
 import { apiRequest } from "../lib/apiRequest";
 import PageCountStack from "../universalComponents/PageCountStack";
 import { Container } from "react-bootstrap";
 import MarketSelectDropdown from "../universalComponents/MarketSelectDropdown";
+import DateRangeFilter from "../universalComponents/DateRangeFilter";
+import { useMyContext } from "../universalComponents/MyContext";
 
 function MarketWise() {
   const [marketTicketCounts, setMarketTicketCounts] = useState({});
@@ -22,6 +23,9 @@ function MarketWise() {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
+  const {setDataDates}=useMyContext();
+
+  const [dates, setDates] = useState({ startDate: '', endDate: '' });
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
 
@@ -35,12 +39,13 @@ function MarketWise() {
   }, []);
 
   const fetchMarketWiseStatus = useCallback(async () => {
+    const {startDate,endDate}=dates;
     if (marketData.length > 0) {
       setLoading(true);
       try {
         const counts = await Promise.all(
           marketData.map(async (item) => {
-            const response = await apiRequest.get("/createTickets/marketwisestatus", { params: { market: item.market } });
+            const response = await apiRequest.get("/createTickets/marketwisestatus", { params: { market: item.market,startDate,endDate } });
             console.log(response.data,"ooooooop")
             return { market: item.market, counts: response.data };
           })
@@ -61,20 +66,18 @@ function MarketWise() {
         setLoading(false);
       }
     }
-  }, [marketData]);
+  }, [marketData,dates]);
 
   const handleMarketClick = (market) => {
     localStorage.setItem("market", market);
     dispatch(setMarket(market));
     setSelectedMarkets([market]);
+    if(dates){
+      setDataDates(dates)
+    }
   };
 
-  const handleStatusClick = (market, statusId) => {
-    localStorage.setItem("statusData", statusId);
-    localStorage.setItem("market", market);
-    dispatch(fetchStatusWiseTickets({ market, statusId }));
-    dispatch(setMarketAndStatus({ market, statusId }));
-  };
+  
 
   const downloadFile = (fileType) => {
     const dataArray = Object.entries(marketTicketCounts).map(([market, counts]) => ({
@@ -115,6 +118,7 @@ function MarketWise() {
       currentPage * itemsPerPage
     );
   }, [filteredMarketCounts, currentPage]);
+  const handleDataFromChild=(startDate, endDate)=>setDates({ startDate, endDate })
 
   return (
     <Container fluid>
@@ -127,9 +131,12 @@ function MarketWise() {
               Market Wise Ticket Counts
             </h4>
 
-            <Row className="d-flex justify-content-center">
-              <Col md={12} className="d-flex flex-wrap justify-content-start">
-                <div className="d-flex flex-wrap w-100 gap-2">
+            <Row className="d-flex justify-content-center mb-2">
+              <Col  xs={12} md="auto">
+              <DateRangeFilter sendDatesToParent={handleDataFromChild}/>
+              </Col>
+              <Col  xs={12} md="auto">
+                <div className=" d-flex gap-2">
                   <button className="btn btn-outline-success fw-medium" onClick={() => downloadFile("status")}>
                     <MdDownload /> Download Status Count as Excel File
                   </button>

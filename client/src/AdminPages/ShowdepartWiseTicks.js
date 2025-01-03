@@ -19,7 +19,7 @@ import getDecodedToken from "../universalComponents/decodeToken";
 
 const ShowdepartWiseTicks = () => {
   const dispatch = useDispatch();
-  const { department, statusId } = useMyContext();
+  const { department, statusId,Dates } = useMyContext();
   const [tickets, setTickets] = useState([]);
   const [market, setMarket] = useState("");
   const [completedAt, setCompletedAt] = useState("");
@@ -104,21 +104,28 @@ const ShowdepartWiseTicks = () => {
   };
   // Filtered and paginated tickets
   const filteredTickets = FilterLogic(
-    tickets,
+    tickets.filter((item) => {
+      const { startDate, endDate } = Dates;
+      if (startDate && endDate) {
+        const ticketDate = new Date(item.createdAt).toISOString().slice(0, 10);
+        return ticketDate >= startDate && ticketDate <= endDate;
+      }
+      return true;
+    }),
     ntidFilter,
     createdAt,
     completedAt,
     statusFilter,
     fullnameFilter
   );
-  console.log(filteredTickets, "filtered");
+  // console.log(filteredTickets, "filtered");
 
   const currentItems = useMemo(() => {
     let sortedTickets = [...filteredTickets].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
-    console.log(sortedTickets, "stsss");
-    console.log(userData.id, "pppppppppp");
+    // console.log(sortedTickets, "stsss");
+    // console.log(userData.id, "pppppppppp");
 
     // Apply filtering if the user's department is not 'SuperAdmin'
     if (userData.department !== "SuperAdmin") {
@@ -133,7 +140,7 @@ const ShowdepartWiseTicks = () => {
       currentPage * itemsPerPage
     );
   }, [filteredTickets, currentPage, itemsPerPage, userData]);
-  console.log(currentItems, "ccyy");
+  // console.log(currentItems, "ccyy");
 
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);

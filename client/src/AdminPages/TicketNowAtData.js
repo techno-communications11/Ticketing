@@ -17,7 +17,8 @@ function TicketNowAtData() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
   const department = getDecodedToken().department;
-  let { datafullname, datastatusId } = useMyContext();
+  let { datafullname, datastatusId,Dates } = useMyContext();
+
   const fetchUserTickets = async () => {
     setLoading(true);
     try {
@@ -32,11 +33,29 @@ function TicketNowAtData() {
           openedByFullName: datafullname, // Add openedByFullName to each ticket
         }));
   
-        setTickets(ticketsWithFullName); // Set the tickets with added openedByFullName
-        setAuthenticated(true);
-        console.log(ticketsWithFullName, "Fetched tickets with full name");
-      }
+        // Filter tickets by openedByFullName and date range
+        const filteredTickets = ticketsWithFullName.filter(ticket => {
+          const matchesFullName = ticket.openedByFullName === datafullname;
+          
+          // Destructure startDate and endDate from Dates object
+          const { startDate, endDate } = Dates || {};
+          
+          // Check if startDate and endDate exist, then filter by date range
+          if (startDate && endDate) {
+            const ticketDate = new Date(ticket.createdAt); // Ensure the date is a valid Date object
+            const isWithinDateRange =
+              ticketDate >= new Date(startDate) && ticketDate <= new Date(endDate);
+            return matchesFullName && isWithinDateRange;
+          }
+          
+          // If no date range, just return by full name
+          return matchesFullName;
+        });
   
+        setTickets(filteredTickets); // Set the tickets with added openedByFullName
+        setAuthenticated(true);
+        console.log(filteredTickets, "Fetched tickets with full name and date range");
+      }
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
       toast.error("Failed to fetch tickets");
@@ -44,6 +63,7 @@ function TicketNowAtData() {
       setLoading(false);
     }
   };
+  
   
 
   useEffect(() => {

@@ -1,30 +1,76 @@
 import prisma from "../lib/prisma.js";
 
 const allDepartCounts = async (req, res) => {
+  const { startDate, endDate } = req.query;
+
   try {
     console.log("Fetching ticket counts by department and status");
 
-    // Aggregate ticket counts by department and status directly in the database
-    const counts = await prisma.createTicket.groupBy({
-      by: ['departmentId', 'statusId'], // Group by department and status
-      _count: {
-        ticketId: true, // Count the number of tickets
+    // Fetch all tickets
+    const tickets = await prisma.createTicket.findMany({
+      select: {
+        ticketId: true,
+        departmentId: true,
+        statusId: true,
+        createdAt: true,
+      },
+    });
+
+    // Filter tickets based on the date range (using slice(0, 10) to get the date part)
+    const filteredTickets = tickets.filter(ticket => {
+      const ticketDate = ticket.createdAt.toISOString().slice(0, 10); // Extract the date part (YYYY-MM-DD)
+      // Apply the date range filter if provided
+      if (startDate && endDate) {
+        return ticketDate >= startDate && ticketDate <= endDate;
+      }else {
+        return ticket
       }
     });
+    console.log(filteredTickets,"ffilfkflk")
+
+    // Aggregate ticket counts by department and status
+    const counts = filteredTickets.reduce((acc, ticket) => {
+      const departmentId = ticket.departmentId;
+      const statusId = ticket.statusId;
+
+      // Initialize department if not yet created
+      if (!acc[departmentId]) {
+        acc[departmentId] = {
+          total: 0,
+          new: 0,
+          opened: 0,
+          inProgress: 0,
+          completed: 0,
+          reopened: 0,
+        };
+      }
+
+      // Increment total ticket count
+      acc[departmentId].total += 1;
+
+      // Fetch the status name and update the count for that status
+      if (statusId === '1') acc[departmentId].new += 1;
+      else if (statusId === '2') acc[departmentId].opened += 1;
+      else if (statusId === '3') acc[departmentId].inProgress += 1;
+      else if (statusId === '4') acc[departmentId].completed += 1;
+      else if (statusId === '5') acc[departmentId].reopened += 1;
+
+      return acc;
+    }, {});
 
     // Fetch department and status names in separate queries
     const departmentNames = await prisma.department.findMany({
       select: {
         id: true,
         name: true,
-      }
+      },
     });
 
     const statusNames = await prisma.status.findMany({
       select: {
         id: true,
         name: true,
-      }
+      },
     });
 
     // Map department and status IDs to names
@@ -38,36 +84,14 @@ const allDepartCounts = async (req, res) => {
       return acc;
     }, {});
 
-    // Format counts into the desired structure
+    // Final result to include department names and counts
     const result = {};
-
-    counts.forEach(item => {
-      const departmentName = departmentMap[item.departmentId];
-      const statusName = statusMap[item.statusId];
-
-      // Skip if no department or status name
-      if (!departmentName || !statusName) return;
-
-      // Initialize department entry if it doesn't exist
-      if (!result[departmentName]) {
-        result[departmentName] = {
-          total: 0,
-          new: 0,
-          opened: 0,
-          inProgress: 0,
-          completed: 0,
-          reopened: 0,
-        };
+    for (const departmentId in counts) {
+      const departmentName = departmentMap[departmentId];
+      if (departmentName) {
+        result[departmentName] = counts[departmentId];
       }
-
-      // Increment the counts for the corresponding status
-      result[departmentName].total += item._count.ticketId;
-      if (statusName === 'new') result[departmentName].new += item._count.ticketId;
-      else if (statusName === 'opened') result[departmentName].opened += item._count.ticketId;
-      else if (statusName === 'inprogress') result[departmentName].inProgress += item._count.ticketId;
-      else if (statusName === 'completed') result[departmentName].completed += item._count.ticketId;
-      else if (statusName === 'reopened') result[departmentName].reopened += item._count.ticketId;
-    });
+    }
 
     console.log("Ticket Counts by Department and Status:", result);
 

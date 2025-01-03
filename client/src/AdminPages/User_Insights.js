@@ -9,6 +9,8 @@ import * as XLSX from "xlsx"; // Import XLSX
 import "../styles/loader.css";
 import FullNameFilter from "../universalComponents/FullNameFilter"; // Assuming these are components for filtering
 import NtidFilter from "../universalComponents//NtidFilter";
+import { Col, Row } from "react-bootstrap";
+import DateRangeFilter from "../universalComponents/DateRangeFilter";
 
 function UserInsights() {
   const [userStats, setUserStats] = useState([]);
@@ -19,16 +21,22 @@ function UserInsights() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
   const navigate = useNavigate();
-  const { setNtid,setStatusId } = useMyContext();
+  const { setNtid,setStatusId,setDataDates } = useMyContext();
   const [loading, setLoading] = useState(false);
+   const [dates, setDates] = useState({ startDate: '', endDate: '' });
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchUserStats = async () => {
+      const {startDate,endDate}=dates;
+     const params={
+      startDate:startDate,
+      endDate:endDate
+     }
       setLoading(true);
       try {
-        const response = await apiRequest.get("/createTickets/userinsights");
+        const response = await apiRequest.get("/createTickets/userinsights",{params});
         if (isMounted) setUserStats(response.data);
       } catch (error) {
         console.error("Error fetching user ticket stats:", error);
@@ -42,7 +50,7 @@ function UserInsights() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [dates]);
 
   if (loading) {
     return <div className="loader"></div>;
@@ -62,6 +70,11 @@ function UserInsights() {
   const handleTotalTickets = (AdminsDatantid,status) => () => {
     setNtid(AdminsDatantid);
     setStatusId(status)
+     
+     if(dates){
+      // console.log(dates,'lllllllllllllooooooooooooollllllllllllll')
+      setDataDates(dates);
+     }
     if (AdminsDatantid) {
       navigate("/totalusertickets");
     } else {
@@ -90,20 +103,29 @@ function UserInsights() {
 
   const handleFullnameFilterClick = () => setFullnameToggle(!fullnameToggle);
   const handleNTIDFilterClick = () => setNtidFilterToggle(!ntidFilterToggle);
+  const handleDataFromChild=(startDate, endDate)=>setDates({ startDate, endDate })
 
   return (
     <div className="container">
       <h3 className="text-center" style={{ color: "#E10174" }}>
         Users Tickets Insights
       </h3>
-
-      <button
+      <Row className="d-flex justify-content-between mb-2">
+      <Col xs={12} md="auto">
+      <DateRangeFilter  sendDatesToParent={handleDataFromChild}/>
+      </Col>
+       <Col xs={12} md="auto">
+       <button
         className="btn btn-outline-success fw-medium"
         onClick={exportToExcel}
         disabled={filteredUserStats.length === 0}
       >
         <MdDownload /> Download as Excel File
       </button>
+      </Col>
+      </Row>
+
+      
 
       <table className="table table-bordered table-striped table-sm">
         <thead className="table-light">

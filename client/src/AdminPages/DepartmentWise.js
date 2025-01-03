@@ -8,6 +8,7 @@ import { Container } from "react-bootstrap";
 import DepartmentSelectDropdown from "../universalComponents/DepartmentSelectDropdown";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../universalComponents/MyContext";
+import DateRangeFilter from "../universalComponents/DateRangeFilter";
 
 const DepartmentWise = () => {
   const [ticketCounts, setTicketCounts] = useState({});
@@ -17,49 +18,56 @@ const DepartmentWise = () => {
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
-  const {setStatusId,setDepartment}=useMyContext()
-   const navigate=useNavigate()
+  const { setStatusId, setDepartment,setDataDates } = useMyContext();
+  const navigate = useNavigate();
+  const [dates, setDates] = useState({ startDate: '', endDate: '' });
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
 
   const fetchAllTickets = useCallback(async () => {
     setLoading(true);
     setError("");
+    const {startDate,endDate}=dates;
+    const params={
+      startDate:startDate,
+      endDate:endDate
+    }
     try {
-      const response = await apiRequest.get("/createTickets/alldeptcounts");
-      const ticketData = response.data;
-      if (typeof ticketData !== "object" || !Object.keys(ticketData).length) {
-        throw new Error("No ticket data received.");
-      }
+      const response = await apiRequest.get("/createTickets/alldeptcounts",{params});
+      // const ticketData = response.data;
+      // console.log(response.data,'ffffff')
+      // if (typeof ticketData !== "object" || !Object.keys(ticketData).length) {
+      //   throw new Error("No ticket data received.");
+      // }
 
-      const counts = Object.keys(ticketData).reduce((acc, department) => {
-        const {
-          total = 0,
-          new: newTickets = 0,
-          opened = 0,
-          inProgress = 0,
-          completed = 0,
-          reopened = 0,
-        } = ticketData[department];
-        acc[department] = {
-          total,
-          new: newTickets,
-          opened,
-          inProgress,
-          completed,
-          reopened,
-        };
-        return acc;
-      }, {});
+      // const counts = Object.keys(ticketData).reduce((acc, department) => {
+      //   const {
+      //     total = 0,
+      //     new: newTickets = 0,
+      //     opened = 0,
+      //     inProgress = 0,
+      //     completed = 0,
+      //     reopened = 0,
+      //   } = ticketData[department];
+      //   acc[department] = {
+      //     total,
+      //     new: newTickets,
+      //     opened,
+      //     inProgress,
+      //     completed,
+      //     reopened,
+      //   };
+      //   return acc;
+      // }, {});
 
-      setTicketCounts(counts);
+      setTicketCounts(response.data);
     } catch (err) {
       console.error("Error fetching tickets:", err);
       setError(err.message || "Failed to load ticket data.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [dates]);
 
   useEffect(() => {
     fetchAllTickets();
@@ -96,14 +104,18 @@ const DepartmentWise = () => {
   );
   const navigateToDepartmentTickets = (department, statusId) => {
     localStorage.setItem("department", department);
-    console.log(department,statusId,'deeee')
+    // console.log(department, statusId, "deeee");
     setDepartment(department);
     setStatusId(statusId);
-    navigate('/showdeptwiseticks');
+    if(dates){
+      setDataDates(dates)
+    }
+    navigate("/showdeptwiseticks");
   };
 
+  const handleDataFromChild=(startDate, endDate)=>setDates({ startDate, endDate })
   return (
-    <Container >
+    <Container>
       <Row>
         {loading ? (
           <div className="loader"></div>
@@ -117,9 +129,12 @@ const DepartmentWise = () => {
               >
                 Department Wise Ticket Counts
               </h4>
-              <Row className=" d-flex justify-content-center">
-                <Col md={12} className="d-flex flex-wrap justify-content-start">
-                  <div className="d-flex flex-wrap w-100 gap-2">
+              <Row className="d-flex justify-content-between align-items-center mb-2">
+                <Col xs={12} md="auto">
+                  <DateRangeFilter sendDatesToParent={handleDataFromChild} />
+                </Col>
+                <Col md="auto">
+                  <div className="d-flex gap-2">
                     <button
                       className="btn btn-outline-success fw-medium"
                       onClick={downloadStatus}
@@ -188,25 +203,60 @@ const DepartmentWise = () => {
                     {currentItems.map(([department, counts], index) => (
                       <tr key={department}>
                         <td>{index + 1}</td>
-                        <td onClick={() => navigateToDepartmentTickets(department, "0")} style={{cursor:'pointer'}}>
+                        <td
+                          onClick={() =>
+                            navigateToDepartmentTickets(department, "0")
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
                           {department}
                         </td>
-                        <td onClick={() => navigateToDepartmentTickets(department, "0")} style={{cursor:'pointer'}}>
+                        <td
+                          onClick={() =>
+                            navigateToDepartmentTickets(department, "0")
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
                           {safeNumber(counts.total)}
                         </td>
-                        <td onClick={() => navigateToDepartmentTickets(department, "1")} style={{cursor:'pointer'}}>
+                        <td
+                          onClick={() =>
+                            navigateToDepartmentTickets(department, "1")
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
                           {safeNumber(counts.new)}
                         </td>
-                        <td onClick={() => navigateToDepartmentTickets(department, "2")} style={{cursor:'pointer'}}>
+                        <td
+                          onClick={() =>
+                            navigateToDepartmentTickets(department, "2")
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
                           {safeNumber(counts.opened)}
                         </td>
-                        <td onClick={() => navigateToDepartmentTickets(department, "3")} style={{cursor:'pointer'}}>
+                        <td
+                          onClick={() =>
+                            navigateToDepartmentTickets(department, "3")
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
                           {safeNumber(counts.inProgress)}
                         </td>
-                        <td onClick={() => navigateToDepartmentTickets(department, "4")} style={{cursor:'pointer'}}>
+                        <td
+                          onClick={() =>
+                            navigateToDepartmentTickets(department, "4")
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
                           {safeNumber(counts.completed)}
                         </td>
-                        <td onClick={() => navigateToDepartmentTickets(department, "5")} style={{cursor:'pointer'}}>
+                        <td
+                          onClick={() =>
+                            navigateToDepartmentTickets(department, "5")
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
                           {safeNumber(counts.reopened)}
                         </td>
                       </tr>

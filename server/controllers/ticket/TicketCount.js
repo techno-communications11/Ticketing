@@ -1,39 +1,53 @@
 import prisma from "../lib/prisma.js";
 
 const TicketCount = async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  // Ensure the startDate and endDate are valid Date objects
+  const parsedStartDate = startDate ? new Date(startDate) : null;
+  const parsedEndDate = endDate ? new Date(endDate) : null;
+
   try {
-    // Fetch ticket counts grouped by statusId
-    const [counts, statuses] = await Promise.all([
-      prisma.createTicket.groupBy({
-        by: ['statusId'],
-        _count: {
-          statusId: true,
-        },
-      }),
-      prisma.status.findMany({
-        select: {
-          id: true,
-          name: true,
-        },
-      }),
-    ]);
+    // Fetch all tickets without filtering by date in the database
+    const tickets = await prisma.createTicket.findMany();
 
-    // Create a formatted response with status names and counts
-    const formattedCounts = statuses.map(status => ({
-      status: status.name,
-      count: counts.find(count => count.statusId === status.id)?._count.statusId || 0,
-    }));
+    // Fetch all statuses
+    const statuses = await prisma.status.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
 
-    console.log(formattedCounts); // Optionally log the formatted counts
+    // Filter tickets by start and end date using JavaScript
+    const filteredTickets = tickets.filter(ticket => {
+      const ticketDate = new Date(ticket.createdAt);
+      // Reset time to midnight for both startDate and endDate for comparison
+      const ticketDateOnly = ticketDate.toISOString().slice(0, 10); // Get only YYYY-MM-DD
+
+      // Compare with the provided start and end dates, if they exist
+      const startDateMatch = parsedStartDate ? ticketDateOnly >= parsedStartDate.toISOString().slice(0, 10) : true;
+      const endDateMatch = parsedEndDate ? ticketDateOnly <= parsedEndDate.toISOString().slice(0, 10) : true;
+
+      return startDateMatch && endDateMatch;
+    });
+
+    // Now, group the filtered tickets by statusId and count them
+    const ticketCounts = statuses.map(status => {
+      const count = filteredTickets.filter(ticket => ticket.statusId === status.id).length;
+      return {
+        status: status.name,
+        count: count,
+      };
+    });
+
+    console.log(ticketCounts); // Optionally log the ticket counts
 
     // Send the response to the client
-    res.status(200).json(formattedCounts);
+    res.status(200).json(ticketCounts);
   } catch (error) {
     console.error('Error fetching ticket counts:', error);
     res.status(500).json({ message: 'Failed to retrieve ticket count data' });
-  } finally {
-    // Disconnect Prisma connection if needed (for serverless environments)
-    // await prisma.$disconnect();
   }
 };
 

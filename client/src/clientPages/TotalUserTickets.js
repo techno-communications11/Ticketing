@@ -29,8 +29,10 @@ function TotalUserTickets() {
   const [ntidFilter, setntidFilter] = useState("");
   const [fullnameFilter, setFullnameFilter] = useState("");
   const itemsPerPage = 30;
-  let { adminntid, statusId } = useMyContext();
+  let { adminntid, statusId,Dates } = useMyContext();
   // var ntid = adminntid;
+  // console.log(adminntid, statusId,Dates,"ppppppopppppppppop")
+  const {startDate,endDate}=Dates;
 
   const [statusToggle, setStatusToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
@@ -103,7 +105,15 @@ function TotalUserTickets() {
 
         const response = await apiRequest.get(url);
         if (response.status === 200) {
-          setTickets(response.data.data);
+          const data = response.data.data.filter((ticket) => {
+            if (startDate && endDate) {
+              const ticketDate = new Date(ticket.createdAt).toISOString().slice(0, 10); // Format as YYYY-MM-DD
+              return ticketDate >= startDate && ticketDate <= endDate;
+            }
+            return true; // Include all tickets if no date filters are provided
+          });
+          
+          setTickets(data);
           // console.log(response.data,"llllllllll")
           setAuthenticated(true);
         }
@@ -117,7 +127,7 @@ function TotalUserTickets() {
   useEffect(() => {
     // Only call fetchUserTickets if adminntid is not null
     fetchUserTickets();
-  }, [statusId, adminntid]);
+  }, [statusId, adminntid,Dates]);
 
   const filteredTickets = FilterLogic(
     tickets || [],
@@ -140,7 +150,7 @@ const department=getDecodedToken().department;
     dispatch(fetchIndividualTickets(id));
   };
 
-  console.log(tickets,"uuuuuuuuuui")
+  // console.log(tickets,"uuuuuuuuuui")
 
   // Render loading spinner
   if (loading) return <div className="loader"></div>;

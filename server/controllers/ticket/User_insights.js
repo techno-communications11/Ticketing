@@ -1,54 +1,63 @@
 import prisma from "../lib/prisma.js";
 
 const User_Insights = async (req, res) => {
+  const { startDate, endDate } = req.query;
+
   try {
     // Fetch all users and their ticket stats
     const usersWithStats = await prisma.user.findMany({
       select: {
-        ntid: true,    // NTID of the user
+        ntid: true, // NTID of the user
         fullname: true, // Full name of the user
-        tickets: {  // Fetch tickets associated with each user
+        tickets: {
           select: {
             status: { select: { name: true } }, // Status of the ticket
-            requestreopen: true  // Request reopen flag
-          }
-        }
-      }
+            requestreopen: true, // Request reopen flag
+            createdAt: true, // Ticket creation date
+          },
+        },
+      },
     });
 
-    // Map users to their respective ticket stats
-    const usersWithTicketStats = usersWithStats.map(user => {
-      // Initialize the ticket stats object
+    const usersWithTicketStats = usersWithStats.map((user) => {
+      // Filter tickets based on date range, if provided
+      const filteredTickets = user.tickets.filter((ticket) => {
+        if (startDate && endDate) {
+          const ticketDate = ticket.createdAt.toISOString().slice(0, 10);
+          return ticketDate >= startDate && ticketDate <= endDate;
+        }
+        return true; // Include all tickets if no date range is provided
+      });
+
+      // Calculate ticket stats
       const ticketStatsForUser = {
-        totalTickets: 0,
+        totalTickets: filteredTickets.length,
         new: 0,
         opened: 0,
         inprogress: 0,
         reopened: 0,
         completed: 0,
-        requestreopenCount: 0
+        requestreopenCount: 0,
       };
 
-      // Loop through the user's tickets to calculate stats
-      user.tickets.forEach(ticket => {
-        ticketStatsForUser.totalTickets++;
+      filteredTickets.forEach((ticket) => {
         const statusName = ticket.status.name;
 
         // Count tickets based on their status
         switch (statusName) {
-          case 'inprogress':
+          case "inprogress":
             ticketStatsForUser.inprogress++;
             break;
-          case 'reopened':
+          case "reopened":
             ticketStatsForUser.reopened++;
             break;
-          case 'completed':
+          case "completed":
             ticketStatsForUser.completed++;
             break;
-          case 'new':
+          case "new":
             ticketStatsForUser.new++;
             break;
-          case 'opened':
+          case "opened":
             ticketStatsForUser.opened++;
             break;
           default:
@@ -65,17 +74,15 @@ const User_Insights = async (req, res) => {
       return {
         ntid: user.ntid,
         fullname: user.fullname,
-        ticketStats: ticketStatsForUser
+        ticketStats: ticketStatsForUser,
       };
     });
-
-    console.log(usersWithTicketStats); // For debugging
 
     // Send the response
     res.status(200).json(usersWithTicketStats);
   } catch (error) {
-    console.error('Error fetching users with ticket stats:', error);
-    res.status(500).json({ error: 'Failed to fetch users with ticket stats.' });
+    console.error("Error fetching users with ticket stats:", error);
+    res.status(500).json({ error: "Failed to fetch users with ticket stats." });
   }
 };
 

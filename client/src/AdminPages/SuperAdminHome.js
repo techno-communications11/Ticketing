@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Container, Col, Row, Card, Spinner } from 'react-bootstrap';
+import { Container, Col, Row, Card } from 'react-bootstrap';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { animateValue } from '../universalComponents/AnnimationCount';
@@ -7,6 +7,7 @@ import { apiRequest } from '../lib/apiRequest';
 import '../styles/loader.css';
 import { useMyContext } from '../universalComponents/MyContext';
 import { useNavigate } from 'react-router-dom';
+import DateRangeFilter from '../universalComponents/DateRangeFilter';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -14,13 +15,22 @@ export function SuperAdminHome() {
   const [ticketCounts, setTicketCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { setStatusId, setNtid } = useMyContext();
+  const { setStatusId, setNtid, setDataDates } = useMyContext(); // Using context methods
   const navigate = useNavigate();
 
+  // Local state for managing startDate and endDate
+  const [dates, setDates] = useState({ startDate: '', endDate: '' });
+
+  // Fetch ticket counts with optional date range filter
   const fetchStatusTickets = useCallback(async () => {
+    const { startDate, endDate } = dates; // Get current dates
+    const params = {
+      startDate,
+      endDate,
+    };
     try {
       setLoading(true);
-      const response = await apiRequest.get('/createTickets/ticketcount');
+      const response = await apiRequest.get('/createTickets/ticketcount', { params });
       if (response.status === 200) {
         const counts = response.data.reduce((acc, { count, status }) => {
           acc[status] = count || 0;
@@ -34,7 +44,7 @@ export function SuperAdminHome() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [dates]);
 
   useEffect(() => {
     fetchStatusTickets();
@@ -49,9 +59,14 @@ export function SuperAdminHome() {
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
 
+  // This function is called when dates are updated in the DateRangeFilter
+  const handleDataFromChild = (startDate, endDate) => {
+    setDates({ startDate, endDate });
+  };
+
   const filteredInsights = useMemo(() => {
     return Object.entries(ticketCounts)
-      .filter(([key]) => key !== "total");
+      .filter(([key]) => key !== 'total');
   }, [ticketCounts]);
 
   const chartData = useMemo(() => {
@@ -82,6 +97,7 @@ export function SuperAdminHome() {
     };
   }, []);
 
+  // Handle status selection and updating context with data
   const handleSperAdminStats = useCallback((statusId) => {
     const statusMap = {
       Total: '0',
@@ -89,22 +105,24 @@ export function SuperAdminHome() {
       Opened: '2',
       Inprogress: '3',
       Completed: '4',
-      Reopened: '5'
+      Reopened: '5',
     };
 
     statusId = statusMap[statusId] || '0';
     if (statusId) {
       localStorage.setItem('statusId', statusId);
-      setStatusId(statusId);
-      setNtid(null);
+      setStatusId(statusId); // Update statusId in context
+      setNtid(null); // Reset NTID in context
+      setDataDates(dates); // Update dataDates in context
       navigate('/totalusertickets');
     }
-  }, [setStatusId, setNtid, navigate]);
+  }, [setStatusId, setNtid, setDataDates, navigate, dates]);
 
   return (
     <Container className="mt-4">
       {loading ? (
         <div className="loader d-flex align-items-center justify-content-center max-vh-100">
+          {/* Loading Spinner */}
         </div>
       ) : (
         <div>
@@ -116,6 +134,9 @@ export function SuperAdminHome() {
 
           <Row className="justify-content-center">
             <Col xs={12} md={6} lg={6} className="mb-4">
+              <Row className="mb-5">
+                <DateRangeFilter sendDatesToParent={handleDataFromChild} />
+              </Row>
               <Row className="justify-content-center">
                 {Object.entries(ticketCounts).map(([key, value]) => (
                   <Col xs={12} sm={6} md={6} lg={4} key={key} className="mb-3">

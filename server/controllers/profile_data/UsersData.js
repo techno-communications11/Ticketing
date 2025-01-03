@@ -13,84 +13,91 @@ const userData = async (req, res) => {
 
     try {
         // Fetch user data without passwords
-        const users = await prisma.user.findMany({
+        const responseData = await prisma.user.findMany({
             select: {
                 id: true,
                 ntid: true,
                 fullname: true,
                 DoorCode: true,
+                // No need to include password: false since it's excluded by default
                 department: {
                     select: {
                         id: true,
-                        name: true,
-                    },
-                },
-            },
+                        name: true
+                    }
+                }
+            }
         });
 
-        // Extract unique door codes from users
-        const doorCodes = [...new Set(users.map(user => user.DoorCode).filter(Boolean))];
+        // Extract door codes from the users
+        const doorCodes = responseData.map(user => user.DoorCode).filter(Boolean);
 
         // Fetch market data based on door codes
-        const marketData = await prisma.marketStructure.findMany({
+        const additionalData = await prisma.marketStructure.findMany({
             where: {
-                doorCode: { in: doorCodes },
+                doorCode: {
+                    in: doorCodes,
+                },
             },
             select: {
                 doorCode: true,
                 dmName: true,
                 market: {
-                    select: { market: true },
+                    select: { market: true }, // Fetch the market name
                 },
             },
         });
 
-        // Fetch profile photos for the users
-        const profilePhotos = await prisma.profilePhoto.findMany({
+        // Fetch profile photo file names for each user from the database
+        const profileImages = await prisma.profilePhoto.findMany({
             where: {
-                userId: { in: users.map(user => user.id) },
+                userId: {
+                    in: responseData.map(user => user.id),
+                }
             },
             select: {
                 userId: true,
-                fileName: true,
-            },
+                fileName: true
+            }
         });
 
-        // Function to generate a signed URL for profile images
+        // Function to get the signed URL for a profile image
         const getImageUrl = async (fileName) => {
-            if (!fileName) return null;
+            if (!fileName) return null; // If no fileName, return null
+
+            // Use the relative file path from the database
+            const getObjectParams = {
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: fileName, // Use the relative path here
+            };
+
             try {
-                const command = new GetObjectCommand({
-                    Bucket: process.env.AWS_BUCKET_NAME,
-                    Key: fileName,
-                });
-                return await getSignedUrl(client, command, { expiresIn: 3600 });
+                const command = new GetObjectCommand(getObjectParams);
+                return await getSignedUrl(client, command, { expiresIn: 3600 }); // URL expires in 1 hour
             } catch (error) {
                 console.error("Error generating signed URL:", error);
                 return null;
             }
         };
 
-        // Enrich user data with market data and profile image URLs
-        const enrichedData = await Promise.all(
-            users.map(async (user) => {
-                const marketInfo = marketData.find(market => market.doorCode === user.DoorCode) || {};
-                const profilePhoto = profilePhotos.find(photo => photo.userId === user.id) || {};
-                const profileImageUrl = await getImageUrl(profilePhoto.fileName);
+        // Merge user data with additional market data and AWS profile image URLs
+        const data = await Promise.all(responseData.map(async (user) => {
+            const additional = additionalData.find(add => add.doorCode === user.DoorCode);
+            const profileImage = profileImages.find(image => image.userId === user.id);
+            const profileImageUrl = await getImageUrl(profileImage ? profileImage.fileName : null); // Fetch image URL for the user
 
-                return {
-                    ...user,
-                    market: marketInfo.market || null,
-                    dmName: marketInfo.dmName || null,
-                    profileImage: profileImageUrl || null,
-                };
-            })
-        );
+            return {
+                ...user,
+                market: additional ? additional.market : null,
+                dmName: additional ? additional.dmName : null,
+                profileimage: profileImageUrl, // Include the image URL
+            };
+        }));
 
-        // Send the enriched user data as a response
-        res.status(200).json(enrichedData);
+        // Respond with user data excluding passwords
+        res.status(200).json(data);
     } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching user data:", error); // Log the error for debugging
         res.status(500).json({ error: 'Internal server error' });
     }
 };

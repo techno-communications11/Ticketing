@@ -1,6 +1,6 @@
 import React, { useEffect, useState ,useRef} from "react";
 import { apiRequest } from "../lib/apiRequest";
-import { Form } from "react-bootstrap";
+import { Col, Form,Row } from "react-bootstrap";
 import { MdFilterList } from "react-icons/md";
 import PageCountStack from "../universalComponents/PageCountStack";
 import "../styles/TicketTable.css";
@@ -10,6 +10,7 @@ import * as XLSX from "xlsx";
 import { MdDownload } from "react-icons/md";
 import '../styles/loader.css'
 import { useOutsideClick } from "../universalComponents/useOutsideClick";
+import DateRangeFilter from "../universalComponents/DateRangeFilter";
 
 function DM_insights() {
   const [dmInsights, setDmInsights] = useState(null);
@@ -22,6 +23,7 @@ function DM_insights() {
   const { setDm } = useMyContext();
   const dropdownRef = useRef(null);
   useOutsideClick(dropdownRef, () => setIsFilterVisible(false));
+  // const [dates, setDates] = useState({ startDate: '', endDate: '' });
 
   useEffect(() => {
     const fetchInsights = async () => {
@@ -62,6 +64,7 @@ function DM_insights() {
 
   const handleDmClick = (dm) => {
     setDm(dm);
+    // setDataDates(dates)
     navigate("/dmtabs");
   };
 
@@ -85,16 +88,24 @@ function DM_insights() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "DM Insights");
     XLSX.writeFile(workbook, "DM_Insights.xlsx");
   };
-
+  // const handleDataFromChild=(startDate, endDate)=>setDates({ startDate, endDate })
   return (
     <div className="container-fluid">
       <h3 className="text-center" style={{color:'#E10174'}}>DM's Tickets Insights</h3>
-      <button
+      <Row className="d-fex justify-content-between mb-2">
+        {/* <Col xs={12} md="auto">
+        <DateRangeFilter sendDatesToParent={handleDataFromChild}/>
+        </Col> */}
+        <Col xs={12}  md="auto">
+        <button
         onClick={downloadExcel}
         className="btn btn-outline-success fw-medium"
       >
         <MdDownload /> Download as Excel File
       </button>
+        </Col>
+      </Row>
+     
       {filteredInsights ? (
         <div className="table-responsive table-sm">
           <table className="table table-bordered table-striped table-sm">

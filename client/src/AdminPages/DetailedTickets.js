@@ -17,6 +17,7 @@ import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from '../universalComponents/FullNameFilter'
 import StatusFilter from '../universalComponents/StatusFilter';
 import getDecodedToken from '../universalComponents/decodeToken';
+import { useMyContext } from '../universalComponents/MyContext';
 
 const ShowTickets = () => {
   const dispatch = useDispatch();
@@ -36,6 +37,8 @@ const ShowTickets = () => {
   const [createdAtToggle, setCreatedAtToggle] = useState(false);
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [fullnameToggle, setFullnameToggle] = useState(false);
+  const {Dates}=useMyContext();
+  // console.log(Dates,)
   const handleFullnameFilterClick = () => {
     setFullnameToggle(!fullnameToggle)
     setStatusToggle(false);
@@ -107,14 +110,27 @@ const ShowTickets = () => {
       dispatch(fetchTickets(selectedMarket.toLowerCase()));
     }
   }, [selectedMarket, dispatch]);
-  const filteredTickets = FilterLogic(
-    tickets || [], 
-    ntidFilter || "", 
-    createdAt || "", 
-    completedAt || "", 
-    statusFilter || "",
-    fullnameFilter||""
-  );
+  
+
+  // Computed filtered tickets
+const filteredTickets = FilterLogic(
+  tickets.filter((item) => {
+    const { startDate, endDate } = Dates;
+    if (startDate && endDate) {
+      const ticketDate = new Date(item.createdAt).toISOString().slice(0, 10);
+      return ticketDate >= startDate && ticketDate <= endDate;
+    }
+    return true;
+  }),
+  ntidFilter || "",
+  createdAt || "",
+  completedAt || "",
+  statusFilter || "",
+  fullnameFilter || ""
+);
+
+
+
 
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const toggleDropdown = () => { setDropdownVisible(!dropdownVisible); };

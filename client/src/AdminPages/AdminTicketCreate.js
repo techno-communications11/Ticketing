@@ -53,7 +53,7 @@ export function AdminTicketCreate() {
     { _id: "12", market: "san diego" },
     { _id: "13", market: "san francisco" },
     { _id: "14", market: "bay area" },
-    { _id: "15", market: "India" },
+    { _id: "15", market: "india" },
   ];
 
   const Departments = [

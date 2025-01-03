@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 // Create a Context
 const MyContext = createContext();
@@ -11,8 +11,9 @@ const MyProvider = ({ children }) => {
         adminntid: "",
         statusId: "",
         fullname: "",
-        datafullname:"",
-        datastatusId:"",
+        datafullname: "",
+        datastatusId: "",
+        Dates: "",
     });
 
     const setDepartment = (department) => setState((prev) => ({ ...prev, department }));
@@ -22,10 +23,27 @@ const MyProvider = ({ children }) => {
     const setFullName = (fullname) => setState((prev) => ({ ...prev, fullname }));
     const setDataStatusId = (datastatusId) => setState((prev) => ({ ...prev, datastatusId }));
     const setDataFullName = (datafullname) => setState((prev) => ({ ...prev, datafullname }));
-    console.log(state,'ppppppppppp')
+    const setDataDates = (Dates) => setState((prev) => ({ ...prev, Dates }));
+
+    // Log Dates whenever it changes
+    useEffect(() => {
+        console.log("Dates updated:", state.Dates);
+    }, [state.Dates]);
 
     return (
-        <MyContext.Provider value={{ ...state, setDepartment,setDataStatusId,setDataFullName, setDm, setNtid, setStatusId, setFullName }}>
+        <MyContext.Provider
+            value={{
+                ...state,
+                setDepartment,
+                setStatusId,
+                setDm,
+                setNtid,
+                setFullName,
+                setDataStatusId,
+                setDataFullName,
+                setDataDates,
+            }}
+        >
             {children}
         </MyContext.Provider>
     );
