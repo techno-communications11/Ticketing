@@ -116,7 +116,7 @@ export function SuperAdminHome() {
       setNtid(null); // Reset NTID in context
       setDataDates(dates); // Update dataDates in context
       localStorage.setItem('dates', JSON.stringify(dates));
-
+      localStorage.removeItem('adminntid');
       navigate('/totalusertickets');
     }
   }, [setStatusId, setNtid, setDataDates, navigate, dates]);
