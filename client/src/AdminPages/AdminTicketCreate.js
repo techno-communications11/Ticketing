@@ -448,8 +448,10 @@ export function AdminTicketCreate() {
 
   const handleTotalTickets = (AdminsDatantid) => () => {
     setNtid(AdminsDatantid);
+    localStorage.setItem('adminntid', AdminsDatantid)  
 
     if (AdminsDatantid) {
+      // localStorage.setItem('adminntid', AdminsDatantid)
       navigate("/totalusertickets");
     } else {
       console.error("NTID is not available");
@@ -821,49 +823,48 @@ export function AdminTicketCreate() {
         </Modal.Body>
         <Modal.Footer>
           <div className="mt-2">
-          <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
-  <Dropdown.Toggle
-    className="text-center fw-medium text-secondary border-0 bg-primary text-white shadow-none w-100"
-    id="dropdown-basic"
-  >
-    {AssignTo || "Assign To"}
-  </Dropdown.Toggle>
-  <Dropdown.Menu
-    style={{ height: "42vh", overflow: "scroll", width: "20rem" }}
-    className="col-12 col-md-12"
-  >
-    <input
-      onChange={(e) => setSearchDepartment(e.target.value)}
-      placeholder="Search Departments..."
-      className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
-      aria-label="Search Departments"
-    />
-    {department==="Internal" ? (
-      <Dropdown.Item
-        onClick={() => handleAssignToSelect("Software India")}
-        className="shadow-lg fw-medium text-primary text-start"
-      >
-        Software India
-      </Dropdown.Item>
-    ) : filteredDepartments?.length > 0 ? (
-      filteredDepartments.map((department, index) => (
-        <Dropdown.Item
-          key={index}
-          onClick={() => handleAssignToSelect(department)}
-          className="shadow-lg fw-medium text-primary text-start"
-          isInvalid={!!errors.department}
-        >
-          {department}
-        </Dropdown.Item>
-      ))
-    ) : (
-      <Dropdown.Item disabled className="text-muted text-start">
-        No departments found
-      </Dropdown.Item>
-    )}
-  </Dropdown.Menu>
-</Dropdown>
-
+            <Dropdown className="flex-grow-1 mb-1" id="dropdown-department">
+              <Dropdown.Toggle
+                className="text-center fw-medium text-secondary border-0 bg-primary text-white shadow-none w-100"
+                id="dropdown-basic"
+              >
+                {AssignTo || "Assign To"}
+              </Dropdown.Toggle>
+              <Dropdown.Menu
+                style={{ height: "42vh", overflow: "scroll", width: "20rem" }}
+                className="col-12 col-md-12"
+              >
+                <input
+                  onChange={(e) => setSearchDepartment(e.target.value)}
+                  placeholder="Search Departments..."
+                  className="w-75 form-control border text-muted fw-medium shadow-none text-center mb-2 ms-2"
+                  aria-label="Search Departments"
+                />
+                {department === "Internal" ? (
+                  <Dropdown.Item
+                    onClick={() => handleAssignToSelect("Software India")}
+                    className="shadow-lg fw-medium text-primary text-start"
+                  >
+                    Software India
+                  </Dropdown.Item>
+                ) : filteredDepartments?.length > 0 ? (
+                  filteredDepartments.map((department, index) => (
+                    <Dropdown.Item
+                      key={index}
+                      onClick={() => handleAssignToSelect(department)}
+                      className="shadow-lg fw-medium text-primary text-start"
+                      isInvalid={!!errors.department}
+                    >
+                      {department}
+                    </Dropdown.Item>
+                  ))
+                ) : (
+                  <Dropdown.Item disabled className="text-muted text-start">
+                    No departments found
+                  </Dropdown.Item>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
           <Button onClick={handleSubmit}>
             {loading ? (

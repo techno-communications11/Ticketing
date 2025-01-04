@@ -6,7 +6,7 @@ import { animateValue } from '../universalComponents/AnnimationCount';
 import { apiRequest } from '../lib/apiRequest';
 import '../styles/loader.css';
 import { useMyContext } from '../universalComponents/MyContext';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import DateRangeFilter from '../universalComponents/DateRangeFilter';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -110,10 +110,13 @@ export function SuperAdminHome() {
 
     statusId = statusMap[statusId] || '0';
     if (statusId) {
-      localStorage.setItem('statusId', statusId);
+      
       setStatusId(statusId); // Update statusId in context
+      localStorage.setItem("statusId", statusId);
       setNtid(null); // Reset NTID in context
       setDataDates(dates); // Update dataDates in context
+      localStorage.setItem('dates', JSON.stringify(dates));
+
       navigate('/totalusertickets');
     }
   }, [setStatusId, setNtid, setDataDates, navigate, dates]);

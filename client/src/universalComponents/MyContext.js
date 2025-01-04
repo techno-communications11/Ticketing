@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 // Create a Context
 const MyContext = createContext();
@@ -13,7 +13,7 @@ const MyProvider = ({ children }) => {
         fullname: "",
         datafullname: "",
         datastatusId: "",
-        Dates: "",
+        Dates:"",
     });
 
     const setDepartment = (department) => setState((prev) => ({ ...prev, department }));
@@ -25,10 +25,7 @@ const MyProvider = ({ children }) => {
     const setDataFullName = (datafullname) => setState((prev) => ({ ...prev, datafullname }));
     const setDataDates = (Dates) => setState((prev) => ({ ...prev, Dates }));
 
-    // Log Dates whenever it changes
-    useEffect(() => {
-        console.log("Dates updated:", state.Dates);
-    }, [state.Dates]);
+  
 
     return (
         <MyContext.Provider

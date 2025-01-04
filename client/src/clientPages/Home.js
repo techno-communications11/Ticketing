@@ -370,6 +370,7 @@ export function Home() {
   const handleTotalTickets = (AdminsDatantid) => () => {
     // console.log(AdminsDatantid, "ooooooooo");
     setNtid(AdminsDatantid);
+    localStorage.setItem('adminntid',AdminsDatantid)
 
     if (AdminsDatantid) {
       navigate("/totalusertickets");

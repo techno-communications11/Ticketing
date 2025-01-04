@@ -34,31 +34,7 @@ const DepartmentWise = () => {
     }
     try {
       const response = await apiRequest.get("/createTickets/alldeptcounts",{params});
-      // const ticketData = response.data;
-      // console.log(response.data,'ffffff')
-      // if (typeof ticketData !== "object" || !Object.keys(ticketData).length) {
-      //   throw new Error("No ticket data received.");
-      // }
-
-      // const counts = Object.keys(ticketData).reduce((acc, department) => {
-      //   const {
-      //     total = 0,
-      //     new: newTickets = 0,
-      //     opened = 0,
-      //     inProgress = 0,
-      //     completed = 0,
-      //     reopened = 0,
-      //   } = ticketData[department];
-      //   acc[department] = {
-      //     total,
-      //     new: newTickets,
-      //     opened,
-      //     inProgress,
-      //     completed,
-      //     reopened,
-      //   };
-      //   return acc;
-      // }, {});
+      
 
       setTicketCounts(response.data);
     } catch (err) {

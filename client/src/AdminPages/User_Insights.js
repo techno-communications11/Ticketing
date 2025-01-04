@@ -69,11 +69,13 @@ function UserInsights() {
 
   const handleTotalTickets = (AdminsDatantid,status) => () => {
     setNtid(AdminsDatantid);
+    localStorage.setItem('adminntid',AdminsDatantid)
     setStatusId(status)
+    localStorage.setItem('statusId',status)
      
      if(dates){
-      // console.log(dates,'lllllllllllllooooooooooooollllllllllllll')
       setDataDates(dates);
+      localStorage.setItem('dates', JSON.stringify(dates));
      }
     if (AdminsDatantid) {
       navigate("/totalusertickets");

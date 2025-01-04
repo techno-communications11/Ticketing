@@ -29,10 +29,9 @@ function TotalUserTickets() {
   const [ntidFilter, setntidFilter] = useState("");
   const [fullnameFilter, setFullnameFilter] = useState("");
   const itemsPerPage = 30;
-  let { adminntid, statusId,Dates } = useMyContext();
-  // var ntid = adminntid;
-  // console.log(adminntid, statusId,Dates,"ppppppopppppppppop")
-  const {startDate,endDate}=Dates;
+  let { adminntid, statusId, Dates } = useMyContext();
+  const storedDates = JSON.parse(localStorage.getItem('dates')) || {};
+  const { startDate, endDate } = Dates || storedDates;
 
   const [statusToggle, setStatusToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
@@ -76,58 +75,60 @@ function TotalUserTickets() {
     setCreatedAtToggle(false);
   };
 
-  
-    const fetchUserTickets = async () => {
-      setLoading(true);
-      const params = new URLSearchParams(); // Create a new URLSearchParams object
-      let url = `/createTickets/usertickets`; // Base URL
+  const fetchUserTickets = async () => {
+    setLoading(true);
+    const params = new URLSearchParams(); // Create a new URLSearchParams object
+    let url = `/createTickets/usertickets`; // Base URL
 
-      try {
-        // console.log(adminntid,"assdsss")
-        if (adminntid) {
-          params.append("ntid", adminntid); // Append ntid if it has a value
-        }
-
-        if (adminntid === null && statusId) {
-          params.append("statusId", statusId); // Append only statusId if adminntid is null
-        }
-
-        if (statusId && adminntid !== null) {
-          params.append("statusId", statusId); // Append statusId if both have values
-        }
-
-        if (params.toString()) {
-          // Only append params if there are any
-          url += `?${params.toString()}`;
-        }
-
-        // Output the final URL for verification
-
-        const response = await apiRequest.get(url);
-        if (response.status === 200) {
-          const data = response.data.data.filter((ticket) => {
-            if (startDate && endDate) {
-              const ticketDate = new Date(ticket.createdAt).toISOString().slice(0, 10); // Format as YYYY-MM-DD
-              return ticketDate >= startDate && ticketDate <= endDate;
-            }
-            return true; // Include all tickets if no date filters are provided
-          });
-          
-          setTickets(data);
-          // console.log(response.data,"llllllllll")
-          setAuthenticated(true);
-        }
-      } catch (error) {
-        console.error("Failed to fetch tickets:", error);
-        toast.error("Failed to fetch tickets");
-      } finally {
-        setLoading(false);
+    try {
+      // console.log(adminntid,"assdsss")
+      const storedAdminntid = localStorage.getItem("adminntid");
+      const storedStatusId = localStorage.getItem("statusId");
+      
+      if (adminntid || storedAdminntid) {
+        params.append("ntid", adminntid || storedAdminntid);
       }
-    };
+      if (!adminntid && (statusId || storedStatusId)) {
+        params.append("statusId", statusId || storedStatusId);
+      }
+      if ((statusId || storedStatusId) && adminntid) {
+        params.append("statusId", statusId || storedStatusId);
+      }
+
+      if (params.toString()) {
+        // Only append params if there are any
+        url += `?${params.toString()}`;
+      }
+
+      // Output the final URL for verification
+
+      const response = await apiRequest.get(url);
+      if (response.status === 200) {
+        const data = response.data.data.filter((ticket) => {
+          if (startDate && endDate) {
+            const ticketDate = new Date(ticket.createdAt)
+              .toISOString()
+              .slice(0, 10); // Format as YYYY-MM-DD
+            return ticketDate >= startDate && ticketDate <= endDate;
+          }
+          return true; // Include all tickets if no date filters are provided
+        });
+
+        setTickets(data);
+        // console.log(response.data,"llllllllll")
+        setAuthenticated(true);
+      }
+    } catch (error) {
+      console.error("Failed to fetch tickets:", error);
+      toast.error("Failed to fetch tickets");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     // Only call fetchUserTickets if adminntid is not null
     fetchUserTickets();
-  }, [statusId, adminntid,Dates]);
+  }, [statusId, adminntid, Dates]);
 
   const filteredTickets = FilterLogic(
     tickets || [],
@@ -137,7 +138,7 @@ function TotalUserTickets() {
     statusFilter || "",
     fullnameFilter || ""
   );
-const department=getDecodedToken().department;
+  const department = getDecodedToken().department;
 
   const currentItems = filteredTickets
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -159,12 +160,12 @@ const department=getDecodedToken().department;
     <div className="container-fluid mt-1">
       <h4
         className="my-2 d-flex justify-content-center"
-        style={{ color: "#E10174",fontSize:'1.5rem' }}
+        style={{ color: "#E10174", fontSize: "1.5rem" }}
       >
         Total User Tickets
       </h4>
 
-      {authenticated &&  (
+      {authenticated && (
         <div className="table-responsive " style={{ zIndex: 1 }}>
           <table className="table table-bordered table-hover table-sm">
             <thead>
@@ -181,7 +182,7 @@ const department=getDecodedToken().department;
                   "CompletedAt",
                   "Duration",
                   "Details",
-                  department === "SuperAdmin"&&"Delete" 
+                  department === "SuperAdmin" && "Delete",
                 ].map((header) => (
                   <th
                     key={header}
@@ -285,22 +286,26 @@ const department=getDecodedToken().department;
               </tr>
             </thead>
             <tbody>
-              {currentItems.length > 0 ?currentItems.map((ticket, index) => (
-                <TicketBody
-                fetchUserTickets={fetchUserTickets} 
-                  key={ticket.id}
-                  ticket={ticket}
-                  index={index}
-                  handleTicket={handleTicket}
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                />
-              )):( <tr>
-                {/* Set the colspan to match the number of columns in your table */}
-                <td colSpan="8" className="text-center">
-                  No tickets found
-                </td>
-              </tr>)}
+              {currentItems.length > 0 ? (
+                currentItems.map((ticket, index) => (
+                  <TicketBody
+                    fetchUserTickets={fetchUserTickets}
+                    key={ticket.id}
+                    ticket={ticket}
+                    index={index}
+                    handleTicket={handleTicket}
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                  />
+                ))
+              ) : (
+                <tr>
+                  {/* Set the colspan to match the number of columns in your table */}
+                  <td colSpan="8" className="text-center">
+                    No tickets found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
