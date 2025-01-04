@@ -449,6 +449,8 @@ export function AdminTicketCreate() {
   const handleTotalTickets = (AdminsDatantid) => () => {
     setNtid(AdminsDatantid);
     localStorage.setItem('adminntid', AdminsDatantid)  
+    localStorage.removeItem('statusId');
+    localStorage.removeItem('dates')
 
     if (AdminsDatantid) {
       // localStorage.setItem('adminntid', AdminsDatantid)
