@@ -115,7 +115,8 @@ const ShowTickets = () => {
   // Computed filtered tickets
 const filteredTickets = FilterLogic(
   tickets.filter((item) => {
-    const { startDate, endDate } = Dates;
+    const storedDates = JSON.parse(localStorage.getItem('dates')) || {};
+    const { startDate, endDate } = Dates || storedDates;
     if (startDate && endDate) {
       const ticketDate = new Date(item.createdAt).toISOString().slice(0, 10);
       return ticketDate >= startDate && ticketDate <= endDate;

@@ -74,6 +74,7 @@ function MarketWise() {
     setSelectedMarkets([market]);
     if(dates){
       setDataDates(dates)
+      localStorage.setItem('dates', JSON.stringify(dates));
     }
   };
 
