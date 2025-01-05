@@ -14,6 +14,8 @@ import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from "../universalComponents/FullNameFilter";
 import StatusFilter from "../universalComponents/StatusFilter";
 import PageCountStack from "../universalComponents/PageCountStack";
+import animationData from "../universalComponents/Animation.json";
+import { Player } from "@lottiefiles/react-lottie-player";
 
 function RequestReopen() {
   const dispatch = useDispatch();
@@ -69,7 +71,7 @@ function RequestReopen() {
   // Fetch tickets
   useEffect(() => {
     const ntid = getDecodedToken()?.ntid;
-    const department=getDecodedToken().department
+    // const department=getDecodedToken().department
     const fetchTickets = async () => {
       try {
         const response = await apiRequest.get(
@@ -96,11 +98,6 @@ function RequestReopen() {
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
-  // Toggle Handlers
-  // const handleToggle = (toggleSetter, ...otherToggles) => {
-  //   toggleSetter((prev) => !prev);
-  //   otherToggles.forEach((toggle) => toggle(false));
-  // };
 
   const filteredTickets = FilterLogic(
     tickets,
@@ -112,13 +109,13 @@ function RequestReopen() {
   );
   return (
     <div className="container">
-      <h3
+      {filteredTickets.length > 0&&<h3
         className="text-capitalize text-center my-3"
         style={{ color: "#E10174" }}
       >
         Reopen Requested Tickets
-      </h3>
-      <Table striped bordered hover>
+      </h3>}
+      <Table striped bordered hover className="mt-3">
         <thead>
         <tr>
                 {[
@@ -247,7 +244,12 @@ function RequestReopen() {
           ) : (
             <tr>
               <td colSpan="8" className="text-center">
-                No tickets found.
+              <Player
+          autoplay
+          loop
+          src={animationData}
+          style={{ height: "700px", width: "700px" }}
+        />
               </td>
             </tr>
           )}

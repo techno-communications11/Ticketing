@@ -16,10 +16,12 @@ import StatusFilter from '../universalComponents/StatusFilter';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import TicketBody from '../universalComponents/TicketBody';
 import '../styles/TicketTable.css'
+import animationData from "../universalComponents/Animation.json";
+import { Player } from "@lottiefiles/react-lottie-player";
+
 
 const TicketsTable = ({ statusIds, text,logedInuser }) => {
   const dispatch = useDispatch();
-  const [market, setMarket] = useState('');
   const [tickets, setTickets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
@@ -105,14 +107,6 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
     dispatch(fetchIndividualTickets(id));
   };
 
-  // Set Market name in uppercase based on the first ticket
-  useEffect(() => {
-    if (tickets.length > 0 && tickets[0]?.market) {
-      setMarket(tickets[0].market.toUpperCase());
-    }
-  }, [tickets]);
-
-  // Paginate and Sort Tickets
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const completedTickets = currentItems.filter(ticket => ticket.isSettled);
   const nonCompletedTickets = currentItems.filter(ticket => !ticket.isSettled);
@@ -121,9 +115,9 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
 
   return (
     <Container className="mt-3">
-      <h3 className="d-flex justify-content-center mb-3 font-family" style={{ color: '#E10174' }}>
+      {finalTickets.length>0&&<h3 className="d-flex justify-content-center mb-3 font-family" style={{ color: '#E10174' }}>
         {text} Tickets
-      </h3>
+      </h3>}
 
       <div className="table-responsive">
         <Table striped bordered hover>
@@ -240,7 +234,12 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="8" className='text-center'>No tickets available</td>
+                <td colSpan="8" className='text-center'><Player
+          autoplay
+          loop
+          src={animationData}
+          style={{ height: "700px", width: "700px" }}
+        /></td>
               </tr>
             )}
           </tbody>

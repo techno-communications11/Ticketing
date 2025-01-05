@@ -21,22 +21,24 @@ function UserInsights() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
   const navigate = useNavigate();
-  const { setNtid,setStatusId,setDataDates } = useMyContext();
+  const { setNtid, setStatusId, setDataDates } = useMyContext();
   const [loading, setLoading] = useState(false);
-   const [dates, setDates] = useState({ startDate: '', endDate: '' });
+  const [dates, setDates] = useState({ startDate: "", endDate: "" });
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchUserStats = async () => {
-      const {startDate,endDate}=dates;
-     const params={
-      startDate:startDate,
-      endDate:endDate
-     }
+      const { startDate, endDate } = dates;
+      const params = {
+        startDate: startDate,
+        endDate: endDate,
+      };
       setLoading(true);
       try {
-        const response = await apiRequest.get("/createTickets/userinsights",{params});
+        const response = await apiRequest.get("/createTickets/userinsights", {
+          params,
+        });
         if (isMounted) setUserStats(response.data);
       } catch (error) {
         console.error("Error fetching user ticket stats:", error);
@@ -67,16 +69,16 @@ function UserInsights() {
     currentPage * itemsPerPage
   );
 
-  const handleTotalTickets = (AdminsDatantid,status) => () => {
+  const handleTotalTickets = (AdminsDatantid, status) => () => {
     setNtid(AdminsDatantid);
-    localStorage.setItem('adminntid',AdminsDatantid)
-    setStatusId(status)
-    localStorage.setItem('statusId',status)
-     
-     if(dates){
+    localStorage.setItem("adminntid", AdminsDatantid);
+    setStatusId(status);
+    localStorage.setItem("statusId", status);
+
+    if (dates) {
       setDataDates(dates);
-      localStorage.setItem('dates', JSON.stringify(dates));
-     }
+      localStorage.setItem("dates", JSON.stringify(dates));
+    }
     if (AdminsDatantid) {
       navigate("/totalusertickets");
     } else {
@@ -105,7 +107,8 @@ function UserInsights() {
 
   const handleFullnameFilterClick = () => setFullnameToggle(!fullnameToggle);
   const handleNTIDFilterClick = () => setNtidFilterToggle(!ntidFilterToggle);
-  const handleDataFromChild=(startDate, endDate)=>setDates({ startDate, endDate })
+  const handleDataFromChild = (startDate, endDate) =>
+    setDates({ startDate, endDate });
 
   return (
     <div className="container">
@@ -113,21 +116,19 @@ function UserInsights() {
         Users Tickets Insights
       </h3>
       <Row className="d-flex justify-content-between mb-2">
-      <Col xs={12} md="auto">
-      <DateRangeFilter  sendDatesToParent={handleDataFromChild}/>
-      </Col>
-       <Col xs={12} md="auto">
-       <button
-        className="btn btn-outline-success fw-medium"
-        onClick={exportToExcel}
-        disabled={filteredUserStats.length === 0}
-      >
-        <MdDownload /> Download as Excel File
-      </button>
-      </Col>
+        <Col xs={12} md="auto">
+          <DateRangeFilter sendDatesToParent={handleDataFromChild} />
+        </Col>
+        <Col xs={12} md="auto">
+          <button
+            className="btn btn-outline-success fw-medium"
+            onClick={exportToExcel}
+            disabled={filteredUserStats.length === 0}
+          >
+            <MdDownload /> Download as Excel File
+          </button>
+        </Col>
       </Row>
-
-      
 
       <table className="table table-bordered table-striped table-sm">
         <thead className="table-light">
@@ -186,31 +187,61 @@ function UserInsights() {
               <td className="text-center">{index + 1}</td>
               <td
                 className="text-center"
-                onClick={handleTotalTickets(ntid,"0")}
+                onClick={handleTotalTickets(ntid, "0")}
                 style={{ cursor: "pointer" }}
               >
                 {ntid}
               </td>
               <td
                 className="text-center text-capitalize"
-                onClick={handleTotalTickets(ntid,"0")}
+                onClick={handleTotalTickets(ntid, "0")}
                 style={{ cursor: "pointer" }}
               >
                 {fullname.toLowerCase()}
               </td>
               <td
                 className="text-center"
-                onClick={handleTotalTickets(ntid,"0")}
+                onClick={handleTotalTickets(ntid, "0")}
                 style={{ cursor: "pointer" }}
               >
                 {ticketStats.totalTickets}
               </td>
-              <td className="text-center" onClick={handleTotalTickets(ntid,"1")} style={{ cursor: "pointer" }}>{ticketStats.new || 0}</td>
-              <td className="text-center" onClick={handleTotalTickets(ntid,"2")} style={{ cursor: "pointer" }}>{ticketStats.opened || 0}</td>
-              <td className="text-center" onClick={handleTotalTickets(ntid,"3")} style={{ cursor: "pointer" }}>{ticketStats.inprogress || 0}</td>
-              <td className="text-center" onClick={handleTotalTickets(ntid,"4")} style={{ cursor: "pointer" }}>{ticketStats.completed || 0}</td>
-              <td className="text-center" onClick={handleTotalTickets(ntid,"5")} style={{ cursor: "pointer" }}>{ticketStats.reopened || 0}</td>
-              <td className="text-center" >
+              <td
+                className="text-center"
+                onClick={handleTotalTickets(ntid, "1")}
+                style={{ cursor: "pointer" }}
+              >
+                {ticketStats.new || 0}
+              </td>
+              <td
+                className="text-center"
+                onClick={handleTotalTickets(ntid, "2")}
+                style={{ cursor: "pointer" }}
+              >
+                {ticketStats.opened || 0}
+              </td>
+              <td
+                className="text-center"
+                onClick={handleTotalTickets(ntid, "3")}
+                style={{ cursor: "pointer" }}
+              >
+                {ticketStats.inprogress || 0}
+              </td>
+              <td
+                className="text-center"
+                onClick={handleTotalTickets(ntid, "4")}
+                style={{ cursor: "pointer" }}
+              >
+                {ticketStats.completed || 0}
+              </td>
+              <td
+                className="text-center"
+                onClick={handleTotalTickets(ntid, "5")}
+                style={{ cursor: "pointer" }}
+              >
+                {ticketStats.reopened || 0}
+              </td>
+              <td className="text-center">
                 {ticketStats.requestreopenCount || 0}
               </td>
             </tr>

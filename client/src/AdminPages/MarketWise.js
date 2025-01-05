@@ -46,7 +46,7 @@ function MarketWise() {
         const counts = await Promise.all(
           marketData.map(async (item) => {
             const response = await apiRequest.get("/createTickets/marketwisestatus", { params: { market: item.market,startDate,endDate } });
-            console.log(response.data,"ooooooop")
+            // console.log(response.data,"ooooooop")
             return { market: item.market, counts: response.data };
           })
         );
@@ -58,7 +58,7 @@ function MarketWise() {
           acc[market] = { total, ...counts };
           return acc;
         }, {});
-        console.log(marketTicketCounts,"mmv")
+        // console.log(marketTicketCounts,"mmv")
         setMarketTicketCounts(marketTotals);
       } catch (error) {
         setError("Failed to fetch market-wise status.");

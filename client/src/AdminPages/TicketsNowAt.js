@@ -13,15 +13,15 @@ function TicketsNowAt() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { setDataStatusId, setDataFullName ,setDataDates} = useMyContext();
-  const [dates, setDates] = useState({ startDate: '', endDate: '' });
+  const { setDataStatusId, setDataFullName, setDataDates } = useMyContext();
+  const [dates, setDates] = useState({ startDate: "", endDate: "" });
 
   // Fetch tickets when component mounts
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         const response = await apiRequest.get("/createTickets/ticketsnowat");
-        console.log(response.data, "Fetched tickets");
+        // console.log(response.data, "Fetched tickets");
         setTickets(response.data);
         setLoading(false);
       } catch (error) {
@@ -91,7 +91,7 @@ function TicketsNowAt() {
 
     setDataStatusId(statusId); // Update the state with the calculated statusId
     setDataFullName(username); // Update the state with the username
-    setDataDates(dates)
+    setDataDates(dates);
     // Navigate with the updated data
     navigate("/ticketnowatdata");
   };

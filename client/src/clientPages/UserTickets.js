@@ -14,6 +14,8 @@ import "../styles/TicketTable.css";
 import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
 import getDecodedToken from "../universalComponents/decodeToken";
+import animationData from "../universalComponents/Animation.json";
+import { Player } from "@lottiefiles/react-lottie-player";
 
 const UserTickets = () => {
   const dispatch = useDispatch();
@@ -129,11 +131,16 @@ const UserTickets = () => {
 
   return (
     <Container className="mt-1">
-      <h3 className="mb-2 font-family text-center" style={{ color: "#E10174" }}>
-        {ticketArray[0]?.status.name?.charAt(0).toUpperCase() +
-          ticketArray[0]?.status.name?.slice(1) || ""}{" "}
-        Tickets
-      </h3>
+      {finalTickets.length > 0 && (
+        <h3
+          className="mb-2 font-family text-center"
+          style={{ color: "#E10174" }}
+        >
+          {ticketArray[0]?.status.name?.charAt(0).toUpperCase() +
+            ticketArray[0]?.status.name?.slice(1) || ""}{" "}
+          Tickets
+        </h3>
+      )}
 
       {loading ? (
         <div className="vh-100 d-flex align-items-center justify-content-center">
@@ -205,8 +212,14 @@ const UserTickets = () => {
             <tbody>
               {finalTickets.length > 0 ? (
                 finalTickets.map((ticket, index) => (
-                 <tr key={ticket.ticketId} className={ticket.isSettled ? 'bg-secondary bg-opacity-50 text-white' : ''}>
-
+                  <tr
+                    key={ticket.ticketId}
+                    className={
+                      ticket.isSettled
+                        ? "bg-secondary bg-opacity-50 text-white"
+                        : ""
+                    }
+                  >
                     <td
                       className="fw-medium text-center"
                       style={getStatusColor(ticket)}
@@ -234,7 +247,9 @@ const UserTickets = () => {
                           ticket.status?.name
                         )}`}
                       >
-                        {ticket.isSettled ? "Settled": getStatusText(ticket.status?.name)}
+                        {ticket.isSettled
+                          ? "Settled"
+                          : getStatusText(ticket.status?.name)}
                       </span>
                     </td>
                     <td
@@ -271,7 +286,12 @@ const UserTickets = () => {
               ) : (
                 <tr>
                   <td colSpan="8" className="text-center">
-                    No tickets available
+                    <Player
+                      autoplay
+                      loop
+                      src={animationData}
+                      style={{ height: "700px", width: "700px" }}
+                    />
                   </td>
                 </tr>
               )}

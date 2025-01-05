@@ -15,7 +15,7 @@ function DepartmentHome() {
   const navigate = useNavigate();
   const { setStatusId, setDepartment } = useMyContext();
   const usersId = getDecodedToken().id;
-  console.log(usersId, "deep");
+  // console.log(usersId, "deep");
 
   useEffect(() => {
     const getStatusOfDepartment = async () => {
@@ -97,13 +97,13 @@ function DepartmentHome() {
       status = "5";
     }
     localStorage.setItem("department", department);
-    console.log(department, status, "deeee");
+    // console.log(department, status, "deeee");
     setDepartment(department);
     setStatusId(status);
     navigate("/showdeptwiseticks");
   };
   const getDepartmentdata=getDecodedToken().subDepartment;
-  console.log(getDepartmentdata,"ddddddddd")
+  // console.log(getDepartmentdata,"ddddddddd")
 
   return loading ? (
     <div className="loading"></div>

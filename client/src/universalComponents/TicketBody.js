@@ -68,8 +68,8 @@ const TicketBody = React.memo(({ ticket, index, currentPage, itemsPerPage, handl
     return (
       <tr>
         <td colSpan="10" className="text-center">
-          <div className="spinner-border" role="status" aria-hidden="true">
-            <span className="visually-hidden">Loading...</span>
+          <div className="spinner-border loader" role="status" aria-hidden="true">
+          
           </div>
         </td>
       </tr>

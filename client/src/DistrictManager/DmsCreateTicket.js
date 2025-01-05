@@ -60,7 +60,7 @@ export function DmsCreateTicket() {
     const fetchData = async () => {
       try {
         const response = await apiRequest.get("/auth/userdata");
-        console.log(response.data, "data");
+        // console.log(response.data, "data");
         setNTids(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -145,13 +145,13 @@ export function DmsCreateTicket() {
   };
 
   const currentFullname = getDecodedToken().fullname;
-  console.log(currentFullname,'cfn')
+  // console.log(currentFullname,'cfn')
 
   // Filter markets based on the fullname
   const dmMarkets = markets
     .filter((item) => item.fullname === currentFullname)
     .map((item) => item.market);
-    console.log(dmMarkets,"dmk")
+    // console.log(dmMarkets,"dmk")
 
   const Departments = [
     // "NTID Mappings",
@@ -269,13 +269,11 @@ export function DmsCreateTicket() {
     setSearchDepartment("");
   };
   const handleAssignToSelect = (department) => {
-    console.log(department, "department selected");
     setAssignTo(department); // Set department to AssignTo state
     setSearchDepartment(""); // Clear search field (if needed)
   };
 
   const validateForm = () => {
-    console.log("entered to valid");
     const newErrors = {
       ntid: "",
       fullname: "",
@@ -288,9 +286,7 @@ export function DmsCreateTicket() {
       department: "",
       dmuser: "",
     };
-    // console.log(AssignTo,"llllllllllll")
-    // console.log(newErrors,"new errors")
-    // console.log(selectedNTID,"ntid")
+ 
     const ntid = selectedNTID;
     const phone = phoneRef.current.value;
     const ticketSubject = ticketSubjectRef.current.value;
@@ -316,52 +312,24 @@ export function DmsCreateTicket() {
     setErrors(newErrors);
     return Object.values(newErrors).every((error) => error === "");
   };
-  // console.log(getDecodedToken().fullname+"--","tttttt")
 
   const handleSubmit = () => {
-    console.log("entered to submit");
     if (validateForm()) {
-      console.log("entered to if cese");
       const formData = new FormData();
-
-      // Log the values before appending to ensure they're correct
-      console.log(selectedNTID, "NTID value");
       formData.append("ntid", selectedNTID);
-
-      console.log(getDecodedToken().fullname, "dm name");
       formData.append("dmuser", "---" + getDecodedToken().fullname);
-      console.log(getDecodedToken().market, "market");
-
-      console.log(phoneRef.current.value, "Phone value");
       formData.append(
         "phone",
         phoneRef.current.value.replace(/[^0-9]/g, "").slice(-10)
       );
-
-      console.log(selectedStore, "Store value");
       formData.append("store", selectedStore);
-
-      console.log(ticketSubjectRef.current.value, "Ticket Subject value");
       formData.append("ticketSubject", ticketSubjectRef.current.value);
-
-      console.log(descriptionRef.current.value, "Description value");
       formData.append("description", descriptionRef.current.value);
-
-      console.log(selectedMarket, "Market value");
       formData.append("market", selectedMarket);
-
-      console.log(selectedNTIDUser, "Fullname value");
       formData.append("fullname", selectedNTIDUser);
-
-      console.log(selectedDepartment, "Selected Department value");
       formData.append("department", selectedDepartment);
-
-      console.log(selectedSubDepartment, "Selected Sub Department value");
       formData.append("subdepartment", selectedSubDepartment);
-
-      console.log(AssignTo, "AssignTo value before submitting");
       formData.append("departmentId", AssignTo);
-
       // Append files if any
       if (cameraFileName && cameraFileName.length > 0) {
         cameraFileName.forEach((file) => {
@@ -374,15 +342,7 @@ export function DmsCreateTicket() {
           formData.append("fileSystemFile", file);
         });
       }
-
-      // Log the formData content
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
-      console.log(formData, "form dataa");
       setLoading(true);
-
-      // Send form data via API request
       apiRequest
         .post("/createTickets/uploadTicket", formData, {
           headers: {
@@ -391,7 +351,6 @@ export function DmsCreateTicket() {
         })
         .then((response) => {
           toast.success("Ticket created successfully!");
-          // departmentId="";
           handleClose();
           setTimeout(() => {
             window.location.reload();
@@ -460,16 +419,12 @@ export function DmsCreateTicket() {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        console.log(selectedMarket, "sel");
-
         const response = await apiRequest.get(`/createTickets/fetchstores`, {
           params: { selectedMarket },
         });
         const storeNames = response.data.map((store) => store.storeName);
-        console.log("Fetched stores:", storeNames);
         setStores(storeNames);
       } catch (error) {
-        console.log("Failed to fetch  Stores");
       }
     };
     fetchStores();
@@ -485,9 +440,6 @@ export function DmsCreateTicket() {
       setFilteredStores(Stores || []);
     }
   }, [searchStore, Stores]);
-
-  //   const dmMarkets = markets[DMName] || [];
-  // console.log(dmMarkets,"markssdh")
 
   return (
     <div>
@@ -589,7 +541,6 @@ export function DmsCreateTicket() {
                   id="dropdown-basic"
                 >
                   {selectedStore || "Select a Store"}{" "}
-                  {/* Placeholder if no store is selected */}
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu

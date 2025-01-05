@@ -66,10 +66,7 @@ const Individualmarketss = () => {
       );
 
       setUsers(filteredUsers);
-
-      if (filteredUsers.length === 0) {
-        console.warn("No users found in your team");
-      }
+      
     } catch (error) {
       console.error(
         "Error fetching users:",
@@ -84,7 +81,6 @@ const Individualmarketss = () => {
     debounce(async () => {
       try {
         if (!storedId) {
-          console.warn("No ticket ID found in local storage.");
           return;
         }
 
@@ -93,7 +89,6 @@ const Individualmarketss = () => {
         );
         setGetComment(data);
 
-        console.log("Comments fetched:", data);
       } catch (error) {
         console.error(
           "Error fetching comments:",
@@ -110,7 +105,6 @@ const Individualmarketss = () => {
 
   useEffect(() => {
     const storedId = localStorage.getItem("selectedId");
-    // console.log(storedId,"strid")
     if (storedId && (!selectedId || selectedId !== storedId)) {
       dispatch(setId(storedId));
       dispatch(fetchIndividualTickets(storedId));
@@ -120,7 +114,6 @@ const Individualmarketss = () => {
   useEffect(() => {
     // Guard clause: Check for ticketId early
     if (!markets?.ticketId) {
-      console.warn("No ticketId available in markets.");
       setUploadedFileUrl(null); // Clear the state if ticketId is not available
       return;
     }
@@ -137,7 +130,6 @@ const Individualmarketss = () => {
         if (signedUrls.length > 0) {
           setUploadedFileUrl(signedUrls); // Store the signed URLs in state
         } else {
-          console.warn("No files found for the specified ticketId.");
           setUploadedFileUrl([]); // Clear the state if no files are found
         }
       } catch (error) {
@@ -153,19 +145,15 @@ const Individualmarketss = () => {
   }, [markets?.ticketId]);
 
   const updateOpenedBy = async () => {
-    console.log("update opened by");
     try {
       const endpoint = departments?.includes(department)
         ? "/createTickets/update_opened_by"
         : "";
-      const response = await apiRequest.put(endpoint, {
+       await apiRequest.put(endpoint, {
         ticketId: markets.ticketId,
         usersId,
       });
 
-      if (response.status === 200) {
-        console.log("Ticket updated successfully:", response.data);
-      }
     } catch (err) {
       console.error("Error updating opened by:", err);
     }
@@ -245,14 +233,7 @@ const Individualmarketss = () => {
 
         const navigationPath = getNavigationPath();
 
-        // Debugging log (optional)
-        const isDebugMode = true;
-        if (isDebugMode) {
-          console.log(
-            `Department: ${department}, Navigation Path: ${navigationPath}`
-          );
-        }
-
+        
         // Navigate after delay
         setTimeout(() => {
           navigate(navigationPath);
@@ -518,7 +499,6 @@ const Individualmarketss = () => {
 
   const handleCallbackAction = async () => {
     const department = "District Manager";
-    console.log("Callback triggered", markets.ticketId, usersId);
 
     try {
       // Construct API request URL with necessary parameters

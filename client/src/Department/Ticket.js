@@ -18,6 +18,8 @@ import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from "../universalComponents/FullNameFilter";
 import '../styles/TicketTable.css'
+import animationData from '../universalComponents/Animation.json'
+import { Player } from "@lottiefiles/react-lottie-player";
 
 function Ticket({ status,openedBy,fullname, }) {
   const [tickets, setTickets] = useState([]);
@@ -148,10 +150,11 @@ function Ticket({ status,openedBy,fullname, }) {
 
   return (
     <Container className="mt-1">
-      <h3 className="my-2 d-flex justify-content-center my-3" style={{ color: '#E10174' }}>Tickets</h3>
+     
      
       {currentItems.length > 0 ? (
         <div className="table-responsive container-fluid">
+           <h3 className="my-2 d-flex justify-content-center my-3" style={{ color: '#E10174' }}>Tickets</h3>
           <table className="table table-bordered table-hover">
             <thead>
             <tr>
@@ -281,15 +284,20 @@ function Ticket({ status,openedBy,fullname, }) {
           </table>
         </div>
       ) : (
-        <p className="text-center">No tickets found.</p>
+        <Player
+          autoplay
+          loop
+          src={animationData}
+          style={{ height: "700px", width: "700px" }}
+        />
       )}
 
-<PageCountStack
+{currentItems.length>0&&<PageCountStack
         filteredTickets={filteredTickets}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         itemsPerPage={itemsPerPage}
-      />
+      />}
     </Container>
   );
 }

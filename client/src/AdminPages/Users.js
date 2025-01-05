@@ -25,7 +25,7 @@ const UserTable = () => {
     const fetchData = async () => {
       try {
         const response = await apiRequest.get('/auth/userdata');
-      console.log(response.data,"hahahj")
+      // console.log(response.data,"hahahj")
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);

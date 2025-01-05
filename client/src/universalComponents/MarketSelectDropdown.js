@@ -5,7 +5,6 @@ import { useOutsideClick } from "./useOutsideClick"; // Custom hook to close dro
 function MarketSelectDropdown({ marketData ,isFilterVisible,setIsFilterVisible,selectedMarkets,setSelectedMarkets,setCurrentPage}) {
   
   const dropdownRef = useRef(null);
- console.log(marketData,'md')
   // Custom hook to close dropdown on outside click
   useOutsideClick(dropdownRef, () => setIsFilterVisible(false));
 

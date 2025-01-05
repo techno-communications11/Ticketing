@@ -16,6 +16,8 @@ import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from "../universalComponents/FullNameFilter";
 import getDecodedToken from "../universalComponents/decodeToken";
+import animationData from '../universalComponents/Animation.json'
+import { Player } from "@lottiefiles/react-lottie-player";
 
 function TotalUserTickets() {
   const dispatch = useDispatch();
@@ -158,12 +160,12 @@ function TotalUserTickets() {
 
   return (
     <div className="container-fluid mt-1">
-      <h4
+      { currentItems.length>0&&<h4
         className="my-2 d-flex justify-content-center"
         style={{ color: "#E10174", fontSize: "1.5rem" }}
       >
         Total User Tickets
-      </h4>
+      </h4>}
 
       {authenticated && (
         <div className="table-responsive " style={{ zIndex: 1 }}>
@@ -300,22 +302,27 @@ function TotalUserTickets() {
                 ))
               ) : (
                 <tr>
-                  {/* Set the colspan to match the number of columns in your table */}
-                  <td colSpan="8" className="text-center">
-                    No tickets found
-                  </td>
+                 
                 </tr>
               )}
             </tbody>
           </table>
         </div>
       )}
-      <PageCountStack
+      {currentItems.length>0?<PageCountStack
         filteredTickets={filteredTickets}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         itemsPerPage={itemsPerPage}
-      />
+      />: <div className="vh-100  mb-5 d-flex flex-row align-items-center justify-content-center">
+      <Player
+       autoplay
+       loop
+       src={animationData}
+       style={{ height: "700px", width: "700px" }}
+     />
+    
+     </div>}
     </div>
   );
 }

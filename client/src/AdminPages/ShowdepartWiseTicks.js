@@ -16,6 +16,8 @@ import { apiRequest } from "../lib/apiRequest";
 import { useDispatch } from "react-redux";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import getDecodedToken from "../universalComponents/decodeToken";
+import animationData from '../universalComponents/Animation.json'
+import { Player } from "@lottiefiles/react-lottie-player";
 
 const ShowdepartWiseTicks = () => {
   const dispatch = useDispatch();
@@ -29,17 +31,17 @@ const ShowdepartWiseTicks = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [ntidFilter, setntidFilter] = useState("");
   const itemsPerPage = 30;
-  // console.log(typeof(statusId));
-  // Filter toggle states
+ 
   const [statusToggle, setStatusToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
   const [createdAtToggle, setCreatedAtToggle] = useState(false);
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [fullnameToggle, setFullnameToggle] = useState(false);
   const userData = getDecodedToken();
-  // console.log(userData.department, "ooooooooooo");
-  // console.log(userData.id, "oooooooooookkkk");
+  const [loading,setLoading]=useState(false);
+ 
   const fetchTickets = async () => {
+    setLoading(true);
     try {
       const response = await apiRequest.get(
         "/createTickets/DepartmentWiseTickets",
@@ -48,9 +50,10 @@ const ShowdepartWiseTicks = () => {
         }
       );
       setTickets(response.data);
-      // console.log(response.data, "kkkkkkkkkkkk");
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,8 +127,6 @@ const ShowdepartWiseTicks = () => {
     let sortedTickets = [...filteredTickets].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
-    // console.log(sortedTickets, "stsss");
-    // console.log(userData.id, "pppppppppp");
 
     // Apply filtering if the user's department is not 'SuperAdmin'
     if (userData.department !== "SuperAdmin") {
@@ -147,10 +148,29 @@ const ShowdepartWiseTicks = () => {
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
+  if(loading){
+    return (
+      <div className="loader"></div>
+    )
+  }
 
   return (
     <Container fluid className="mt-2">
-      <div className="col-12 d-flex flex-column flex-md-row align-items-center mb-2">
+      
+
+      {currentItems.length == 0 ? (
+        <div className="vh-100  mb-5 d-flex flex-row align-items-center justify-content-center">
+         <Player
+          autoplay
+          loop
+          src={animationData}
+          style={{ height: "700px", width: "700px" }}
+        />
+       
+        </div>
+      ) : (
+        <>
+        <div className="col-12 d-flex flex-column flex-md-row align-items-center mb-2">
         <h3
           className="col-12 col-md-5 mb-0 font-family text-capitalize"
           style={{ color: "#E10174" }}
@@ -158,13 +178,6 @@ const ShowdepartWiseTicks = () => {
           Tickets from Market {market?.toLowerCase()}
         </h3>
       </div>
-
-      {tickets.length === 0 ? (
-        <div className="vh-100 d-flex align-items-center justify-content-center">
-          <div className="loader"></div>
-        </div>
-      ) : (
-        <>
           <Table bordered hover responsive>
             <thead>
               <tr>
@@ -192,7 +205,8 @@ const ShowdepartWiseTicks = () => {
                       <>
                         <IoFilterSharp
                           style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                          onClick={() => !handleStatusFilterClick}
+                          onClick={handleStatusFilterClick}
+
                         />
                         {statusToggle && (
                           <div className="dropdown-menu show">
@@ -215,7 +229,7 @@ const ShowdepartWiseTicks = () => {
                         {fullnameToggle && (
                           <div className="dropdown-menu show">
                             <FullnameFilter
-                              setFullnameToggle={setFullnameToggle}
+                              setFullnameFilterToggle={setFullnameToggle}
                               fullnameFilter={fullnameFilter}
                               setFullnameFilter={setFullnameFilter}
                               setCurrentPage={setCurrentPage}
@@ -304,12 +318,12 @@ const ShowdepartWiseTicks = () => {
               )}
             </tbody>
           </Table>
-          <PageCountStack
+          {currentItems.length>0&&<PageCountStack
             filteredTickets={filteredTickets}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             itemsPerPage={itemsPerPage}
-          />
+          />}
         </>
       )}
     </Container>

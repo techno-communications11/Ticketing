@@ -190,7 +190,7 @@ export function AdminTicketCreate() {
     setSearchSubDepartment("");
   };
   const handleAssignToSelect = (department) => {
-    console.log(department, "department selected");
+    // console.log(department, "department selected");
     setAssignTo(department); // Set department to AssignTo state
     setSearchDepartment(""); // Clear search field (if needed)
     setSearchSubDepartment("");
@@ -284,7 +284,7 @@ export function AdminTicketCreate() {
 
     // Loop through the fields array to append values to formData
     fields.forEach(({ name, value }) => {
-      console.log(value, `${name} value`);
+      // console.log(value, `${name} value`);
       formData.append(name, value);
     });
 
@@ -292,7 +292,7 @@ export function AdminTicketCreate() {
     const appendFiles = (fileArray, fieldName) => {
       if (fileArray?.length > 0) {
         fileArray.forEach((file) => {
-          console.log(file, `${fieldName} value`);
+          // console.log(file, `${fieldName} value`);
           formData.append(fieldName, file);
         });
       }
@@ -302,9 +302,9 @@ export function AdminTicketCreate() {
     appendFiles(fileSystemFileName, "fileSystemFile");
 
     // Log all formData entries
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
+    // for (let [key, value] of formData.entries()) {
+    //   console.log(`${key}: ${value}`);
+    // }
 
     setLoading(true);
 

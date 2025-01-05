@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 const getDecodedToken = () => {
     const token = localStorage.getItem("token");
     if (!token) {
-        console.warn("No token found in localStorage");
+        // console.warn("No token found in localStorage");
         return null;
     }
     try {

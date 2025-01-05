@@ -83,8 +83,7 @@ export function NavbarClient() {
             // ticket.status.id === "5"||ticket.status.id==='3'||ticket.status.id==='1'
         );
         setTickets(fetchedTickets);
-        console.log(response.data,'dddd')
-        console.log(fetchedTickets,'nnnnnnnn')
+        
       } catch (error) {
         console.error("Failed to fetch tickets:", error);
       }

@@ -4,10 +4,10 @@ import { apiRequest } from "../lib/apiRequest";
 import { MdFilterList } from "react-icons/md"; // Import the filter icon
 import Form from "react-bootstrap/Form"; // Import Form component from react-bootstrap
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is included
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../universalComponents/MyContext";
-import { setUserAndStatus, fetchStatusTickets } from "../redux/userStatusSlice";
+import animationData from "../universalComponents/Animation.json";
+import { Player } from "@lottiefiles/react-lottie-player";
 
 const EmployeesInsights = ({ dm }) => {
   const [ticketData, setTicketData] = useState([]);
@@ -17,7 +17,6 @@ const EmployeesInsights = ({ dm }) => {
   const token = localStorage.getItem("token");
   const fullname = dm ? dm : jwtDecode(token).fullname;
   const { setNtid } = useMyContext();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,18 +39,7 @@ const EmployeesInsights = ({ dm }) => {
   const filteredData = ticketData.filter((user) =>
     user.ntid.toLowerCase()?.includes(filter.toLowerCase())
   );
-  const handleDataSend = (AdminsDatantid,statusId) => {
-    console.log(AdminsDatantid,"ntidppp",statusId,"stausIdpp")
-    localStorage.setItem("statusData", statusId);
-    dispatch(fetchStatusTickets({ ntid:AdminsDatantid,statusId}));
-    dispatch(setUserAndStatus({  ntid:AdminsDatantid,statusId }));
-    navigate("/usertickets");
-  };
-
-//   const handleStatusClick = (AdminsDatantid, statusId) => () =>{
-//     console.log(AdminsDatantid,'ntidzz',statusId,"sttausIdzzz")
-//     handleDataSend( AdminsDatantid,statusId);
-// }
+ 
   const handleTotalTickets = (AdminsDatantid) => () => {
     console.log(AdminsDatantid, "AdminsDatantid");
     setNtid(AdminsDatantid);
@@ -68,122 +56,123 @@ const EmployeesInsights = ({ dm }) => {
 
   return (
     <div className="container mt-2">
-      <h3 className="text-center mb-4" style={{ color: "#E10174" }}>
-        Total Employees Insights
-      </h3>
+      {ticketData > 0 && (
+        <h3 className="text-center mb-4" style={{ color: "#E10174" }}>
+          Total Employees Insights
+        </h3>
+      )}
 
-      <div className="table-responsive">
-        <table className="table table-bordered table-striped table-hover">
-          <thead>
-            <tr>
-              <th
-                style={{ backgroundColor: "#E10174", color: "white" }}
-                className="text-center"
-              >
-                SINO
-              </th>
-              <th
-                style={{
-                  backgroundColor: "#E10174",
-                  color: "white",
-                  cursor: "pointer",
-                }}
-              >
-                Email / NTID
-                <MdFilterList
-                  className="ms-2"
-                  onClick={() => setIsFilterVisible(!isFilterVisible)}
-                  style={{ cursor: "pointer" }}
-                />
-                {isFilterVisible && (
-                  <Form.Control
-                    type="text"
-                    placeholder="Filter by NTID"
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                    className="mt-1"
-                    style={{ width: "auto", display: "inline-block" }} // Inline display
+      {ticketData.length > 0 ? (
+        <div className="table-responsive">
+          <table className="table table-bordered table-striped table-hover">
+            <thead>
+              <tr>
+                <th
+                  style={{ backgroundColor: "#E10174", color: "white" }}
+                  className="text-center"
+                >
+                  SINO
+                </th>
+                <th
+                  style={{
+                    backgroundColor: "#E10174",
+                    color: "white",
+                    cursor: "pointer",
+                  }}
+                >
+                  Email / NTID
+                  <MdFilterList
+                    className="ms-2"
+                    onClick={() => setIsFilterVisible(!isFilterVisible)}
+                    style={{ cursor: "pointer" }}
                   />
-                )}
-              </th>
-              <th style={{ backgroundColor: "#E10174", color: "white" }}>
-                Total Tickets
-              </th>
-              <th style={{ backgroundColor: "#E10174", color: "white" }}>
-                New
-              </th>
-              <th style={{ backgroundColor: "#E10174", color: "white" }}>
-                Opened
-              </th>
-              <th style={{ backgroundColor: "#E10174", color: "white" }}>
-                In Progress
-              </th>
-              <th style={{ backgroundColor: "#E10174", color: "white" }}>
-                Closed
-              </th>
-              <th style={{ backgroundColor: "#E10174", color: "white" }}>
-                Reopened
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredData.map((user, index) => (
-              <tr key={user.ntid}>
-                <td className="text-center ">{index + 1}</td>
-                <td
-                  className="text-center"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleTotalTickets(user.ntid)}
-                >
-                  {user.ntid}
-                </td>
-                <td
-                  className="text-center"
-                  style={{ cursor: "pointer" }}
-                  onClick={handleTotalTickets(user.ntid)}
-                >
-                  {user.totalTickets}
-                </td>
-                <td
-                  className="text-center"
-                  // style={{ cursor: "pointer" }}
-                  // onClick={handleStatusClick(user.ntid, "1")}
-                >
-                  {user.newTickets}
-                </td>
-                <td
-                  className="text-center"
-                  // style={{ cursor: "pointer" }}
-                  // onClick={handleStatusClick(user.ntid, "2")}
-                >
-                  {user.openedTickets}
-                </td>
-                <td
-                  className="text-center"
-                  // style={{ cursor: "pointer" }}
-                  // onClick={handleStatusClick(user.ntid, "3")}
-                >
-                  {user.inprogressTickets}
-                </td>
-                <td
-                  className="text-center"
-                  // style={{ cursor: "pointer" }}
-                  // onClick={handleStatusClick(user.ntid, "4")}
-                >
-                  {user.completedTickets}
-                </td>
-                <td
-                  className="text-center"
-                  // style={{ cursor: "pointer" }}
-                  // onClick={handleStatusClick(user.ntid, "5")}
-                >
-                  {user.reopenedTickets}
-                </td>
+                  {isFilterVisible && (
+                    <Form.Control
+                      type="text"
+                      placeholder="Filter by NTID"
+                      value={filter}
+                      onChange={(e) => setFilter(e.target.value)}
+                      className="mt-1"
+                      style={{ width: "auto", display: "inline-block" }} // Inline display
+                    />
+                  )}
+                </th>
+                <th style={{ backgroundColor: "#E10174", color: "white" }}>
+                  Total Tickets
+                </th>
+                <th style={{ backgroundColor: "#E10174", color: "white" }}>
+                  New
+                </th>
+                <th style={{ backgroundColor: "#E10174", color: "white" }}>
+                  Opened
+                </th>
+                <th style={{ backgroundColor: "#E10174", color: "white" }}>
+                  In Progress
+                </th>
+                <th style={{ backgroundColor: "#E10174", color: "white" }}>
+                  Closed
+                </th>
+                <th style={{ backgroundColor: "#E10174", color: "white" }}>
+                  Reopened
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {filteredData.map((user, index) => (
+                <tr key={user.ntid}>
+                  <td className="text-center ">{index + 1}</td>
+                  <td
+                    className="text-center"
+                    style={{ cursor: "pointer" }}
+                    onClick={handleTotalTickets(user.ntid)}
+                  >
+                    {user.ntid}
+                  </td>
+                  <td
+                    className="text-center"
+                    style={{ cursor: "pointer" }}
+                    onClick={handleTotalTickets(user.ntid)}
+                  >
+                    {user.totalTickets}
+                  </td>
+                  <td
+                    className="text-center"
+                  >
+                    {user.newTickets}
+                  </td>
+                  <td
+                    className="text-center"
+                  >
+                    {user.openedTickets}
+                  </td>
+                  <td
+                    className="text-center"
+                  >
+                    {user.inprogressTickets}
+                  </td>
+                  <td
+                    className="text-center"
+                  >
+                    {user.completedTickets}
+                  </td>
+                  <td
+                    className="text-center"
+                  >
+                    {user.reopenedTickets}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <Player
+          autoplay
+          loop
+          src={animationData}
+          style={{ height: "700px", width: "700px" }}
+        />
+      )}
     </div>
   );
 };

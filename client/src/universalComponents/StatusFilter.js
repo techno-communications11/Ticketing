@@ -2,7 +2,7 @@ import React from 'react';
 import { useOutsideClick } from "./useOutsideClick";
 import { useRef } from 'react';
 
-const statuses = ['New', 'Opened', 'Inprogress', 'Completed', 'ReOpened'];
+const statuses = ['All','New', 'Opened', 'Inprogress', 'Completed', 'ReOpened'];
 
 function StatusFilter({setStatusFilter, setStatusToggle,setCurrentPage}) {
   const dropdownRef = useRef(null);
@@ -15,7 +15,7 @@ function StatusFilter({setStatusFilter, setStatusToggle,setCurrentPage}) {
           key={status}
           style={{ cursor: 'pointer' }}
           className="shadow-lg fw-medium text-primary dropdown-item text-center text-capitalize"
-          onClick={() => {setStatusFilter(status); setCurrentPage(1)}}
+          onClick={() => { !status.includes('All')?setStatusFilter(status):setStatusFilter(null); setCurrentPage(1)}}
           aria-label={`Filter by ${status} status`}
         >
           {status}
