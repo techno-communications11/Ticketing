@@ -29,7 +29,7 @@ const UserTable = () => {
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
-        toast.error("Error fetching users");
+        console.log("Error fetching users");
       }
     };
     fetchData();

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { apiRequest } from '../lib/apiRequest';
-import Filtering from '../universalComponents/Filtering';
+// import Filtering from '../universalComponents/Filtering';
 import TicketBody from '../universalComponents/TicketBody';
 import PageCountStack from '../universalComponents/PageCountStack';
 import { Container, Row } from 'react-bootstrap';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import getDecodedToken from '../universalComponents/decodeToken';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import { useDispatch } from 'react-redux';
@@ -124,7 +124,7 @@ function Ticket({ status,openedBy,fullname, }) {
   
       } catch (error) {
         console.error('Failed to fetch tickets:', error);
-        toast.error('Failed to fetch tickets');
+        console.log('Failed to fetch tickets');
       }
     };
   

@@ -122,7 +122,7 @@ function TotalUserTickets() {
       }
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
-      toast.error("Failed to fetch tickets");
+      console.log("Failed to fetch tickets");
     } finally {
       setLoading(false);
     }

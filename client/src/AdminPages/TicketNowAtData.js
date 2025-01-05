@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { apiRequest } from "../lib/apiRequest";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import PageCountStack from "../universalComponents/PageCountStack";
@@ -61,7 +61,7 @@ function TicketNowAtData() {
       }
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
-      toast.error("Failed to fetch tickets");
+      // toast.error("Failed to fetch tickets");
     } finally {
       setLoading(false);
     }

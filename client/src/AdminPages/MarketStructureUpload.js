@@ -87,13 +87,14 @@ export function MarketStructureUpload() {
       if (response.status === 201) {
         toast.success("Market registered successfully!");
       } else {
-        toast.error(response.data?.message || 'Failed to register market');
+        console.log(response.data?.message)
+        // toast.error(response.data?.message || 'Failed to register market');
       }
     } catch (error) {
       console.error("Error details:", error.response?.data || error.message);
-      toast.error(
-        error.response?.data?.message || "An unexpected error occurred"
-      );
+      // toast.error(
+      //   error.response?.data?.message || "An unexpected error occurred"
+      // );
     } finally {
       BdiIDRef.current.value = "";
       dmNameRef.current.value = "";
@@ -138,7 +139,7 @@ export function MarketStructureUpload() {
         toast.error("File upload failed. Please try again.");
       }
     } catch (error) {
-      toast.error("An unexpected error occurred");
+      console.log("An unexpected error occurred");
     } finally {
       setLoading(false);
     }

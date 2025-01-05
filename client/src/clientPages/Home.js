@@ -307,7 +307,7 @@ export function Home() {
             ...prevErrors,
             ntid: errorMsg,
           }));
-          toast.error(errorMsg);
+          // toast.error(errorMsg);
           setLoading(false);
         });
     }

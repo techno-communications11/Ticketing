@@ -64,7 +64,7 @@ export function DmsCreateTicket() {
         setNTids(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
-        toast.error("Error fetching users");
+       console.log("Error fetching users");
       }
     };
     fetchData();
@@ -363,19 +363,19 @@ export function DmsCreateTicket() {
               ...prevErrors,
               ntid: error.response.data.message,
             }));
-            toast.error(error.response.data.message);
+            // toast.error(error.response.data.message);
           } else if (error.request) {
             setErrors((prevErrors) => ({
               ...prevErrors,
               ntid: "No response from server. Please try again later.",
             }));
-            toast.error("No response from server. Please try again later.");
+            // toast.error("No response from server. Please try again later.");
           } else {
             setErrors((prevErrors) => ({
               ...prevErrors,
               ntid: "Error occurred. Please try again.",
             }));
-            toast.error("Error occurred. Please try again.");
+            // toast.error("Error occurred. Please try again.");
           }
         });
     }
