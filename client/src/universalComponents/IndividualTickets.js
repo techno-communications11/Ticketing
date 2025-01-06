@@ -83,7 +83,6 @@ const Individualmarketss = () => {
           `/createTickets/getcomment/?ticketId=${storedId}`
         );
         setGetComment(data);
-
       } catch (error) {
         console.error(
           "Error fetching comments:",
@@ -144,11 +143,10 @@ const Individualmarketss = () => {
       const endpoint = departments?.includes(department)
         ? "/createTickets/update_opened_by"
         : "";
-       await apiRequest.put(endpoint, {
+      await apiRequest.put(endpoint, {
         ticketId: markets.ticketId,
         usersId,
       });
-
     } catch (err) {
       console.error("Error updating opened by:", err);
     }
@@ -174,8 +172,6 @@ const Individualmarketss = () => {
     fetchData();
   }, [markets, userNtid, department]);
 
-
-
   const updateTicketStatus = async (statusId) => {
     try {
       const response = await apiRequest.put(
@@ -187,7 +183,7 @@ const Individualmarketss = () => {
       }
     } catch (error) {
       console.error(`Error updating status to ${statusId}:`, error);
-    } 
+    }
   };
 
   const handleToastAndNavigation = (statusId) => {
@@ -228,7 +224,6 @@ const Individualmarketss = () => {
 
         const navigationPath = getNavigationPath();
 
-        
         // Navigate after delay
         setTimeout(() => {
           navigate(navigationPath);
@@ -281,33 +276,37 @@ const Individualmarketss = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setCommentLoading(true);
-  
+
     try {
       // Create a new FormData object
       const formData = new FormData();
       formData.append("ticketId", markets.ticketId);
       formData.append("comment", comment.trim()); // Trim to avoid unnecessary spaces
       formData.append("createdBy", fullname);
-  
+
       // Append files if available
       if (selectedFiles.length > 0) {
         selectedFiles.forEach((file) => {
           formData.append("commentedfiles", file);
         });
       }
-  
+
       // Send the request to submit the comment
-      const response = await apiRequest.put("/createTickets/postcomment", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-  
+      const response = await apiRequest.put(
+        "/createTickets/postcomment",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
       // Check if the request was successful
       if (response.status === 200) {
         toast.success("Comment submitted successfully");
-        resetCommentForm();  // Reset the form after submission
-        fetchComments();     // Refresh the comments list
+        resetCommentForm(); // Reset the form after submission
+        fetchComments(); // Refresh the comments list
       } else {
         toast.error("Failed to submit comment");
       }
@@ -316,10 +315,9 @@ const Individualmarketss = () => {
       console.error("Error submitting comment:", error);
       toast.error("An error occurred while submitting the comment");
     } finally {
-      setCommentLoading(false);  // Stop loading indicator
+      setCommentLoading(false); // Stop loading indicator
     }
   };
-  
 
   const resetCommentForm = () => {
     setComment(""); // Clear comment input
@@ -337,18 +335,18 @@ const Individualmarketss = () => {
       toast.error("Invalid department or ticket ID");
       return;
     }
-  
+
     try {
       const response = await apiRequest.put(
         `/createTickets/assigntodepartment/?department=${selectedDept}&ticketId=${markets.ticketId}`
       );
-  
+
       if (response.status === 200) {
         toast.success(`Assigned to ${selectedDept}`);
-  
+
         // Update ticket status
         await updateTicketStatus("3");
-  
+
         // Fetch updated tickets and dispatch actions
         await fetchUpdatedTickets();
       } else {
@@ -363,38 +361,37 @@ const Individualmarketss = () => {
       setSelectedDepartment("");
     }
   };
-  
+
   // Function to fetch updated tickets and dispatch actions
   const fetchUpdatedTickets = async () => {
     try {
-      dispatch(setId(storedId));  // Assuming `storedId` is available globally
+      dispatch(setId(storedId)); // Assuming `storedId` is available globally
       await dispatch(fetchIndividualTickets(storedId));
     } catch (error) {
       console.error("Error fetching updated tickets:", error);
     }
   };
-  
 
   const onhandleAllot = async (user) => {
     if (!user || !markets.ticketId) {
       toast.error("Invalid user or ticket ID");
       return;
     }
-  
+
     try {
       // Sending the request to allot the ticket
       const response = await apiRequest.put("/createTickets/alloted", {
         user,
         ticketId: markets.ticketId,
       });
-  
+
       // Check if the response status indicates success
       if (response.status === 200) {
         toast.success(`Assigned to ${user}`);
-  
+
         // Update the ticket status and navigate without setTimeout
         await updateTicketStatus("3");
-  
+
         // Navigate to the "departmentnew" page after a small delay to allow the toast message to show
         await delay(1500);
         navigate("/departmentnew");
@@ -407,16 +404,15 @@ const Individualmarketss = () => {
       resetDepartmentState();
     }
   };
-  
+
   // Helper function to delay execution (using Promise)
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-  
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
   // Function to reset department state or any other state you need to clear
   const resetDepartmentState = () => {
     setSelectedDepartment("");
     // Reset any other relevant states here
   };
-  
 
   let count = 0;
   getcomment.map((comment) => {
@@ -434,17 +430,18 @@ const Individualmarketss = () => {
       },
       reopen: {
         actionText: "request to reopen",
-        confirmationText: "Are you sure you want to request reopening this ticket?",
+        confirmationText:
+          "Are you sure you want to request reopening this ticket?",
         endpoint: "/createTickets/request-reopen",
       },
     };
-  
+
     const config = actionsConfig[action];
     if (!config) return;
-  
+
     const capitalizeActionText = (text) =>
       text.charAt(0).toUpperCase() + text.slice(1); // Capitalize action text
-  
+
     try {
       const { isConfirmed } = await Swal.fire({
         title: `Confirm ${capitalizeActionText(config.actionText)}`,
@@ -456,12 +453,12 @@ const Individualmarketss = () => {
         confirmButtonText: `Yes, ${config.actionText} it!`,
         cancelButtonText: "Cancel",
       });
-  
+
       if (isConfirmed) {
         const response = await apiRequest.put(config.endpoint, {
           ticketId: markets.ticketId,
         });
-  
+
         if (response.status === 200) {
           await Swal.fire({
             icon: "success",
@@ -469,7 +466,7 @@ const Individualmarketss = () => {
             text: `The ticket has been ${config.actionText}d successfully.`,
             confirmButtonColor: "#E10174",
           });
-  
+
           handlePostActionNavigation(action);
         }
       }
@@ -483,7 +480,6 @@ const Individualmarketss = () => {
       });
     }
   };
-  
 
   const handlePostActionNavigation = (action) => {
     const navigateTo = getNavigationPath(action);
@@ -512,27 +508,26 @@ const Individualmarketss = () => {
     } else if (action === "reopen" && department === "Employee") {
       return "/home";
     }
-    
+
     return "/"; // Default path
   };
-  
 
   const handleConfirmSettled = () => handleTicketAction("settle");
   const handleRequestReopen = () => handleTicketAction("reopen");
 
   const handleCallbackAction = async () => {
     const department = "District Manager";
-  
+
     const apiUrl = `/createTickets/callback/?department=${department}&ticketId=${markets.ticketId}&usersId=${usersId}`;
-  
+
     try {
       // Make the API call to assign the ticket
       const { status } = await apiRequest.put(apiUrl);
-  
+
       if (status === 200) {
         // Display success toast message
         toast.success(`Assigned to ${department}`);
-  
+
         // Update the ticket status and navigate after success
         await updateTicketStatus("2");
         setTimeout(() => navigate("/openedTickets"), 1500);
@@ -546,7 +541,6 @@ const Individualmarketss = () => {
       setSelectedDepartment("");
     }
   };
-  
 
   let counts = getcomment.reduce((acc, comment) => {
     if (comment.createdBy === fname) {
@@ -560,11 +554,10 @@ const Individualmarketss = () => {
   };
 
   const canRequestReopen =
-  counts >= 1 &&
-  department === "Employee" &&
-  markets.status?.name === "completed" &&
-  !markets.requestreopen;
-
+    counts >= 1 &&
+    department === "Employee" &&
+    markets.status?.name === "completed" &&
+    !markets.requestreopen;
 
   return (
     <div className="container mt-2">
@@ -577,7 +570,6 @@ const Individualmarketss = () => {
           {markets.ticketId || "No ticket details available"}
         </span>
       </h5>
-
       {markets ? (
         <div className="row border bg-white rounded p-2">
           <div className="col-md-8">
@@ -641,7 +633,6 @@ const Individualmarketss = () => {
                                   fileName.length > 20
                                     ? fileName.substring(0, 17) + "..."
                                     : fileName; // Shorten the name if it's too long
-
                                 return (
                                   <a
                                     key={fileIndex}
@@ -671,25 +662,23 @@ const Individualmarketss = () => {
               </div>
             </div>
           </div>
-
           <div className="col-md-4 mb-3 text-center">
             <div className="card shadow-sm rounded">
               {uploadedFileUrl && uploadedFileUrl.length > 0 ? (
                 <Carousel>
                   {uploadedFileUrl.map((url, index) => (
-                   <Carousel.Item key={index}>
-                   <img
-                     src={url}
-                     alt={`Ticket File ${index + 1}`}
-                     className="d-block w-100"
-                     style={{
-                       maxHeight: "250px", // Limit the maximum height
-                       objectFit: "cover", // Preserve original dimensions and aspect ratio
-                     }}
-                     onClick={() => handleImageClick(url)} // Open modal on image click
-                   />
-                 </Carousel.Item>
-                 
+                    <Carousel.Item key={index}>
+                      <img
+                        src={url}
+                        alt={`Ticket File ${index + 1}`}
+                        className="d-block w-100"
+                        style={{
+                          maxHeight: "250px", // Limit the maximum height
+                          objectFit: "cover", // Preserve original dimensions and aspect ratio
+                        }}
+                        onClick={() => handleImageClick(url)} // Open modal on image click
+                      />
+                    </Carousel.Item>
                   ))}
                 </Carousel>
               ) : (
@@ -742,7 +731,6 @@ const Individualmarketss = () => {
                           key={index}
                           onClick={() => onhandleAllot(user.fullname)}
                           className="text-primary text-capitalize shadow-lg"
-                        
                         >
                           {user.fullname}
                         </Dropdown.Item>
@@ -780,7 +768,6 @@ const Individualmarketss = () => {
                                   })
                                 }
                                 className="text-primary"
-                               
                               >
                                 {dept}
                               </Dropdown.Item>
@@ -802,7 +789,6 @@ const Individualmarketss = () => {
                             onClick={() =>
                               handleConfirmAction("4", "mark as completed")
                             }
-                            
                           >
                             Close
                           </button>
@@ -812,16 +798,14 @@ const Individualmarketss = () => {
                     })()}
                   </>
                 )}
-
-{canRequestReopen && (
-  <Button
-    variant="primary fw-medium w-auto ms-auto me-3"
-    onClick={handleRequestReopen}
-  >
-    Request Reopen
-  </Button>
-)}
-
+              {canRequestReopen && (
+                <Button
+                  variant="primary fw-medium w-auto ms-auto me-3"
+                  onClick={handleRequestReopen}
+                >
+                  Request Reopen
+                </Button>
+              )}
               {counts >= 1 &&
                 department !== "Employee" &&
                 markets.status?.name === "completed" &&
@@ -836,7 +820,8 @@ const Individualmarketss = () => {
 
               {department !== "Employee" &&
                 markets.status?.name === "completed" &&
-                subDepartment !== "User" && !markets.isSettled && (
+                subDepartment !== "User" &&
+                !markets.isSettled && (
                   <Button
                     variant="success fw-medium w-auto"
                     onClick={handleConfirmSettled}
@@ -863,7 +848,6 @@ const Individualmarketss = () => {
       ) : (
         <div className="alert alert-info mt-3">No tickets available.</div>
       )}
-     
 
       {subDepartment !== "User" && markets.status?.name === "completed" && (
         <span className="text-danger fw-medium">

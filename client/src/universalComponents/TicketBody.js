@@ -64,17 +64,7 @@ const TicketBody = React.memo(({ ticket, index, currentPage, itemsPerPage, handl
     </td>
   ), [ticket, department, Departments]);
 
-  if (loading) {
-    return (
-      <tr>
-        <td colSpan="10" className="text-center">
-          <div className="spinner-border loader" role="status" aria-hidden="true">
-          
-          </div>
-        </td>
-      </tr>
-    );
-  }
+  
 
   return (
     <tr key={ticket.ticketId}>
