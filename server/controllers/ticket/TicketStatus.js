@@ -1,11 +1,10 @@
 import prisma from "../lib/prisma.js";
 import { Resend } from "resend";
-const resend = new Resend(process.env.RESEND_API_KEY);
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+const resend = new Resend(process.env.RESEND_API_KEY);
 const s3Client = new S3Client({ region: "eu-north-1" });
-
 
 const validTransitions = {
   "1": ["2"],
@@ -25,13 +24,16 @@ const TicketStatus = async (req, res) => {
   }
 
   try {
+    // Fetch the ticket and user info in one query
     const ticket = await prisma.createTicket.findUnique({
       where: { ticketId },
       select: {
         userId: true,
+        ntid: true,
         status: { select: { id: true, name: true } },
         assignedTo: true,
-        department: { select: { id: true } },
+        department: { select: { id: true, name: true } },
+        openedBy: true,
       },
     });
 
@@ -48,8 +50,7 @@ const TicketStatus = async (req, res) => {
       });
     }
 
-    const departmentId = ticket.assignedTo ? "19" :ticket.department.id;
-
+    const departmentId = ticket.assignedTo ? "19" : ticket.department.id;
     const updateData = {
       statusId: requestedStatus,
       ...(requestedStatus === "4" && { completedAt: new Date(), requestreopen: null, openedBy: usersId }),
@@ -65,23 +66,36 @@ const TicketStatus = async (req, res) => {
       }),
     };
 
+    // Update ticket status
     await prisma.createTicket.update({
       where: { ticketId },
       data: updateData,
     });
 
-    const updatedTicket = await prisma.createTicket.findUnique({
-      where: { ticketId },
-      select: {
-        userId: true,
-        ntid: true,
-        assignedTo: true,
-        assignToTeam: true,
-        openedBy: true,
-        department: { select: { name: true } },
-        status: { select: { name: true } },
-      },
-    });
+    // Fetch updated ticket with the comments and user details in parallel
+    const [updatedTicket, ticketComments] = await Promise.all([
+      prisma.createTicket.findUnique({
+        where: { ticketId },
+        select: {
+          userId: true,
+          ntid: true,
+          assignedTo: true,
+          assignToTeam: true,
+          openedBy: true,
+          department: { select: { name: true } },
+          status: { select: { name: true } },
+        },
+      }),
+      prisma.comment.findMany({
+        where: { ticketId },
+        select: {
+          comment: true,
+          commentedfiles: true,
+          createdAt: true,
+          createdBy: true,
+        },
+      }),
+    ]);
 
     if (!updatedTicket.ntid) {
       return res.status(400).json({ message: "Ticket owner email (ntid) is missing." });
@@ -96,16 +110,7 @@ const TicketStatus = async (req, res) => {
       openedByName = user?.fullname || "Unknown";
     }
 
-    const ticketComments = await prisma.comment.findMany({
-      where: { ticketId },
-      select: {
-        comment: true,
-        commentedfiles: true,
-        createdAt: true,
-        createdBy: true,
-      },
-    });
-
+    // Parallelize fetching signed URLs for the commented files
     const commentsWithSignedUrls = await Promise.all(
       ticketComments.map(async (comment) => {
         if (comment.commentedfiles?.length > 0) {

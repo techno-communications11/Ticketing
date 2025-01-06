@@ -3,7 +3,7 @@ import prisma from "../lib/prisma.js";
 const UserTicketStatus = async (req, res) => {
   const { statusId, ntid } = req.query; // Access statusId from query parameters
 
-  console.log(ntid, "Fetching tickets for user");
+  // console.log(ntid, "Fetching tickets for user");
 
   if (!ntid) {
     return res.status(400).json('Invalid user ID');

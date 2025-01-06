@@ -5,8 +5,8 @@ const Callback = async (req, res) => {
     const { department, ticketId, usersId } = req.query;
 
     // Log incoming query parameters
-    console.log("Incoming query parameters:", req.query);
-    console.log("Department assignment details:", department, ticketId);
+    // console.log("Incoming query parameters:", req.query);
+    // console.log("Department assignment details:", department, ticketId);
 
     // Check if required fields are provided
     if (!department || !ticketId) {
@@ -40,7 +40,7 @@ const Callback = async (req, res) => {
       },
     });
 
-    console.log(`Ticket ${ticketId} successfully updated and assigned to ${department}`);
+    // console.log(`Ticket ${ticketId} successfully updated and assigned to ${department}`);
     res.status(200).json(updatedTicket);
 
   } catch (err) {

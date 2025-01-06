@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma.js";
 
 const requestReopenTicket = async (req, res) => {
-  const { ticketId } = req.body; // Use req.body to get the ticketId
+  const { ticketId } = req.body; // Get ticketId from the request body
 
   // Check if ticketId is provided
   if (!ticketId) {
@@ -9,24 +9,21 @@ const requestReopenTicket = async (req, res) => {
   }
 
   try {
-    // Check if ticket exists before attempting to update
-    const ticketExists = await prisma.createTicket.findUnique({
-      where: { ticketId: ticketId }
+    // Attempt to update the ticket and handle the case where the ticket doesn't exist
+    const updatedTicket = await prisma.createTicket.update({
+      where: { ticketId: ticketId },
+      data: { requestreopen: true },
     });
 
-    if (!ticketExists) {
+    // Return the updated ticket after successful update
+    return res.status(200).json(updatedTicket);
+  } catch (error) {
+    // Handle the case where the ticket doesn't exist (RecordNotFoundError)
+    if (error.code === "P2025") {
       return res.status(404).json({ error: "Ticket not found" });
     }
 
-    // Update the ticket's requestReopen status
-    const updatedTicket = await prisma.createTicket.update({
-      where: { ticketId: ticketId },
-      data: { requestreopen: true }
-    });
-
-    // Send back the updated ticket
-    return res.status(200).json(updatedTicket);
-  } catch (error) {
+    // General error handling
     console.error("Error requesting to reopen ticket:", error);
     return res.status(500).json({ error: "Failed to request reopen ticket" });
   }

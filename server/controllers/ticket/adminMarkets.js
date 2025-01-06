@@ -14,7 +14,7 @@ const adminMarket = async (req, res) => {
       }
     });
 
-    console.log("Market Structures Retrieved:", marketStructures);
+    // console.log("Market Structures Retrieved:", marketStructures);
 
     // Check if market structures are empty
     if (marketStructures.length === 0) {
@@ -25,7 +25,7 @@ const adminMarket = async (req, res) => {
     // Extract market names
     const markets = marketStructures.map(structure => structure.market?.market);
 
-    console.log("Formatted Markets Data:", markets);
+    // console.log("Formatted Markets Data:", markets);
 
     // Send the markets data as a response
     res.status(200).json(markets);

@@ -32,7 +32,7 @@ const alloted = async (req, res) => {
     });
 
     // Log the updated ticket
-    console.log("Ticket updated:", updatedTicket);
+    // console.log("Ticket updated:", updatedTicket);
 
     // Send the success response
     res.status(200).json({ message: "Ticket updated successfully", ticket: updatedTicket });

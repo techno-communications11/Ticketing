@@ -1,8 +1,7 @@
 import prisma from "../lib/prisma.js";
 
 const Settlement = async (req, res) => {
-  const { ticketId } = req.body; 
-  console.log(ticketId, "yyyyyyyyyyy");
+  const { ticketId } = req.body;
 
   // Check if ticketId is provided
   if (!ticketId) {
@@ -10,24 +9,21 @@ const Settlement = async (req, res) => {
   }
 
   try {
-    // Check if ticket exists before attempting to update
-    const ticketExists = await prisma.createTicket.findUnique({
-      where: { ticketId: ticketId }
+    // Attempt to update the ticket's settlement status directly
+    const updatedTicket = await prisma.createTicket.update({
+      where: { ticketId: ticketId },
+      data: { isSettled: true },
     });
 
-    if (!ticketExists) {
+    // Return the updated ticket after successful update
+    return res.status(200).json(updatedTicket);
+  } catch (error) {
+    // Handle the case where the ticket doesn't exist (RecordNotFoundError)
+    if (error.code === "P2025") {
       return res.status(404).json({ error: "Ticket not found" });
     }
 
-    // Update the ticket's settlement status
-    const updatedTicket = await prisma.createTicket.update({
-      where: { ticketId: ticketId },
-      data: { isSettled: true }
-    });
-
-    console.log(updatedTicket);
-    return res.status(200).json(updatedTicket);
-  } catch (error) {
+    // General error handling
     console.error("Error settling ticket:", error);
     return res.status(500).json({ error: "Failed to settle ticket" });
   }
