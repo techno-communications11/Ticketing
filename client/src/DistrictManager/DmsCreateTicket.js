@@ -158,14 +158,15 @@ export function DmsCreateTicket() {
     // "Trainings",
     // "Accessories Order",
     // "YUBI Key Setups",
-    // "Charge Back/Commission",
-    // "Inventory",
+    "Charge Back/Commission",
+    "Reporting",
+    "Inventory",
     "Admin",
     "Software India",
-    // "Maintenance ",
+    "Maintenance ",
     // "Housing ",
     // "CAM NW",
-    // "HR Payroll",
+    "HR Payroll",
   ];
   const [searchDepartment, setSearchDepartment] = useState("");
   const [filteredDepartments, setFilteredDepartments] = useState(Departments);

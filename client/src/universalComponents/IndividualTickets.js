@@ -35,14 +35,15 @@ const Individualmarketss = () => {
     // "Trainings",
     // "Accessories Order",
     // "YUBI Key Setups",
-    // "Charge Back/Commission",
-    // "Inventory",
+    "Charge Back/Commission",
+    "Inventory",
     "Admin",
     "Software India",
-    // "Maintenance",
+    "Maintenance",
     // "Housing",
     // "CAM NW",
-    // "HR Payroll",
+    "HR Payroll",
+    "Reporting"
   ];
 
   const {

@@ -32,7 +32,12 @@ export function Register() {
     "District Manager",
     "Employee",
     "Software India",
-    "Internal"
+    "Internal",
+    "Reporting",
+    "Inventory",
+    "Maintenance",
+    "HR Payroll",
+    "Charge Back/Commission",
   ];
   const subUserroles = ["Manager", "User"];
 
@@ -54,30 +59,30 @@ export function Register() {
   const handleSubmit = async (event) => {
     setLoading(true);
     event.preventDefault();
-  
+
     const ntid = NTIDRef.current?.value?.trim() || "";
     const fullname = fullNameRef.current?.value?.trim() || "";
     const password = passwordRef.current?.value?.trim() || "";
     const DoorCode = DoorCodeRef.current?.value?.trim() || "";
-  
+
     // Validation
     setIsNtidValid(!!ntid);
     setIsFullnameValid(!!fullname);
     setIsRoleValid(!!selectedRole);
-  
+
     if (!validatePassword(password)) {
       setIsPasswordValid(false);
       toast.error("Password must meet the criteria.", { autoClose: 3000 });
       setLoading(false);
       return;
     }
-  
+
     if (!ntid || !fullname || !selectedRole) {
       toast.error("Please fill in all required fields.");
       setLoading(false);
       return;
     }
-  
+
     try {
       const response = await apiRequest.post("/auth/register", {
         ntid,
@@ -99,7 +104,6 @@ export function Register() {
       setLoading(false);
     }
   };
-  
 
   const resetForm = () => {
     setSelectedRole("");
@@ -117,7 +121,6 @@ export function Register() {
       passwordRef.current.value = "";
     }
   };
-  
 
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
@@ -131,7 +134,6 @@ export function Register() {
   };
 
   const handleFileUpload = async () => {
-   
     if (!selectedFile) {
       toast.error("Please select a file first.");
       return;
@@ -209,9 +211,10 @@ export function Register() {
                   >
                     {selectedRole || "Select Role"}
                   </Dropdown.Toggle>
-                  <Dropdown.Menu>
+                  <Dropdown.Menu   style={{overflowY:"auto",height:"300px"}}>
                     {userRoles.map((role, index) => (
                       <Dropdown.Item
+                      className="shadow-lg text-primary"
                         key={index}
                         onClick={() => handleSelect(role)}
                       >
@@ -220,34 +223,45 @@ export function Register() {
                     ))}
                   </Dropdown.Menu>
                 </Dropdown>
-                {selectedRole && ["Admin"].includes(selectedRole) && (
-                  <Dropdown>
-                    <Dropdown.Toggle
-                      id="subRoleDropdown"
-                      className="form-control bg-transparent text-dark text-start border-secondary "
-                    >
-                      {selectedSubRole || "Select Subrole"}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      {subUserroles.map((role, index) => (
-                        <Dropdown.Item
-                          key={index}
-                          onClick={() => handleSubSelect(role)}
-                        >
-                          {role}
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                )}
+                {selectedRole &&
+                  [
+                    "Admin",
+                    "Reporting",
+                    "Inventory",
+                    "Maintenance",
+                    "HR Payroll",
+                    "Charge Back/Commission",
+                  ].includes(selectedRole) && (
+                    <Dropdown>
+                      <Dropdown.Toggle
+                        id="subRoleDropdown"
+                        className="form-control bg-transparent text-dark text-start border-secondary "
+                      >
+                        {selectedSubRole || "Select Subrole"}
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        {subUserroles.map((role, index) => (
+                          <Dropdown.Item
+                          className="shadow-lg text-primary"
+                            key={index}
+                            onClick={() => handleSubSelect(role)}
+                          >
+                            {role}
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  )}
 
-               {["Employee","Market Manager"].includes(selectedRole) && <input
-                  type="text"
-                  id="doorCode"
-                  placeholder="Door Code"
-                  className="form-control my-1"
-                  ref={DoorCodeRef}
-                />}
+                {["Employee", "Market Manager"].includes(selectedRole) && (
+                  <input
+                    type="text"
+                    id="doorCode"
+                    placeholder="Door Code"
+                    className="form-control my-1"
+                    ref={DoorCodeRef}
+                  />
+                )}
                 <div className="input-group">
                   <input
                     type={passwordVisible ? "text" : "password"}
@@ -258,7 +272,7 @@ export function Register() {
                   <span
                     className="input-group-text"
                     onClick={handlePasswordToggle}
-                    style={{cursor:'pointer'}}
+                    style={{ cursor: "pointer" }}
                   >
                     {passwordVisible ? <FaRegEye /> : <FaEyeSlash />}
                   </span>

@@ -59,13 +59,14 @@ export function Home() {
     // "Trainings",
     // "Accessories Order",
     // "YUBI Key Setups",
-    // "Charge Back/Commission",
-    // "Inventory",
+    "Charge Back/Commission",
+    "Inventory",
     "Admin",
-    // "Maintenance ",
+    "Maintenance ",
     // "Housing ",
     // "CAM NW",
-    // "HR Payroll",
+    "HR Payroll",
+    "Reporting"
   ];
 
   const [searchDepartment, setSearchDepartment] = useState("");

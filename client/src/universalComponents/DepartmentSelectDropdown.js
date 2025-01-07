@@ -16,6 +16,11 @@ function DepartmentSelectDropdown({
     { department: "NTID Mappings" },
     { department: "District Manager" },
     { department: "Maintenance" },
+    { department: "Maintaince" },
+    { department: "Reporting" },
+    { department: "Inventory" },
+    { department: "Commission" },
+    { department: "HR Payroll" },
     // Add more departments as needed
   ];
 

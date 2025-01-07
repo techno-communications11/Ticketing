@@ -4,7 +4,6 @@ import getDecodedToken from '../universalComponents/decodeToken';
 
 function DepartmentOpened() {
   const userId = getDecodedToken()?.id;
-  // console.log(typeof(userId))
 
   return (
     <Ticket status={'3'} openedBy={userId}  fullname={null} />

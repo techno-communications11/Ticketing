@@ -50,7 +50,7 @@ const marketManagerDepartments = ['Market Manager'];
 const departmentDepartments = [
   'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',  'Charge Back/Commission',
    'Inventory',  'Housing',
-  'CAM NW', 'HR Payroll','Maintenance','Admin',"Software India"
+  'CAM NW', 'HR Payroll','Maintenance','Admin',"Software India","Reporting"
 ];
 const internalDepartment=['Internal'];
 

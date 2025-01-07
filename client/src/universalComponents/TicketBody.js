@@ -68,7 +68,8 @@ const TicketBody = React.memo(({ ticket, index, currentPage, itemsPerPage, handl
     return (
       <tr>
         <td colSpan="10" className="text-center">
-          <div className="loader">
+          <div className=" loader" role="status" aria-hidden="true">
+          
           </div>
         </td>
       </tr>

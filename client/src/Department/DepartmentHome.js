@@ -103,7 +103,6 @@ function DepartmentHome() {
     navigate("/showdeptwiseticks");
   };
   const getDepartmentdata=getDecodedToken().subDepartment;
-  // console.log(getDepartmentdata,"ddddddddd")
 
   return loading ? (
     <div className="loading"></div>

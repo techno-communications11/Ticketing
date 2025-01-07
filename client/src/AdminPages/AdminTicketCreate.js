@@ -54,6 +54,7 @@ export function AdminTicketCreate() {
     { _id: "13", market: "san francisco" },
     { _id: "14", market: "bay area" },
     { _id: "15", market: "india" },
+    { _id: "16", market: "head office" },
   ];
 
   const Departments = [
@@ -61,14 +62,15 @@ export function AdminTicketCreate() {
     // "Trainings",
     // "Accessories Order",
     // "YUBI Key Setups",
-    // "Charge Back/Commission",
-    // "Inventory",
+    "Charge Back/Commission",
+    "Inventory",
     "Admin",
     "Software India",
-    // "Maintenance ",
+    "Maintenance ",
     // "Housing ",
     // "CAM NW",
-    // "HR Payroll",
+    "HR Payroll",
+    "Reporting",
   ];
   const admin = [
     "Internet",
@@ -448,9 +450,9 @@ export function AdminTicketCreate() {
 
   const handleTotalTickets = (AdminsDatantid) => () => {
     setNtid(AdminsDatantid);
-    localStorage.setItem('adminntid', AdminsDatantid)  
-    localStorage.removeItem('statusId');
-    localStorage.removeItem('dates')
+    localStorage.setItem("adminntid", AdminsDatantid);
+    localStorage.removeItem("statusId");
+    localStorage.removeItem("dates");
 
     if (AdminsDatantid) {
       // localStorage.setItem('adminntid', AdminsDatantid)
@@ -579,16 +581,20 @@ export function AdminTicketCreate() {
                     {selectedMarket || "Select Market"}
                   </Dropdown.Toggle>
 
-                  <Dropdown.Menu className="w-100 text-capitalize ">
-                    {markets.map(({ _id, market }) => (
-                      <Dropdown.Item
-                        className="fw-medium  shadow-lg text-primary"
-                        key={_id}
-                        onClick={() => setSelectedMarket(market)}
-                      >
-                        {market}
-                      </Dropdown.Item>
-                    ))}
+                  <Dropdown.Menu className="w-100 text-capitalize" style={{height:"300px",overflowY:"auto"}}>
+                    {markets
+                      .filter(({ market }) =>
+                        department === "Internal" ? market === "india" : true
+                      )
+                      .map(({ _id, market }) => (
+                        <Dropdown.Item
+                          className="fw-medium shadow-lg text-primary"
+                          key={_id}
+                          onClick={() => setSelectedMarket(market)}
+                        >
+                          {market}
+                        </Dropdown.Item>
+                      ))}
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
@@ -850,17 +856,25 @@ export function AdminTicketCreate() {
                     Software India
                   </Dropdown.Item>
                 ) : filteredDepartments?.length > 0 ? (
-                  filteredDepartments.map((department, index) => (
-                    <Dropdown.Item
-                      key={index}
-                      onClick={() => handleAssignToSelect(department)}
-                      className="shadow-lg fw-medium text-primary text-start"
-                      isInvalid={!!errors.department}
-                    >
-                      {department}
-                    </Dropdown.Item>
-                  ))
-                ) : (
+                  filteredDepartments
+  ?.filter((department) => {
+    if (selectedMarket === "head office") {
+      return department === "Admin";
+    } else if (selectedMarket === "india") {
+      return department === "Software India";
+    }
+    return true; // Default case: include all departments
+  })
+  .map((department, index) => (
+    <Dropdown.Item
+      key={index}
+      onClick={() => handleAssignToSelect(department)}
+      className="shadow-lg fw-medium text-primary text-start"
+      isInvalid={!!errors.department}
+    >
+      {department}
+    </Dropdown.Item>
+  )) )  : (
                   <Dropdown.Item disabled className="text-muted text-start">
                     No departments found
                   </Dropdown.Item>
