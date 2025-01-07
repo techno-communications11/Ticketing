@@ -48,7 +48,7 @@ const superAdminDepartments = ['SuperAdmin'];
 const districtManagerDepartments = ['District Manager', 'Employee'];
 const marketManagerDepartments = ['Market Manager'];
 const departmentDepartments = [
-  'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',  'Charge Back/Commission',
+  'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',  'Commission',
    'Inventory',  'Housing',
   'CAM NW', 'HR Payroll','Maintenance','Admin',"Software India","Reporting"
 ];
