@@ -36,7 +36,7 @@ export function NavbarClient() {
     "Trainings",
     "Accessories Order",
     "YUBI Key Setups",
-    "Charge Back/Commission",
+    "Commission",
     "Inventory",
     "Housing",
     "CAM NW",
