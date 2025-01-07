@@ -158,7 +158,7 @@ export function DmsCreateTicket() {
     // "Trainings",
     // "Accessories Order",
     // "YUBI Key Setups",
-    "Charge Back/Commission",
+    "Commission",
     "Reporting",
     "Inventory",
     "Admin",

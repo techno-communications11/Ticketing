@@ -59,7 +59,7 @@ export function Home() {
     // "Trainings",
     // "Accessories Order",
     // "YUBI Key Setups",
-    "Charge Back/Commission",
+    "Commission",
     "Inventory",
     "Admin",
     "Maintenance ",

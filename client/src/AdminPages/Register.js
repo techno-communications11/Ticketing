@@ -37,7 +37,7 @@ export function Register() {
     "Inventory",
     "Maintenance",
     "HR Payroll",
-    "Charge Back/Commission",
+    "Commission",
   ];
   const subUserroles = ["Manager", "User"];
 
@@ -230,7 +230,7 @@ export function Register() {
                     "Inventory",
                     "Maintenance",
                     "HR Payroll",
-                    "Charge Back/Commission",
+                    "Commission",
                   ].includes(selectedRole) && (
                     <Dropdown>
                       <Dropdown.Toggle

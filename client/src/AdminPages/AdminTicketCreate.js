@@ -62,7 +62,7 @@ export function AdminTicketCreate() {
     // "Trainings",
     // "Accessories Order",
     // "YUBI Key Setups",
-    "Charge Back/Commission",
+    "Commission",
     "Inventory",
     "Admin",
     "Software India",
@@ -581,7 +581,10 @@ export function AdminTicketCreate() {
                     {selectedMarket || "Select Market"}
                   </Dropdown.Toggle>
 
-                  <Dropdown.Menu className="w-100 text-capitalize" style={{height:"300px",overflowY:"auto"}}>
+                  <Dropdown.Menu
+                    className="w-100 text-capitalize"
+                    style={{ height: "300px", overflowY: "auto" }}
+                  >
                     {markets
                       .filter(({ market }) =>
                         department === "Internal" ? market === "india" : true
@@ -857,24 +860,25 @@ export function AdminTicketCreate() {
                   </Dropdown.Item>
                 ) : filteredDepartments?.length > 0 ? (
                   filteredDepartments
-  ?.filter((department) => {
-    if (selectedMarket === "head office") {
-      return department === "Admin";
-    } else if (selectedMarket === "india") {
-      return department === "Software India";
-    }
-    return true; // Default case: include all departments
-  })
-  .map((department, index) => (
-    <Dropdown.Item
-      key={index}
-      onClick={() => handleAssignToSelect(department)}
-      className="shadow-lg fw-medium text-primary text-start"
-      isInvalid={!!errors.department}
-    >
-      {department}
-    </Dropdown.Item>
-  )) )  : (
+                    ?.filter((department) => {
+                      if (selectedMarket === "head office") {
+                        return department === "Admin";
+                      } else if (selectedMarket === "india") {
+                        return department === "Software India";
+                      }
+                      return true; // Default case: include all departments
+                    })
+                    .map((department, index) => (
+                      <Dropdown.Item
+                        key={index}
+                        onClick={() => handleAssignToSelect(department)}
+                        className="shadow-lg fw-medium text-primary text-start"
+                        isInvalid={!!errors.department}
+                      >
+                        {department}
+                      </Dropdown.Item>
+                    ))
+                ) : (
                   <Dropdown.Item disabled className="text-muted text-start">
                     No departments found
                   </Dropdown.Item>
