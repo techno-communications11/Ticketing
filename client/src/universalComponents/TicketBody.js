@@ -59,7 +59,7 @@ const TicketBody = React.memo(({ ticket, index, currentPage, itemsPerPage, handl
   }, [navigate]);
 
   const renderCell = useCallback((content, className = '') => (
-    <td className={`${ticket.isSettled  ? 'bg-secondary text-white text-center fw-medium text-shrink bg-opacity-50' : `text-center fw-medium text-shrink ${className}`}`}>
+    <td className={`${ticket.isSettled  ? 'bg-secondary text-white text-center fw-medium text-shrink bg-opacity-50 text-capitalize' : `text-center fw-medium text-shrink  text-capitalize ${className}`}`}>
       {content}
     </td>
   ), [ticket, department, Departments]);

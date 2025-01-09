@@ -169,7 +169,7 @@ function TotalUserTickets() {
 
       {authenticated && (
         <div className="table-responsive " style={{ zIndex: 1 }}>
-          <table className="table table-bordered table-hover table-sm">
+          <table className="table table-bordered table-hover table-sm" style={{fontSize:'0.95rem'}}>
             <thead>
               <tr>
                 {[
