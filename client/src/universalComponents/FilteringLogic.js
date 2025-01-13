@@ -3,6 +3,7 @@ function FilterLogic(tickets, ntidFilter, createdAt, completedAt, statusFilter, 
     // console.error('Invalid tickets input:', tickets);
     return []; // Return an empty array if `tickets` is not valid
   }
+  console.log(createdAt,'data fetched')
 
   return tickets.filter(ticket => {
     const matchesNTID = ntidFilter ? ticket.ntid.includes(ntidFilter) : true;

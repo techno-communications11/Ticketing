@@ -40,6 +40,7 @@ function TotalUserTickets() {
   const [createdAtToggle, setCreatedAtToggle] = useState(false);
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [fullnameToggle, setFullnameToggle] = useState(false);
+  console.log(completedAt,'llllllllllllvda')
 
   const handleFullnameFilterClick = () => {
     setFullnameToggle(!fullnameToggle);

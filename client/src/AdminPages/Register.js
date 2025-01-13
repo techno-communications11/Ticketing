@@ -60,7 +60,7 @@ export function Register() {
     setLoading(true);
     event.preventDefault();
 
-    const ntid = NTIDRef.current?.value?.trim() || "";
+    const ntid = NTIDRef.current?.value?.trim().toLowerCase() || "";
     const fullname = fullNameRef.current?.value?.trim() || "";
     const password = passwordRef.current?.value?.trim() || "";
     const DoorCode = DoorCodeRef.current?.value?.trim() || "";

@@ -7,12 +7,14 @@ import { useRef } from 'react';
 function CreatedAt({ createdAt, setCreatedAt, setCreatedAtToggle,setCurrentPage }) {
   const dropdownRef = useRef(null);
   useOutsideClick(dropdownRef, () => setCreatedAtToggle(false));
-
   return (
     <div className="shadow-sm p-3 my-2" ref={dropdownRef}>
       <DatePicker
         selected={createdAt}
-        onChange={(date) => {setCreatedAt(date);setCurrentPage(1)}}
+        onChange={
+          (date) => {
+            setCreatedAt(date);setCurrentPage(1)
+          }}
         inline
         placeholderText="Select a date"
         className="form-control" // Bootstrap styling

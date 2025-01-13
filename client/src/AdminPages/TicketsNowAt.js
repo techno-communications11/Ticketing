@@ -85,6 +85,7 @@ function TicketsNowAt() {
       completed: "4",
       opened: "2",
       reopened: "5",
+      new:'1',
     };
 
     const statusId = statusMap[status] || ""; // Default to an empty string if status is not in the map

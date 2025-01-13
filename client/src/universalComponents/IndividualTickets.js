@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Dropdown, Modal } from "react-bootstrap";
+import { Button, Dropdown } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { apiRequest } from "../lib/apiRequest";
@@ -15,7 +15,7 @@ import formatDate from "./FormatDate";
 import { Carousel } from "react-bootstrap";
 import debounce from "lodash/debounce";
 
-import "react-medium-image-zoom/dist/styles.css";
+
 
 const Individualmarketss = () => {
   const navigate = useNavigate();
@@ -29,6 +29,7 @@ const Individualmarketss = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [commentLoading, setCommentLoading] = useState(false);
   const [users, setUsers] = useState([]);
+  const[statusLoading,setsatusLoading]=useState(false);
 
   const departments = [
     // "NTID Mappings",
@@ -174,6 +175,7 @@ const Individualmarketss = () => {
   }, [markets, userNtid, department]);
 
   const updateTicketStatus = async (statusId) => {
+    setsatusLoading(true);
     try {
       const response = await apiRequest.put(
         `/createTickets/updateprogress/?statusId=${statusId}&ticketId=${markets.ticketId}&usersId=${usersId}`
@@ -184,6 +186,8 @@ const Individualmarketss = () => {
       }
     } catch (error) {
       console.error(`Error updating status to ${statusId}:`, error);
+    } finally{
+      setsatusLoading(false)
     }
   };
 
@@ -262,13 +266,8 @@ const Individualmarketss = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="vh-100">
-        <div className="loader d-flex align-items-center justify-content-center vh-80"></div>
-      </div>
-    );
-  }
+ 
+  
 
   const handleCommentChange = (e) => {
     setComment(e.target.value);
@@ -332,6 +331,7 @@ const Individualmarketss = () => {
   };
 
   const assignToDepartment = async (selectedDept) => {
+    setsatusLoading(true);
     if (!selectedDept || !markets.ticketId) {
       toast.error("Invalid department or ticket ID");
       return;
@@ -360,6 +360,7 @@ const Individualmarketss = () => {
     } finally {
       // Reset selected department
       setSelectedDepartment("");
+      setsatusLoading(false);
     }
   };
 
@@ -374,6 +375,7 @@ const Individualmarketss = () => {
   };
 
   const onhandleAllot = async (user) => {
+    setsatusLoading(true)
     if (!user || !markets.ticketId) {
       toast.error("Invalid user or ticket ID");
       return;
@@ -403,8 +405,33 @@ const Individualmarketss = () => {
     } finally {
       // Reset selected department regardless of success or failure
       resetDepartmentState();
+      setsatusLoading(true)
     }
   };
+
+  if (loading || statusLoading) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
+          zIndex: 1050,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div className="loader" role="status">
+        
+        </div>
+      </div>
+    );
+  }
+    
 
   // Helper function to delay execution (using Promise)
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -494,24 +521,27 @@ const Individualmarketss = () => {
     }
   };
 
-  const getNavigationPath = (action) => {
+  const getNavigationPath = (action, department, departments) => {
     if (action === "settle") {
-      switch (department) {
-        case "District Manager":
-          return "/completed";
-        case "SuperAdmin":
-          return "/SuperAdminHome";
-        case "Admin":
-          return "/departmentcompleted";
-        default:
-          return "/"; // Default path if department doesn't match
+      if (department === "District Manager") {
+        return "/completed";
       }
-    } else if (action === "reopen" && department === "Employee") {
+      if (department === "SuperAdmin") {
+        return "/SuperAdminHome";
+      }
+      if (departments.includes(department)) {
+        return "/departmentcompleted";
+      }
+      return "/"; // Default path if no department matches
+    }
+  
+    if (action === "reopen" && department === "Employee") {
       return "/home";
     }
-
+  
     return "/"; // Default path
   };
+  
 
   const handleConfirmSettled = () => handleTicketAction("settle");
   const handleRequestReopen = () => handleTicketAction("reopen");
