@@ -409,7 +409,7 @@ const Individualmarketss = () => {
     }
   };
 
-  if (loading || statusLoading) {
+  if (loading) {
     return (
       <div
         style={{
@@ -432,6 +432,28 @@ const Individualmarketss = () => {
     );
   }
     
+  if (statusLoading) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
+          zIndex: 1050,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div className="loader" role="status">
+        
+        </div>
+      </div>
+    );
+  }
 
   // Helper function to delay execution (using Promise)
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
