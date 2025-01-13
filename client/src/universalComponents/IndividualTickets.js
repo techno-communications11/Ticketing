@@ -409,51 +409,7 @@ const Individualmarketss = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
-          zIndex: 1050,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div className="loader" role="status">
-        
-        </div>
-      </div>
-    );
-  }
-    
-  if (statusLoading) {
-    return (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
-          zIndex: 1050,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div className="loader" role="status">
-        
-        </div>
-      </div>
-    );
-  }
+ 
 
   // Helper function to delay execution (using Promise)
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -471,65 +427,70 @@ const Individualmarketss = () => {
     }
   });
 
-  const handleTicketAction = async (action) => {
-    const actionsConfig = {
-      settle: {
-        actionText: "settle",
-        confirmationText: "Are you sure you want to settle this ticket?",
-        endpoint: "/createTickets/settlement",
-      },
-      reopen: {
-        actionText: "request to reopen",
-        confirmationText:
-          "Are you sure you want to request reopening this ticket?",
-        endpoint: "/createTickets/request-reopen",
-      },
-    };
+    const handleTicketAction = async (action) => {
+      const actionsConfig = {
+        settle: {
+          actionText: "settle",
+          confirmationText: "Are you sure you want to settle this ticket?",
+          endpoint: "/createTickets/settlement",
+        },
+        reopen: {
+          actionText: "request to reopen",
+          confirmationText:
+            "Are you sure you want to request reopening this ticket?",
+          endpoint: "/createTickets/request-reopen",
+        },
+      };
 
-    const config = actionsConfig[action];
-    if (!config) return;
+      const config = actionsConfig[action];
+      if (!config) return;
 
-    const capitalizeActionText = (text) =>
-      text.charAt(0).toUpperCase() + text.slice(1); // Capitalize action text
+      const capitalizeActionText = (text) =>
+        text.charAt(0).toUpperCase() + text.slice(1); // Capitalize action text
 
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `Confirm ${capitalizeActionText(config.actionText)}`,
-        text: config.confirmationText,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#E10174",
-        cancelButtonColor: "#d33",
-        confirmButtonText: `Yes, ${config.actionText} it!`,
-        cancelButtonText: "Cancel",
-      });
-
-      if (isConfirmed) {
-        const response = await apiRequest.put(config.endpoint, {
-          ticketId: markets.ticketId,
+      try {
+        const { isConfirmed } = await Swal.fire({
+          title: `Confirm ${capitalizeActionText(config.actionText)}`,
+          text: config.confirmationText,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#E10174",
+          cancelButtonColor: "#d33",
+          confirmButtonText: `Yes, ${config.actionText} it!`,
+          cancelButtonText: "Cancel",
         });
 
-        if (response.status === 200) {
-          await Swal.fire({
-            icon: "success",
-            title: `Ticket ${capitalizeActionText(config.actionText)}d`,
-            text: `The ticket has been ${config.actionText}d successfully.`,
-            confirmButtonColor: "#E10174",
+        if (isConfirmed) {
+          const response = await apiRequest.put(config.endpoint, {
+            ticketId: markets.ticketId,
           });
 
-          handlePostActionNavigation(action);
+          if (response.status === 200) {
+            await Swal.fire({
+              icon: "success",
+              title: `Ticket ${capitalizeActionText(config.actionText)}d`,
+              text: `The ticket has been ${config.actionText}d successfully.`,
+              confirmButtonColor: "#E10174",
+            });
+
+            try {
+              handlePostActionNavigation(action);
+            } catch (navigationError) {
+              console.error("Error in handlePostActionNavigation:", navigationError);
+            }
+            
+          }
         }
+      } catch (error) {
+        console.error(`Error processing ${config.actionText}:`, error);
+        await Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: `There was an error ${config.actionText}ing the ticket. Please try again.`,
+          confirmButtonColor: "#E10174",
+        });
       }
-    } catch (error) {
-      console.error(`Error processing ${config.actionText}:`, error);
-      await Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: `There was an error ${config.actionText}ing the ticket. Please try again.`,
-        confirmButtonColor: "#E10174",
-      });
-    }
-  };
+    };
 
   const handlePostActionNavigation = (action) => {
     const navigateTo = getNavigationPath(action);
@@ -611,7 +572,51 @@ const Individualmarketss = () => {
     department === "Employee" &&
     markets.status?.name === "completed" &&
     !markets.requestreopen;
-
+    if (loading) {
+      return (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
+            zIndex: 1050,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div className="loader" role="status">
+          
+          </div>
+        </div>
+      );
+    }
+      
+    if (statusLoading) {
+      return (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.6)", // Semi-transparent white
+            zIndex: 1050,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div className="loader" role="status">
+          
+          </div>
+        </div>
+      );
+    }
   return (
     <div className="container mt-2">
       <h5
