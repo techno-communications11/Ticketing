@@ -16,12 +16,14 @@ import { apiRequest } from "../lib/apiRequest";
 import { useDispatch } from "react-redux";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import getDecodedToken from "../universalComponents/decodeToken";
-import animationData from '../universalComponents/Animation.json'
-import { Player } from "@lottiefiles/react-lottie-player";
+// import animationData from '../universalComponents/Animation.json'
+// import { Player } from "@lottiefiles/react-lottie-player";
+import { FaExclamationCircle } from 'react-icons/fa';
+import '../styles/TicketTable.css';
 
 const ShowdepartWiseTicks = () => {
   const dispatch = useDispatch();
-  const { department, statusId,Dates } = useMyContext();
+  const { department, statusId, Dates } = useMyContext();
   const [tickets, setTickets] = useState([]);
   const [market, setMarket] = useState("");
   const [completedAt, setCompletedAt] = useState("");
@@ -31,15 +33,15 @@ const ShowdepartWiseTicks = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [ntidFilter, setntidFilter] = useState("");
   const itemsPerPage = 30;
- 
+
   const [statusToggle, setStatusToggle] = useState(false);
   const [ntidFilterToggle, setNtidFilterToggle] = useState(false);
   const [createdAtToggle, setCreatedAtToggle] = useState(false);
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [fullnameToggle, setFullnameToggle] = useState(false);
   const userData = getDecodedToken();
-  const [loading,setLoading]=useState(false);
- 
+  const [loading, setLoading] = useState(false);
+
   const fetchTickets = async () => {
     setLoading(true);
     try {
@@ -148,7 +150,7 @@ const ShowdepartWiseTicks = () => {
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
-  if(loading){
+  if (loading) {
     return (
       <div className="loader"></div>
     )
@@ -156,30 +158,29 @@ const ShowdepartWiseTicks = () => {
 
   return (
     <Container fluid className="mt-2">
-      
+
 
       {currentItems.length == 0 ? (
-        <div className="vh-100  mb-5 d-flex flex-row align-items-center justify-content-center">
-         <Player
-          autoplay
-          loop
-          src={animationData}
-          style={{ height: "700px", width: "700px" }}
-        />
-       
+        <div className='d-flex justify-content-center align-items-center' style={{ height: '80vh' }}>
+          <div className='text-center'>
+            <FaExclamationCircle className='text-secondary' style={{ fontSize: '5rem', marginBottom: '1rem' }} />
+            <p className='fs-1 fw-bolder text-muted'>No data available ...</p>
+            <p className='text-muted'>Please check back later or try refreshing the page.</p>
+          </div>
         </div>
       ) : (
         <>
-        <div className="col-12 d-flex flex-column flex-md-row align-items-center mb-2">
-        <h3
-          className="col-12 col-md-5 mb-0 font-family text-capitalize"
-          style={{ color: "#E10174" }}
-        >
-          Tickets from Market {market?.toLowerCase()}
-        </h3>
-      </div>
+          <div className="col-12 d-flex flex-column flex-md-row align-items-center mb-2">
+            <h3
+              className="col-12 col-md-5 mb-0 font-family text-capitalize"
+              style={{ color: "#E10174" }}
+            >
+              Tickets from Market {market?.toLowerCase()}
+            </h3>
+          </div>
+          <div className="table-container3">
           <Table bordered hover responsive>
-            <thead>
+            <thead className="sticky-top" style={{ top: "0", zIndex: "1" }}>
               <tr>
                 {[
                   "SC.No",
@@ -318,7 +319,8 @@ const ShowdepartWiseTicks = () => {
               )}
             </tbody>
           </Table>
-          {currentItems.length>0&&<PageCountStack
+          </div>
+          {currentItems.length > 0 && <PageCountStack
             filteredTickets={filteredTickets}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}

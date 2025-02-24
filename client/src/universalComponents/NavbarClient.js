@@ -180,7 +180,7 @@ export function NavbarClient() {
             <LogoutSection handleLogout={handleLogout} />
           </>
         ) : (
-          <Nav.Link as={Link} to="/login" className="me-5">
+          <Nav.Link as={Link} to="/login" className="me-1">
             Login
           </Nav.Link>
         )}

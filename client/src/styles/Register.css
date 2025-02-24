@@ -1,0 +1,53 @@
+/* Pink Theme */
+.bg-pink-light {
+    background-color: #f8e1f2 !important;
+  }
+ 
+  
+  .bg-pink {
+    background-color: #e10174 !important;
+  }
+  
+  .text-pink {
+    color: #e10174 !important;
+  }
+  
+  .btn-pink {
+    background-color: #e10174;
+    border-color: #e10174;
+    color: white;
+  }
+  
+  .btn-pink:hover {
+    background-color: #c90063;
+    border-color: #c90063;
+  }
+  
+  /* Input Error Styling */
+  .input-error {
+    border-color: #dc3545 !important;
+  }
+  
+  /* Form Styling */
+  .form-control {
+    border-radius: 0.25rem;
+  }
+  
+  .input-group-text {
+    border-radius: 0.25rem;
+  }
+  
+  /* Dropdown Styling */
+  .dropdown-menu {
+    border-radius: 0.25rem;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f8e1f2;
+  }
+  
+  /* Spinner Styling */
+  .spinner-border {
+    width: 1.5rem;
+    height: 1.5rem;
+  }

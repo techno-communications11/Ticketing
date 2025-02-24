@@ -18,8 +18,9 @@ import FullnameFilter from "../universalComponents/FullNameFilter";
 import StatusFilter from "../universalComponents/StatusFilter";
 import getDecodedToken from "../universalComponents/decodeToken";
 import { useMyContext } from "../universalComponents/MyContext";
-import animationData from "../universalComponents/Animation.json";
-import { Player } from "@lottiefiles/react-lottie-player";
+// import animationData from "../universalComponents/Animation.json";
+// import { Player } from "@lottiefiles/react-lottie-player";
+import { FaExclamationCircle } from 'react-icons/fa';
 
 const ShowTickets = () => {
   const dispatch = useDispatch();
@@ -160,48 +161,48 @@ const ShowTickets = () => {
 
   return (
     <Container fluid className="mt-2">
-        <Row
-          className="mb-1 font-family text-capitalize align-items-center"
-          style={{ color: "#E10174" }}
-        >
-          <Col xs={12} md={6} className="d-flex gap-0">
-            <Col xs={11} md={9}>
-              <h3>Tickets from Market {market.toLowerCase()}</h3>
-            </Col>
-            <Col
-              xs={1}
-              md={3}
-              className="position-relative"
-              ref={dropdownRef}
-              style={{ right: "100px" }}
-            >
-              <button
-                onClick={toggleDropdown}
-                className="border-0 fs-4 bg-transparent text-primary"
-              >
-                <IoIosArrowDown />
-              </button>
-              {dropdownVisible && (
-                <div
-                  className="dropdown-menu show position-absolute overflow-auto"
-                  style={{ height: "50vh" }}
-                >
-                  {marketData.map((data, index) => (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      className="dropdown-item shadow-lg text-primary fw-medium"
-                      onClick={handleMarketChange}
-                      data-value={data.market.toLowerCase()}
-                      key={index}
-                    >
-                      {data.market.toUpperCase()}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Col>
+      <Row
+        className="mb-1 font-family text-capitalize align-items-center"
+        style={{ color: "#E10174" }}
+      >
+        <Col xs={12} md={6} className="d-flex gap-0">
+          <Col xs={11} md={9}>
+            <h3>Tickets from Market {market.toLowerCase()}</h3>
           </Col>
-        </Row>
+          <Col
+            xs={1}
+            md={3}
+            className="position-relative"
+            ref={dropdownRef}
+            style={{ right: "100px" }}
+          >
+            <button
+              onClick={toggleDropdown}
+              className="border-0 fs-4 bg-transparent text-primary"
+            >
+              <IoIosArrowDown />
+            </button>
+            {dropdownVisible && (
+              <div
+                className="dropdown-menu show position-absolute overflow-auto"
+                style={{ height: "50vh" }}
+              >
+                {marketData.map((data, index) => (
+                  <div
+                    style={{ cursor: "pointer" }}
+                    className="dropdown-item shadow-lg text-primary fw-medium"
+                    onClick={handleMarketChange}
+                    data-value={data.market.toLowerCase()}
+                    key={index}
+                  >
+                    {data.market.toUpperCase()}
+                  </div>
+                ))}
+              </div>
+            )}
+          </Col>
+        </Col>
+      </Row>
 
       {loading ? (
         <div className="loader d-flex align-items-center justify-content-center vh-80"></div>
@@ -333,17 +334,19 @@ const ShowTickets = () => {
                   currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
                   key={ticket.TicketId}
+                  // onDelete={handleDelete}
                 />
               ))
             ) : (
               <tr>
                 <td colSpan="11" className="text-center fw-medium">
-                  <Player
-                    autoplay
-                    loop
-                    src={animationData}
-                    style={{ height: "700px", width: "700px" }}
-                  />
+                  <div className='d-flex justify-content-center align-items-center' style={{ height: '60vh' }}>
+                    <div className='text-center'>
+                      <FaExclamationCircle className='text-secondary' style={{ fontSize: '5rem', marginBottom: '1rem' }} />
+                      <p className='fs-1 fw-bolder text-muted'>No data available ...</p>
+                      <p className='text-muted'>Please check back later or try refreshing the page.</p>
+                    </div>
+                  </div>
                 </td>
               </tr>
             )}

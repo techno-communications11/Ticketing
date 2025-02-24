@@ -14,7 +14,7 @@ import getDecodedToken from "./decodeToken";
 import formatDate from "./FormatDate";
 import { Carousel } from "react-bootstrap";
 import debounce from "lodash/debounce";
-
+import { FaImage } from 'react-icons/fa';
 
 
 const Individualmarketss = () => {
@@ -618,7 +618,7 @@ const Individualmarketss = () => {
       );
     }
   return (
-    <div className="container mt-2">
+    <div className="container-fluid mt-2">
       <h5
         className="mb-3 font-family text-start"
         style={{ color: "#E10174", fontWeight: "bold" }}
@@ -741,11 +741,14 @@ const Individualmarketss = () => {
                 </Carousel>
               ) : (
                 <div
-                  className="card-img-top img-thumbnail text-center d-flex justify-content-center align-items-center"
-                  style={{ height: "250px", width: "100%" }}
-                >
-                  <span>No Images Available</span>
+                className="card-img-top img-thumbnail  text-center d-flex justify-content-center align-items-center bg-light"
+                style={{ height: "250px", width: "100%", borderRadius: "10px" }}
+              >
+                <div className="text-muted border-dotted">
+                  <FaImage size={50} className="mb-3" /> {/* Using the FaImage icon */}
+                  <p className="mb-0">No Images Available</p>
                 </div>
+              </div>
               )}
             </div>
           </div>

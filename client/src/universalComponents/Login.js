@@ -1,8 +1,10 @@
-import React, { useState, useRef, useCallback } from "react";
-import { FaRegEye, FaEyeSlash } from "react-icons/fa";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import { FaRegEye, FaEyeSlash, FaUser, FaLock } from "react-icons/fa"; // React Icons
 import { apiRequest } from "../lib/apiRequest";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import "animate.css"; // For animations
+import "../styles/Login.css"; // Custom CSS for pink theme
 
 export function Login() {
   const ntidRef = useRef(null);
@@ -11,6 +13,18 @@ export function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Disable scrolling when the component mounts
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    // Re-enable scrolling when the component unmounts
+    return () => {
+      document.body.style.overflow = "auto";
+      document.documentElement.style.overflow = "auto";
+    };
+  }, []);
 
   const validatePassword = useCallback((password) => {
     const passwordRegex =
@@ -57,7 +71,7 @@ export function Login() {
         "District Manager": "/dmtabs",
         "Market Manager": "/markethome",
         SuperAdmin: "/superAdminHome",
-        Internal:"/admincreateticket"
+        Internal: "/admincreateticket",
       };
 
       navigate(departmentRoutes[department] || "/departmenthome");
@@ -74,89 +88,100 @@ export function Login() {
   };
 
   return (
-    <div className="container-fluid d-flex flex-column align-items-center justify-content-center mt-5 max-vh-100 ">
+    <div
+      
+      className="container-fluid d-flex flex-column justify-content-center align-items-center bg-pink-light vh-100"
+    >
       {isLoading ? (
         <div className="loader d-flex align-items-center justify-content-center" />
       ) : (
-        <>
-          <div className="my-2 text-center mt-5">
-            <p
-              style={{
-                color: "#E10174",
-                fontFamily: "Arial, sans-serif",
-                fontWeight: "500",
-                fontSize: "1.5rem",
-                display: "inline-block",
-                lineHeight: "1.2",
-              }}
-            >
-              TECHNO COMMUNICATIONS LLC
-            </p>
-          </div>
+        <div className="container-fluid ">
+          <h1 className="font-weight-bold text-center fw-bolder display-1 text-pink mb-5">
+            Welcome Back..
+          </h1>
+          <div className="row justify-content-center align-items-center w-100 ">
+            {/* Left Side: Logo */}
+            <div className="p-5 col-12 col-md-6 d-flex justify-content-center align-items-center animate__animated animate__fadeInLeft">
+              <img
+                loading="lazy"
+                width="500"
+                height="300"
+                className="img-fluid"
+                srcSet="./logoT.webp"
+                alt="Logo"
+              />
+            </div>
 
-          <div className="row justify-content-center align-items-center mt-5">
-            <img
-              loading="lazy"
-              width="800"
-              height="300"
-              className="col-12 col-md-6 col-lg-4 mb-4 d-none d-sm-block h-50 me-5"
-              srcSet="./logoT.webp"
-              alt="Logo"
-            />
-
-            <div className="col-12 mt-5 col-md-6 col-lg-4 d-flex justify-content-center align-items-center">
+            {/* Right Side: Login Form */}
+            <div className="col-12 col-md-6 d-flex justify-content-center align-items-center animate__animated animate__fadeInRight">
               <form
-                className="p-4 rounded shadow-lg w-100 col-12 bg-white"
+                className="p-4 rounded shadow-lg w-100 bg-white"
                 onSubmit={handleSubmit}
+                style={{ maxWidth: "500px" }}
               >
-                <h1 className="font-weight-bold d-flex justify-content-center fs-4 mb-4">
+                <h1 className="font-weight-bold text-center mb-3 fs-2 fw-bolder text-pink">
                   Login
                 </h1>
 
+                {/* NTID Input */}
                 <div className="form-group mb-3">
-                  <input
-                    id="ntid"
-                    type="text"
-                    placeholder="Enter Email / NTID"
-                    className="form-control border shadow-none"
-                    ref={ntidRef}
-                    aria-label="NTID"
-                  />
+                  <div className="input-group">
+                    <span className="input-group-text bg-pink text-white">
+                      <FaUser />
+                    </span>
+                    <input
+                      id="ntid"
+                      type="text"
+                      placeholder="Enter Email / NTID"
+                      className="form-control border shadow-none"
+                      ref={ntidRef}
+                      aria-label="NTID"
+                    />
+                  </div>
                   {errors.ntid && (
                     <span className="text-danger small">{errors.ntid}</span>
                   )}
                 </div>
 
-                <div className="form-group mb-3 position-relative">
-                  <input
-                    id="password"
-                    type={passwordVisible ? "text" : "password"}
-                    placeholder="Enter password"
-                    className="form-control border shadow-none"
-                    ref={passwordRef}
-                    aria-label="Password"
-                  />
-                  <span
-                    className="position-absolute top-50 end-0 translate-middle-y me-3"
-                    onClick={() => setPasswordVisible(!passwordVisible)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {passwordVisible ? <FaRegEye /> : <FaEyeSlash />}
-                  </span>
+                {/* Password Input */}
+                <div className="form-group mb-3">
+                  <div className="input-group">
+                    <span className="input-group-text bg-pink text-white">
+                      <FaLock />
+                    </span>
+                    <input
+                      id="password"
+                      type={passwordVisible ? "text" : "password"}
+                      placeholder="Enter password"
+                      className="form-control border shadow-none"
+                      ref={passwordRef}
+                      aria-label="Password"
+                    />
+                    <span
+                      className="input-group-text text-pink"
+                      onClick={() => setPasswordVisible(!passwordVisible)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {passwordVisible ? <FaRegEye /> : <FaEyeSlash />}
+                    </span>
+                  </div>
+                  {errors.password && (
+                    <span className="text-danger small">{errors.password}</span>
+                  )}
                 </div>
-                {errors.password && (
-                  <span className="text-danger small">{errors.password}</span>
-                )}
 
+                {/* Submit Button */}
                 <div className="mb-3">
                   <button
                     type="submit"
-                    className="btn btn-primary w-100 py-2"
+                    className="btn btn-pink w-100 py-2"
                     disabled={isLoading}
                   >
                     {isLoading ? "Logging in..." : "Login"}
                   </button>
                 </div>
+
+                {/* Error Message */}
                 {errors.general && (
                   <p className="text-danger small text-center">
                     {errors.general}
@@ -165,7 +190,7 @@ export function Login() {
               </form>
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

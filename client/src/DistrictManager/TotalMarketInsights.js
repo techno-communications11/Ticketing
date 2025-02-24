@@ -6,8 +6,8 @@ import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useMyContext } from '../universalComponents/MyContext';
 import { useNavigate } from 'react-router-dom';
-import animationData from "../universalComponents/Animation.json";
-import { Player } from "@lottiefiles/react-lottie-player";
+// import animationData from "../universalComponents/Animation.json";
+// import { Player } from "@lottiefiles/react-lottie-player";
 
 Chart.register(ArcElement, Tooltip, Legend);
 
@@ -89,12 +89,9 @@ function TotalMarketInsights({ dm }) {
                     </Col>
                 </Row>
             ) : (
-                <Player
-                    autoplay
-                    loop
-                    src={animationData}
-                    style={{ height: "700px", width: "700px", marginLeft: '50%' }}
-                />
+               <div>
+                <p>no data available</p>
+               </div>
             )}
         </Container>
     );

@@ -9,6 +9,7 @@ import '../styles/loader.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PageCountStack from '../universalComponents/PageCountStack';
+import '../styles/TicketTable.css';
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -19,13 +20,12 @@ const UserTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 30 ;
+  const itemsPerPage = 30;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await apiRequest.get('/auth/userdata');
-      // console.log(response.data,"hahahj")
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -34,7 +34,6 @@ const UserTable = () => {
     };
     fetchData();
   }, []);
-
 
   const handleSearch = (query) => {
     const input = query.trim().toLowerCase();
@@ -47,7 +46,7 @@ const UserTable = () => {
       const fullname = user.fullname ? user.fullname.toLowerCase() : '';
       const market = user.market && user.market.market ? user.market.market.toLowerCase() : '';
       const dmName = user.dmName ? user.dmName.toLowerCase() : '';
-  
+
       return (
         ntid?.includes(input) ||
         fullname?.includes(input) ||
@@ -56,7 +55,7 @@ const UserTable = () => {
       );
     });
     setUsers(filteredUsers);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
 
   const handleEdit = (user) => {
@@ -106,7 +105,7 @@ const UserTable = () => {
   }, [currentPage, users]);
 
   return (
-    <div className="container">
+    <div className="container-fluid">
       <div className='d-flex justify-content-center mt-1'>
         <div className='col-md-6 d-flex gap-2 rounded align-items-center col-10 my-2' style={{ border: '1.5px solid gray' }}>
           <input
@@ -137,32 +136,34 @@ const UserTable = () => {
                 <h4 className="font-family mb-0" style={{ color: '#E10174' }}>Users Information</h4>
                 <h4 className="mb-0" style={{ color: '#E10174' }}>users: {users.length}</h4>
               </div>
-              <Table striped bordered hover responsive className='table  align-middle text-center table-sm'>
-                <thead>
-                  <tr>
-                  {['SC.No', 'Email / NTID', 'Full Name', 'Market', 'DmName', 'Edit', 'View Profile'].map((header) => (
-                  <th key={header} className='text-center' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
-                ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentItems.map((user, index) => (
-                    <tr key={user.ntid} className='fw-medium'>
-                      <td className='text-center'>{(currentPage - 1) * itemsPerPage+index + 1}</td>
-                      <td className='text-center'>{user.ntid}</td>
-                      <td className='text-center text-capitalize'>{user.fullname?.toLowerCase()}</td>
-                      <td className='text-center text-capitalize'>{user.market ? user.market.market : ""}</td>
-                      <td className='text-center text-capitalize'>{user.dmName}</td>
-                      <td style={{ cursor: 'pointer' }} className='text-center' onClick={() => handleEdit(user)}>
-                        <MdModeEditOutline />
-                      </td>
-                      <td style={{ cursor: 'pointer' }} className='text-center' onClick={() => viewImage(user)}>
-                        <FaEye />
-                      </td>
+              <div className="table-container1">
+                <Table striped bordered hover responsive className='table align-middle text-center table-sm'>
+                  <thead>
+                    <tr>
+                      {['SC.No', 'Email / NTID', 'Full Name', 'Market', 'DmName', 'Edit', 'View Profile'].map((header) => (
+                        <th key={header} className='text-center sticky-header' style={{ backgroundColor: '#E10174', color: 'white' }}>{header}</th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
+                  </thead>
+                  <tbody className="scrollable-body">
+                    {currentItems.map((user, index) => (
+                      <tr key={user.ntid} className='fw-medium'>
+                        <td className='text-center'>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                        <td className='text-center'>{user.ntid}</td>
+                        <td className='text-center text-capitalize'>{user.fullname?.toLowerCase()}</td>
+                        <td className='text-center text-capitalize'>{user.market ? user.market.market : ""}</td>
+                        <td className='text-center text-capitalize'>{user.dmName}</td>
+                        <td style={{ cursor: 'pointer' }} className='text-center' onClick={() => handleEdit(user)}>
+                          <MdModeEditOutline />
+                        </td>
+                        <td style={{ cursor: 'pointer' }} className='text-center' onClick={() => viewImage(user)}>
+                          <FaEye />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
             </div>
           )}
         </div>
@@ -218,7 +219,7 @@ const UserTable = () => {
             </Form.Group>
             <Modal.Footer>
               <Button variant="primary" type="submit">Save</Button>
-            </Modal.Footer> 
+            </Modal.Footer>
           </Form>
         </Modal.Body>
       </Modal>

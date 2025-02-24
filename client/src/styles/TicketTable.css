@@ -58,3 +58,41 @@
     .active-link {
         color: blue; 
     }
+
+
+    .table-container3 {
+        max-height: 74vh; /* Adjust height as needed */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+       
+      }
+
+    .table-container {
+        max-height: 70vh; /* Adjust height as needed */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .table-container1 {
+        max-height: 68vh; /* Adjust height as needed */
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .table-responsive {
+        flex: 1;
+        overflow: auto;
+      }
+      
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+      
+      .scrollable-body {
+        overflow-y: auto;
+        max-height: 60vh; /* Adjust height as needed */
+      }

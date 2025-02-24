@@ -110,13 +110,13 @@ function GetAllDeptTickets() {
   const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <Container className="mt-1">
+    <Container fluid className="mt-1">
       <h3 className="my-2 d-flex justify-content-center my-3" style={{ color: '#E10174' }}>Tickets</h3>
      
       {currentItems.length > 0 ? (
-        <div className="table-responsive container-fluid">
-          <table className="table table-bordered table-hover">
-            <thead>
+        <div className="table-responsive container-fluid table-container">
+          <table className="table table-bordered table-hover ">
+            <thead className='sticky-top' style={{ top: '0', zIndex: '1' }}>
             <tr>
                 {[
                   "SC.No",

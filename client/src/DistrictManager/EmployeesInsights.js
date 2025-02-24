@@ -6,8 +6,8 @@ import Form from "react-bootstrap/Form"; // Import Form component from react-boo
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap is included
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../universalComponents/MyContext";
-import animationData from "../universalComponents/Animation.json";
-import { Player } from "@lottiefiles/react-lottie-player";
+// import animationData from "../universalComponents/Animation.json";
+// import { Player } from "@lottiefiles/react-lottie-player";
 
 const EmployeesInsights = ({ dm }) => {
   const [ticketData, setTicketData] = useState([]);
@@ -166,12 +166,9 @@ const EmployeesInsights = ({ dm }) => {
           </table>
         </div>
       ) : (
-        <Player
-          autoplay
-          loop
-          src={animationData}
-          style={{ height: "700px", width: "700px" }}
-        />
+        <div>
+          <p>No data available</p>
+        </div>
       )}
     </div>
   );

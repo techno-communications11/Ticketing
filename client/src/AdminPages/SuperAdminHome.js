@@ -122,7 +122,7 @@ export function SuperAdminHome() {
   }, [setStatusId, setNtid, setDataDates, navigate, dates]);
 
   return (
-    <Container className="mt-4">
+    <Container  className="mt-4">
       {loading ? (
         <div className="loader d-flex align-items-center justify-content-center max-vh-100">
           {/* Loading Spinner */}

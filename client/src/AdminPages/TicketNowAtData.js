@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { apiRequest } from "../lib/apiRequest";
-// import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import PageCountStack from "../universalComponents/PageCountStack";
@@ -8,8 +7,7 @@ import "../styles/loader.css";
 import TicketBody from "../universalComponents/TicketBody";
 import getDecodedToken from "../universalComponents/decodeToken";
 import { useMyContext } from "../universalComponents/MyContext";
-import animationData from "../universalComponents/Animation.json";
-import { Player } from "@lottiefiles/react-lottie-player";
+import { FaExclamationCircle } from 'react-icons/fa'; // Import the icon from React Icons
 
 function TicketNowAtData() {
   const dispatch = useDispatch();
@@ -57,11 +55,9 @@ function TicketNowAtData() {
 
         setTickets(filteredTickets); // Set the tickets with added openedByFullName
         setAuthenticated(true);
-        // console.log(filteredTickets, "Fetched tickets with full name and date range");
       }
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
-      // toast.error("Failed to fetch tickets");
     } finally {
       setLoading(false);
     }
@@ -81,7 +77,15 @@ function TicketNowAtData() {
     dispatch(fetchIndividualTickets(id));
   };
 
-  if (loading) return <div className="loader"></div>;
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="loader" role="status">
+          {/* <span className="visually-hidden">Loading...</span> */}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-fluid mt-1">
@@ -93,17 +97,19 @@ function TicketNowAtData() {
           Total User Tickets
         </h1>
       )}
+
       {currentItems.length === 0 && (
-        <Player
-          autoplay
-          loop
-          src={animationData}
-          style={{ height: "700px", width: "700px" }}
-        />
+        <div className='d-flex justify-content-center align-items-center' style={{ height: '80vh' }}>
+          <div className='text-center'>
+            <FaExclamationCircle className='text-secondary' style={{ fontSize: '5rem', marginBottom: '1rem' }} />
+            <p className='fs-1 fw-bolder text-muted'>No data available ...</p>
+            <p className='text-muted'>Please check back later or try refreshing the page.</p>
+          </div>
+        </div>
       )}
 
-      {authenticated && (
-        <div className="table-responsive " style={{ zIndex: 1 }}>
+      {authenticated && currentItems.length > 0 && (
+        <div className="table-container">
           <table className="table table-bordered table-hover">
             <thead>
               <tr>
@@ -124,7 +130,7 @@ function TicketNowAtData() {
                     header && (
                       <th
                         key={header}
-                        className="text-center"
+                        className="text-center sticky-header"
                         style={{ backgroundColor: "#E10174", color: "white" }}
                       >
                         {header}
@@ -133,30 +139,23 @@ function TicketNowAtData() {
                 )}
               </tr>
             </thead>
-            <tbody>
-              {currentItems.length > 0 ? (
-                currentItems.map((ticket, index) => (
-                  <TicketBody
-                    fetchUserTickets={fetchUserTickets}
-                    key={ticket.id}
-                    ticket={ticket}
-                    index={index}
-                    handleTicket={handleTicket}
-                    currentPage={currentPage}
-                    itemsPerPage={itemsPerPage}
-                  />
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" className="text-center">
-                    No tickets found
-                  </td>
-                </tr>
-              )}
+            <tbody className="scrollable-body">
+              {currentItems.map((ticket, index) => (
+                <TicketBody
+                  fetchUserTickets={fetchUserTickets}
+                  key={ticket.id}
+                  ticket={ticket}
+                  index={index}
+                  handleTicket={handleTicket}
+                  currentPage={currentPage}
+                  itemsPerPage={itemsPerPage}
+                />
+              ))}
             </tbody>
           </table>
         </div>
       )}
+
       {currentItems.length > 0 && (
         <PageCountStack
           filteredTickets={tickets}

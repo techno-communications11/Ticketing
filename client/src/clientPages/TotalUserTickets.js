@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { apiRequest } from "../lib/apiRequest";
-// import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import PageCountStack from "../universalComponents/PageCountStack";
@@ -16,8 +15,8 @@ import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from "../universalComponents/FullNameFilter";
 import getDecodedToken from "../universalComponents/decodeToken";
-import animationData from '../universalComponents/Animation.json'
-import { Player } from "@lottiefiles/react-lottie-player";
+import { FaExclamationCircle } from 'react-icons/fa';
+import '../styles/TicketTable.css';
 
 function TotalUserTickets() {
   const dispatch = useDispatch();
@@ -31,7 +30,7 @@ function TotalUserTickets() {
   const [ntidFilter, setntidFilter] = useState("");
   const [fullnameFilter, setFullnameFilter] = useState("");
   const itemsPerPage = 30;
-  let { adminntid, statusId, Dates } = useMyContext();
+  const { adminntid, statusId, Dates } = useMyContext();
   const storedDates = JSON.parse(localStorage.getItem('dates')) || {};
   const { startDate, endDate } = Dates || storedDates;
 
@@ -40,7 +39,6 @@ function TotalUserTickets() {
   const [createdAtToggle, setCreatedAtToggle] = useState(false);
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [fullnameToggle, setFullnameToggle] = useState(false);
-  console.log(completedAt,'llllllllllllvda')
 
   const handleFullnameFilterClick = () => {
     setFullnameToggle(!fullnameToggle);
@@ -80,14 +78,13 @@ function TotalUserTickets() {
 
   const fetchUserTickets = async () => {
     setLoading(true);
-    const params = new URLSearchParams(); // Create a new URLSearchParams object
-    let url = `/createTickets/usertickets`; // Base URL
+    const params = new URLSearchParams();
+    let url = `/createTickets/usertickets`;
 
     try {
-      // console.log(adminntid,"assdsss")
       const storedAdminntid = localStorage.getItem("adminntid");
       const storedStatusId = localStorage.getItem("statusId");
-      
+
       if (adminntid || storedAdminntid) {
         params.append("ntid", adminntid || storedAdminntid);
       }
@@ -99,37 +96,30 @@ function TotalUserTickets() {
       }
 
       if (params.toString()) {
-        // Only append params if there are any
         url += `?${params.toString()}`;
       }
-
-      // Output the final URL for verification
 
       const response = await apiRequest.get(url);
       if (response.status === 200) {
         const data = response.data.data.filter((ticket) => {
           if (startDate && endDate) {
-            const ticketDate = new Date(ticket.createdAt)
-              .toISOString()
-              .slice(0, 10); // Format as YYYY-MM-DD
+            const ticketDate = new Date(ticket.createdAt).toISOString().slice(0, 10);
             return ticketDate >= startDate && ticketDate <= endDate;
           }
-          return true; // Include all tickets if no date filters are provided
+          return true;
         });
 
         setTickets(data);
-        // console.log(response.data,"llllllllll")
         setAuthenticated(true);
       }
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
-      console.log("Failed to fetch tickets");
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    // Only call fetchUserTickets if adminntid is not null
     fetchUserTickets();
   }, [statusId, adminntid, Dates]);
 
@@ -147,31 +137,29 @@ function TotalUserTickets() {
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  // Handle ticket click
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
 
-  // console.log(tickets,"uuuuuuuuuui")
-
-  // Render loading spinner
   if (loading) return <div className="loader"></div>;
 
   return (
     <div className="container-fluid mt-1">
-      { currentItems.length>0&&<h4
-        className="my-2 d-flex justify-content-center"
-        style={{ color: "#E10174", fontSize: "1.5rem" }}
-      >
-        Total User Tickets
-      </h4>}
+      {currentItems.length > 0 && (
+        <h4
+          className="my-2 d-flex justify-content-center"
+          style={{ color: "#E10174", fontSize: "1.5rem" }}
+        >
+          Total User Tickets
+        </h4>
+      )}
 
       {authenticated && (
-        <div className="table-responsive " style={{ zIndex: 1 }}>
-          <table className="table table-bordered table-hover table-sm" style={{fontSize:'0.95rem'}}>
-            <thead>
+        <div className="table-responsive table-container3" style={{ zIndex: 1 }}>
+          <table className="table table-bordered table-hover table-sm" style={{ fontSize: '0.95rem' }}>
+            <thead className="sticky-top" style={{ top: 0, zIndex: 1 }}>
               <tr>
                 {[
                   "SC.No",
@@ -179,9 +167,7 @@ function TotalUserTickets() {
                   "Full Name",
                   "Status",
                   "CreatedAt",
-                  ...(department === "SuperAdmin"
-                    ? ["Now At", "CompletedBy"]
-                    : []),
+                  ...(department === "SuperAdmin" ? ["Now At", "CompletedBy"] : []),
                   "CompletedAt",
                   "Duration",
                   "Details",
@@ -235,7 +221,6 @@ function TotalUserTickets() {
                           style={{ cursor: "pointer", marginLeft: "0.5rem" }}
                           onClick={handleNTIDFilterClick}
                         />
-
                         {ntidFilterToggle && (
                           <div className="dropdown-menu show">
                             <NtidFilter
@@ -299,31 +284,31 @@ function TotalUserTickets() {
                     handleTicket={handleTicket}
                     currentPage={currentPage}
                     itemsPerPage={itemsPerPage}
+                    tickets={tickets} // Added tickets prop
+                    setTickets={setTickets}
                   />
                 ))
               ) : (
-                <tr>
-                 
-                </tr>
+                <tr></tr>
               )}
             </tbody>
           </table>
         </div>
       )}
-      {currentItems.length>0?<PageCountStack
-        filteredTickets={filteredTickets}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        itemsPerPage={itemsPerPage}
-      />: <div className="vh-100  mb-5 d-flex flex-row align-items-center justify-content-center">
-      <Player
-       autoplay
-       loop
-       src={animationData}
-       style={{ height: "700px", width: "700px" }}
-     />
-    
-     </div>}
+      {currentItems.length > 0 ? (
+        <PageCountStack
+          filteredTickets={filteredTickets}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+        />
+      ) : (
+        <div className='d-flex flex-column align-items-center justify-content-center' style={{ height: '80vh' }}>
+          <FaExclamationCircle className='text-secondary' style={{ fontSize: '5rem', marginBottom: '1rem' }} />
+          <p className='fs-1 fw-bolder text-muted'>No data available ...</p>
+          <p className='text-muted'>Please check back later or try refreshing the page.</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -16,8 +16,8 @@ import StatusFilter from '../universalComponents/StatusFilter';
 import FilterLogic from '../universalComponents/FilteringLogic';
 import TicketBody from '../universalComponents/TicketBody';
 import '../styles/TicketTable.css'
-import animationData from "../universalComponents/Animation.json";
-import { Player } from "@lottiefiles/react-lottie-player";
+// import animationData from "../universalComponents/Animation.json";
+// import { Player } from "@lottiefiles/react-lottie-player";
 
 
 const TicketsTable = ({ statusIds, text,logedInuser }) => {
@@ -234,12 +234,9 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="8" className='text-center'><Player
-          autoplay
-          loop
-          src={animationData}
-          style={{ height: "700px", width: "700px" }}
-        /></td>
+                <td colSpan="8" className='text-center'>
+                  no data available
+                </td>
               </tr>
             )}
           </tbody>

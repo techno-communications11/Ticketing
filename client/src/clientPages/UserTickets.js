@@ -14,8 +14,10 @@ import "../styles/TicketTable.css";
 import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
 import getDecodedToken from "../universalComponents/decodeToken";
-import animationData from "../universalComponents/Animation.json";
-import { Player } from "@lottiefiles/react-lottie-player";
+// import animationData from "../universalComponents/Animation.json";
+// import { Player } from "@lottiefiles/react-lottie-player";
+import { FaExclamationCircle } from 'react-icons/fa'; // Import the icon from React Icons
+
 
 const UserTickets = () => {
   const dispatch = useDispatch();
@@ -38,8 +40,8 @@ const UserTickets = () => {
   const ticketArray = Array.isArray(userTickets)
     ? userTickets
     : Array.isArray(tickets)
-    ? tickets
-    : [];
+      ? tickets
+      : [];
 
   useEffect(() => {
     const statusToFetch = selectedStatus || localStorage.getItem("statusData");
@@ -69,9 +71,9 @@ const UserTickets = () => {
 
   const filteredTickets = createdAt
     ? ticketArray.filter(
-        (ticket) =>
-          new Date(ticket.createdAt).toISOString().split("T")[0] === createdAt
-      )
+      (ticket) =>
+        new Date(ticket.createdAt).toISOString().split("T")[0] === createdAt
+    )
     : ticketArray;
 
   const currentItems = filteredTickets.slice(
@@ -286,12 +288,13 @@ const UserTickets = () => {
               ) : (
                 <tr>
                   <td colSpan="8" className="text-center">
-                    <Player
-                      autoplay
-                      loop
-                      src={animationData}
-                      style={{ height: "700px", width: "700px" }}
-                    />
+                    <div className='d-flex justify-content-center align-items-center' style={{ height: '70vh' }}>
+                      <div className='text-center'>
+                        <FaExclamationCircle className='text-secondary' style={{ fontSize: '5rem', marginBottom: '1rem' }} />
+                        <p className='fs-1 fw-bolder text-muted'>No data available ...</p>
+                        <p className='text-muted'>Please check back later or try refreshing the page.</p>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               )}

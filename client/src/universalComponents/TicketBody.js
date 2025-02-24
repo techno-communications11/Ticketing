@@ -3,7 +3,6 @@ import { GrLinkNext } from "react-icons/gr";
 import { Link } from "react-router-dom";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import getDecodedToken from "./decodeToken";
 import { apiRequest } from "../lib/apiRequest";
 import { getDuration } from "../universalComponents/getDuration";
@@ -12,14 +11,18 @@ import formatDate from "../universalComponents/FormatDate";
 import "../styles/TicketTable.css";
 import "../styles/loader.css";
 
-const TicketBody = React.memo(({ ticket, index, currentPage, itemsPerPage, handleTicket }) => {
+const TicketBody = React.memo(({ 
+  ticket, 
+  index, 
+  currentPage, 
+  itemsPerPage, 
+  handleTicket, 
+  fetchUserTickets, 
+  tickets, // No default needed since parent provides it
+  setTickets 
+}) => {
   const [loading, setLoading] = useState(false);
   const department = getDecodedToken().department;
-  const navigate = useNavigate();
-  const Departments = [
-    "Admin",
-    "Software India"
-  ];
 
   const badgeClasses = useMemo(() => ({
     opened: "bg-secondary",
@@ -41,35 +44,41 @@ const TicketBody = React.memo(({ ticket, index, currentPage, itemsPerPage, handl
 
   const handleDelete = useCallback(async (ticketId) => {
     setLoading(true);
+    
+    // Optimistically update the UI by removing the ticket
+    const previousTickets = [...tickets]; // Store previous state for rollback
+    const updatedTickets = tickets.filter(t => t.ticketId !== ticketId);
+    setTickets(updatedTickets);
+
     try {
       const response = await apiRequest.get(`/createTickets/deleteticket/${ticketId}`);
-
       if (response.status === 200) {
-        toast.success("Deleted successfully");
         setTimeout(() => {
-          navigate('/SuperAdminHome');
-        }, 1500);
+          toast.success("Ticket deleted successfully!");
+        }, 1000);
       }
     } catch (error) {
       console.error("Error deleting ticket:", error);
-      toast.error("Failed to delete ticket. Please try again.");
+      setTickets(previousTickets); // Revert to previous state on error
+      fetchUserTickets(); // Fallback to refresh data
+      toast.error("Failed to delete ticket. Data has been refreshed.");
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  }, [tickets, setTickets, fetchUserTickets]);
 
   const renderCell = useCallback((content, className = '') => (
-    <td className={`${ticket.isSettled  ? 'bg-secondary text-white text-center fw-medium text-shrink bg-opacity-50 text-capitalize' : `text-center fw-medium text-shrink  text-capitalize ${className}`}`}>
+    <td className={`${ticket.isSettled ? 'bg-secondary text-white text-center fw-medium text-shrink bg-opacity-50 text-capitalize' : `text-center fw-medium text-shrink text-capitalize ${className}`}`}>
       {content}
     </td>
-  ), [ticket, department, Departments]);
+  ), [ticket]);
 
   if (loading) {
     return (
       <tr>
         <td colSpan="10" className="text-center">
-          <div className=" loader" role="status" aria-hidden="true">
-          
+          <div className="loader" role="status" aria-hidden="true">
+            {/* Add your loader animation here */}
           </div>
         </td>
       </tr>
@@ -83,7 +92,7 @@ const TicketBody = React.memo(({ ticket, index, currentPage, itemsPerPage, handl
       {renderCell(ticket.fullname)}
       {renderCell(
         <span className={`badge rounded-pill ${badgeClasses[ticket.status?.name] || "bg-secondary"}`}>
-          {ticket.isSettled ? "Settled": statusTexts[ticket.status?.name] }
+          {ticket.isSettled ? "Settled" : statusTexts[ticket.status?.name]}
         </span>
       )}
       {renderCell(formatDate(ticket.createdAt))}

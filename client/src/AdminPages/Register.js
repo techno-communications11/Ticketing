@@ -1,12 +1,13 @@
 import React, { useState, useRef } from "react";
 import { apiRequest } from "../lib/apiRequest";
-import { FaRegEye, FaEyeSlash } from "react-icons/fa";
+import { FaRegEye, FaEyeSlash, FaUser, FaLock, FaUpload } from "react-icons/fa"; // React Icons
 import "../styles/loader.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FileUploads from "../universalComponents/FileUploads";
 import ReusableButtons from "../universalComponents/ReusableButtons";
 import { Dropdown } from "react-bootstrap";
+import "../styles/Register.css"; // Custom CSS for styling
 
 export function Register() {
   const NTIDRef = useRef("");
@@ -167,9 +168,9 @@ export function Register() {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row align-items-center justify-content-center">
-        <div className="col-12 col-md-6 col-lg-10">
+    <div style={{minHeight:'39rem'}} className="container-fluid d-flex flex-column align-items-center justify-content-center">
+      <div className="row justify-content-center align-items-center w-100">
+        <div className="col-12 col-md-8 col-lg-6">
           <ReusableButtons
             bigText="Register User"
             smallText="Upload"
@@ -180,49 +181,84 @@ export function Register() {
             <div className="d-flex justify-content-center mt-5 h-auto">
               <form
                 onSubmit={handleSubmit}
-                className="col-12 col-md-4 shadow-lg p-3 rounded"
+                className="col-12 col-md-8 shadow-lg p-4 rounded bg-white"
               >
-                <h5 className="text-center font-family mb-2">Register User</h5>
-                <input
-                  type="text"
-                  id="ntid"
-                  placeholder="Enter Email / NTID"
-                  className={`form-control my-1 ${
-                    !isNtidValid ? "input-error" : ""
-                  }`}
-                  ref={NTIDRef}
-                />
-                <input
-                  type="text"
-                  id="fullName"
-                  placeholder="Full Name"
-                  className={`form-control my-1 ${
-                    !isFullnameValid ? "input-error" : ""
-                  }`}
-                  ref={fullNameRef}
-                />
+                <h2 className="text-center font-weight-bold mb-4 text-pink">
+                  Register User
+                </h2>
+                <div className="form-group mb-3">
+                  <div className="input-group">
+                    <span className="input-group-text bg-pink text-white">
+                      <FaUser />
+                    </span>
+                    <input
+                      type="text"
+                      id="ntid"
+                      placeholder="Enter Email / NTID"
+                      className={`form-control ${
+                        !isNtidValid ? "input-error" : ""
+                      }`}
+                      ref={NTIDRef}
+                    />
+                  </div>
+                  {!isNtidValid && (
+                    <span className="text-danger small">NTID is required.</span>
+                  )}
+                </div>
 
-                <Dropdown>
-                  <Dropdown.Toggle
-                    id="roleDropdown"
-                    className={`form-control bg-transparent text-dark text-start border-secondary shadow-none my-1 ${
-                      !isRoleValid ? "input-error" : ""
-                    }`}
-                  >
-                    {selectedRole || "Select Role"}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu   style={{overflowY:"auto",height:"300px"}}>
-                    {userRoles.map((role, index) => (
-                      <Dropdown.Item
-                      className="shadow-lg text-primary"
-                        key={index}
-                        onClick={() => handleSelect(role)}
-                      >
-                        {role}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+                <div className="form-group mb-3">
+                  <div className="input-group">
+                    <span className="input-group-text bg-pink text-white">
+                      <FaUser />
+                    </span>
+                    <input
+                      type="text"
+                      id="fullName"
+                      placeholder="Full Name"
+                      className={`form-control ${
+                        !isFullnameValid ? "input-error" : ""
+                      }`}
+                      ref={fullNameRef}
+                    />
+                  </div>
+                  {!isFullnameValid && (
+                    <span className="text-danger small">
+                      Full Name is required.
+                    </span>
+                  )}
+                </div>
+
+                <div className="form-group mb-3">
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      id="roleDropdown"
+                      className={`form-control bg-transparent text-dark text-start border-secondary ${
+                        !isRoleValid ? "input-error" : ""
+                      }`}
+                    >
+                      {selectedRole || "Select Role"}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu
+                      style={{ overflowY: "auto", height: "300px" }}
+                    >
+                      {userRoles.map((role, index) => (
+                        <Dropdown.Item
+                          className="shadow-lg text-primary"
+                          key={index}
+                          onClick={() => handleSelect(role)}
+                        >
+                          {role}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                  {!isRoleValid && (
+                    <span className="text-danger small">
+                      Role is required.
+                    </span>
+                  )}
+                </div>
+
                 {selectedRole &&
                   [
                     "Admin",
@@ -232,59 +268,85 @@ export function Register() {
                     "HR Payroll",
                     "Commission",
                   ].includes(selectedRole) && (
-                    <Dropdown>
-                      <Dropdown.Toggle
-                        id="subRoleDropdown"
-                        className="form-control bg-transparent text-dark text-start border-secondary "
-                      >
-                        {selectedSubRole || "Select Subrole"}
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        {subUserroles.map((role, index) => (
-                          <Dropdown.Item
-                          className="shadow-lg text-primary"
-                            key={index}
-                            onClick={() => handleSubSelect(role)}
-                          >
-                            {role}
-                          </Dropdown.Item>
-                        ))}
-                      </Dropdown.Menu>
-                    </Dropdown>
+                    <div className="form-group mb-3">
+                      <Dropdown>
+                        <Dropdown.Toggle
+                          id="subRoleDropdown"
+                          className="form-control bg-transparent text-dark text-start border-secondary"
+                        >
+                          {selectedSubRole || "Select Subrole"}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          {subUserroles.map((role, index) => (
+                            <Dropdown.Item
+                              className="shadow-lg text-primary"
+                              key={index}
+                              onClick={() => handleSubSelect(role)}
+                            >
+                              {role}
+                            </Dropdown.Item>
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
                   )}
 
                 {["Employee", "Market Manager"].includes(selectedRole) && (
-                  <input
-                    type="text"
-                    id="doorCode"
-                    placeholder="Door Code"
-                    className="form-control my-1"
-                    ref={DoorCodeRef}
-                  />
+                  <div className="form-group mb-3">
+                    <div className="input-group">
+                      <span className="input-group-text bg-pink text-white">
+                        <FaLock />
+                      </span>
+                      <input
+                        type="text"
+                        id="doorCode"
+                        placeholder="Door Code"
+                        className="form-control"
+                        ref={DoorCodeRef}
+                      />
+                    </div>
+                  </div>
                 )}
-                <div className="input-group">
-                  <input
-                    type={passwordVisible ? "text" : "password"}
-                    placeholder="Password"
-                    className="form-control my-1"
-                    ref={passwordRef}
-                  />
-                  <span
-                    className="input-group-text"
-                    onClick={handlePasswordToggle}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {passwordVisible ? <FaRegEye /> : <FaEyeSlash />}
-                  </span>
+
+                <div className="form-group mb-3">
+                  <div className="input-group">
+                    <span className="input-group-text bg-pink text-white">
+                      <FaLock />
+                    </span>
+                    <input
+                      type={passwordVisible ? "text" : "password"}
+                      placeholder="Password"
+                      className="form-control"
+                      ref={passwordRef}
+                    />
+                    <span
+                      className="input-group-text bg-pink text-white"
+                      onClick={handlePasswordToggle}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {passwordVisible ? <FaRegEye /> : <FaEyeSlash />}
+                    </span>
+                  </div>
+                  {!isPasswordValid && (
+                    <span className="text-danger small">
+                      Password must meet the criteria.
+                    </span>
+                  )}
                 </div>
-                <button type="submit" className="btn btn-primary w-100">
+
+                <button
+                  type="submit"
+                  className="btn btn-pink w-100 py-2"
+                  disabled={loading}
+                >
                   {loading ? (
-                    <div class="spinner-border text-muted"></div>
+                    <div className="spinner-border text-light"></div>
                   ) : (
                     "Register"
                   )}
                 </button>
               </form>
+
               <img
                 src="./register.webp"
                 alt="register user"

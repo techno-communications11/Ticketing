@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
 import { Pie } from "react-chartjs-2"; // Import the Pie chart component
+import { FaArrowRight, FaTicketAlt, FaChartPie, FaSync, FaCheckCircle, FaExclamationCircle, FaUserClock } from "react-icons/fa"; // React Icons
 import getDecodedToken from "../universalComponents/decodeToken";
 import { apiRequest } from "../lib/apiRequest";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../universalComponents/MyContext";
-import { FaArrowRight } from "react-icons/fa";
-
 
 function DepartmentHome() {
   const department = getDecodedToken()?.department;
@@ -15,7 +14,6 @@ function DepartmentHome() {
   const navigate = useNavigate();
   const { setStatusId, setDepartment } = useMyContext();
   const usersId = getDecodedToken().id;
-  // console.log(usersId, "deep");
 
   useEffect(() => {
     const getStatusOfDepartment = async () => {
@@ -24,13 +22,7 @@ function DepartmentHome() {
         const response = await apiRequest.get(
           `/createTickets/getDepartmentStats/${department}/${usersId}`
         );
-        // console.log(response,'lllllllllllllllllll')
-  
         if (response.status === 200) {
-          // Filter the data based on openedBy
-          // const filteredData = response.data.filter((ticket) => ticket.openedBy === usersId);
-  
-          // Map the filtered data into key-value pairs
           setCounts(
             Object.entries(response.data).map(([key, value]) => ({
               key,
@@ -44,12 +36,11 @@ function DepartmentHome() {
         setLoading(false);
       }
     };
-  
+
     if (department) {
       getStatusOfDepartment();
     }
   }, [department, usersId]);
-  
 
   // Filter out the "total" entry from the counts array
   const filteredCounts = counts.filter((count) => count.key !== "Total");
@@ -77,65 +68,71 @@ function DepartmentHome() {
       },
     ],
   };
+
   const handleClick = (status) => {
-    if (status === "Total") {
-      status = "0";
-    }
-    if (status === "new") {
-      status = "1";
-    }
-    if (status === "opened") {
-      status = "2";
-    }
-    if (status === "inprogress") {
-      status = "3";
-    }
-    if (status === "completed") {
-      status = "4";
-    }
-    if (status === "reopened") {
-      status = "5";
-    }
+    const statusMap = {
+      Total: "0",
+      new: "1",
+      opened: "2",
+      inprogress: "3",
+      completed: "4",
+      reopened: "5",
+    };
+    const statusId = statusMap[status] || "0";
     localStorage.setItem("department", department);
-    // console.log(department, status, "deeee");
     setDepartment(department);
-    setStatusId(status);
+    setStatusId(statusId);
     navigate("/showdeptwiseticks");
   };
-  const getDepartmentdata=getDecodedToken().subDepartment;
+
+  const getDepartmentdata = getDecodedToken().subDepartment;
 
   return loading ? (
-    <div className="loading"></div>
+    <div className="d-flex justify-content-center align-items-center vh-100">
+      <Spinner animation="border" role="status" variant="primary">
+        <span className="visually-hidden"></span>
+      </Spinner>
+    </div>
   ) : (
-    <Container>
-      {
-        getDepartmentdata==='Manager' &&
-        <div className="mt-2"><p className="fs-5 p-1 mt-1  text-primary text-decoration-none  text-capitalize rounded">all tickets in department <a href="/getalldepartmenttickets"> <FaArrowRight/> </a> </p></div>
-      }
-      
-      <h2 className="mt-4 text-center" style={{ color: "#E10174" }}>
-        {department} Department statusData
+    <Container fluid>
+      {getDepartmentdata === 'Manager' && (
+        <div className="mt-3 text-end">
+          <p className="fs-5 p-1 text-primary text-decoration-none text-capitalize">
+            All tickets in department <a href="/getalldepartmenttickets"><FaArrowRight /></a>
+          </p>
+        </div>
+      )}
+
+      <h2 className="text-center my-4" style={{ color: "#E10174" }}>
+        {department} Department Status
       </h2>
-      <Row className="d-flex  justify-content-center mt-5">
-        <Col md={8} className="d-flex flex-wrap justify-content-center gap-3 ">
+
+      <Row className="justify-content-center p-3">
+        <Col md={8} className="d-flex flex-wrap justify-content-center gap-4">
           {counts.map((count, index) => (
             <Card
               key={index}
-              style={{ cursor: "pointer",width:'20rem',height:'10rem' }}
+              style={{ cursor: "pointer", width: "18rem", height: "10rem" }}
+              className="shadow-sm hover-shadow-lg transition-all"
               onClick={() => handleClick(count.key)}
             >
-              <Card.Body className="text-center  mt-3">
+              <Card.Body className="d-flex flex-column justify-content-center align-items-center">
                 <h3 style={{ color: "#E10174" }}>{count.value}</h3>
-                <h4>{count.key}</h4>
+                <h4 className="text-center">{count.key}</h4>
               </Card.Body>
             </Card>
           ))}
         </Col>
-        <Col
-          md={4}
-          className="d-flex align-items-center justify-content-center "
-        >
-          <Pie data={pieData} /> {/* Pie chart component */}
+
+        <Col md={4} className="d-flex align-items-center justify-content-center">
+          <Card className="shadow-sm p-3">
+            <Card.Body>
+              <h5 className="text-center mb-4">
+                <FaChartPie className="me-2" /> Status Overview
+              </h5>
+              <Pie data={pieData} />
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </Container>

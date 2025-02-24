@@ -14,8 +14,8 @@ import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from "../universalComponents/FullNameFilter";
 import StatusFilter from "../universalComponents/StatusFilter";
 import PageCountStack from "../universalComponents/PageCountStack";
-import animationData from "../universalComponents/Animation.json";
-import { Player } from "@lottiefiles/react-lottie-player";
+// import animationData from "../universalComponents/Animation.json";
+// import { Player } from "@lottiefiles/react-lottie-player";
 
 function RequestReopen() {
   const dispatch = useDispatch();
@@ -244,12 +244,7 @@ function RequestReopen() {
           ) : (
             <tr>
               <td colSpan="8" className="text-center">
-              <Player
-          autoplay
-          loop
-          src={animationData}
-          style={{ height: "700px", width: "700px" }}
-        />
+             no data available
               </td>
             </tr>
           )}

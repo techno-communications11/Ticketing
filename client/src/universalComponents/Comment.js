@@ -33,12 +33,12 @@ function Comment({
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-100 d-flex flex-column border rounded mt-2"
+      className="w-100 d-flex flex-column border rounded mt-2 p-2"
     >
-      <div className="d-flex align-items-center">
+      <div className="d-flex align-items-center flex-wrap">
         {/* Add Image Button */}
         <RiImageAddFill
-          className="fs-4 ms-3"
+          className="fs-4 ms-2 ms-md-3"
           style={{ cursor: "pointer", color: "#E10174" }}
           onClick={handleUploadClick}
         />
@@ -55,7 +55,7 @@ function Comment({
           value={comment}
           onChange={handleCommentChange}
           placeholder="Enter Comment"
-          className="fw-medium rounded-3 border-0 bg-transparent flex-grow-1"
+          className="fw-medium rounded-3 border-0 bg-transparent flex-grow-1 mx-2"
           rows={1}
           style={{
             resize: "none",
@@ -65,8 +65,8 @@ function Comment({
             textAlign: "center",
             lineHeight: "1.5",
             minHeight: "50px",
-            padding: "15px 5px",
-            marginRight: "10px",
+            padding: "10px 5px",
+            fontSize: "0.9rem", // Smaller font size for mobile
           }}
           required
           disabled={commentLoading}
@@ -93,10 +93,12 @@ function Comment({
           <ul className="list-unstyled">
             {selectedFiles.map((file, index) => (
               <li key={index} className="d-flex align-items-center text-muted">
-                {file.name}
+                <span className="text-truncate" style={{ maxWidth: "150px" }}>
+                  {file.name}
+                </span>
                 <Button
                   variant="link"
-                  className="text-danger ms-3"
+                  className="text-danger ms-2"
                   onClick={() => removeFile(index)}
                 >
                   <ImCross className="text-danger" />

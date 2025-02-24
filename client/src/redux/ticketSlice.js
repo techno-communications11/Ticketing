@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiRequest } from '../lib/apiRequest';
 
+// Async thunk to fetch tickets
 export const fetchTickets = createAsyncThunk(
   'tickets/fetchTickets',
   async (market) => {
@@ -8,6 +9,7 @@ export const fetchTickets = createAsyncThunk(
       params: { market },
     });
 
+    // Sort tickets by createdAt date in descending order
     const sortedTickets = response.data.sort((a, b) => {
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
@@ -16,12 +18,20 @@ export const fetchTickets = createAsyncThunk(
   }
 );
 
+// Create the ticket slice
 const ticketSlice = createSlice({
   name: 'tickets',
   initialState: {
     tickets: [],
     loading: false,
     error: null,
+  },
+  reducers: {
+    // Reducer to delete a ticket from the state
+    deleteTicket: (state, action) => {
+      const ticketId = action.payload;
+      state.tickets = state.tickets.filter((ticket) => ticket.ticketId !== ticketId);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -39,4 +49,8 @@ const ticketSlice = createSlice({
   },
 });
 
+// Export the deleteTicket action
+export const { deleteTicket } = ticketSlice.actions;
+
+// Export the reducer
 export default ticketSlice.reducer;
