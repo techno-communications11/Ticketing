@@ -1,10 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Login}  from './universalComponents/Login';
+import { Login } from './universalComponents/Login';
 import { Profile } from './universalComponents/Profile';
 import { Home } from './clientPages/Home';
 import { NavbarClient } from './universalComponents/NavbarClient';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
+ import { useEffect } from 'react';
 import { Register } from './AdminPages/Register';
 import { SuperAdminHome } from './AdminPages/SuperAdminHome';
 import MarketDetailed from './AdminPages/DetailedTickets';
@@ -16,27 +17,26 @@ import Users from './AdminPages/Users';
 import New from './DistrictManager/New';
 import OpenedTickets from './DistrictManager/OpenedTickets';
 import Completed from './DistrictManager/Completed';
-import  Markethome from './MarketManager/Markethome'
+import Markethome from './MarketManager/Markethome';
 import DepartmentWiseTickets from './Department/DepartmentWiseTickets';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import TotalUserTickets from './clientPages/TotalUserTickets';
 import DepartmentNew from './Department/DepartmentNew';
 import DepartmentHome from './Department/DepartmentHome';
-import RequestReopen from './DistrictManager/RequestReopen'
+import RequestReopen from './DistrictManager/RequestReopen';
 import Tickets_From_Team from './Department/Tickets_From_Team';
 import DepartmentOpened from './Department/DepartmentOpened';
-import Market_Department from './AdminPages/Market_Department'
-import DMTabs from './DistrictManager/DMTabs'
+import Market_Department from './AdminPages/Market_Department';
+import DMTabs from './DistrictManager/DMTabs';
 import { MyProvider } from './universalComponents/MyContext';
 import Inprogress from './DistrictManager/Inprogress';
 import Reopened from './DistrictManager/Reopened';
 import DepartmentsInsightsData from './DistrictManager/DepartmentsInsightsData';
 import ShowdepartWiseTicks from './AdminPages/ShowdepartWiseTicks';
 import { AdminTicketCreate } from './AdminPages/AdminTicketCreate';
-import {DmsCreateTicket} from './DistrictManager/DmsCreateTicket';
+import { DmsCreateTicket } from './DistrictManager/DmsCreateTicket';
 import GetAllDeptTickets from './Department/GetAllDeptTickets';
 import TicketNowAtData from './AdminPages/TicketNowAtData';
-
 
 const getToken = () => localStorage.getItem('token');
 const decodeToken = () => {
@@ -48,11 +48,18 @@ const superAdminDepartments = ['SuperAdmin'];
 const districtManagerDepartments = ['District Manager', 'Employee'];
 const marketManagerDepartments = ['Market Manager'];
 const departmentDepartments = [
-  'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups',  'Commission',
-   'Inventory',  'Housing',
-  'CAM NW', 'HR Payroll','Maintenance','Admin',"Software India","Reporting"
+  'NTID Mappings', 'Trainings', 'Accessories Order', 'YUBI Key Setups', 'Commission',
+  'Inventory', 'Housing', 'CAM NW', 'HR Payroll', 'Maintenance', 'Admin', "Software India", "Reporting"
 ];
-const internalDepartment=['Internal'];
+const internalDepartment = ['Internal'];
+
+const departmentRoutes = {
+  Employee: "/home",
+  "District Manager": "/dmtabs",
+  "Market Manager": "/markethome",
+  SuperAdmin: "/superAdminHome",
+  Internal: "/admincreateticket",
+};
 
 const ProtectedRoute = ({ children, allowedDepartments }) => {
   const token = getToken();
@@ -68,7 +75,20 @@ const ProtectedRoute = ({ children, allowedDepartments }) => {
 
 const AppContent = () => {
   const location = useLocation();
-  const showNavbar = location.pathname !== '/'; 
+  const navigate = useNavigate();
+  const token = getToken();
+  const decodedToken = decodeToken();
+  const userDepartment = decodedToken?.department;
+
+  // Redirect logged-in users to their respective home pages if they try to access the root path
+  useEffect(() => {
+    if (token && location.pathname === '/') {
+      const route = departmentRoutes[userDepartment] || "/home"; // Default to "/home" if department is not found
+      navigate(route, { replace: true });
+    }
+  }, [token, userDepartment, navigate, location.pathname]);
+
+  const showNavbar = location.pathname !== '/';
 
   return (
     <>
