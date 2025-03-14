@@ -1,21 +1,27 @@
-import React from 'react';
+import React from "react";
 import { useOutsideClick } from "./useOutsideClick";
-import { useRef } from 'react';
+import { useRef } from "react";
+import "../styles/StatusFilter.css"; // New custom CSS file
 
-const statuses = ['All','New', 'Opened', 'Inprogress', 'Completed', 'ReOpened'];
+const statuses = ["All", "New", "Opened", "Inprogress", "Completed", "ReOpened"];
 
-function StatusFilter({setStatusFilter, setStatusToggle,setCurrentPage}) {
+function StatusFilter({ setStatusFilter, setStatusToggle, setCurrentPage }) {
   const dropdownRef = useRef(null);
   useOutsideClick(dropdownRef, () => setStatusToggle(false));
 
+  const handleStatusClick = (status) => {
+    setStatusFilter(status === "All" ? null : status);
+    setCurrentPage(1);
+    setStatusToggle(false); // Close dropdown after selection
+  };
+
   return (
-    <div ref={dropdownRef} style={{ zIndex: 2 }}>
+    <div ref={dropdownRef} className="status-filter-dropdown">
       {statuses.map((status) => (
         <div
           key={status}
-          style={{ cursor: 'pointer' }}
-          className="shadow-lg fw-medium text-primary dropdown-item text-center text-capitalize"
-          onClick={() => { !status.includes('All')?setStatusFilter(status):setStatusFilter(null); setCurrentPage(1)}}
+          className="status-filter-item"
+          onClick={() => handleStatusClick(status)}
           aria-label={`Filter by ${status} status`}
         >
           {status}

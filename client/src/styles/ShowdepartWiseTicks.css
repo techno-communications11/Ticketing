@@ -1,0 +1,36 @@
+/* ShowdepartWiseTicks.css */
+.table-modern {
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .table-modern th {
+    font-size: 14px;
+    padding: 6px;
+    background-color: #E10174 !important;
+    color: white;
+    border: none;
+  }
+  
+  .table-modern td {
+    font-size: 14px;
+    padding: 12px;
+    vertical-align: middle;
+    border-color: #f1f1f1;
+  }
+  
+  .table-modern tr:hover {
+    background-color: #f8e9f0;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .spinner-border.text-pink {
+    border-color: #E10174;
+    border-right-color: transparent;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f8e9f0;
+    color: #E10174 !important;
+  }

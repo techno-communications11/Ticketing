@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { Container, Table, Row, Col } from "react-bootstrap";
 import { apiRequest } from "../lib/apiRequest";
 import { useDispatch } from "react-redux";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import PageCountStack from "../universalComponents/PageCountStack";
-import "../styles/loader.css";
 import TicketBody from "../universalComponents/TicketBody";
 import getDecodedToken from "../universalComponents/decodeToken";
 import { useMyContext } from "../universalComponents/MyContext";
-import { FaExclamationCircle } from 'react-icons/fa'; // Import the icon from React Icons
+import { FaExclamationCircle } from "react-icons/fa";
+import "../styles/TicketNowAtData.css"; // New CSS file for this component
 
 function TicketNowAtData() {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ function TicketNowAtData() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
   const department = getDecodedToken().department;
-  let { datafullname, datastatusId, Dates } = useMyContext();
+  const { datafullname, datastatusId, Dates } = useMyContext();
 
   const fetchUserTickets = async () => {
     setLoading(true);
@@ -27,33 +28,25 @@ function TicketNowAtData() {
       });
 
       if (response.status === 200) {
-        // Add openedByFullName to each ticket in the array
         const ticketsWithFullName = response.data.tickets.map((ticket) => ({
           ...ticket,
-          openedByFullName: datafullname, // Add openedByFullName to each ticket
+          openedByFullName: datafullname,
         }));
 
-        // Filter tickets by openedByFullName and date range
         const filteredTickets = ticketsWithFullName.filter((ticket) => {
           const matchesFullName = ticket.openedByFullName === datafullname;
-
-          // Destructure startDate and endDate from Dates object
           const { startDate, endDate } = Dates || {};
 
-          // Check if startDate and endDate exist, then filter by date range
           if (startDate && endDate) {
-            const ticketDate = new Date(ticket.createdAt); // Ensure the date is a valid Date object
+            const ticketDate = new Date(ticket.createdAt);
             const isWithinDateRange =
-              ticketDate >= new Date(startDate) &&
-              ticketDate <= new Date(endDate);
+              ticketDate >= new Date(startDate) && ticketDate <= new Date(endDate);
             return matchesFullName && isWithinDateRange;
           }
-
-          // If no date range, just return by full name
           return matchesFullName;
         });
 
-        setTickets(filteredTickets); // Set the tickets with added openedByFullName
+        setTickets(filteredTickets);
         setAuthenticated(true);
       }
     } catch (error) {
@@ -65,7 +58,7 @@ function TicketNowAtData() {
 
   useEffect(() => {
     fetchUserTickets();
-  }, []);
+  }, [datafullname, datastatusId, Dates]);
 
   const currentItems = tickets
     ?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -77,94 +70,95 @@ function TicketNowAtData() {
     dispatch(fetchIndividualTickets(id));
   };
 
-  if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="loader" role="status">
-          {/* <span className="visually-hidden">Loading...</span> */}
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="container-fluid mt-1">
+    <Container fluid className="mt-4">
+      {/* Header Section */}
       {currentItems.length > 0 && (
-        <h1
-          className="my-2 d-flex justify-content-center"
-          style={{ color: "#E10174", fontSize: "2rem" }}
-        >
-          Total User Tickets
-        </h1>
+        <Row className="mb-3">
+          <Col>
+            <h1 className="fw-bold text-dark text-center">
+              Total User Tickets <span style={{ color: "#E10174" }}>{datafullname || ""}</span>
+            </h1>
+          </Col>
+        </Row>
       )}
 
-      {currentItems.length === 0 && (
-        <div className='d-flex justify-content-center align-items-center' style={{ height: '80vh' }}>
-          <div className='text-center'>
-            <FaExclamationCircle className='text-secondary' style={{ fontSize: '5rem', marginBottom: '1rem' }} />
-            <p className='fs-1 fw-bolder text-muted'>No data available ...</p>
-            <p className='text-muted'>Please check back later or try refreshing the page.</p>
+      {/* Loading State */}
+      {loading ? (
+        <div className="d-flex align-items-center justify-content-center vh-100">
+          <div className="spinner-border text-pink" role="status" style={{ width: "3rem", height: "3rem" }}>
+            <span className="visually-hidden">Loading...</span>
           </div>
         </div>
-      )}
+      ) : (
+        <>
+          {/* Table Section */}
+          {authenticated && currentItems.length > 0 ? (
+            <div className="table-responsive shadow-sm rounded">
+              <Table hover className="table-modern">
+                <thead>
+                  <tr style={{ backgroundColor: "#E10174", color: "white" }}>
+                    {[
+                      "SC.No",
+                      "NTID / Email",
+                      "Full Name",
+                      "Status",
+                      "CreatedAt",
+                      "Now At",
+                      "CompletedBy",
+                      "CompletedAt",
+                      "Duration",
+                      "Details",
+                      department === "SuperAdmin" && "Delete",
+                    ].map(
+                      (header) =>
+                        header && (
+                          <th key={header} className="text-center align-middle fw-medium">
+                            {header}
+                          </th>
+                        )
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentItems.map((ticket, index) => (
+                    <TicketBody
+                      fetchUserTickets={fetchUserTickets}
+                      key={ticket.id}
+                      ticket={ticket}
+                      index={index}
+                      handleTicket={handleTicket}
+                      currentPage={currentPage}
+                      itemsPerPage={itemsPerPage}
+                    />
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          ) : (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
+              <div className="text-center">
+                <FaExclamationCircle className=" mb-3" style={{ fontSize: "5rem" ,color:'#E10174'}} />
+                <h5 className="fw-bold text-muted">No Data Available</h5>
+                <p className="text-muted">Please check back later or try refreshing the page.</p>
+              </div>
+            </div>
+          )}
 
-      {authenticated && currentItems.length > 0 && (
-        <div className="table-container">
-          <table className="table table-bordered table-hover">
-            <thead>
-              <tr>
-                {[
-                  "SC.No",
-                  "NTID / Email",
-                  "Full Name",
-                  "Status",
-                  "CreatedAt",
-                  "Now At",
-                  "CompletedBy",
-                  "CompletedAt",
-                  "Duration",
-                  "Details",
-                  department === "SuperAdmin" && "Delete",
-                ].map(
-                  (header) =>
-                    header && (
-                      <th
-                        key={header}
-                        className="text-center sticky-header"
-                        style={{ backgroundColor: "#E10174", color: "white" }}
-                      >
-                        {header}
-                      </th>
-                    )
-                )}
-              </tr>
-            </thead>
-            <tbody className="scrollable-body">
-              {currentItems.map((ticket, index) => (
-                <TicketBody
-                  fetchUserTickets={fetchUserTickets}
-                  key={ticket.id}
-                  ticket={ticket}
-                  index={index}
-                  handleTicket={handleTicket}
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+          {/* Pagination */}
+          {currentItems.length > 0 && (
+            <div className="mt-4">
+              <PageCountStack
+                filteredTickets={tickets}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                itemsPerPage={itemsPerPage}
+              />
+            </div>
+          )}
+        </>
       )}
-
-      {currentItems.length > 0 && (
-        <PageCountStack
-          filteredTickets={tickets}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          itemsPerPage={itemsPerPage}
-        />
-      )}
-    </div>
+    </Container>
   );
 }
 

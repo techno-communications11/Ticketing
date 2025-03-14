@@ -1,0 +1,252 @@
+/* Container styling */
+.ticket-create-container {
+    min-height: 100vh;
+    background-color: #f4f5f7; /* Jira-like light gray */
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  }
+  
+  /* Portal title */
+  .portal-title {
+    color: #E10174; /* Pink */
+    font-weight: 600;
+    font-size: 1.75rem;
+    text-align: center;
+    padding-top: 1rem;
+  }
+  
+  /* Ticket action card */
+  .ticket-action-card {
+    border-radius: 8px;
+    border: 1px solid #E10174;
+    background-color: #fff;
+  }
+  
+  .ticket-icon {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  /* Status card */
+  .status-card {
+    border-radius: 8px;
+    border: 1px solid #E10174;
+    background-color: #fff;
+  }
+  
+  .status-title {
+    color: #42526e; /* Jira muted text */
+    font-size: 1.25rem;
+     margin-bottom: 2rem;
+    font-weight: 500;
+  }
+  
+  .status-item {
+    border: none;
+     border: 1px solid #E10174;
+     padding: 5px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .status-item:hover {
+    transform: translateY(-5px);
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
+  }
+  
+  .status-item h6 {
+    color: #42526e;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .status-count {
+    color: #E10174;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+     /* border: 1px solid #E10174; */
+  }
+  
+  /* Chart card */
+  .chart-card {
+    border-radius: 8px;
+    border: none;
+    background-color: #fff;
+    height: 100%;
+  }
+  
+  /* Modal styling */
+  .ticket-modal .modal-content {
+    border-radius: 8px;
+    /* border: 1px solid #E10174; */
+  }
+  
+  .modal-title {
+    color: #E10174;
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+  
+  /* Form inputs */
+  .form-input {
+    border: 1px solid #1b1a1b;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #42526e;
+    transition: border-color 0.2s ease;
+  }
+  
+  .form-input:focus {
+    border-color: #181718; /* Darker pink */
+    box-shadow: none;
+  }
+  
+  .form-input::placeholder {
+    color: #a5adba; /* Light gray */
+  }
+  
+  /* Dropdowns */
+  .dropdown-toggle {
+    background-color: #fff;
+    border: 1px solid #121212;
+    color: #42526e;
+    font-weight: 500;
+    text-align: left;
+    width: 100%;
+    transition: background-color 0.2s ease;
+  }
+  
+  .dropdown-toggle:hover {
+    background-color: #fce4ec; /* Light pink */
+  }
+  
+  .dropdown-menu-scroll {
+    max-height: 42vh;
+    overflow-y: auto;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .dropdown-search {
+    width: calc(100% - 1rem);
+    border: 1px solid #E10174;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
+  
+  .dropdown-item-pink {
+    color: #42526e;
+    font-size: 0.9rem;
+  }
+  
+  .dropdown-item-pink:hover {
+    background-color: #fce4ec;
+    color: #E10174;
+  }
+  
+  .assign-to-btn {
+    background-color: #E10174;
+    border: none;
+    color: #fff;
+  }
+  
+  .assign-to-btn:hover {
+    background-color: #c1075e;
+  }
+  
+  /* File upload area */
+  .file-upload-area {
+    border: 2px dashed #E10174;
+    border-radius: 6px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .file-upload-area:hover {
+    background-color: #fce4ec;
+  }
+  
+  .file-upload-text p {
+    color: #42526e;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  
+  .file-upload-buttons .btn-outline-pink {
+    border-color: #E10174;
+    color: #E10174;
+  }
+  
+  .file-upload-buttons .btn-outline-pink:hover {
+    background-color: #E10174;
+    color: #fff;
+  }
+  
+  .upload-icon {
+    font-size: 1.75rem;
+    color: #E10174;
+  }
+  
+  .file-upload-placeholder p {
+    color: #42526e;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  
+  /* Buttons */
+  .btn-pink {
+    background-color: #E10174;
+    border-color: #E10174;
+    color: #fff;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-pink:hover {
+    background-color: #c1075e;
+    border-color: #c1075e;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .portal-title {
+      font-size: 1.5rem;
+    }
+  
+    .ticket-icon {
+      width: 120px;
+      height: 120px;
+    }
+  
+    .status-title {
+      font-size: 1.1rem;
+    }
+  
+    .status-count {
+      font-size: 1.5rem;
+    }
+  
+    .modal-title {
+      font-size: 1.25rem;
+    }
+  
+    .form-input {
+      font-size: 0.85rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .status-item h6 {
+      font-size: 0.9rem;
+    }
+  
+    .status-count {
+      font-size: 1.25rem;
+    }
+  }

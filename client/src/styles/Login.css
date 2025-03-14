@@ -1,42 +1,88 @@
-/* Pink Theme */
-.bg-pink {
-    background-color: #e10174 !important;
-  }
-  /* Disable scrolling */
+/* Login.css */
+.bg-pink-light {
+  background-color: #f8e9f0 !important;
+}
 
-  .bg-pink-light {
-    background-color: #f8e1f2 !important;
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.text-pink {
+  color: #E10174 !important;
+}
+
+.btn-pink {
+  background-color: #E10174;
+  border-color: #E10174;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.btn-pink:hover {
+  background-color: #c70a5f;
+  border-color: #c70a5f;
+  color: white;
+}
+
+.form-control-modern {
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.3s ease;
+}
+
+.form-control-modern:focus {
+  border-color: #E10174;
+  box-shadow: 0 0 0 0.2rem rgba(225, 1, 116, 0.25);
+}
+
+.form-control-modern.is-invalid {
+  border-color: #dc3545;
+}
+
+.input-group-text {
+  border-radius: 8px 0 0 8px;
+}
+
+.spinner-border.text-pink {
+  border-color: #E10174;
+  border-right-color: transparent;
+}
+
+.spinner-border {
+  border-color: #fff;
+  border-right-color: transparent;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .card {
+    padding: 1.5rem !important;
+    max-width: 90% !important;
   }
-  
-  .text-pink {
-    color: #e10174 !important;
-  }
-  
+
   .btn-pink {
-    background-color: #e10174;
-    border-color: #e10174;
-    color: white;
+    font-size: 14px;
+    padding: 8px;
   }
-  
-  .btn-pink:hover {
-    background-color: #c90063;
-    border-color: #c90063;
+
+  .form-control-modern {
+    font-size: 12px;
   }
-  
-  /* Animations */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+
+  img {
+    max-width: 300px !important;
+    margin-bottom: 20px;
   }
-  
-  .animate__fadeInLeft {
-    animation: fadeIn 1s ease-in-out;
+
+  h1 {
+    font-size: 2rem !important;
+    
   }
-  
-  .animate__fadeInRight {
-    animation: fadeIn 1s ease-in-out;
+
+  h2 {
+    font-size: 1.25rem !important;
   }
+}

@@ -1,0 +1,83 @@
+/* DepartmentHome.css */
+.department-home-container {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .text-pink {
+    color: #E10174 !important;
+  }
+  
+  .all-tickets-link {
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .all-tickets-link:hover {
+    color: #E10174 !important;
+  }
+  
+  .status-card {
+    border-radius: 12px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .status-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(225, 1, 116, 0.2) !important;
+  }
+  
+  .status-card h3 {
+    font-size: 2rem;
+  }
+  
+  .status-card h4 {
+    font-size: 1.1rem;
+    color: #42526e; /* Jira-like dark gray */
+  }
+  
+  .pie-card {
+    border-radius: 12px;
+    background-color: #fff;
+  }
+  
+  .spinner-border.text-pink {
+    border-color: #E10174;
+    border-right-color: transparent;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .status-card {
+      width: 100% !important;
+      max-width: 16rem;
+      height: 9rem;
+    }
+  
+    .status-card h3 {
+      font-size: 1.5rem;
+    }
+  
+    .status-card h4 {
+      font-size: 1rem;
+    }
+  
+    .pie-card {
+      margin-top: 20px;
+    }
+  
+    .department-home-container {
+      padding: 10px;
+    }
+  
+    .all-tickets-link {
+      font-size: 1rem !important;
+    }
+  
+    h2 {
+      font-size: 1.5rem !important;
+    }
+  }

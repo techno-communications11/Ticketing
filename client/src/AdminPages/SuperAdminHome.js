@@ -5,8 +5,9 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { animateValue } from '../universalComponents/AnnimationCount';
 import { apiRequest } from '../lib/apiRequest';
 import '../styles/loader.css';
+import '../styles/SuperAdminHome.css'; // New custom stylesheet
 import { useMyContext } from '../universalComponents/MyContext';
-import { json, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DateRangeFilter from '../universalComponents/DateRangeFilter';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -15,19 +16,13 @@ export function SuperAdminHome() {
   const [ticketCounts, setTicketCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { setStatusId, setNtid, setDataDates } = useMyContext(); // Using context methods
+  const { setStatusId, setNtid, setDataDates } = useMyContext();
   const navigate = useNavigate();
-
-  // Local state for managing startDate and endDate
   const [dates, setDates] = useState({ startDate: '', endDate: '' });
 
-  // Fetch ticket counts with optional date range filter
   const fetchStatusTickets = useCallback(async () => {
-    const { startDate, endDate } = dates; // Get current dates
-    const params = {
-      startDate,
-      endDate,
-    };
+    const { startDate, endDate } = dates;
+    const params = { startDate, endDate };
     try {
       setLoading(true);
       const response = await apiRequest.get('/createTickets/ticketcount', { params });
@@ -59,14 +54,12 @@ export function SuperAdminHome() {
 
   const safeNumber = (value) => (isNaN(value) ? 0 : value);
 
-  // This function is called when dates are updated in the DateRangeFilter
   const handleDataFromChild = (startDate, endDate) => {
     setDates({ startDate, endDate });
   };
 
   const filteredInsights = useMemo(() => {
-    return Object.entries(ticketCounts)
-      .filter(([key]) => key !== 'total');
+    return Object.entries(ticketCounts).filter(([key]) => key !== 'total');
   }, [ticketCounts]);
 
   const chartData = useMemo(() => {
@@ -88,16 +81,26 @@ export function SuperAdminHome() {
       plugins: {
         legend: {
           position: 'top',
+          labels: {
+            font: { size: 14, family: 'Roboto' },
+            color: '#42526e',
+          },
         },
         title: {
           display: true,
           text: 'Ticket Counts by Status',
+          font: { size: 18, family: 'Roboto', weight: '500' },
+          color: '#E10174',
+        },
+        tooltip: {
+          backgroundColor: '#E10174',
+          titleFont: { family: 'Roboto' },
+          bodyFont: { family: 'Roboto' },
         },
       },
     };
   }, []);
 
-  // Handle status selection and updating context with data
   const handleSperAdminStats = useCallback((statusId) => {
     const statusMap = {
       Total: '0',
@@ -107,14 +110,12 @@ export function SuperAdminHome() {
       Completed: '4',
       Reopened: '5',
     };
-
     statusId = statusMap[statusId] || '0';
     if (statusId) {
-      
-      setStatusId(statusId); // Update statusId in context
-      localStorage.setItem("statusId", statusId);
-      setNtid(null); // Reset NTID in context
-      setDataDates(dates); // Update dataDates in context
+      setStatusId(statusId);
+      localStorage.setItem('statusId', statusId);
+      setNtid(null);
+      setDataDates(dates);
       localStorage.setItem('dates', JSON.stringify(dates));
       localStorage.removeItem('adminntid');
       navigate('/totalusertickets');
@@ -122,30 +123,33 @@ export function SuperAdminHome() {
   }, [setStatusId, setNtid, setDataDates, navigate, dates]);
 
   return (
-    <Container  className="mt-4">
+    <Container  className=" mt-4">
       {loading ? (
-        <div className="loader d-flex align-items-center justify-content-center max-vh-100">
-          {/* Loading Spinner */}
+        <div className="loader-overlay">
+          <div className="loader" role="status"></div>
         </div>
       ) : (
         <div>
           <Row>
             <Col md={12} className="text-center mb-4">
-              <h4 className="font-family" style={{ color: '#E10174' }}>Ticket Status Overview</h4>
+              <h4 className="dashboard-title">Ticket Status Overview</h4>
             </Col>
           </Row>
 
           <Row className="justify-content-center">
             <Col xs={12} md={6} lg={6} className="mb-4">
-              <Row className="mb-5">
+              <Row className="mb-4">
                 <DateRangeFilter sendDatesToParent={handleDataFromChild} />
               </Row>
               <Row className="justify-content-center">
                 {Object.entries(ticketCounts).map(([key, value]) => (
                   <Col xs={12} sm={6} md={6} lg={4} key={key} className="mb-3">
-                    <Card className="shadow-sm text-center p-3 h-100 rounded" style={{ cursor: 'pointer', fontWeight: '800' }} onClick={() => handleSperAdminStats(key.charAt(0).toUpperCase() + key.slice(1))}>
-                      <h5 className="font-family">{key.charAt(0).toUpperCase() + key.slice(1)}</h5>
-                      <p id={`${key}Tickets`} style={{ color: '#E10174', fontSize: '40px', fontWeight: 'bold' }}>
+                    <Card
+                      className="ticket-card shadow-sm text-center p-3 h-100"
+                      onClick={() => handleSperAdminStats(key.charAt(0).toUpperCase() + key.slice(1))}
+                    >
+                      <h5 className="card-title">{key.charAt(0).toUpperCase() + key.slice(1)}</h5>
+                      <p id={`${key}Tickets`} className="ticket-count">
                         {safeNumber(value)}
                       </p>
                     </Card>
@@ -154,8 +158,8 @@ export function SuperAdminHome() {
               </Row>
             </Col>
 
-            <Col xs={12} md={6} lg={6} className="mb-4">
-              <Card className="shadow-sm p-4 rounded" style={{ height: '68vh' }}>
+            <Col xs={12} md={6} lg={6} style={{maxHeight:'30rem'}} className="mb-4 ms-auto" >
+              <Card className="chart-card  ms-3">
                 <Pie data={chartData} options={chartOptions} />
               </Card>
             </Col>
@@ -163,7 +167,9 @@ export function SuperAdminHome() {
         </div>
       )}
 
-      {error && <p className="text-danger text-center">{error}</p>}
+      {error && <p className="error-message text-danger text-center">{error}</p>}
     </Container>
   );
 }
+
+export default SuperAdminHome;

@@ -1,0 +1,42 @@
+/* StatusFilter.css */
+.status-filter-dropdown {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    width: 150px;
+    z-index: 1000; /* Ensure it appears above other elements */
+  }
+  
+  .status-filter-item {
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #42526e; /* Jira-like dark gray */
+    text-align: center;
+    text-transform: capitalize;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .status-filter-item:hover {
+    background-color: #f8e9f0; /* Light pink hover */
+    color: #E10174; /* Pink text on hover */
+  }
+  
+  .status-filter-item:active {
+    background-color: #E10174; /* Pink background on click */
+    color: #fff;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .status-filter-dropdown {
+      width: 120px;
+    }
+  
+    .status-filter-item {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+  }

@@ -118,7 +118,7 @@ function TicketsNowAt() {
   };
 
   return (
-    <div className="container mt-1">
+    <div className="container-fluid mt-1">
       <h4 className="text-center" style={{ color: "#E10174" }}>
         Tickets Now_At
       </h4>
@@ -167,15 +167,15 @@ function TicketsNowAt() {
           <tbody>
             {Object.values(groupedTickets).map((ticketGroup, index) => (
               <tr key={index}>
-                <td className="text-center">{index + 1}</td>
-                <td className="text-center text-capitalize">
+                <td className="text-center" style={{color:'#42526e'}}>{index + 1}</td>
+                <td className="text-center text-capitalize" style={{color:'#42526e'}}>
                   {ticketGroup.openedBy?.toLowerCase()}
                 </td>
                 {/* Render the count for each status in the appropriate column */}
                 {allStatuses.map((status) => (
                   <td
                     className="text-center"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer",color:'#42526e' }}
                     key={status}
                     onClick={() => handleTicket(status, ticketGroup.openedBy)}
                   >

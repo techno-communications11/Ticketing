@@ -1,0 +1,65 @@
+/* DMTabs.css */
+.dm-tabs-container {
+    background-color: #f8f9fa; /* Light gray background */
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .dm-tabs-header {
+    background-color: #fff;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 12px 12px 0 0;
+    padding: 10px 20px;
+  }
+  
+  .dm-tabs .MuiTabs-root {
+    font-weight: 500;
+  }
+  
+  .dm-tab {
+    color: #42526e !important; /* Jira-like dark gray */
+    font-weight: 500 !important;
+    font-size: 16px !important;
+    text-transform: capitalize !important;
+    padding: 12px 24px !important;
+    transition: color 0.3s ease !important;
+  }
+  
+  .dm-tab:hover {
+    color: #E10174 !important; /* Pink on hover */
+  }
+  
+  .dm-tab.Mui-selected {
+    color: #E10174 !important; /* Pink when selected */
+    font-weight: 600 !important;
+  }
+  
+  .dm-tab-panel {
+    background-color: #fff;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dm-tab-content {
+    padding: 24px !important; /* Override MUI Box padding */
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .dm-tabs-container {
+      padding: 10px;
+    }
+  
+    .dm-tabs-header {
+      padding: 5px 10px;
+    }
+  
+    .dm-tab {
+      font-size: 14px !important;
+      padding: 8px 16px !important;
+    }
+  
+    .dm-tab-content {
+      padding: 16px !important;
+    }
+  }

@@ -110,12 +110,12 @@ const UserTable = () => {
         <div className='col-md-6 d-flex gap-2 rounded align-items-center col-10 my-2' style={{ border: '1.5px solid gray' }}>
           <input
             type="text"
-            className='form-control input-form fw-medium border-0 shadow-none'
+            className='form-control input-form   border-0 shadow-none'
             placeholder="Search..."
             value={query}
             onChange={e => setQuery(e.target.value)}
           />
-          <button onClick={() => handleSearch(query)} className='btn btn-white fs-5 border-0 shadow-lg text-success fw-medium'>
+          <button onClick={() => handleSearch(query)} className='btn btn-white fs-5 border-0 shadow-lg text-success  '>
             <CiSearch />
           </button>
         </div>
@@ -127,7 +127,7 @@ const UserTable = () => {
       ) : (
         <div>
           {users.length === 0 ? (
-            <div className="container">
+            <div className="container-fluid">
               <div className='loader mb-5'></div>
             </div>
           ) : (
@@ -147,16 +147,16 @@ const UserTable = () => {
                   </thead>
                   <tbody className="scrollable-body">
                     {currentItems.map((user, index) => (
-                      <tr key={user.ntid} className='fw-medium'>
-                        <td className='text-center'>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                        <td className='text-center'>{user.ntid}</td>
-                        <td className='text-center text-capitalize'>{user.fullname?.toLowerCase()}</td>
-                        <td className='text-center text-capitalize'>{user.market ? user.market.market : ""}</td>
-                        <td className='text-center text-capitalize'>{user.dmName}</td>
-                        <td style={{ cursor: 'pointer' }} className='text-center' onClick={() => handleEdit(user)}>
+                      <tr key={user.ntid} className=' '>
+                        <td className='text-center' style={{color:'#42526e'}}>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                        <td className='text-center' style={{color:'#42526e'}}>{user.ntid}</td>
+                        <td className='text-center text-capitalize' style={{color:'#42526e'}}>{user.fullname?.toLowerCase()}</td>
+                        <td className='text-center text-capitalize' style={{color:'#42526e'}}>{user.market ? user.market.market : ""}</td>
+                        <td className='text-center text-capitalize' style={{color:'#42526e'}}>{user.dmName}</td>
+                        <td style={{ cursor: 'pointer',color:'#42526e' }} className='text-center' onClick={() => handleEdit(user)}>
                           <MdModeEditOutline />
                         </td>
-                        <td style={{ cursor: 'pointer' }} className='text-center' onClick={() => viewImage(user)}>
+                        <td style={{ cursor: 'pointer',color:'#42526e' }} className='text-center' onClick={() => viewImage(user)}>
                           <FaEye />
                         </td>
                       </tr>

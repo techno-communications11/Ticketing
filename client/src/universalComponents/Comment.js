@@ -3,6 +3,8 @@ import { TbSend2 } from "react-icons/tb";
 import { Button } from "react-bootstrap";
 import { RiImageAddFill } from "react-icons/ri";
 import { ImCross } from "react-icons/im";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/Comment.css"; // New custom stylesheet
 
 function Comment({
   handleCommentChange,
@@ -33,20 +35,19 @@ function Comment({
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-100 d-flex flex-column border rounded mt-2 p-2"
+      className="comment-form w-100 d-flex flex-column border rounded mt-2 p-2"
     >
       <div className="d-flex align-items-center flex-wrap">
         {/* Add Image Button */}
         <RiImageAddFill
-          className="fs-4 ms-2 ms-md-3"
-          style={{ cursor: "pointer", color: "#E10174" }}
+          className="comment-icon upload-icon ms-2 ms-md-3"
           onClick={handleUploadClick}
         />
         <input
           type="file"
           ref={fileInputRef}
           multiple
-          style={{ display: "none" }}
+          className="d-none"
           onChange={handleFileChange}
         />
 
@@ -55,50 +56,43 @@ function Comment({
           value={comment}
           onChange={handleCommentChange}
           placeholder="Enter Comment"
-          className="fw-medium rounded-3 border-0 bg-transparent flex-grow-1 mx-2"
+          className="comment-textarea fw-medium rounded-3 border-0 bg-transparent flex-grow-1 mx-2"
           rows={1}
-          style={{
-            resize: "none",
-            overflow: "hidden",
-            outline: "none",
-            boxShadow: "none",
-            textAlign: "center",
-            lineHeight: "1.5",
-            minHeight: "50px",
-            padding: "10px 5px",
-            fontSize: "0.9rem", // Smaller font size for mobile
-          }}
           required
           disabled={commentLoading}
         />
 
         {/* Submit Button */}
         {commentLoading ? (
-          <div className="spinner-border text-primary"></div>
+          <div className="spinner-border text-pink comment-spinner" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
         ) : (
           <Button
             type="submit"
-            className="bg-transparent text-primary border-0 d-flex align-items-center"
-            style={{ minHeight: "50px" }}
+            className="comment-submit-btn bg-transparent border-0 d-flex align-items-center"
           >
-            <TbSend2 className="fs-3" />
+            <TbSend2 className="fs-3 text-pink" />
           </Button>
         )}
       </div>
 
       {/* Display Selected Files */}
       {selectedFiles.length > 0 && (
-        <div className="mt-2 ms-2">
-          <strong>Selected Images:</strong>
-          <ul className="list-unstyled">
+        <div className="selected-files mt-2 ms-2">
+          <strong className="text-pink">Selected Images:</strong>
+          <ul className="list-unstyled mt-1">
             {selectedFiles.map((file, index) => (
-              <li key={index} className="d-flex align-items-center text-muted">
-                <span className="text-truncate" style={{ maxWidth: "150px" }}>
+              <li
+                key={index}
+                className="d-flex align-items-center text-muted mb-1"
+              >
+                <span className="file-name text-truncate">
                   {file.name}
                 </span>
                 <Button
                   variant="link"
-                  className="text-danger ms-2"
+                  className="remove-file-btn ms-2 p-0"
                   onClick={() => removeFile(index)}
                 >
                   <ImCross className="text-danger" />

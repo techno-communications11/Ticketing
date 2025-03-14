@@ -1,0 +1,179 @@
+/* Container styling */
+.user-tickets-container {
+    min-height: 100vh;
+    background-color: #f4f5f7; /* Jira-like light gray */
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    padding: 1rem;
+  }
+  
+  /* Tickets title */
+  .tickets-title {
+    color: #E10174; /* Pink */
+    font-weight: 600;
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Table styling */
+  .tickets-table {
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tickets-table thead th {
+    background-color: #E10174;
+    color: #fff;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 0.75rem;
+    position: relative;
+    vertical-align: middle;
+  }
+  
+  .tickets-table tbody tr {
+    transition: background-color 0.2s ease;
+  }
+  
+  .tickets-table tbody tr:hover {
+    background-color: #fce4ec; /* Light pink hover */
+  }
+  
+  .tickets-table td {
+    font-size: 0.85rem;
+    color: #42526e; /* Jira muted text */
+    padding: 0.75rem;
+    vertical-align: middle;
+  }
+  
+  .settled-row {
+    background-color: #e5e7eb; /* Gray for settled tickets */
+    opacity: 0.8;
+  }
+  
+  /* Filter icon */
+  .filter-icon {
+    margin-left: 0.5rem;
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+  .filter-icon:hover {
+    color: #fce4ec; /* Light pink on hover */
+  }
+  
+  /* Filter dropdown */
+  .filter-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #E10174;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+  }
+  
+  /* Badge styling */
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+  
+  /* Details icon */
+  .details-icon {
+    color: #E10174;
+    font-size: 1.25rem;
+    transition: color 0.2s ease;
+  }
+  
+  .details-icon:hover {
+    color: #c1075e; /* Darker pink */
+  }
+  
+  /* No data state */
+  .no-data-container {
+    height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .no-data-icon {
+    font-size: 5rem;
+    color: #E10174;
+    margin-bottom: 1rem;
+  }
+  
+  .no-data-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #42526e;
+    margin-bottom: 0.5rem;
+  }
+  
+  .no-data-text {
+    font-size: 1rem;
+    color: #6B7280;
+  }
+  
+  /* Loader overlay */
+  .loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: 1050;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .tickets-title {
+      font-size: 1.5rem;
+    }
+  
+    .tickets-table thead th {
+      font-size: 0.85rem;
+      padding: 0.5rem;
+    }
+  
+    .tickets-table td {
+      font-size: 0.8rem;
+      padding: 0.5rem;
+    }
+  
+    .no-data-icon {
+      font-size: 4rem;
+    }
+  
+    .no-data-title {
+      font-size: 1.5rem;
+    }
+  
+    .no-data-text {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .tickets-table {
+      font-size: 0.75rem;
+    }
+  
+    .details-icon {
+      font-size: 1rem;
+    }
+  }

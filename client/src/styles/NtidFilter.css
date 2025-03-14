@@ -1,0 +1,30 @@
+/* NtidFilter.css */
+.ntid-filter-input {
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ced4da;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: 200px;
+  }
+  
+  .ntid-filter-input:focus {
+    border-color: #E10174; /* Pink focus border */
+    box-shadow: 0 0 0 0.2rem rgba(225, 1, 116, 0.25); /* Pink glow */
+    outline: none;
+  }
+  
+  .ntid-filter-input::placeholder {
+    color: #a0a4a8; /* Light gray placeholder */
+    font-style: italic;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .ntid-filter-input {
+      width: 150px;
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+  }

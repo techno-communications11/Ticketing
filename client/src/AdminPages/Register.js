@@ -1,13 +1,12 @@
 import React, { useState, useRef } from "react";
 import { apiRequest } from "../lib/apiRequest";
-import { FaRegEye, FaEyeSlash, FaUser, FaLock, FaUpload } from "react-icons/fa"; // React Icons
-import "../styles/loader.css";
+import { FaRegEye, FaEyeSlash, FaUser, FaLock, FaUpload } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FileUploads from "../universalComponents/FileUploads";
 import ReusableButtons from "../universalComponents/ReusableButtons";
-import { Dropdown } from "react-bootstrap";
-import "../styles/Register.css"; // Custom CSS for styling
+import { Dropdown, Form } from "react-bootstrap";
+import "../styles/Register.css"; // Updated custom CSS
 
 export function Register() {
   const NTIDRef = useRef("");
@@ -43,14 +42,13 @@ export function Register() {
   const subUserroles = ["Manager", "User"];
 
   const validatePassword = (password) => {
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
     return passwordRegex.test(password);
   };
 
   const handleSelect = (role) => {
     setSelectedRole(role);
-    setSelectedSubRole(""); // Reset subrole when changing role
+    setSelectedSubRole("");
   };
 
   const handleSubSelect = (role) => {
@@ -66,7 +64,6 @@ export function Register() {
     const password = passwordRef.current?.value?.trim() || "";
     const DoorCode = DoorCodeRef.current?.value?.trim() || "";
 
-    // Validation
     setIsNtidValid(!!ntid);
     setIsFullnameValid(!!fullname);
     setIsRoleValid(!!selectedRole);
@@ -109,18 +106,10 @@ export function Register() {
   const resetForm = () => {
     setSelectedRole("");
     setSelectedSubRole("");
-    if (NTIDRef.current && NTIDRef.current.value !== undefined) {
-      NTIDRef.current.value = "";
-    }
-    if (fullNameRef.current && fullNameRef.current.value !== undefined) {
-      fullNameRef.current.value = "";
-    }
-    if (DoorCodeRef.current && DoorCodeRef.current.value !== undefined) {
-      DoorCodeRef.current.value = "";
-    }
-    if (passwordRef.current && passwordRef.current.value !== undefined) {
-      passwordRef.current.value = "";
-    }
+    if (NTIDRef.current) NTIDRef.current.value = "";
+    if (fullNameRef.current) fullNameRef.current.value = "";
+    if (DoorCodeRef.current) DoorCodeRef.current.value = "";
+    if (passwordRef.current) passwordRef.current.value = "";
   };
 
   const handleFileUploadClick = () => {
@@ -129,9 +118,7 @@ export function Register() {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-    }
+    if (file) setSelectedFile(file);
   };
 
   const handleFileUpload = async () => {
@@ -152,9 +139,7 @@ export function Register() {
         setSelectedFile(null);
         toast.success("File uploaded successfully", { autoClose: 2000 });
       } else {
-        toast.error("File upload failed. Please try again.", {
-          autoClose: 2000,
-        });
+        toast.error("File upload failed. Please try again.", { autoClose: 2000 });
       }
     } catch (error) {
       toast.error("Something went wrong");
@@ -168,8 +153,8 @@ export function Register() {
   };
 
   return (
-    <div style={{minHeight:'39rem'}} className="container-fluid d-flex flex-column align-items-center justify-content-center">
-      <div className="row justify-content-center align-items-center w-100">
+    <div className="container-fluid d-flex align-items-center justify-content-center min-vh-90 bg-light">
+      <div className="row justify-content-center w-100">
         <div className="col-12 col-md-8 col-lg-6">
           <ReusableButtons
             bigText="Register User"
@@ -178,145 +163,127 @@ export function Register() {
             activeForm={activeForm}
           />
           {activeForm === "register" ? (
-            <div className="d-flex justify-content-center mt-5 h-auto">
-              <form
-                onSubmit={handleSubmit}
-                className="col-12 col-md-8 shadow-lg p-4 rounded bg-white"
-              >
-                <h2 className="text-center font-weight-bold mb-4 text-pink">
-                  Register User
-                </h2>
-                <div className="form-group mb-3">
+            <div className="card shadow-lg p-4 mt-4 border-0">
+              <h2 className="text-center fw-bold mb-4" style={{ color: "#E10174" }}>
+                Register User
+              </h2>
+              <Form onSubmit={handleSubmit}>
+                {/* NTID Field */}
+                <Form.Group className="mb-3">
                   <div className="input-group">
                     <span className="input-group-text bg-pink text-white">
                       <FaUser />
                     </span>
-                    <input
+                    <Form.Control
                       type="text"
-                      id="ntid"
                       placeholder="Enter Email / NTID"
-                      className={`form-control ${
-                        !isNtidValid ? "input-error" : ""
-                      }`}
+                      className={`form-control ${!isNtidValid ? "is-invalid" : ""}`}
                       ref={NTIDRef}
                     />
+                    {!isNtidValid && (
+                      <Form.Control.Feedback type="invalid">
+                        NTID is required.
+                      </Form.Control.Feedback>
+                    )}
                   </div>
-                  {!isNtidValid && (
-                    <span className="text-danger small">NTID is required.</span>
-                  )}
-                </div>
+                </Form.Group>
 
-                <div className="form-group mb-3">
+                {/* Full Name Field */}
+                <Form.Group className="mb-3">
                   <div className="input-group">
                     <span className="input-group-text bg-pink text-white">
                       <FaUser />
                     </span>
-                    <input
+                    <Form.Control
                       type="text"
-                      id="fullName"
                       placeholder="Full Name"
-                      className={`form-control ${
-                        !isFullnameValid ? "input-error" : ""
-                      }`}
+                      className={`form-control ${!isFullnameValid ? "is-invalid" : ""}`}
                       ref={fullNameRef}
                     />
+                    {!isFullnameValid && (
+                      <Form.Control.Feedback type="invalid">
+                        Full Name is required.
+                      </Form.Control.Feedback>
+                    )}
                   </div>
-                  {!isFullnameValid && (
-                    <span className="text-danger small">
-                      Full Name is required.
-                    </span>
-                  )}
-                </div>
+                </Form.Group>
 
-                <div className="form-group mb-3">
+                {/* Role Dropdown */}
+                <Form.Group className="mb-3">
                   <Dropdown>
                     <Dropdown.Toggle
-                      id="roleDropdown"
-                      className={`form-control bg-transparent text-dark text-start border-secondary ${
-                        !isRoleValid ? "input-error" : ""
-                      }`}
+                      variant="outline-pink"
+                      className={`w-100 text-start ${!isRoleValid ? "border-danger" : ""}`}
                     >
                       {selectedRole || "Select Role"}
                     </Dropdown.Toggle>
-                    <Dropdown.Menu
-                      style={{ overflowY: "auto", height: "300px" }}
-                    >
+                    <Dropdown.Menu className="w-100 shadow-sm" style={{ maxHeight: "300px", overflowY: "auto" }}>
                       {userRoles.map((role, index) => (
                         <Dropdown.Item
-                          className="shadow-lg text-primary"
                           key={index}
                           onClick={() => handleSelect(role)}
+                          className="dropdown-item-pink"
                         >
                           {role}
                         </Dropdown.Item>
                       ))}
                     </Dropdown.Menu>
                   </Dropdown>
-                  {!isRoleValid && (
-                    <span className="text-danger small">
-                      Role is required.
-                    </span>
-                  )}
-                </div>
+                  {!isRoleValid && <small className="text-danger">Role is required.</small>}
+                </Form.Group>
 
+                {/* Subrole Dropdown */}
                 {selectedRole &&
-                  [
-                    "Admin",
-                    "Reporting",
-                    "Inventory",
-                    "Maintenance",
-                    "HR Payroll",
-                    "Commission",
-                  ].includes(selectedRole) && (
-                    <div className="form-group mb-3">
+                  ["Admin", "Reporting", "Inventory", "Maintenance", "HR Payroll", "Commission"].includes(
+                    selectedRole
+                  ) && (
+                    <Form.Group className="mb-3">
                       <Dropdown>
-                        <Dropdown.Toggle
-                          id="subRoleDropdown"
-                          className="form-control bg-transparent text-dark text-start border-secondary"
-                        >
+                        <Dropdown.Toggle variant="outline-pink" className="w-100 text-start">
                           {selectedSubRole || "Select Subrole"}
                         </Dropdown.Toggle>
-                        <Dropdown.Menu>
+                        <Dropdown.Menu className="w-100 shadow-sm">
                           {subUserroles.map((role, index) => (
                             <Dropdown.Item
-                              className="shadow-lg text-primary"
                               key={index}
                               onClick={() => handleSubSelect(role)}
+                              className="dropdown-item-pink"
                             >
                               {role}
                             </Dropdown.Item>
                           ))}
                         </Dropdown.Menu>
                       </Dropdown>
-                    </div>
+                    </Form.Group>
                   )}
 
+                {/* Door Code Field */}
                 {["Employee", "Market Manager"].includes(selectedRole) && (
-                  <div className="form-group mb-3">
+                  <Form.Group className="mb-3">
                     <div className="input-group">
                       <span className="input-group-text bg-pink text-white">
                         <FaLock />
                       </span>
-                      <input
+                      <Form.Control
                         type="text"
-                        id="doorCode"
                         placeholder="Door Code"
                         className="form-control"
                         ref={DoorCodeRef}
                       />
                     </div>
-                  </div>
+                  </Form.Group>
                 )}
 
-                <div className="form-group mb-3">
+                {/* Password Field */}
+                <Form.Group className="mb-4">
                   <div className="input-group">
                     <span className="input-group-text bg-pink text-white">
                       <FaLock />
                     </span>
-                    <input
+                    <Form.Control
                       type={passwordVisible ? "text" : "password"}
                       placeholder="Password"
-                      className="form-control"
+                      className={`form-control ${!isPasswordValid ? "is-invalid" : ""}`}
                       ref={passwordRef}
                     />
                     <span
@@ -326,33 +293,27 @@ export function Register() {
                     >
                       {passwordVisible ? <FaRegEye /> : <FaEyeSlash />}
                     </span>
+                    {!isPasswordValid && (
+                      <Form.Control.Feedback type="invalid">
+                        Password must be 8+ characters with uppercase, lowercase, number, and special character.
+                      </Form.Control.Feedback>
+                    )}
                   </div>
-                  {!isPasswordValid && (
-                    <span className="text-danger small">
-                      Password must meet the criteria.
-                    </span>
-                  )}
-                </div>
+                </Form.Group>
 
+                {/* Submit Button */}
                 <button
                   type="submit"
-                  className="btn btn-pink w-100 py-2"
+                  className="btn btn-pink w-100 py-2 fw-medium"
                   disabled={loading}
                 >
                   {loading ? (
-                    <div className="spinner-border text-light"></div>
+                    <span className="spinner-border spinner-border-sm" />
                   ) : (
                     "Register"
                   )}
                 </button>
-              </form>
-
-              <img
-                src="./register.webp"
-                alt="register user"
-                className="img-fluid d-none d-md-block mt-5 ms-5"
-                style={{ maxHeight: "350px" }}
-              />
+              </Form>
             </div>
           ) : (
             <FileUploads
@@ -366,7 +327,7 @@ export function Register() {
           )}
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={1500} />
     </div>
   );
 }

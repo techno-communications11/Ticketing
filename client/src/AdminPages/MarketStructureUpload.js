@@ -1,11 +1,11 @@
 import React, { useState, useRef } from "react";
 import { apiRequest } from "../lib/apiRequest";
-import "../styles/loader.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FileUploads from "../universalComponents/FileUploads";
 import ReusableButtons from "../universalComponents/ReusableButtons";
-import Form from "react-bootstrap/Form";
+import { Form, Card, Button } from "react-bootstrap";
+import "../styles/MarketStructureUpload.css"; // New custom CSS file
 
 export function MarketStructureUpload() {
   const BdiIDRef = useRef("");
@@ -14,7 +14,7 @@ export function MarketStructureUpload() {
   const marketRef = useRef("");
   const doorCodeRef = useRef("");
   const storeAddressRef = useRef("");
-  const fileInputRef = useRef("");
+  const fileInputRef = useRef(null);
 
   const markets = [
     { _id: "1", market: "arizona" },
@@ -46,7 +46,6 @@ export function MarketStructureUpload() {
   });
 
   const handleSubmit = async (event) => {
-    
     event.preventDefault();
 
     const bdiId = BdiIDRef.current.value.trim();
@@ -61,7 +60,6 @@ export function MarketStructureUpload() {
       dmName: !dmName,
       storeName: !storeName,
       market: !market,
-      // doorCode: !doorCode,
       storeAddress: !storeAddress,
     };
 
@@ -72,8 +70,8 @@ export function MarketStructureUpload() {
       toast.error("Please fill out all required fields");
       return;
     }
-    setLoading(true);
 
+    setLoading(true);
     try {
       const response = await apiRequest.post("/market/registermarket", {
         bdiId,
@@ -87,14 +85,10 @@ export function MarketStructureUpload() {
       if (response.status === 201) {
         toast.success("Market registered successfully!");
       } else {
-        console.log(response.data?.message)
-        // toast.error(response.data?.message || 'Failed to register market');
+        console.log(response.data?.message);
       }
     } catch (error) {
       console.error("Error details:", error.response?.data || error.message);
-      // toast.error(
-      //   error.response?.data?.message || "An unexpected error occurred"
-      // );
     } finally {
       BdiIDRef.current.value = "";
       dmNameRef.current.value = "";
@@ -109,6 +103,7 @@ export function MarketStructureUpload() {
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -117,7 +112,6 @@ export function MarketStructureUpload() {
   };
 
   const handleFileUpload = async () => {
-    
     if (!selectedFile) {
       toast.error("Please select a file first.");
       return;
@@ -127,13 +121,11 @@ export function MarketStructureUpload() {
       const formData = new FormData();
       formData.append("file", selectedFile);
       const response = await apiRequest.post("/market/excelSheet", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       if (response.status === 200) {
-        setSelectedFile("");
+        setSelectedFile(null);
         toast.success("File uploaded successfully");
       } else {
         toast.error("File upload failed. Please try again.");
@@ -146,61 +138,68 @@ export function MarketStructureUpload() {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row w-100 align-items-center justify-content-center">
-        <div className="col-12 col-md-8 col-lg-10 col-xl-8 ">
+    <div className="container-fluid d-flex align-items-center justify-content-center min-vh-90 bg-light">
+      <div className="row justify-content-center w-100">
+        <div className="col-12 col-md-10 col-lg-8">
           <ReusableButtons
-            bigText={"Register Store"}
-            smallText={"Upload"}
+            bigText="Register Store"
+            smallText="Upload"
             setActiveForm={setActiveForm}
             activeForm={activeForm}
           />
-          {activeForm === "register" ? (
-            <div className="container">
-              <div className="row d-flex justify-content-center align-items-center">
-                <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                  <Form
-                    onSubmit={handleSubmit}
-                    className="shadow-lg rounded p-4"
-                  >
-                    <div className="text-center mb-4">
-                      <h5 className="font-family">Register Store</h5>
-                    </div>
-                    <Form.Group className="mb-2">
+          {activeForm === "register"? (
+            <div className="row mt-4">
+              {/* Form Section */}
+              <div className="col-12 col-md-6 mb-4 mb-md-0">
+                <Card className="shadow-lg p-4 border-0">
+                  <h5 className="text-center fw-bold mb-4" style={{ color: "#E10174" }}>
+                    Register Store
+                  </h5>
+                  <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3">
                       <Form.Control
                         type="text"
-                        placeholder="Bdi ID"
+                        placeholder="Bdi ID *"
                         ref={BdiIDRef}
                         isInvalid={errors.bdiId}
-                        className="border shadow-none"
+                        className="form-control-modern"
                       />
+                      <Form.Control.Feedback type="invalid">
+                        Bdi ID is required.
+                      </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group className="mb-2">
+                    <Form.Group className="mb-3">
                       <Form.Control
                         type="text"
-                        placeholder="District Manager Name"
+                        placeholder="District Manager Name *"
                         ref={dmNameRef}
                         isInvalid={errors.dmName}
-                        className="border shadow-none"
+                        className="form-control-modern"
                       />
+                      <Form.Control.Feedback type="invalid">
+                        District Manager Name is required.
+                      </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group className="mb-2">
+                    <Form.Group className="mb-3">
                       <Form.Control
                         type="text"
-                        placeholder="Store Name"
+                        placeholder="Store Name *"
                         ref={storeNameRef}
                         isInvalid={errors.storeName}
-                        className="border shadow-none"
+                        className="form-control-modern"
                       />
+                      <Form.Control.Feedback type="invalid">
+                        Store Name is required.
+                      </Form.Control.Feedback>
                     </Form.Group>
-                    <Form.Group className="mb-2">
+                    <Form.Group className="mb-3">
                       <Form.Select
                         ref={marketRef}
                         isInvalid={errors.market}
-                        className="border shadow-none"
+                        className="form-control-modern"
                         aria-label="Select Market"
                       >
-                        <option value="">Select Market</option>
+                        <option value="">Select Market *</option>
                         {markets.map((market) => (
                           <option
                             className="text-capitalize"
@@ -211,43 +210,53 @@ export function MarketStructureUpload() {
                           </option>
                         ))}
                       </Form.Select>
-                    </Form.Group>
-                    <Form.Group className="mb-2">
-                      <Form.Control
-                        type="text"
-                        placeholder="Door Code"
-                        ref={doorCodeRef}
-                        isInvalid={errors.doorCode}
-                        className="border shadow-none"
-                      />
+                      <Form.Control.Feedback type="invalid">
+                        Market is required.
+                      </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Control
                         type="text"
-                        placeholder="Store Address"
-                        ref={storeAddressRef}
-                        isInvalid={errors.storeAddress}
-                        className="border shadow-none"
+                        placeholder="Door Code"
+                        ref={doorCodeRef}
+                        className="form-control-modern"
                       />
                     </Form.Group>
-                    <div className="d-grid gap-2">
-                      <button className="btn btn-primary" type="submit">
-                        {loading ? (
-                          <div class="spinner-border text-muted"></div>
-                        ) : (
-                          "Register"
-                        )}
-                      </button>
-                    </div>
+                    <Form.Group className="mb-4">
+                      <Form.Control
+                        type="text"
+                        placeholder="Store Address *"
+                        ref={storeAddressRef}
+                        isInvalid={errors.storeAddress}
+                        className="form-control-modern"
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        Store Address is required.
+                      </Form.Control.Feedback>
+                    </Form.Group>
+                    <Button
+                      variant="pink"
+                      type="submit"
+                      className="w-100 py-2 fw-medium"
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <span className="spinner-border spinner-border-sm" />
+                      ) : (
+                        "Register"
+                      )}
+                    </Button>
                   </Form>
-                </div>
-                <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 text-center">
-                  <img
-                    src="./market.png"
-                    alt="Market"
-                    className="img-fluid d-none d-md-block"
-                  />
-                </div>
+                </Card>
+              </div>
+              {/* Image Section */}
+              <div className="col-12 col-md-6 d-flex justify-content-center align-items-center">
+                <img
+                  src="./market.png"
+                  alt="Market"
+                  className="img-fluid d-none d-md-block"
+                  style={{ maxHeight: "350px" }}
+                />
               </div>
             </div>
           ) : (
@@ -255,7 +264,6 @@ export function MarketStructureUpload() {
               handleFileUploadClick={handleFileUploadClick}
               handleFileChange={handleFileChange}
               handleFileUpload={handleFileUpload}
-              handleSubmit={handleSubmit}
               selectedFile={selectedFile}
               fileInputRef={fileInputRef}
               loading={loading}
@@ -263,7 +271,9 @@ export function MarketStructureUpload() {
           )}
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={1500} />
     </div>
   );
 }
+
+export default MarketStructureUpload;

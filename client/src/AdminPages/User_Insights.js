@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { apiRequest } from "../lib/apiRequest";
 import { MdDownload } from "react-icons/md";
-import { IoFilterSharp } from "react-icons/io5"; // Added IoFilterSharp import
+import { IoFilterSharp } from "react-icons/io5";
 import PageCountStack from "../universalComponents/PageCountStack";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../universalComponents/MyContext";
-import * as XLSX from "xlsx"; // Import XLSX
-import "../styles/loader.css";
-import FullNameFilter from "../universalComponents/FullNameFilter"; // Assuming these are components for filtering
-import NtidFilter from "../universalComponents//NtidFilter";
+import * as XLSX from "xlsx";
+import FullNameFilter from "../universalComponents/FullNameFilter";
+import NtidFilter from "../universalComponents/NtidFilter";
 import { Col, Row } from "react-bootstrap";
 import DateRangeFilter from "../universalComponents/DateRangeFilter";
+import "../styles/UserInsights.css"; // New custom CSS file
+import {Container} from "react-bootstrap";
 
 function UserInsights() {
   const [userStats, setUserStats] = useState([]);
@@ -30,15 +31,10 @@ function UserInsights() {
 
     const fetchUserStats = async () => {
       const { startDate, endDate } = dates;
-      const params = {
-        startDate: startDate,
-        endDate: endDate,
-      };
+      const params = { startDate, endDate };
       setLoading(true);
       try {
-        const response = await apiRequest.get("/createTickets/userinsights", {
-          params,
-        });
+        const response = await apiRequest.get("/createTickets/userinsights", { params });
         if (isMounted) setUserStats(response.data);
       } catch (error) {
         console.error("Error fetching user ticket stats:", error);
@@ -55,7 +51,11 @@ function UserInsights() {
   }, [dates]);
 
   if (loading) {
-    return <div className="loader"></div>;
+    return (
+      <div className="loader-container">
+        <div className="loader"></div>
+      </div>
+    );
   }
 
   const filteredUserStats = userStats.filter(
@@ -107,155 +107,148 @@ function UserInsights() {
 
   const handleFullnameFilterClick = () => setFullnameToggle(!fullnameToggle);
   const handleNTIDFilterClick = () => setNtidFilterToggle(!ntidFilterToggle);
-  const handleDataFromChild = (startDate, endDate) =>
-    setDates({ startDate, endDate });
+  const handleDataFromChild = (startDate, endDate) => setDates({ startDate, endDate });
 
   return (
-    <div className="container">
-      <h3 className="text-center" style={{ color: "#E10174" }}>
-        Users Tickets Insights
-      </h3>
-      <Row className="d-flex justify-content-between mb-2">
-        <Col xs={12} md="auto">
+    <Container fluid className="user-insights-container">
+      <h3 className="text-center my-4 text-pink fw-bold">Users Tickets Insights</h3>
+      <Row className="justify-content-between mb-3">
+        <Col xs={12} md="auto" className="mb-2 mb-md-0">
           <DateRangeFilter sendDatesToParent={handleDataFromChild} />
         </Col>
         <Col xs={12} md="auto">
           <button
-            className="btn btn-outline-success fw-medium"
+            className="btn export-btn"
             onClick={exportToExcel}
             disabled={filteredUserStats.length === 0}
           >
-            <MdDownload /> Download as Excel File
+            <MdDownload className="me-1" /> Download as Excel
           </button>
         </Col>
       </Row>
 
-      <table className="table table-bordered table-striped table-sm">
-        <thead className="table-light">
-          <tr className="tablerow">
-            <th>SINo</th>
-            <th>
-              Email / NTID
-              <>
-                <IoFilterSharp
-                  style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                  onClick={handleNTIDFilterClick}
-                />
-                {ntidFilterToggle && (
-                  <div className="dropdown-menu show">
-                    <NtidFilter
-                      setNtidFilterToggle={setNtidFilterToggle}
-                      ntidFilter={ntidFilter}
-                      setntidFilter={setNtidFilter}
-                      setCurrentPage={setCurrentPage}
-                    />
-                  </div>
-                )}
-              </>
-            </th>
-            <th>
-              Fullname
-              <>
-                <IoFilterSharp
-                  style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                  onClick={handleFullnameFilterClick}
-                />
-                {fullnameToggle && (
-                  <div className="dropdown-menu show">
-                    <FullNameFilter
-                      setFullnameFilterToggle={setFullnameToggle}
-                      fullnameFilter={fullnameFilter}
-                      setFullnameFilter={setFullnameFilter}
-                      setCurrentPage={setCurrentPage}
-                    />
-                  </div>
-                )}
-              </>
-            </th>
-            <th>Total</th>
-            <th>New</th>
-            <th>Opened</th>
-            <th>InProgress</th>
-            <th>Completed</th>
-            <th>Reopened</th>
-            <th style={{ backgroundColor: "#117a65" }}>Request Reopen</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentItems.map(({ ntid, fullname, ticketStats }, index) => (
-            <tr key={ntid}>
-              <td className="text-center">{index + 1}</td>
-              <td
-                className="text-center"
-                onClick={handleTotalTickets(ntid, "0")}
-                style={{ cursor: "pointer" }}
-              >
-                {ntid}
-              </td>
-              <td
-                className="text-center text-capitalize"
-                onClick={handleTotalTickets(ntid, "0")}
-                style={{ cursor: "pointer" }}
-              >
-                {fullname.toLowerCase()}
-              </td>
-              <td
-                className="text-center"
-                onClick={handleTotalTickets(ntid, "0")}
-                style={{ cursor: "pointer" }}
-              >
-                {ticketStats.totalTickets}
-              </td>
-              <td
-                className="text-center"
-                onClick={handleTotalTickets(ntid, "1")}
-                style={{ cursor: "pointer" }}
-              >
-                {ticketStats.new || 0}
-              </td>
-              <td
-                className="text-center"
-                onClick={handleTotalTickets(ntid, "2")}
-                style={{ cursor: "pointer" }}
-              >
-                {ticketStats.opened || 0}
-              </td>
-              <td
-                className="text-center"
-                onClick={handleTotalTickets(ntid, "3")}
-                style={{ cursor: "pointer" }}
-              >
-                {ticketStats.inprogress || 0}
-              </td>
-              <td
-                className="text-center"
-                onClick={handleTotalTickets(ntid, "4")}
-                style={{ cursor: "pointer" }}
-              >
-                {ticketStats.completed || 0}
-              </td>
-              <td
-                className="text-center"
-                onClick={handleTotalTickets(ntid, "5")}
-                style={{ cursor: "pointer" }}
-              >
-                {ticketStats.reopened || 0}
-              </td>
-              <td className="text-center">
-                {ticketStats.requestreopenCount || 0}
-              </td>
+      <div className="table-wrapper" style={{height:'800px'}}>
+        <table className="table table-custom">
+          <thead className="table-header">
+            <tr>
+              <th>SINo</th>
+              <th>
+                Email / NTID
+                <div className="filter-icon">
+                  <IoFilterSharp onClick={handleNTIDFilterClick} />
+                  {ntidFilterToggle && (
+                    <div className="filter-dropdown">
+                      <NtidFilter
+                        setNtidFilterToggle={setNtidFilterToggle}
+                        ntidFilter={ntidFilter}
+                        setntidFilter={setNtidFilter}
+                        setCurrentPage={setCurrentPage}
+                      />
+                    </div>
+                  )}
+                </div>
+              </th>
+              <th>
+                Fullname
+                <div className="filter-icon">
+                  <IoFilterSharp onClick={handleFullnameFilterClick} />
+                  {fullnameToggle && (
+                    <div className="filter-dropdown">
+                      <FullNameFilter
+                        setFullnameFilterToggle={setFullnameToggle}
+                        fullnameFilter={fullnameFilter}
+                        setFullnameFilter={setFullnameFilter}
+                        setCurrentPage={setCurrentPage}
+                      />
+                    </div>
+                  )}
+                </div>
+              </th>
+              <th>Total</th>
+              <th>New</th>
+              <th>Opened</th>
+              <th>In Progress</th>
+              <th>Completed</th>
+              <th>Reopened</th>
+              <th className="request-reopen-header">Request Reopen</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="table-body">
+            {currentItems.length > 0 ? (
+              currentItems.map(({ ntid, fullname, ticketStats }, index) => (
+                <tr key={ntid}>
+                  <td className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                  <td
+                    className="text-center clickable"
+                    onClick={handleTotalTickets(ntid, "0")}
+                  >
+                    {ntid}
+                  </td>
+                  <td
+                    className="text-center clickable text-capitalize"
+                    onClick={handleTotalTickets(ntid, "0")}
+                  >
+                    {fullname.toLowerCase()}
+                  </td>
+                  <td
+                    className="text-center clickable"
+                    onClick={handleTotalTickets(ntid, "0")}
+                  >
+                    {ticketStats.totalTickets}
+                  </td>
+                  <td
+                    className="text-center clickable"
+                    onClick={handleTotalTickets(ntid, "1")}
+                  >
+                    {ticketStats.new || 0}
+                  </td>
+                  <td
+                    className="text-center clickable"
+                    onClick={handleTotalTickets(ntid, "2")}
+                  >
+                    {ticketStats.opened || 0}
+                  </td>
+                  <td
+                    className="text-center clickable"
+                    onClick={handleTotalTickets(ntid, "3")}
+                  >
+                    {ticketStats.inprogress || 0}
+                  </td>
+                  <td
+                    className="text-center clickable"
+                    onClick={handleTotalTickets(ntid, "4")}
+                  >
+                    {ticketStats.completed || 0}
+                  </td>
+                  <td
+                    className="text-center clickable"
+                    onClick={handleTotalTickets(ntid, "5")}
+                  >
+                    {ticketStats.reopened || 0}
+                  </td>
+                  <td className="text-center">{ticketStats.requestreopenCount || 0}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="10" className="text-center no-data">
+                  No data available
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-      <PageCountStack
-        itemsPerPage={itemsPerPage}
-        filteredTickets={filteredUserStats}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
-    </div>
+      {currentItems.length > 0 && (
+        <PageCountStack
+          itemsPerPage={itemsPerPage}
+          filteredTickets={filteredUserStats}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
+    </Container>
   );
 }
 

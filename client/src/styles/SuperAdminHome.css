@@ -1,0 +1,105 @@
+/* Container styling */
+.super-admin-container {
+    
+    background-color: #f4f5f7; /* Jira-like light gray background */
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  }
+  
+  /* Dashboard title */
+  .dashboard-title {
+    color: #E10174; /* Pink */
+    font-weight: 600;
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Ticket card */
+  .ticket-card {
+    border-radius: 8px;
+    border: 1px solid #E10174; /* Pink border */
+    background-color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .ticket-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow on hover */
+  }
+  
+  .card-title {
+    color: #42526e; /* Jira muted text */
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+  }
+  
+  .ticket-count {
+    color: #E10174;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  
+  /* Chart card */
+  .chart-card {
+    border-radius: 8px;
+    border: none;
+  }
+  
+  /* Loader overlay */
+  .loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    z-index: 1050;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Error message */
+  .error-message {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .dashboard-title {
+      font-size: 1.5rem;
+    }
+  
+    .ticket-card {
+      padding: 1.5rem;
+    }
+  
+    .card-title {
+      font-size: 1rem;
+    }
+  
+    .ticket-count {
+      font-size: 1.75rem;
+    }
+  
+    .chart-card {
+      height: 50vh; /* Adjust height for smaller screens */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .ticket-card {
+      padding: 1rem;
+    }
+  
+    .card-title {
+      font-size: 0.9rem;
+    }
+  
+    .ticket-count {
+      font-size: 1.5rem;
+    }
+  }

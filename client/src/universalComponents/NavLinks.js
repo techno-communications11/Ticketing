@@ -1,75 +1,94 @@
-import { TbEyeCheck } from "react-icons/tb";
-import { MdAssignmentTurnedIn } from "react-icons/md";
-import { MdOutlineDoneAll } from "react-icons/md";
-import { GoIssueReopened } from "react-icons/go";
 import { Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { TbEyeCheck } from "react-icons/tb";
+import { MdAssignmentTurnedIn, MdOutlineDoneAll } from "react-icons/md";
+import { GoIssueReopened } from "react-icons/go";
 import { VscGitPullRequestNewChanges } from "react-icons/vsc";
-import { FaTicket } from "react-icons/fa6";
-import { FaUsers } from "react-icons/fa";
-const NavLinks = ({ department, pathname, isDepartments }) => (
+import { FaTicket, FaUsers } from "react-icons/fa6";
+import "../styles/NavLinks.css"; // New custom CSS file
+
+const NavLinks = ({ department, pathname, isDepartments }) => {
+  const isDistrictManager = department === "District Manager";
+
+  // Define navigation items with their properties
+  const navItems = [
+    ...(isDistrictManager
+      ? [
+          {
+            to: "/dmcreateticket",
+            label: "Create Ticket",
+            icon: <FaTicket className="text-danger fs-5" />,
+            activePaths: ["/dmcreateticket"],
+          },
+        ]
+      : []),
+    {
+      to: isDistrictManager ? "/openedTickets" : isDepartments ? "/departmentopened" : "/",
+      label: "Viewed",
+      icon: <TbEyeCheck className="text-primary fs-5" />,
+      activePaths: ["/openedTickets", "/departmentopened"],
+    },
+    ...(isDistrictManager
+      ? [
+          {
+            to: "/inprogress",
+            label: "Assigned",
+            icon: <MdAssignmentTurnedIn className="text-warning fs-5" />,
+            activePaths: ["/inprogress"],
+          },
+        ]
+      : []),
+    {
+      to: isDistrictManager ? "/completed" : isDepartments ? "/departmentcompleted" : "/",
+      label: "Completed",
+      icon: <MdOutlineDoneAll className="text-success fs-5" />,
+      activePaths: ["/completed", "/departmentcompleted"],
+    },
+    ...(isDistrictManager
+      ? [
+          {
+            to: "/request-reopen",
+            label: "Reopen Request",
+            icon: <VscGitPullRequestNewChanges className="text-danger fs-5" />,
+            activePaths: ["/request-reopen"],
+          },
+          {
+            to: "/reopened",
+            label: "Reopened",
+            icon: <GoIssueReopened className="text-primary fs-5" />,
+            activePaths: ["/reopened"],
+          },
+        ]
+      : []),
+    ...(isDepartments
+      ? [
+          {
+            to: "/departmentsfromteam",
+            label: "Team Tickets",
+            icon: <FaUsers className="text-primary fs-5" />,
+            activePaths: ["/departmentsfromteam"],
+          },
+        ]
+      : []),
+  ];
+
+  return (
     <>
-
-{ department==='District Manager'&&<Nav.Link
-        as={Link}
-        to={department === "District Manager" ? "/dmcreateticket" : "/"}
-        className={`fw-medium position-relative ${pathname === "/dmcreateticket" ? "text-danger fw-bolder" : "text-dark"}`}
-      >
-        <FaTicket className="text-danger fs-5" /> Create Ticket
-      </Nav.Link>}
-
-      <Nav.Link
-        as={Link}
-        to={department === "District Manager" ? "/openedTickets" : isDepartments ? "/departmentopened" : "/"}
-        className={`fw-medium position-relative ${pathname === "/openedTickets" || pathname === "/departmentopened" ? "text-danger fw-bolder" : "text-dark"}`}
-      >
-        <TbEyeCheck className="text-primary fs-5" /> Viewed
-      </Nav.Link>
-  
-      {department==='District Manager' && <Nav.Link
-        as={Link}
-        to={department === "District Manager" ? "/inprogress" : "/"}
-        className={`fw-medium position-relative ${pathname === "/inprogress" ? "text-danger fw-bolder" : "text-dark"}`}
-      >
-        <MdAssignmentTurnedIn className="text-warning fs-5" /> Assigned
-      </Nav.Link>}
-  
-      <Nav.Link
-        as={Link}
-        to={department === "District Manager" ? "/completed" : isDepartments ? "/departmentcompleted" : "/"}
-        className={`fw-medium position-relative ${pathname === "/completed" || pathname === "/departmentcompleted" ? "text-danger fw-bolder" : "text-dark"}`}
-      >
-        <MdOutlineDoneAll className="text-success fs-5" /> Completed
-      </Nav.Link>
-  
-      {department === "District Manager" && (
+      {navItems.map((item, index) => (
         <Nav.Link
+          key={index}
           as={Link}
-          to={department === "District Manager" ? "/request-reopen" : "/"}
-          className={`fw-medium position-relative ${pathname === "/request-reopen" ? "text-danger fw-bolder" : "text-dark"}`}
+          to={item.to}
+          className={`nav-link-custom d-flex align-items-center gap-2 ${
+            item.activePaths.includes(pathname) ? "active" : ""
+          }`}
         >
-          <VscGitPullRequestNewChanges className="fs-5 fw-bolder text-danger" /> ReopenQuest
+          {item.icon}
+          <span>{item.label}</span>
         </Nav.Link>
-      )}
-  
-      {department==='District Manager'&&<Nav.Link
-        as={Link}
-        to={department === "District Manager" ? "/reopened" : "/"}
-        className={`fw-medium position-relative ${pathname === "/reopened" ? "text-danger fw-bolder" : "text-dark"}`}
-      >
-        <GoIssueReopened className="text-primary fs-5 fw-bolder" /> Reopened
-      </Nav.Link>}
-      {isDepartments && (
-  <Nav.Link
-    as={Link}
-    to={isDepartments ? "/departmentsfromteam" : "/"}
-    className={`fw-medium position-relative ${pathname === "/departmentsfromteam" ? "text-danger fw-bolder" : "text-dark"}`}
-  >
-    <FaUsers className="text-primary fs-5 fw-bolder" /> Team Tickets
-  </Nav.Link>
-)}
-
+      ))}
     </>
   );
-  export default NavLinks
-  
+};
+
+export default NavLinks;

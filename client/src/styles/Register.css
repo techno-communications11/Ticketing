@@ -1,53 +1,112 @@
-/* Pink Theme */
-.bg-pink-light {
-    background-color: #f8e1f2 !important;
+/* Register.css */
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.bg-pink {
+  background-color: #E10174 !important;
+}
+
+.text-pink {
+  color: #E10174 !important;
+}
+
+.btn-pink {
+  background-color: #E10174;
+  border-color: #E10174;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.btn-pink:hover {
+  background-color: #c70a5f;
+  border-color: #c70a5f;
+  color: white;
+}
+
+.btn-outline-pink {
+  border-color: #E10174;
+  color: #E10174;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-pink:hover {
+  background-color: #E10174;
+  color: white;
+}
+
+.form-control {
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.form-control:focus {
+  border-color: #E10174;
+  box-shadow: 0 0 0 0.2rem rgba(225, 1, 116, 0.25);
+}
+
+.input-group-text {
+  border-radius: 8px 0 0 8px;
+}
+
+.dropdown-toggle {
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  background-color: white;
+  border: 1px solid #ced4da;
+}
+
+.dropdown-toggle:hover {
+  background-color: #f8e9f0;
+}
+
+.dropdown-menu {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown-item-pink {
+  padding: 8px 16px;
+  color: #E10174;
+}
+
+.dropdown-item-pink:hover {
+  background-color: #f8e9f0;
+  color: #c70a5f;
+}
+
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+
+.spinner-border {
+  border-color: #fff;
+  border-right-color: transparent;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem !important;
   }
- 
-  
-  .bg-pink {
-    background-color: #e10174 !important;
-  }
-  
-  .text-pink {
-    color: #e10174 !important;
-  }
-  
+
   .btn-pink {
-    background-color: #e10174;
-    border-color: #e10174;
-    color: white;
+    font-size: 14px;
+    padding: 8px;
   }
-  
-  .btn-pink:hover {
-    background-color: #c90063;
-    border-color: #c90063;
+
+  .form-control,
+  .dropdown-toggle {
+    font-size: 12px;
   }
-  
-  /* Input Error Styling */
-  .input-error {
-    border-color: #dc3545 !important;
-  }
-  
-  /* Form Styling */
-  .form-control {
-    border-radius: 0.25rem;
-  }
-  
-  .input-group-text {
-    border-radius: 0.25rem;
-  }
-  
-  /* Dropdown Styling */
-  .dropdown-menu {
-    border-radius: 0.25rem;
-  }
-  
-  .dropdown-item:hover {
-    background-color: #f8e1f2;
-  }
-  
-  /* Spinner Styling */
-  .spinner-border {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
+}

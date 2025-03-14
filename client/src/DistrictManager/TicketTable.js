@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Table } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
-import PageCountStack from '../universalComponents/PageCountStack';
-import { fetchStatusWiseTickets, setMarketAndStatus } from '../redux/statusSlice';
-import {jwtDecode} from 'jwt-decode';
-import '../styles/TicketTable.css';
-import { setId, fetchIndividualTickets } from '../redux/marketSlice';
+import React, { useEffect, useState } from "react";
+import { Container, Table } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import PageCountStack from "../universalComponents/PageCountStack";
+import { fetchStatusWiseTickets, setMarketAndStatus } from "../redux/statusSlice";
+import { jwtDecode } from "jwt-decode";
+import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import { IoFilterSharp } from "react-icons/io5";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import NtidFilter from "../universalComponents/NtidFilter";
 import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
-import FullnameFilter from '../universalComponents/FullNameFilter';
-import StatusFilter from '../universalComponents/StatusFilter';
-import FilterLogic from '../universalComponents/FilteringLogic';
-import TicketBody from '../universalComponents/TicketBody';
-import '../styles/TicketTable.css'
-// import animationData from "../universalComponents/Animation.json";
-// import { Player } from "@lottiefiles/react-lottie-player";
+import FullnameFilter from "../universalComponents/FullNameFilter";
+import StatusFilter from "../universalComponents/StatusFilter";
+import FilterLogic from "../universalComponents/FilteringLogic";
+import TicketBody from "../universalComponents/TicketBody";
+import "../styles/TicketsTable.css"; // Updated custom CSS
 
-
-const TicketsTable = ({ statusIds, text,logedInuser }) => {
+const TicketsTable = ({ statusIds, text, logedInuser }) => {
   const dispatch = useDispatch();
   const [tickets, setTickets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +27,7 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
   const [completedAt, setCompletedAt] = useState("");
   const [createdAt, setCreatedAt] = useState("");
   const [ntidFilter, setNtidFilter] = useState("");
-  const [fullnameFilter, setFullnameFilter] = useState('');
+  const [fullnameFilter, setFullnameFilter] = useState("");
 
   // Toggle States for Filters
   const [statusToggle, setStatusToggle] = useState(false);
@@ -41,7 +37,7 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
   const [fullnameToggle, setFullnameToggle] = useState(false);
 
   const token = localStorage.getItem("token");
-  const userId = jwtDecode(token);
+  const userId = token ? jwtDecode(token) : {};
 
   // Toggle Handlers
   const handleToggle = (toggleSetter, ...otherToggles) => {
@@ -63,38 +59,37 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
   useEffect(() => {
     const storedMarket = userId?.id;
     const hasFetched = localStorage.getItem("hasFetched");
-  
+
     if (storedMarket && !hasFetched) {
       const fetchTickets = async () => {
-        // Fetch all tickets based on statusIds without filtering by openedBy yet
         const allTickets = await Promise.all(
-          statusIds.map(statusId => dispatch(fetchStatusWiseTickets({ id: storedMarket, statusId })))
+          statusIds.map((statusId) =>
+            dispatch(fetchStatusWiseTickets({ id: storedMarket, statusId }))
+          )
         );
-        
-        const combined = allTickets.flatMap(ticket => ticket.payload || []);
-        
-        // After fetching, filter the tickets based on `openedBy` and `statusIds`
+
+        const combined = allTickets.flatMap((ticket) => ticket.payload || []);
+
         let filteredTickets = combined;
-  
-        // If `openedBy` is provided, filter tickets based on `openedBy`
+
         if (logedInuser) {
-          filteredTickets = filteredTickets.filter(ticket => ticket.openedBy === logedInuser);
+          filteredTickets = filteredTickets.filter(
+            (ticket) => ticket.openedBy === logedInuser
+          );
         }
-  
-        // Update state with the filtered tickets
+
         setTickets(filteredTickets);
       };
-  
+
       fetchTickets();
-      statusIds.forEach(statusId => dispatch(setMarketAndStatus({ id: storedMarket, statusId })));
+      statusIds.forEach((statusId) =>
+        dispatch(setMarketAndStatus({ id: storedMarket, statusId }))
+      );
       localStorage.setItem("hasFetched", true);
     }
-  }, [statusIds, userId, logedInuser]); // Added `openedBy` as a dependency
-  
-  
+  }, [statusIds, userId, logedInuser, dispatch]);
 
   useEffect(() => {
-    // Reset hasFetched on component unmount
     return () => {
       localStorage.removeItem("hasFetched");
     };
@@ -107,33 +102,54 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
     dispatch(fetchIndividualTickets(id));
   };
 
-  const currentItems = filteredTickets.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const completedTickets = currentItems.filter(ticket => ticket.isSettled);
-  const nonCompletedTickets = currentItems.filter(ticket => !ticket.isSettled);
-  const sortedCompletedTickets = completedTickets.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+  const currentItems = filteredTickets.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  const completedTickets = currentItems.filter((ticket) => ticket.isSettled);
+  const nonCompletedTickets = currentItems.filter((ticket) => !ticket.isSettled);
+  const sortedCompletedTickets = completedTickets.sort(
+    (a, b) => new Date(b.completedAt) - new Date(a.completedAt)
+  );
   const finalTickets = [...nonCompletedTickets, ...sortedCompletedTickets];
 
   return (
-    <Container className="mt-3">
-      {finalTickets.length>0&&<h3 className="d-flex justify-content-center mb-3 font-family" style={{ color: '#E10174' }}>
-        {text} Tickets
-      </h3>}
+    <Container fluid className="tickets-table-container">
+      {finalTickets.length > 0 && (
+        <h3 className="text-center my-4 text-pink fw-bold">{text} Tickets</h3>
+      )}
 
-      <div className="table-responsive">
-        <Table striped bordered hover>
-          <thead className="sticky-thead">
+      <div className="table-wrapper">
+        <Table className="table-custom">
+          <thead className="table-header">
             <tr>
-              {["SC.No", "Email / NTID", "Full Name", "Status", "CreatedAt", "CompletedAt", "Duration", "Details"].map((header) => (
-                <th key={header} className="text-center" style={{ backgroundColor: "#E10174", color: "white" }}>
+              {[
+                "SC.No",
+                "Email / NTID",
+                "Full Name",
+                "Status",
+                "CreatedAt",
+                "CompletedAt",
+                "Duration",
+                "Details",
+              ].map((header) => (
+                <th key={header} className="text-center">
                   {header}
                   {header === "Status" && (
-                    <>
+                    <div className="filter-icon">
                       <IoFilterSharp
-                        style={{ cursor: "pointer", marginLeft: '0.5rem' }}
-                        onClick={() => handleToggle(setStatusToggle, setNtidFilterToggle, setCreatedAtToggle, setCompletedAtToggle, setFullnameToggle)}
+                        onClick={() =>
+                          handleToggle(
+                            setStatusToggle,
+                            setNtidFilterToggle,
+                            setCreatedAtToggle,
+                            setCompletedAtToggle,
+                            setFullnameToggle
+                          )
+                        }
                       />
                       {statusToggle && (
-                        <div className="dropdown-menu show">
+                        <div className="filter-dropdown">
                           <StatusFilter
                             statusFilter={statusFilter}
                             setStatusFilter={setStatusFilter}
@@ -142,34 +158,23 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
                           />
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
-                  {header === "Full Name" && (
-                    <>
+                  {header === "Email / NTID" && (
+                    <div className="filter-icon">
                       <IoFilterSharp
-                        style={{ cursor: "pointer", marginLeft: '0.5rem' }}
-                        onClick={() => handleToggle(setFullnameToggle, setStatusToggle, setNtidFilterToggle, setCreatedAtToggle, setCompletedAtToggle)}
-                      />
-                      {fullnameToggle && (
-                        <div className="dropdown-menu show">
-                          <FullnameFilter
-                            fullnameFilter={fullnameFilter}
-                            setFullnameFilter={setFullnameFilter}
-                            setCurrentPage={setCurrentPage}
-                            setFullnameFilterToggle={setFullnameToggle}
-                          />
-                        </div>
-                      )}
-                    </>
-                  )}
-                  {header === "NTID" && (
-                    <>
-                      <IoFilterSharp
-                        style={{ cursor: "pointer", marginLeft: '0.5rem' }}
-                        onClick={() => handleToggle(setNtidFilterToggle, setStatusToggle, setCreatedAtToggle, setCompletedAtToggle, setFullnameToggle)}
+                        onClick={() =>
+                          handleToggle(
+                            setNtidFilterToggle,
+                            setStatusToggle,
+                            setCreatedAtToggle,
+                            setCompletedAtToggle,
+                            setFullnameToggle
+                          )
+                        }
                       />
                       {ntidFilterToggle && (
-                        <div className="dropdown-menu show">
+                        <div className="filter-dropdown">
                           <NtidFilter
                             ntidFilter={ntidFilter}
                             setntidFilter={setNtidFilter}
@@ -178,34 +183,73 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
                           />
                         </div>
                       )}
-                    </>
+                    </div>
+                  )}
+                  {header === "Full Name" && (
+                    <div className="filter-icon">
+                      <IoFilterSharp
+                        onClick={() =>
+                          handleToggle(
+                            setFullnameToggle,
+                            setStatusToggle,
+                            setNtidFilterToggle,
+                            setCreatedAtToggle,
+                            setCompletedAtToggle
+                          )
+                        }
+                      />
+                      {fullnameToggle && (
+                        <div className="filter-dropdown">
+                          <FullnameFilter
+                            fullnameFilter={fullnameFilter}
+                            setFullnameFilter={setFullnameFilter}
+                            setCurrentPage={setCurrentPage}
+                            setFullnameFilterToggle={setFullnameToggle}
+                          />
+                        </div>
+                      )}
+                    </div>
                   )}
                   {header === "CreatedAt" && (
-                    <>
+                    <div className="filter-icon">
                       <BsCalendar2DateFill
-                        style={{ cursor: "pointer", marginLeft: '0.5rem' }}
-                        onClick={() => handleToggle(setCreatedAtToggle, setStatusToggle, setNtidFilterToggle, setCompletedAtToggle, setFullnameToggle)}
+                        onClick={() =>
+                          handleToggle(
+                            setCreatedAtToggle,
+                            setStatusToggle,
+                            setNtidFilterToggle,
+                            setCompletedAtToggle,
+                            setFullnameToggle
+                          )
+                        }
                       />
                       {createdAtToggle && (
-                        <div className="dropdown-menu show">
+                        <div className="filter-dropdown">
                           <CreatedAt
                             createdAt={createdAt}
                             setCreatedAt={setCreatedAt}
                             setCurrentPage={setCurrentPage}
-                            setCreatedAtToggle={setCompletedAtToggle}
+                            setCreatedAtToggle={setCreatedAtToggle} // Fixed typo
                           />
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
                   {header === "CompletedAt" && (
-                    <>
+                    <div className="filter-icon">
                       <BsCalendar2DateFill
-                        style={{ cursor: "pointer", marginLeft: '0.5rem' }}
-                        onClick={() => handleToggle(setCompletedAtToggle, setStatusToggle, setNtidFilterToggle, setCreatedAtToggle, setFullnameToggle)}
+                        onClick={() =>
+                          handleToggle(
+                            setCompletedAtToggle,
+                            setStatusToggle,
+                            setNtidFilterToggle,
+                            setCreatedAtToggle,
+                            setFullnameToggle
+                          )
+                        }
                       />
                       {completedAtToggle && (
-                        <div className="dropdown-menu show">
+                        <div className="filter-dropdown">
                           <CompletedAt
                             completedAt={completedAt}
                             setCompletedAt={setCompletedAt}
@@ -214,17 +258,17 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
                           />
                         </div>
                       )}
-                    </>
+                    </div>
                   )}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="table-body">
             {finalTickets.length > 0 ? (
               finalTickets.map((ticket, index) => (
                 <TicketBody
-                  key={ticket.id || index} // Use unique 'id' or fallback to index
+                  key={ticket.id || index}
                   ticket={ticket}
                   index={index}
                   handleTicket={handleTicket}
@@ -234,8 +278,8 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="8" className='text-center'>
-                  no data available
+                <td colSpan="8" className="text-center no-data">
+                  No data available
                 </td>
               </tr>
             )}
@@ -243,11 +287,13 @@ const TicketsTable = ({ statusIds, text,logedInuser }) => {
         </Table>
       </div>
 
-      <PageCountStack
-        filteredTickets={filteredTickets}
-        itemsPerPage={itemsPerPage}
-        setCurrentPage={setCurrentPage}
-      />
+      {finalTickets.length > 0 && (
+        <PageCountStack
+          filteredTickets={filteredTickets}
+          itemsPerPage={itemsPerPage}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
     </Container>
   );
 };

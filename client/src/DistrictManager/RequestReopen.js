@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Table, Container } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { IoFilterSharp } from "react-icons/io5";
 import { BsCalendar2DateFill } from "react-icons/bs";
@@ -14,8 +14,7 @@ import CompletedAt from "../universalComponents/CompletedAt";
 import FullnameFilter from "../universalComponents/FullNameFilter";
 import StatusFilter from "../universalComponents/StatusFilter";
 import PageCountStack from "../universalComponents/PageCountStack";
-// import animationData from "../universalComponents/Animation.json";
-// import { Player } from "@lottiefiles/react-lottie-player";
+import "../styles/RequestReopen.css"; // New custom CSS file
 
 function RequestReopen() {
   const dispatch = useDispatch();
@@ -33,56 +32,21 @@ function RequestReopen() {
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [fullnameToggle, setFullnameToggle] = useState(false);
 
-  const handleFullnameFilterClick = () => {
-    setFullnameToggle(!fullnameToggle);
-    setStatusToggle(false);
-    setNtidFilterToggle(false);
-    setCreatedAtToggle(false);
-    setCompletedAtToggle(false);
+  // Toggle Handlers
+  const handleToggle = (toggleSetter, ...otherToggles) => {
+    toggleSetter((prev) => !prev);
+    otherToggles.forEach((toggle) => toggle(false));
   };
 
-  const handleStatusFilterClick = () => {
-    setStatusToggle(!statusToggle);
-    setNtidFilterToggle(false);
-    setCreatedAtToggle(false);
-    setCompletedAtToggle(false);
-  };
-
-  const handleNTIDFilterClick = () => {
-    setNtidFilterToggle(!ntidFilterToggle);
-    setStatusToggle(false);
-    setCreatedAtToggle(false);
-    setCompletedAtToggle(false);
-  };
-
-  const handleCreatedAtFilterClick = () => {
-    setCreatedAtToggle(!createdAtToggle);
-    setStatusToggle(false);
-    setNtidFilterToggle(false);
-    setCompletedAtToggle(false);
-  };
-
-  const handleCompletedFilterClick = () => {
-    setCompletedAtToggle(!completedAtToggle);
-    setStatusToggle(false);
-    setNtidFilterToggle(false);
-    setCreatedAtToggle(false);
-  };
   // Fetch tickets
   useEffect(() => {
     const ntid = getDecodedToken()?.ntid;
-    // const department=getDecodedToken().department
     const fetchTickets = async () => {
       try {
-        const response = await apiRequest.get(
-          "/createTickets/get_request_reopen_tickets",
-          {
-            params: { ntid },
-          }
-        );
-          
+        const response = await apiRequest.get("/createTickets/get_request_reopen_tickets", {
+          params: { ntid },
+        });
         setTickets(response.data);
-        // console.log(response.data, "req,re");
       } catch (error) {
         console.error("Error fetching tickets:", error);
       }
@@ -107,156 +71,193 @@ function RequestReopen() {
     statusFilter,
     fullnameFilter
   );
-  return (
-    <div className="container">
-      {filteredTickets.length > 0&&<h3
-        className="text-capitalize text-center my-3"
-        style={{ color: "#E10174" }}
-      >
-        Reopen Requested Tickets
-      </h3>}
-      <Table striped bordered hover className="mt-3">
-        <thead>
-        <tr>
-                {[
-                  "SC.No",
-                  "Email / NTID",
-                  "Full Name",
-                  "Status",
-                  "CreatedAt",
-                  "CompletedAt",
-                  "Duration",
-                  "Details",
-                ].map((header) => (
-                  <th
-                    key={header}
-                    className="text-center"
-                    style={{ backgroundColor: "#E10174", color: "white" }}
-                  >
-                    {header}
-                    {header === "Status" && (
-                      <>
-                        <IoFilterSharp
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                          onClick={handleStatusFilterClick}
-                        />
-                        {statusToggle && (
-                          <div className="dropdown-menu show">
-                            <StatusFilter
-                              setStatusToggle={setStatusToggle}
-                              statusFilter={statusFilter}
-                              setStatusFilter={setStatusFilter}
-                              setCurrentPage={setCurrentPage}
-                            />
-                          </div>
-                        )}
-                      </>
-                    )}
-                    {header === "Full Name" && (
-                      <>
-                        <IoFilterSharp
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                          onClick={handleFullnameFilterClick}
-                        />
-                        {fullnameToggle && (
-                          <div className="dropdown-menu show">
-                            <FullnameFilter
-                              setFullnameFilterToggle={setFullnameToggle}
-                              fullnameFilter={fullnameFilter}
-                              setFullnameFilter={setFullnameFilter}
-                              setCurrentPage={setCurrentPage}
-                            />
-                          </div>
-                        )}
-                      </>
-                    )}
-                    {header === "NTID" && (
-                      <>
-                        <IoFilterSharp
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                          onClick={handleNTIDFilterClick}
-                        />
 
-                        {ntidFilterToggle && (
-                          <div className="dropdown-menu show">
-                            <NtidFilter
-                              setNtidFilterToggle={setNtidFilterToggle}
-                              ntidFilter={ntidFilter}
-                              setntidFilter={setntidFilter}
-                              setCurrentPage={setCurrentPage}
-                            />
-                          </div>
-                        )}
-                      </>
-                    )}
-                    {header === "CreatedAt" && (
-                      <>
-                        <BsCalendar2DateFill
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                          onClick={handleCreatedAtFilterClick}
-                        />
-                        {createdAtToggle && (
-                          <div className="dropdown-menu show">
-                            <CreatedAt
-                              setCreatedAtToggle={setCreatedAtToggle}
-                              createdAt={createdAt}
-                              setCreatedAt={setCreatedAt}
-                              setCurrentPage={setCurrentPage}
-                            />
-                          </div>
-                        )}
-                      </>
-                    )}
-                    {header === "CompletedAt" && (
-                      <>
-                        <BsCalendar2DateFill
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                          onClick={handleCompletedFilterClick}
-                        />
-                        {completedAtToggle && (
-                          <div className="dropdown-menu show">
-                            <CompletedAt
-                              setCompletedAtToggle={setCompletedAtToggle}
-                              completedAt={completedAt}
-                              setCompletedAt={setCompletedAt}
-                              setCurrentPage={setCurrentPage}
-                            />
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </th>
-                ))}
-              </tr>
-        </thead>
-        <tbody>
-          {filteredTickets.length > 0 ? (
-            filteredTickets.map((ticket, index) => (
-              <TicketBody
-                key={index}
-                currentPage={currentPage}
-                ticket={ticket}
-                index={index}
-                handleTicket={handleTicket}
-                itemsPerPage={itemsPerPage}
-              />
-            ))
-          ) : (
+  const currentItems = filteredTickets.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  return (
+    <Container fluid className="request-reopen-container">
+      {currentItems.length > 0 && (
+        <h3 className="text-center my-4 text-pink fw-bold">Reopen Requested Tickets</h3>
+      )}
+      <div className="table-wrapper">
+        <Table className="table-custom">
+          <thead className="table-header">
             <tr>
-              <td colSpan="8" className="text-center">
-             no data available
-              </td>
+              {[
+                "SC.No",
+                "Email / NTID",
+                "Full Name",
+                "Status",
+                "CreatedAt",
+                "CompletedAt",
+                "Duration",
+                "Details",
+              ].map((header) => (
+                <th key={header} className="text-center">
+                  {header}
+                  {header === "Status" && (
+                    <div className="filter-icon">
+                      <IoFilterSharp
+                        onClick={() =>
+                          handleToggle(
+                            setStatusToggle,
+                            setNtidFilterToggle,
+                            setCreatedAtToggle,
+                            setCompletedAtToggle,
+                            setFullnameToggle
+                          )
+                        }
+                      />
+                      {statusToggle && (
+                        <div className="filter-dropdown">
+                          <StatusFilter
+                            setStatusToggle={setStatusToggle}
+                            statusFilter={statusFilter}
+                            setStatusFilter={setStatusFilter}
+                            setCurrentPage={setCurrentPage}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {header === "Email / NTID" && (
+                    <div className="filter-icon">
+                      <IoFilterSharp
+                        onClick={() =>
+                          handleToggle(
+                            setNtidFilterToggle,
+                            setStatusToggle,
+                            setCreatedAtToggle,
+                            setCompletedAtToggle,
+                            setFullnameToggle
+                          )
+                        }
+                      />
+                      {ntidFilterToggle && (
+                        <div className="filter-dropdown">
+                          <NtidFilter
+                            setNtidFilterToggle={setNtidFilterToggle}
+                            ntidFilter={ntidFilter}
+                            setntidFilter={setntidFilter}
+                            setCurrentPage={setCurrentPage}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {header === "Full Name" && (
+                    <div className="filter-icon">
+                      <IoFilterSharp
+                        onClick={() =>
+                          handleToggle(
+                            setFullnameToggle,
+                            setStatusToggle,
+                            setNtidFilterToggle,
+                            setCreatedAtToggle,
+                            setCompletedAtToggle
+                          )
+                        }
+                      />
+                      {fullnameToggle && (
+                        <div className="filter-dropdown">
+                          <FullnameFilter
+                            setFullnameFilterToggle={setFullnameToggle}
+                            fullnameFilter={fullnameFilter}
+                            setFullnameFilter={setFullnameFilter}
+                            setCurrentPage={setCurrentPage}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {header === "CreatedAt" && (
+                    <div className="filter-icon">
+                      <BsCalendar2DateFill
+                        onClick={() =>
+                          handleToggle(
+                            setCreatedAtToggle,
+                            setStatusToggle,
+                            setNtidFilterToggle,
+                            setCompletedAtToggle,
+                            setFullnameToggle
+                          )
+                        }
+                      />
+                      {createdAtToggle && (
+                        <div className="filter-dropdown">
+                          <CreatedAt
+                            setCreatedAtToggle={setCreatedAtToggle}
+                            createdAt={createdAt}
+                            setCreatedAt={setCreatedAt}
+                            setCurrentPage={setCurrentPage}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {header === "CompletedAt" && (
+                    <div className="filter-icon">
+                      <BsCalendar2DateFill
+                        onClick={() =>
+                          handleToggle(
+                            setCompletedAtToggle,
+                            setStatusToggle,
+                            setNtidFilterToggle,
+                            setCreatedAtToggle,
+                            setFullnameToggle
+                          )
+                        }
+                      />
+                      {completedAtToggle && (
+                        <div className="filter-dropdown">
+                          <CompletedAt
+                            setCompletedAtToggle={setCompletedAtToggle}
+                            completedAt={completedAt}
+                            setCompletedAt={setCompletedAt}
+                            setCurrentPage={setCurrentPage}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </th>
+              ))}
             </tr>
-          )}
-        </tbody>
-      </Table>
-      <PageCountStack
-        filteredTickets={filteredTickets}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        itemsPerPage={itemsPerPage}
-      />
-    </div>
+          </thead>
+          <tbody className="table-body">
+            {currentItems.length > 0 ? (
+              currentItems.map((ticket, index) => (
+                <TicketBody
+                  key={ticket.id || index}
+                  currentPage={currentPage}
+                  ticket={ticket}
+                  index={index}
+                  handleTicket={handleTicket}
+                  itemsPerPage={itemsPerPage}
+                />
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="text-center no-data">
+                  No data available
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+      </div>
+      {currentItems.length > 0 && (
+        <PageCountStack
+          filteredTickets={filteredTickets}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+        />
+      )}
+    </Container>
   );
 }
 

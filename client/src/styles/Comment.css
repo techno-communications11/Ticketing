@@ -1,0 +1,122 @@
+/* Form container */
+.comment-form {
+    background-color: #fff;
+    border-color: #E10174; /* Pink border */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow like Jira */
+    border-radius: 6px;
+  }
+  
+  /* Icons */
+  .comment-icon {
+    cursor: pointer;
+    color: #E10174; /* Pink color */
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .upload-icon:hover {
+    color: #c1075e; /* Darker pink on hover */
+    transform: scale(1.1);
+  }
+  
+  /* Textarea */
+  .comment-textarea {
+    resize: none;
+    overflow: hidden;
+    outline: none;
+    box-shadow: none;
+    min-height: 50px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #42526e; /* Jira-like muted text */
+    transition: border-color 0.2s ease;
+  }
+  
+  .comment-textarea::placeholder {
+    color: #a5adba; /* Light gray placeholder */
+    text-align: center;
+  }
+  
+  .comment-textarea:focus {
+    border: 1px solid #E10174; /* Pink border on focus */
+    border-radius: 4px;
+  }
+  
+  .comment-textarea:disabled {
+    background-color: #f4f5f7; /* Light gray when disabled */
+    opacity: 0.7;
+  }
+  
+  /* Submit button */
+  .comment-submit-btn {
+    min-height: 50px;
+    padding: 0 10px;
+  }
+  
+  .comment-submit-btn .text-pink {
+    color: #E10174;
+    transition: color 0.2s ease;
+  }
+  
+  .comment-submit-btn:hover .text-pink {
+    color: #c1075e; /* Darker pink on hover */
+  }
+  
+  /* Spinner */
+  .comment-spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-width: 0.2rem;
+    color: #E10174 !important; /* Pink spinner */
+  }
+  
+  /* Selected files section */
+  .selected-files {
+    padding: 0 0.5rem;
+  }
+  
+  .text-pink {
+    color: #E10174; /* Pink text */
+  }
+  
+  .file-name {
+    max-width: 150px;
+    font-size: 0.85rem;
+  }
+  
+  .remove-file-btn {
+    line-height: 1;
+  }
+  
+  .remove-file-btn .text-danger {
+    font-size: 0.8rem;
+    transition: color 0.2s ease;
+  }
+  
+  .remove-file-btn:hover .text-danger {
+    color: #a80545; /* Darker red on hover */
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .comment-form {
+      padding: 1rem;
+    }
+  
+    .comment-textarea {
+      font-size: 0.85rem;
+      padding: 8px 10px;
+    }
+  
+    .upload-icon {
+      font-size: 1.25rem;
+    }
+  
+    .comment-submit-btn .fs-3 {
+      font-size: 1.5rem !important;
+    }
+  
+    .file-name {
+      max-width: 120px;
+    }
+  }

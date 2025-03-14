@@ -22,11 +22,11 @@ function DateRangeFilter({ sendDatesToParent }) {
   return (
     <Row>
       <Col className="d-flex align-items-center">
-        <label style={{ width: '8rem' }}>Start Date:</label>
+        <label style={{ width: '8rem',color:'#42526e' }}>Start Date:</label>
         <input type="date" className="form-control" onChange={handleStartDate} />
       </Col>
       <Col className="d-flex align-items-center mt-2 mt-md-0">
-        <label style={{ width: '8rem' }}>End Date:</label>
+        <label style={{ width: '8rem',color:'#42526e' }}>End Date:</label>
         <input type="date" className="form-control" onChange={handleEndDate} />
       </Col>
     </Row>

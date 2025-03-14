@@ -91,7 +91,7 @@ const DepartmentWise = () => {
 
   const handleDataFromChild=(startDate, endDate)=>setDates({ startDate, endDate })
   return (
-    <Container>
+    <Container fluid>
       <Row>
         {loading ? (
           <div className="loader"></div>
@@ -178,12 +178,12 @@ const DepartmentWise = () => {
                   <tbody>
                     {currentItems.map(([department, counts], index) => (
                       <tr key={department}>
-                        <td>{index + 1}</td>
+                        <td style={{color:'#42526e'}}>{index + 1}</td>
                         <td
                           onClick={() =>
                             navigateToDepartmentTickets(department, "0")
                           }
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer",color:'#42526e' }}
                         >
                           {department}
                         </td>
@@ -191,7 +191,7 @@ const DepartmentWise = () => {
                           onClick={() =>
                             navigateToDepartmentTickets(department, "0")
                           }
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer" ,color:'#42526e'}}
                         >
                           {safeNumber(counts.total)}
                         </td>
@@ -199,7 +199,7 @@ const DepartmentWise = () => {
                           onClick={() =>
                             navigateToDepartmentTickets(department, "1")
                           }
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer" ,color:'#42526e'}}
                         >
                           {safeNumber(counts.new)}
                         </td>
@@ -207,7 +207,7 @@ const DepartmentWise = () => {
                           onClick={() =>
                             navigateToDepartmentTickets(department, "2")
                           }
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer",color:'#42526e' }}
                         >
                           {safeNumber(counts.opened)}
                         </td>
@@ -215,7 +215,7 @@ const DepartmentWise = () => {
                           onClick={() =>
                             navigateToDepartmentTickets(department, "3")
                           }
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer",color:'#42526e' }}
                         >
                           {safeNumber(counts.inProgress)}
                         </td>
@@ -223,7 +223,7 @@ const DepartmentWise = () => {
                           onClick={() =>
                             navigateToDepartmentTickets(department, "4")
                           }
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer",color:'#42526e' }}
                         >
                           {safeNumber(counts.completed)}
                         </td>
@@ -231,7 +231,7 @@ const DepartmentWise = () => {
                           onClick={() =>
                             navigateToDepartmentTickets(department, "5")
                           }
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: "pointer",color:'#42526e' }}
                         >
                           {safeNumber(counts.reopened)}
                         </td>

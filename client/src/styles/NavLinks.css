@@ -1,0 +1,35 @@
+/* NavLinks.css */
+.nav-link-custom {
+    color: #42526e !important; /* Jira-like dark gray */
+    font-weight: 500;
+    padding: 8px 16px !important;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+  }
+  
+  .nav-link-custom:hover {
+    color: #E10174 !important; /* Pink hover */
+    background-color: #f8e9f0; /* Light pink background */
+  }
+  
+  .nav-link-custom.active {
+    color: #E10174 !important; /* Pink active state */
+    font-weight: 600;
+    background-color: #f8e9f0;
+  }
+  
+  .nav-link-custom span {
+    font-size: 14px;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 991px) {
+    .nav-link-custom {
+      padding: 10px 12px !important;
+      font-size: 13px;
+    }
+  
+    .nav-link-custom svg {
+      font-size: 18px !important; /* Adjust icon size on mobile */
+    }
+  }

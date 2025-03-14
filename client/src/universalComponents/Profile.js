@@ -5,12 +5,13 @@ import { FaRegEye, FaEyeSlash } from "react-icons/fa";
 import { apiRequest } from "../lib/apiRequest";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../styles/Profile.css"; // New custom stylesheet
 
 export function Profile() {
   const [popButtons, setPopButtons] = useState(false);
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [ImmediateEdit, setImmediateEdit] = useState(false);
+  const [immediateEdit, setImmediateEdit] = useState(false);
   const [toggle, setToggle] = useState(false);
   const [passwordVisibleNew, setPasswordVisibleNew] = useState(false);
   const [passwordVisibleConfirm, setPasswordConfirmVisible] = useState(false);
@@ -41,7 +42,7 @@ export function Profile() {
         withCredentials: true,
       });
       if (response.status === 200) {
-        const imageUrl = response.data.fileUrl; // This is a signed URL
+        const imageUrl = response.data.fileUrl;
         setUploadedFileUrl(imageUrl);
       } else {
         throw new Error("Failed to retrieve profile photo");
@@ -71,6 +72,7 @@ export function Profile() {
       toast.success("Profile photo added successfully!");
       setTimeout(() => {
         fetchProfile();
+        setPhotoUpdated(!photoUpdated); // Trigger re-fetch
       }, 2000);
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -127,134 +129,140 @@ export function Profile() {
   };
 
   return (
-    <div className="container mt-sm-5 mt-md-1">
-      <div className="d-md-flex flex-row justify-content-center align-items-start">
-        <div className="d-none d-md-flex align-items-center m-auto">
-          <img src="./userdata.png" height={300} alt="User Data" />
+    <div className="container-fluid  mt-4">
+      <div className="row justify-content-center align-items-start">
+        {/* Left Side Image (Hidden on Small Screens) */}
+        <div className="col-md-4 mt-5 d-none d-md-flex align-items-center justify-content-center">
+          <img src="./userdata.png" alt="User Data" className="img-fluid profile-side-image" />
         </div>
 
-        <div className="col-md-6">
-          <div className="d-flex flex-column justify-content-center align-items-center">
-            {uploadedFileUrl == null ? (
-              <div
-                className="d-flex flex-column justify-content-center align-items-center rounded-circle"
-                onClick={() => setPopButtons(true)}
-                style={{ cursor: "pointer", width: "10vw", height: "19vh" }}
-              >
-                {popButtons || ImmediateEdit ? (
-                  <div className="mt-2">
-                    <label className="btn btn-outline-secondary fw-medium m-1 font-size">
-                      Camera
-                      <input
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                        style={{ display: "none" }}
-                        onChange={handleFileInputChange}
-                      />
-                    </label>
-
-                    <label className="btn btn-outline-secondary fw-medium font-size ms-2">
-                      Browse
-                      <input
-                        type="file"
-                        accept=".jpeg, .jpg, .png, .gif"
-                        style={{ display: "none" }}
-                        onChange={handleFileInputChange}
-                      />
-                    </label>
+        {/* Profile Content */}
+        <div className="col-md-6 mt-5">
+          <div className="card shadow-sm profile-card">
+            <div className="card-body text-center">
+              {/* Profile Photo Section */}
+              <div className="profile-photo-wrapper mb-4">
+                {uploadedFileUrl == null ? (
+                  <div
+                    className="photo-upload-area rounded-circle bg-light d-flex flex-column justify-content-center align-items-center"
+                    onClick={() => setPopButtons(true)}
+                  >
+                    {popButtons || immediateEdit ? (
+                      <div className="upload-buttons">
+                        <label className="btn btn-outline-pink fw-medium m-1">
+                          Camera
+                          <input
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            className="d-none"
+                            onChange={handleFileInputChange}
+                          />
+                        </label>
+                        <label className="btn btn-outline-pink fw-medium m-1">
+                          Browse
+                          <input
+                            type="file"
+                            accept=".jpeg, .jpg, .png, .gif"
+                            className="d-none"
+                            onChange={handleFileInputChange}
+                          />
+                        </label>
+                      </div>
+                    ) : (
+                      <div>
+                        <MdOutlineCloudUpload size={50} className="text-pink" />
+                        <p className="text-muted mt-2">Upload Photo</p>
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <div>
-                    <MdOutlineCloudUpload size={50} className="ms-4" />
-                    <p className="text-secondary me-2">Upload Photo</p>
+                  <div className="profile-photo-display">
+                    <img
+                      src={uploadedFileUrl}
+                      alt="Profile"
+                      className="rounded-circle img-thumbnail"
+                    />
+                    <button
+                      className="btn btn-outline-pink mt-2 ms-3"
+                      onClick={handleEdit}
+                    >
+                      <MdModeEditOutline /> Edit
+                    </button>
                   </div>
                 )}
               </div>
-            ) : (
-              <div className="mt-2">
-                <img
-                  src={uploadedFileUrl}
-                  alt="Profile"
-                  className="img-thumbnail rounded-circle"
-                  style={{ width: "100px", height: "100px" }}
-                />
-                <div className="ms-3 mt-2 fs-6">
-                  <span
-                    style={{ cursor: "pointer" }}
-                    className="btn btn-outline-primary fs-6"
-                    onClick={handleEdit}
-                  >
-                    <MdModeEditOutline /> Edit
-                  </span>
+
+              {/* User Data Section */}
+              {userData && (
+                <div className="user-data">
+                  {Object.entries(userData).map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="d-flex justify-content-between align-items-center mb-2"
+                    >
+                      <strong className="text-pink text-capitalize">
+                        {key}:
+                      </strong>
+                      <span>{value}</span>
+                    </div>
+                  ))}
+
+                  {/* Reset Password Section */}
+                  {!toggle ? (
+                    <button
+                      className="btn btn-pink w-100 mt-3"
+                      onClick={resetPasswordHandler}
+                    >
+                      Reset Password
+                    </button>
+                  ) : (
+                    <form onSubmit={handleSubmit}>
+                      <div className="input-group mb-2">
+                        <input
+                          type={passwordVisibleNew ? "text" : "password"}
+                          placeholder="Enter new password"
+                          className="form-control border-pink"
+                          ref={passwordRef}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-outline-pink"
+                          onClick={handlePasswordToggle}
+                        >
+                          {passwordVisibleNew ? <FaRegEye /> : <FaEyeSlash />}
+                        </button>
+                      </div>
+                      <div className="input-group mb-2">
+                        <input
+                          type={passwordVisibleConfirm ? "text" : "password"}
+                          placeholder="Confirm password"
+                          className="form-control border-pink"
+                          ref={passwordConformRef}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-outline-pink"
+                          onClick={handlePasswordConfirmToggle}
+                        >
+                          {passwordVisibleConfirm ? <FaRegEye /> : <FaEyeSlash />}
+                        </button>
+                      </div>
+                      {error && <small className="text-danger d-block mb-2">{error}</small>}
+                      <button type="submit" className="btn btn-pink w-100">
+                        Update Password
+                      </button>
+                    </form>
+                  )}
                 </div>
-              </div>
-            )}
-          </div>
-
-          {userData && (
-            <div className="p-1">
-              <div>
-                {Object.entries(userData).map(([key, value]) => (
-                  <p key={key} className="d-flex justify-content-between">
-                    <strong>
-                      {key.charAt(0).toUpperCase() + key.slice(1)}:
-                    </strong>
-                    <span>{value}</span>
-                  </p>
-                ))}
-              </div>
-
-              {toggle === false ? (
-                <button
-                  className="btn btn-primary w-100"
-                  onClick={resetPasswordHandler}
-                >
-                  Reset Password
-                </button>
-              ) : (
-                <form onSubmit={handleSubmit}>
-                  <div className="form-group d-flex align-items-center border rounded">
-                    <input
-                      type={passwordVisibleNew ? "text" : "password"}
-                      placeholder="Enter password"
-                      className="form-control border-0 shadow-none"
-                      ref={passwordRef}
-                    />
-                    <span
-                      onClick={handlePasswordToggle}
-                      className="mx-2"
-                      style={{ cursor: "pointer" }}
-                    >
-                      {passwordVisibleNew ? <FaRegEye /> : <FaEyeSlash />}
-                    </span>
-                  </div>
-                  <div className="form-group d-flex align-items-center mt-1 border rounded">
-                    <input
-                      type={passwordVisibleConfirm ? "text" : "password"}
-                      placeholder="Confirm password"
-                      className="form-control border-0 shadow-none"
-                      ref={passwordConformRef}
-                    />
-                    <span
-                      onClick={handlePasswordConfirmToggle}
-                      className="mx-2"
-                      style={{ cursor: "pointer" }}
-                    >
-                      {passwordVisibleConfirm ? <FaRegEye /> : <FaEyeSlash />}
-                    </span>
-                  </div>
-                  {error && <small className="text-danger">{error}</small>}
-                  <button type="submit" className="btn btn-primary mt-2 w-100">
-                    Update Password
-                  </button>
-                </form>
               )}
             </div>
-          )}
+          </div>
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 }
+
+export default Profile;

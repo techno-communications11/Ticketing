@@ -10,11 +10,11 @@ import "../styles/loader.css";
 import { fetchStatusTickets, setUserAndStatus } from "../redux/userStatusSlice";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import { getDuration } from "../universalComponents/getDuration";
-import "../styles/TicketTable.css";
+import "../styles/UserTickets.css"; // Updated custom stylesheet
 import CreatedAt from "../universalComponents/CreatedAt";
 import CompletedAt from "../universalComponents/CompletedAt";
 import getDecodedToken from "../universalComponents/decodeToken";
-import { FaExclamationCircle } from 'react-icons/fa'; // Import the icon from React Icons
+import { FaExclamationCircle } from "react-icons/fa";
 
 const UserTickets = () => {
   const dispatch = useDispatch();
@@ -23,22 +23,17 @@ const UserTickets = () => {
   const [completedAtToggle, setCompletedAtToggle] = useState(false);
   const [completedAt, setCompletedAt] = useState("");
   const [createdAt, setCreatedAt] = useState("");
-
   const itemsPerPage = 30;
   const ntids = getDecodedToken()?.ntid;
 
-  const selectedStatus = useSelector(
-    (state) => state.userTickets.selectedStatus
-  );
-  const { statustickets: userTickets, loading } = useSelector(
-    (state) => state.userTickets
-  );
+  const selectedStatus = useSelector((state) => state.userTickets.selectedStatus);
+  const { statustickets: userTickets, loading } = useSelector((state) => state.userTickets);
   const tickets = useSelector((state) => state.tickets.tickets);
   const ticketArray = Array.isArray(userTickets)
     ? userTickets
     : Array.isArray(tickets)
-      ? tickets
-      : [];
+    ? tickets
+    : [];
 
   useEffect(() => {
     const statusToFetch = selectedStatus || localStorage.getItem("statusData");
@@ -63,14 +58,12 @@ const UserTickets = () => {
   );
 
   const handleCreatedAtFilterClick = () => setCreatedAtToggle((prev) => !prev);
-  const handleCompletedAtFilterClick = () =>
-    setCompletedAtToggle((prev) => !prev);
+  const handleCompletedAtFilterClick = () => setCompletedAtToggle((prev) => !prev);
 
   const filteredTickets = createdAt
     ? ticketArray.filter(
-      (ticket) =>
-        new Date(ticket.createdAt).toISOString().split("T")[0] === createdAt
-    )
+        (ticket) => new Date(ticket.createdAt).toISOString().split("T")[0] === createdAt
+      )
     : ticketArray;
 
   const currentItems = filteredTickets.slice(
@@ -78,28 +71,25 @@ const UserTickets = () => {
     currentPage * itemsPerPage
   );
 
-  const nonCompletedTickets = currentItems.filter(
-    (ticket) => ticket.requestreopen
-  );
-  const completedTickets = currentItems.filter(
-    (ticket) => !ticket.requestreopen
-  );
+  const nonCompletedTickets = currentItems.filter((ticket) => ticket.requestreopen);
+  const completedTickets = currentItems.filter((ticket) => !ticket.requestreopen);
   const sortedCompletedTickets = completedTickets.sort(
     (a, b) => new Date(b.completedAt) - new Date(a.completedAt)
   );
   const finalTickets = [...nonCompletedTickets, ...sortedCompletedTickets];
 
   const getStatusColor = (ticket) => {
-    if (ticket.requestreopen) return { color: "#006A4E" };
-    if (ticket.isSettled === true) return { color: "gray" };
+    if (ticket.requestreopen) return { color: "#006A4E" }; // Green for reopened
+    if (ticket.isSettled) return { color: "#6B7280" }; // Gray for settled
     return {};
   };
+
   const getBadgeClass = (status) => {
     switch (status) {
       case "opened":
         return "bg-secondary";
       case "inprogress":
-        return "bg-warning";
+        return "bg-warning text-dark";
       case "completed":
         return "bg-success";
       case "reopened":
@@ -129,26 +119,22 @@ const UserTickets = () => {
   };
 
   return (
-    <Container fluid className="mt-1">
+    <Container fluid className="user-tickets-container mt-1">
       {loading ? (
-        <div className="vh-100 d-flex align-items-center justify-content-center">
-          <div className="loader vh-80" />
+        <div className="loader-overlay">
+          <div className="loader" role="status" />
         </div>
       ) : (
         <>
           {finalTickets.length > 0 && (
             <>
-              <h3
-                className="mb-2 font-family text-center"
-                style={{ color: "#E10174" }}
-              >
+              <h3 className="tickets-title">
                 {ticketArray[0]?.status.name?.charAt(0).toUpperCase() +
                   ticketArray[0]?.status.name?.slice(1) || ""}{" "}
                 Tickets
               </h3>
-
               <div className="table-responsive">
-                <Table bordered className="table-sm">
+                <Table bordered hover className="tickets-table">
                   <thead>
                     <tr>
                       {[
@@ -161,49 +147,41 @@ const UserTickets = () => {
                         "Duration",
                         "Details",
                       ].map((header) => (
-                        <th
-                          key={header}
-                          className="text-center"
-                          style={{ backgroundColor: "#E10174", color: "white" }}
-                        >
+                        <th key={header} className="text-center">
                           {header}
                           {header === "CreatedAt" && (
-                            <>
-                              <BsCalendar2DateFill
-                                style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                                onClick={handleCreatedAtFilterClick}
-                                aria-label="Toggle Created At Filter"
-                              />
-                              {createdAtToggle && (
-                                <div className="dropdown-menu show">
-                                  <CreatedAt
-                                    createdAt={createdAt}
-                                    setCreatedAt={setCreatedAt}
-                                    setCurrentPage={setCurrentPage}
-                                    setCreatedAtToggle={setCreatedAtToggle}
-                                  />
-                                </div>
-                              )}
-                            </>
+                            <BsCalendar2DateFill
+                              className="filter-icon"
+                              onClick={handleCreatedAtFilterClick}
+                              aria-label="Toggle Created At Filter"
+                            />
                           )}
                           {header === "CompletedAt" && (
-                            <>
-                              <BsCalendar2DateFill
-                                style={{ cursor: "pointer", marginLeft: "0.5rem" }}
-                                onClick={handleCompletedAtFilterClick}
-                                aria-label="Toggle Completed At Filter"
+                            <BsCalendar2DateFill
+                              className="filter-icon"
+                              onClick={handleCompletedAtFilterClick}
+                              aria-label="Toggle Completed At Filter"
+                            />
+                          )}
+                          {(header === "CreatedAt" && createdAtToggle) && (
+                            <div className="filter-dropdown">
+                              <CreatedAt
+                                createdAt={createdAt}
+                                setCreatedAt={setCreatedAt}
+                                setCurrentPage={setCurrentPage}
+                                setCreatedAtToggle={setCreatedAtToggle}
                               />
-                              {completedAtToggle && (
-                                <div className="dropdown-menu show">
-                                  <CompletedAt
-                                    completedAt={completedAt}
-                                    setCompletedAt={setCompletedAt}
-                                    setCurrentPage={setCurrentPage}
-                                    setCompletedAtToggle={setCompletedAtToggle}
-                                  />
-                                </div>
-                              )}
-                            </>
+                            </div>
+                          )}
+                          {(header === "CompletedAt" && completedAtToggle) && (
+                            <div className="filter-dropdown">
+                              <CompletedAt
+                                completedAt={completedAt}
+                                setCompletedAt={setCompletedAt}
+                                setCurrentPage={setCurrentPage}
+                                setCompletedAtToggle={setCompletedAtToggle}
+                              />
+                            </div>
                           )}
                         </th>
                       ))}
@@ -213,69 +191,35 @@ const UserTickets = () => {
                     {finalTickets.map((ticket, index) => (
                       <tr
                         key={ticket.ticketId}
-                        className={
-                          ticket.isSettled
-                            ? "bg-secondary bg-opacity-50 text-white"
-                            : ""
-                        }
+                        className={ticket.isSettled ? "settled-row" : ""}
                       >
-                        <td
-                          className="fw-medium text-center"
-                          style={getStatusColor(ticket)}
-                        >
+                        <td className="text-center" style={getStatusColor(ticket)}>
                           {(currentPage - 1) * itemsPerPage + index + 1}
                         </td>
-                        <td
-                          className="fw-medium text-center"
-                          style={getStatusColor(ticket)}
-                        >
+                        <td className="text-center" style={getStatusColor(ticket)}>
                           {ticket.ntid}
                         </td>
-                        <td
-                          className="fw-medium text-center"
-                          style={getStatusColor(ticket)}
-                        >
+                        <td className="text-center" style={getStatusColor(ticket)}>
                           {ticket.fullname}
                         </td>
-                        <td
-                          className="fw-medium text-center"
-                          style={getStatusColor(ticket)}
-                        >
-                          <span
-                            className={`badge rounded-pill ${getBadgeClass(
-                              ticket.status?.name
-                            )}`}
-                          >
-                            {ticket.isSettled
-                              ? "Settled"
-                              : getStatusText(ticket.status?.name)}
+                        <td className="text-center" style={getStatusColor(ticket)}>
+                          <span className={`badge ${getBadgeClass(ticket.status?.name)}`}>
+                            {ticket.isSettled ? "Settled" : getStatusText(ticket.status?.name)}
                           </span>
                         </td>
-                        <td
-                          className="fw-medium text-center"
-                          style={getStatusColor(ticket)}
-                        >
+                        <td className="text-center" style={getStatusColor(ticket)}>
                           {formatDate(ticket.createdAt)}
                         </td>
-                        <td
-                          className="fw-medium text-center"
-                          style={getStatusColor(ticket)}
-                        >
-                          {ticket.completedAt
-                            ? formatDate(ticket.completedAt)
-                            : "-"}
+                        <td className="text-center" style={getStatusColor(ticket)}>
+                          {ticket.completedAt ? formatDate(ticket.completedAt) : "-"}
                         </td>
-                        <td
-                          className="fw-medium text-center"
-                          style={getStatusColor(ticket)}
-                        >
-                          {ticket.completedAt
-                            ? getDuration(ticket.createdAt, ticket.completedAt)
-                            : "-"}
+                        <td className="text-center" style={getStatusColor(ticket)}>
+                          {ticket.completedAt ? getDuration(ticket.createdAt, ticket.completedAt) : "-"}
                         </td>
-                        <td className="fw-medium text-center">
-                          <Link to={"/details"} aria-label="View Ticket Details">
+                        <td className="text-center">
+                          <Link to="/details" aria-label="View Ticket Details">
                             <GrLinkNext
+                              className="details-icon"
                               onClick={() => handleTicket(ticket.ticketId)}
                             />
                           </Link>
@@ -289,12 +233,9 @@ const UserTickets = () => {
           )}
 
           {finalTickets.length === 0 && (
-            <div className='d-flex justify-content-center align-items-center' style={{ height: '70vh' }}>
-              <div className='text-center'>
-                <FaExclamationCircle className='text-secondary' style={{ fontSize: '5rem', marginBottom: '1rem' }} />
-                <p className='fs-1 fw-bolder text-muted'>No data available ...</p>
-                <p className='text-muted'>Please check back later or try refreshing the page.</p>
-              </div>
+            <div className="no-data-container">
+              <FaExclamationCircle className="no-data-icon me-1" />
+              <p className="no-data-title">No Data Available</p>
             </div>
           )}
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Container, Table } from "react-bootstrap";
-import "../styles/loader.css";
+import { Container, Table, Row, Col, Dropdown } from "react-bootstrap";
 import PageCountStack from "../universalComponents/PageCountStack";
 import FilterLogic from "../universalComponents/FilteringLogic";
 import TicketBody from "../universalComponents/TicketBody";
@@ -16,10 +15,8 @@ import { apiRequest } from "../lib/apiRequest";
 import { useDispatch } from "react-redux";
 import { setId, fetchIndividualTickets } from "../redux/marketSlice";
 import getDecodedToken from "../universalComponents/decodeToken";
-// import animationData from '../universalComponents/Animation.json'
-// import { Player } from "@lottiefiles/react-lottie-player";
-import { FaExclamationCircle } from 'react-icons/fa';
-import '../styles/TicketTable.css';
+import { FaExclamationCircle } from "react-icons/fa";
+import "../styles/ShowdepartWiseTicks.css"; // New CSS file for this component
 
 const ShowdepartWiseTicks = () => {
   const dispatch = useDispatch();
@@ -45,12 +42,9 @@ const ShowdepartWiseTicks = () => {
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const response = await apiRequest.get(
-        "/createTickets/DepartmentWiseTickets",
-        {
-          params: { department, statusId },
-        }
-      );
+      const response = await apiRequest.get("/createTickets/DepartmentWiseTickets", {
+        params: { department, statusId },
+      });
       setTickets(response.data);
     } catch (error) {
       console.error("Failed to fetch tickets:", error);
@@ -65,7 +59,6 @@ const ShowdepartWiseTicks = () => {
     }
   }, [department, statusId]);
 
-  // Set market name if tickets are available
   useEffect(() => {
     if (tickets.length > 0) {
       setMarket(tickets[0]?.market?.toUpperCase() || "");
@@ -107,7 +100,7 @@ const ShowdepartWiseTicks = () => {
     setNtidFilterToggle(false);
     setCreatedAtToggle(false);
   };
-  // Filtered and paginated tickets
+
   const filteredTickets = FilterLogic(
     tickets.filter((item) => {
       const { startDate, endDate } = Dates;
@@ -123,94 +116,73 @@ const ShowdepartWiseTicks = () => {
     statusFilter,
     fullnameFilter
   );
-  // console.log(filteredTickets, "filtered");
 
   const currentItems = useMemo(() => {
     let sortedTickets = [...filteredTickets].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
 
-    // Apply filtering if the user's department is not 'SuperAdmin'
     if (userData.department !== "SuperAdmin") {
-      sortedTickets = sortedTickets.filter(
-        (ticket) => ticket.openedBy === userData.id
-      );
+      sortedTickets = sortedTickets.filter((ticket) => ticket.openedBy === userData.id);
     }
 
-    // Paginate the sorted and filtered tickets
     return sortedTickets.slice(
       (currentPage - 1) * itemsPerPage,
       currentPage * itemsPerPage
     );
   }, [filteredTickets, currentPage, itemsPerPage, userData]);
-  // console.log(currentItems, "ccyy");
 
   const handleTicket = (id) => {
     localStorage.setItem("selectedId", id);
     dispatch(setId(id));
     dispatch(fetchIndividualTickets(id));
   };
-  if (loading) {
-    return (
-      <div className="loader"></div>
-    )
-  }
 
   return (
-    <Container fluid className="mt-2">
+    <Container fluid className="mt-4">
+      {/* Header Section */}
+      <Row className="mb-3 align-items-center">
+        <Col xs={12}>
+          <h3 className="fw-bold text-dark">
+            Tickets from Market: <span style={{ color: "#E10174" }}>{market || "N/A"}</span>
+          </h3>
+        </Col>
+      </Row>
 
-
-      {currentItems.length == 0 ? (
-        <div className='d-flex justify-content-center align-items-center' style={{ height: '80vh' }}>
-          <div className='text-center'>
-            <FaExclamationCircle className='text-secondary' style={{ fontSize: '5rem', marginBottom: '1rem' }} />
-            <p className='fs-1 fw-bolder text-muted'>No data available ...</p>
-            <p className='text-muted'>Please check back later or try refreshing the page.</p>
+      {/* Loading State */}
+      {loading ? (
+        <div className="d-flex align-items-center justify-content-center vh-100">
+          <div className="spinner-border text-pink" role="status" style={{ width: "3rem", height: "3rem" }}>
+            <span className="visually-hidden">Loading...</span>
           </div>
         </div>
       ) : (
-        <>
-          <div className="col-12 d-flex flex-column flex-md-row align-items-center mb-2">
-            <h3
-              className="col-12 col-md-5 mb-0 font-family text-capitalize"
-              style={{ color: "#E10174" }}
-            >
-              Tickets from Market {market?.toLowerCase()}
-            </h3>
-          </div>
-          <div className="table-container3">
-          <Table bordered hover responsive>
-            <thead className="sticky-top" style={{ top: "0", zIndex: "1" }}>
-              <tr>
+        <div className="table-responsive shadow-sm rounded">
+          <Table hover className="table-modern">
+            <thead>
+              <tr style={{ backgroundColor: "#E10174", color: "white" }}>
                 {[
                   "SC.No",
                   "Email / NTID",
                   "Full Name",
                   "Status",
                   "CreatedAt",
-                  ...(userData.department === "SuperAdmin"
-                    ? ["Now At", "CompletedBy"]
-                    : []),
+                  ...(userData.department === "SuperAdmin" ? ["Now At", "CompletedBy"] : []),
                   "CompletedAt",
                   "Duration",
                   "Details",
                   ...(userData.department === "SuperAdmin" ? ["Delete"] : []),
                 ].map((header) => (
-                  <th
-                    key={header}
-                    className="text-center"
-                    style={{ backgroundColor: "#E10174", color: "white" }}
-                  >
+                  <th key={header} className="text-center align-middle fw-medium">
                     {header}
                     {header === "Status" && (
-                      <>
+                      <Dropdown as="span" className="ms-2">
                         <IoFilterSharp
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          style={{ cursor: "pointer", color: "white" }}
                           onClick={handleStatusFilterClick}
-
                         />
                         {statusToggle && (
-                          <div className="dropdown-menu show">
+                          <div className="dropdown-menu show p-3 shadow-sm">
                             <StatusFilter
                               setStatusToggle={setStatusToggle}
                               statusFilter={statusFilter}
@@ -219,16 +191,16 @@ const ShowdepartWiseTicks = () => {
                             />
                           </div>
                         )}
-                      </>
+                      </Dropdown>
                     )}
                     {header === "Full Name" && (
-                      <>
+                      <Dropdown as="span" className="ms-2">
                         <IoFilterSharp
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          style={{ cursor: "pointer", color: "white" }}
                           onClick={handleFullnameFilterClick}
                         />
                         {fullnameToggle && (
-                          <div className="dropdown-menu show">
+                          <div className="dropdown-menu show p-3 shadow-sm">
                             <FullnameFilter
                               setFullnameFilterToggle={setFullnameToggle}
                               fullnameFilter={fullnameFilter}
@@ -237,16 +209,16 @@ const ShowdepartWiseTicks = () => {
                             />
                           </div>
                         )}
-                      </>
+                      </Dropdown>
                     )}
-                    {header === "NTID / Email" && (
-                      <>
+                    {header === "Email / NTID" && (
+                      <Dropdown as="span" className="ms-2">
                         <IoFilterSharp
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          style={{ cursor: "pointer", color: "white" }}
                           onClick={handleNTIDFilterClick}
                         />
                         {ntidFilterToggle && (
-                          <div className="dropdown-menu show">
+                          <div className="dropdown-menu show p-3 shadow-sm">
                             <NtidFilter
                               setNtidFilterToggle={setNtidFilterToggle}
                               ntidFilter={ntidFilter}
@@ -255,16 +227,16 @@ const ShowdepartWiseTicks = () => {
                             />
                           </div>
                         )}
-                      </>
+                      </Dropdown>
                     )}
                     {header === "CreatedAt" && (
-                      <>
+                      <Dropdown as="span" className="ms-2">
                         <BsCalendar2DateFill
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          style={{ cursor: "pointer", color: "white" }}
                           onClick={handleCreatedAtFilterClick}
                         />
                         {createdAtToggle && (
-                          <div className="dropdown-menu show">
+                          <div className="dropdown-menu show p-3 shadow-sm">
                             <CreatedAt
                               setCreatedAtToggle={setCreatedAtToggle}
                               createdAt={createdAt}
@@ -273,16 +245,16 @@ const ShowdepartWiseTicks = () => {
                             />
                           </div>
                         )}
-                      </>
+                      </Dropdown>
                     )}
                     {header === "CompletedAt" && (
-                      <>
+                      <Dropdown as="span" className="ms-2">
                         <BsCalendar2DateFill
-                          style={{ cursor: "pointer", marginLeft: "0.5rem" }}
+                          style={{ cursor: "pointer", color: "white" }}
                           onClick={handleCompletedFilterClick}
                         />
                         {completedAtToggle && (
-                          <div className="dropdown-menu show">
+                          <div className="dropdown-menu show p-3 shadow-sm">
                             <CompletedAt
                               setCompletedAtToggle={setCompletedAtToggle}
                               completedAt={completedAt}
@@ -291,13 +263,12 @@ const ShowdepartWiseTicks = () => {
                             />
                           </div>
                         )}
-                      </>
+                      </Dropdown>
                     )}
                   </th>
                 ))}
               </tr>
             </thead>
-
             <tbody>
               {currentItems.length > 0 ? (
                 currentItems.map((ticket, index) => (
@@ -312,21 +283,30 @@ const ShowdepartWiseTicks = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="text-center">
-                    No tickets found.
+                  <td colSpan={userData.department === "SuperAdmin" ? 11 : 8} className="text-center py-5">
+                    <div className="d-flex flex-column align-items-center">
+                      <FaExclamationCircle className="text-muted mb-3" style={{ fontSize: "4rem" }} />
+                      <h5 className="fw-bold text-muted">No Data Available</h5>
+                      <p className="text-muted">Check back later or try refreshing the page.</p>
+                    </div>
                   </td>
                 </tr>
               )}
             </tbody>
           </Table>
-          </div>
-          {currentItems.length > 0 && <PageCountStack
+        </div>
+      )}
+
+      {/* Pagination */}
+      {currentItems.length > 0 && (
+        <div className="mt-4">
+          <PageCountStack
             filteredTickets={filteredTickets}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             itemsPerPage={itemsPerPage}
-          />}
-        </>
+          />
+        </div>
       )}
     </Container>
   );

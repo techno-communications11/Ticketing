@@ -813,9 +813,9 @@ export function DmsCreateTicket() {
           Ticketing Portal
         </p>
 
-        <div className="row mt-1">
+        <div className=" d-flex justify-content-center  align-items-center mt-4  row mt-1">
           <div className="col-12 col-md-8 d-flex flex-column">
-            <div className=" col-md-12 flex-grow-1 bg-white shadow-lg border-0 rounded p-2 text-center mb-2">
+            <div className=" col-md-12 flex-grow-1 bg-white  border-0 rounded p-2 text-center mb-2">
               <div className="d-flex justify-content-center align-items-center mb-3">
                 <img
                   loading="lazy"

@@ -1,0 +1,59 @@
+/* FileUploads.css */
+.upload-card {
+    border-radius: 12px;
+    background-color: #fff;
+  }
+  
+  .text-pink {
+    color: #E10174 !important;
+  }
+  
+  .btn-pink {
+    background-color: #E10174;
+    border-color: #E10174;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-pink:hover {
+    background-color: #c70a5f;
+    border-color: #c70a5f;
+    color: white;
+  }
+  
+  .upload-area {
+    height: 100px;
+    border: 2px dashed #E10174;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .upload-area:hover {
+    background-color: #f8e9f0;
+  }
+  
+  .spinner-border {
+    border-color: #fff;
+    border-right-color: transparent;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .upload-card {
+      padding: 1.5rem !important;
+    }
+  
+    .btn-pink {
+      font-size: 14px;
+      padding: 8px;
+    }
+  
+    .upload-area {
+      height: 80px;
+    }
+  
+    img {
+      max-height: 200px !important;
+    }
+  }

@@ -1,0 +1,72 @@
+/* NavbarClient.css */
+.navbar-custom {
+    background-color: #fff;
+    border-bottom: 1px solid #e9ecef;
+    padding: 10px 20px;
+  }
+  
+  .navbar-custom .navbar-brand {
+    color: #E10174;
+    font-weight: 600;
+  }
+  
+  .navbar-custom .navbar-brand:hover {
+    color: #c70a5f;
+  }
+  
+  .navbar-toggle-custom {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .navbar-toggle-custom:focus {
+    outline: none !important;
+  }
+  
+  .nav-link-custom {
+    color: #E10174 !important;
+    font-weight: 500;
+    padding: 8px 16px !important;
+    transition: color 0.3s ease;
+    background: linear-gradient(90deg, rgba(63, 94, 251, 1) 0%, rgba(180, 27, 148, 1) 81%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .nav-link-custom:hover {
+    color: #c70a5f !important;
+  }
+  
+  .text-pink {
+    color: #E10174 !important;
+  }
+  
+  .badge {
+    position: relative;
+    top: -5px;
+    font-weight: 500;
+  }
+  
+  .fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 991px) {
+    .navbar-custom .navbar-collapse {
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  
+    .navbar-custom .nav-link-custom {
+      padding: 10px !important;
+    }
+  
+    .navbar-custom .badge {
+      top: 0;
+      margin-left: 5px;
+    }
+  }

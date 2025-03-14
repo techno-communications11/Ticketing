@@ -1,0 +1,134 @@
+/* Container styling */
+.profile-container {
+    min-height: 100vh;
+    background-color: #f4f5f7; /* Jira-like light gray background */
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  }
+  
+  /* Card styling */
+  .profile-card {
+    border-radius: 8px;
+    background-color: #fff;
+    border: none;
+  }
+  
+  /* Side image */
+  .profile-side-image {
+    max-height: 300px;
+    opacity: 0.9;
+  }
+  
+  /* Profile photo wrapper */
+  .profile-photo-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Photo upload area */
+  .photo-upload-area {
+    width: 150px;
+    height: 150px;
+    border: 2px dashed #E10174; /* Pink dashed border */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .photo-upload-area:hover {
+    background-color: #fce4ec; /* Light pink hover */
+  }
+  
+  /* Upload buttons */
+  .upload-buttons .btn-outline-pink {
+    color: #E10174;
+    border-color: #E10174;
+    transition: all 0.2s ease;
+  }
+  
+  .upload-buttons .btn-outline-pink:hover {
+    background-color: #E10174;
+    color: #fff;
+  }
+  
+  /* Profile photo display */
+  .profile-photo-display img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 3px solid #E10174; /* Pink border */
+  }
+  
+  .profile-photo-display .btn-outline-pink {
+    font-size: 0.9rem;
+    padding: 0.25rem 0.75rem;
+  }
+  
+  /* User data styling */
+  .user-data {
+    padding: 0 1rem;
+  }
+  
+  .text-pink {
+    color: #E10174; /* Primary pink color */
+  }
+  
+  /* Buttons */
+  .btn-pink {
+    background-color: #E10174;
+    border-color: #E10174;
+    color: #fff;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .btn-pink:hover {
+    background-color: #c1075e; /* Darker pink on hover */
+    border-color: #c1075e;
+  }
+  
+  .btn-outline-pink {
+    color: #E10174;
+    border-color: #E10174;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-outline-pink:hover {
+    background-color: #E10174;
+    color: #fff;
+  }
+  
+  /* Input fields */
+  .border-pink {
+    border-color: #E10174 !important;
+  }
+  
+  .form-control:focus {
+    border-color: #E10174;
+    box-shadow: 0 0 0 0.2rem rgba(225, 1, 116, 0.25); /* Pink focus ring */
+  }
+  
+  /* Toast adjustments */
+  .Toastify__toast--success {
+    background-color: #E10174 !important;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .photo-upload-area {
+      width: 120px;
+      height: 120px;
+    }
+  
+    .profile-photo-display img {
+      width: 100px;
+      height: 100px;
+    }
+  
+    .user-data {
+      padding: 0 0.5rem;
+    }
+  
+    .btn-pink,
+    .btn-outline-pink {
+      font-size: 0.9rem;
+    }
+  }

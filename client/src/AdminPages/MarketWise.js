@@ -182,12 +182,13 @@ function MarketWise() {
                 <tbody>
                   {currentItems.map(([market, counts], index) => (
                     <tr key={market}>
-                      <th className="fw-medium">{index + 1}</th>
+                      <th className="fw-medium" style={{color:'#42526e'}}>{index + 1}</th>
                       <td>
                         <Link
                           to="/marketDetailedTicket"
                           onClick={() => handleMarketClick(market)}
-                          className="text-capitalize text-decoration-none fw-medium text-black"
+                          style={{color:'#42526e'}}
+                          className="text-capitalize text-decoration-none fw-medium "
                         >
                           {market}
                         </Link>
@@ -195,7 +196,8 @@ function MarketWise() {
                       {["total", "new", "opened", "inprogress", "completed", "reopened"].map((status, idx) => (
                         <td key={idx}>
                           <span
-                            className="text-decoration-none text-dark fw-medium"
+                            className="text-decoration-none fw-medium"
+                            style={{color:'#42526e'}}
                           >
                             {safeNumber(counts[status])}
                           </span>
